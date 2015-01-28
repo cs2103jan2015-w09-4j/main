@@ -5,6 +5,6 @@ Person in-charge:
 -----------------
 Basic Features: Rodson Chue
 Advance Features: Eric Han
-Testing: Chen Hsin
-Documentation: Tze Cheng
+Testing: Lin Chen-Hsin
+Documentation: Chen Tze Cheng
 
