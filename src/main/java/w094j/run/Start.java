@@ -2,8 +2,8 @@ package w094j.run;
 
 /**
  * Class to start the Task Manager.
- *
- * @author Han Liang Wee Eric
+ * 
+ * @author Han Liang Wee, Eric(A0065517A)
  */
 public class Start {
 
