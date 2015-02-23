@@ -17,16 +17,12 @@ public class ModifyStatement extends Statement {
     /**
      * Initializes an add statement, ensures that the statement is valid.
      *
-     * @param command
-     *            add command.
-     * @param toAdd
-     *            the string to be added.
+     * @param statementString
      * @exception InvalidParameterException
      *                if the parameters does not exist.
      */
-    public ModifyStatement(Command command) {
-        super(command, this.toAdd);
-        assert (Command.ADD == command);
+    public ModifyStatement(String statementString) {
+        super(Command.MODIFY, statementString);
         if ((this.toAdd == null) || (this.toAdd.length() == 0)) {
             throw new InvalidParameterException(
                     "add command must have valid parameters.");
