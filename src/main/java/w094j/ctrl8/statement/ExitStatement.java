@@ -7,20 +7,20 @@ import w094j.ctrl8.terminal.Terminal;
  *
  * @author Han Liang Wee Eric(A0065517A)
  */
-public class ExitStatement extends Statement {
+public class ExitStatement extends StatementNoParams {
 
     /**
-     * @param command
+     * Creates a new exit Statement.
+     *
+     * @param statementString
      */
-    public ExitStatement(Command command) {
-        super(command);
-        assert (Command.EXIT == command);
+    public ExitStatement(String statementString) {
+        super(Command.EXIT, statementString);
     }
 
     @Override
     public void execute(Terminal terminal) {
-// terminal.exit();
-
+        // TODO Link to Terminal
     }
 
 }

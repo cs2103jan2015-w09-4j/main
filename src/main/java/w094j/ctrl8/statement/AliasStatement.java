@@ -3,24 +3,25 @@ package w094j.ctrl8.statement;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
- * History Statement has no parameters.
+ * Alias Statement has no parameters.
  *
  * @author Han Liang Wee, Eric(A0065517A)
  */
-public class HistoryStatement extends StatementNoParams {
+public class AliasStatement extends StatementNoParams {
 
     /**
-     * Creates a new history Statement.
+     * Creates a new alias statement.
      *
      * @param statementString
      */
-    public HistoryStatement(String statementString) {
-        super(Command.HISTORY, statementString);
+    public AliasStatement(String statementString) {
+        super(Command.ALIAS, statementString);
     }
 
     @Override
     public void execute(Terminal terminal) {
         // TODO Link to Terminal
+
     }
 
 }
