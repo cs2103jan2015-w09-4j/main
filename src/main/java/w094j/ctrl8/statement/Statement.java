@@ -48,24 +48,13 @@ public abstract class Statement {
              * 1. add 2. delete 3. exit 4. history 5. list 6. modify 7. search
              */
             case ADD :
-                statement = new AddStatement(command,
-                        Command.removeCommandKeyword(statementString));
-                break;
-            case DELETE :
-                statement = new DeleteStatement(command,
-                        Command.removeCommandKeyword(statementString));
+                statement = new AddStatement(statementString);
                 break;
             case EXIT :
                 statement = new ExitStatement(statementString);
                 break;
             case HISTORY :
                 statement = new HistoryStatement(statementString);
-                break;
-            case VIEW :
-                statement = new ListStatement(command);
-                break;
-            case MODIFY :
-                statement = new ModifyStatement(command);
                 break;
             case ALIAS :
                 statement = new AliasStatement(statementString);
