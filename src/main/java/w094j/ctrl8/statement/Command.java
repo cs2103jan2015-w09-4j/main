@@ -63,6 +63,10 @@ public enum Command {
      */
     EXIT("exit"),
     /**
+     * Help command to help the user with the commands and its syntax.
+     */
+    HELP("help"),
+    /**
      * Displays the current history of actions.
      */
     HISTORY("history"),
