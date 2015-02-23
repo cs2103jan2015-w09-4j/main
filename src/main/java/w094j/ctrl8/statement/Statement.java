@@ -44,9 +44,9 @@ public abstract class Statement {
         }
         switch (command) {
 
-            /*
-             * 1. add 2. delete 3. exit 4. history 5. list 6. modify 7. search
-             */
+        /*
+         * 1. add 2. delete 3. exit 4. history 5. list 6. modify 7. search
+         */
             case ADD :
                 statement = new AddStatement(command,
                         Command.removeCommandKeyword(statementString));
