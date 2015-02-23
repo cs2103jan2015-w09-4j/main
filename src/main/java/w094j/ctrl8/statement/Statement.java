@@ -13,7 +13,7 @@ import w094j.ctrl8.terminal.Terminal;
  */
 public abstract class Statement {
 
-    private String arguments;
+    private String argumentsString;
     private Command command;
 
     /**
@@ -21,9 +21,9 @@ public abstract class Statement {
      *
      * @param command
      */
-    protected Statement(Command command, String arguments) {
+    protected Statement(Command command, String statementString) {
         this.command = command;
-        this.arguments = arguments;
+        this.argumentsString = Command.removeCommandKeyword(statementString);
     }
 
     /**
@@ -44,9 +44,9 @@ public abstract class Statement {
         }
         switch (command) {
 
-        /*
-         * 1. add 2. delete 3. exit 4. history 5. list 6. modify 7. search
-         */
+            /*
+             * 1. add 2. delete 3. exit 4. history 5. list 6. modify 7. search
+             */
             case ADD :
                 statement = new AddStatement(command,
                         Command.removeCommandKeyword(statementString));
@@ -56,19 +56,19 @@ public abstract class Statement {
                         Command.removeCommandKeyword(statementString));
                 break;
             case EXIT :
-                statement = new ExitStatement(command);
+                statement = new ExitStatement(statementString);
                 break;
             case HISTORY :
-                statement = new HistoryStatement(command);
+                statement = new HistoryStatement(statementString);
                 break;
-            case LIST :
+            case VIEW :
                 statement = new ListStatement(command);
                 break;
             case MODIFY :
                 statement = new ModifyStatement(command);
                 break;
-            case SEARCH :
-                statement = new ExitStatement(command);
+            case ALIAS :
+                statement = new AliasStatement(statementString);
                 break;
             default :
                 // should never reach here
@@ -98,10 +98,25 @@ public abstract class Statement {
     public abstract void execute(Terminal terminal);
 
     /**
+     * @return the argumentsString
+     */
+    public String getArgumentsString() {
+        return this.argumentsString;
+    }
+
+    /**
      * @return the command
      */
     public Command getCommand() {
         return this.command;
+    }
+
+    /**
+     * @param argumentsString
+     *            the argumentsString to set
+     */
+    public void setArgumentsString(String argumentsString) {
+        this.argumentsString = argumentsString;
     }
 
     /**
