@@ -1,5 +1,6 @@
 package w094j.ctrl8.terminal;
 
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,10 +27,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-     * a task map should
-     * contain at least one
-     * entry
-     */
+                                                         * a task map should
+                                                         * contain at least one
+                                                         * entry
+                                                         */
 
     Database database;
     Display display;
@@ -63,7 +64,7 @@ public class Terminal {
     public void displayNextCommandRequest() {
         if (this.display instanceof CLIDisplay) {
             this.display
-            .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
+                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
         } else {
             // TODO When GUI Display development begins
         }
@@ -211,18 +212,18 @@ public class Terminal {
          */
 
         Task[] allTasks = this.makeDummyTaskList();/*
-         * TODO: currently a
-         * placeholder to simulate
-         * task adding to tree
-         */
+                                                    * TODO: currently a
+                                                    * placeholder to simulate
+                                                    * task adding to tree
+                                                    */
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null); /*
-                                    * All task objects in allTasks[] should not
-                                    * be null
-                                    */
+             * All task objects in allTasks[] should not
+             * be null
+             */
             assert (!this.taskMap.containsKey(task.getTaskName()));
             /*
              * The taskmap should not already contain a task with the same key
@@ -260,58 +261,6 @@ public class Terminal {
     }
 
     /**
-     * Reads input from a stream and translates it into a statement for command
-     * object to handle Boolean return value is always true (to continue driver
-     * loop) unless 'exit' command is invoked
-     *
-     * @return true unless 'exit' command is specified indicating end of program
-     */
-    private boolean parseInput() {
-        String userInput = this.display.getUserInput();
-        Statement st;
-
-        try {
-            st = Statement.parse(userInput);
-        } catch (Exception e) {
-            this.display.outputMessage(ErrorMessage.ERROR + e);
-            return true;
-        }
-
-        try {
-            st.execute(this);
-        } catch (Exception e) {
-            this.display.outputMessage(ErrorMessage.ERROR + e);
-            return true;
-        }
-
-        switch (st.getCommand()) {
-            case EXIT :
-                this.display.outputMessage(NormalMessage.EXIT_COMMAND);
-                return false;
-
-            case ADD :
-                // TODO: call database.save
-                return true;
-
-            case DELETE :
-                return true;
-
-            case HISTORY :
-                return true;
-            case LIST :
-                return true;
-            case MODIFY :
-                return true;
-            case SEARCH :
-                return true;
-
-            default :
-                // Should not reach here
-                return false;
-        }
-    }
-
-    /**
      * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
      * user inputs until 'exit' is invoked
      */
@@ -319,7 +268,13 @@ public class Terminal {
         boolean continueExecution = true;
         while (continueExecution) {
             this.displayNextCommandRequest();
-            continueExecution = this.parseInput();
+
+            // Passes string to Statement.java to parse into a command
+            try {
+                Statement.parse(this.display.getUserInput());
+            } catch (InvalidParameterException e) {
+                this.display.outputMessage(e.getMessage());
+            }
 
         }
 
