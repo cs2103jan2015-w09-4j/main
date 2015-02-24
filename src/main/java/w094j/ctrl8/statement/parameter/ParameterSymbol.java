@@ -1,8 +1,11 @@
 package w094j.ctrl8.statement.parameter;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -56,6 +59,7 @@ public enum ParameterSymbol {
      */
     TITLE("=");
 
+    private static String bannedSymbolsRegex;
     private static Logger logger = LoggerFactory
             .getLogger(ParameterSymbol.class);
     private static Map<String, ParameterSymbol> parameterLookup = new HashMap<String, ParameterSymbol>();
@@ -65,25 +69,88 @@ public enum ParameterSymbol {
 
     static {
         String delim = "";
-        String regex = "^(";
+        String regex = "(";
+        String symbolSelection = "";
         for (ParameterSymbol eaParamSymbol : EnumSet
                 .allOf(ParameterSymbol.class)) {
             parameterLookup.put(eaParamSymbol.toString(), eaParamSymbol);
-            regex += delim;
-            regex += Pattern.quote(parameterLookup.toString());
+            symbolSelection += delim;
+            symbolSelection += Pattern.quote(eaParamSymbol.toString());
             delim = "|";
         }
-        regex += ")(\\s|$)";
+        regex += symbolSelection;
+        regex += ")\\{([^\\r\\n\\{\\}" + symbolSelection + "]+)?\\}";
+        logger.info(regex);
         parameterPattern = Pattern.compile(regex);
-        logger.info("Parameter Parser initialized with REGEX:" + regex);
+        bannedSymbolsRegex = "(" + symbolSelection + "|\\{|\\})";
+        logger.info("Parameter Parser initialized with REGEX:"
+                + parameterPattern.pattern());
+        logger.info("Banned Symbols Regex:" + bannedSymbolsRegex);
     }
 
     private ParameterSymbol(String symbol) {
         this.symbol = symbol;
     }
 
-    public static Parameter parse(String parameterString) {
-        return null;
+    /**
+     * Parses the parameter taken from the terminal.
+     *
+     * @param parameterString
+     * @return List of Parsed Parameters.
+     */
+    public static List<Parameter> parse(String parameterString) {
+
+        Matcher parameterMatcher = parameterPattern.matcher(parameterString);
+
+        List<Parameter> parameterList = new ArrayList<>();
+        while (parameterMatcher.find()) {
+            String eaParameter = parameterMatcher.group();
+            String eaParameterSymbol = eaParameter.substring(0, 1);
+            String eaParameterPayload = eaParameter.replaceAll(
+                    bannedSymbolsRegex, "");
+            parameterList
+            .add(createParameter(
+                    parameterLookup.get(eaParameterSymbol),
+                    eaParameterPayload));
+        }
+
+        return parameterList;
+    }
+
+    /**
+     * Initializes the appropriate Parameter based on the ParameterSymbol.
+     *
+     * @param symbol
+     *            symbol of the parameter to be created.
+     * @param payload
+     *            payload to parse based on the parameter context.
+     * @return parsed Parameter.
+     */
+    private static Parameter createParameter(ParameterSymbol symbol,
+            String payload) {
+
+        switch (symbol) {
+            case CATEGORY :
+                return new CategoryParameter(payload);
+            case DEADLINE :
+                return new DeadlineParameter(payload);
+            case DESCRIPTION :
+                return new DescriptionParameter(payload);
+            case LOCATION :
+                return new LocationParameter(payload);
+            case PRIORITY :
+                return new PriorityParameter(payload);
+            case REMINDER :
+                return new ReminderParameter(payload);
+            case START_TIME :
+                return new StartTimeParameter(payload);
+            case TITLE :
+                return new TitleParameter(payload);
+            default :
+                // The code should never reach here
+                assert (false);
+                return null;
+        }
     }
 
     @Override
