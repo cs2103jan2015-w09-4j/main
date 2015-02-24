@@ -8,7 +8,7 @@ import java.util.Map;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
-import w094j.ctrl8.message.ErrorMessage;
+import w094j.ctrl8.exception.CommandExecutionException;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
@@ -27,10 +27,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-                                                         * a task map should
-                                                         * contain at least one
-                                                         * entry
-                                                         */
+     * a task map should
+     * contain at least one
+     * entry
+     */
 
     Database database;
     Display display;
@@ -58,13 +58,45 @@ public class Terminal {
     }
 
     /**
+     * Part of CRUD: Add. Throws two types of Exceptions [1:
+     * CommandExecutionException] [2. TaskOverwriteException (expected throw
+     * from Database)] Refer to Issue #47
+     *
+     * @param task
+     *            The task to add to the database, it should be properly
+     *            constructed otherwise Database would run into issues
+     */
+    public void add(Task task) {
+        // Make sure there is at least a proper task title
+        assert (task.getTaskTitle() != null);
+
+        try {
+            // Add to taskmap?
+            this.taskMap.put(task.getTaskTitle(), task);
+            // Add to database
+            this.database.saveTask(task);
+
+            // Informs user that his add statement is successful
+            this.display.outputMessage(task.getTaskTitle()
+                    + NormalMessage.ADD_TASK_SUCCESSFUL);
+
+        } catch (Exception e) {
+            try {
+                throw new CommandExecutionException(e.getMessage());
+            } catch (CommandExecutionException e1) {
+                // Program should not reach here
+            }
+        }
+    }
+
+    /**
      * Displays an output message requesting for the next user input. This may
      * be empty if the UI does not require such.
      */
     public void displayNextCommandRequest() {
         if (this.display instanceof CLIDisplay) {
             this.display
-                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
+            .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
         } else {
             // TODO When GUI Display development begins
         }
@@ -104,28 +136,6 @@ public class Terminal {
                 i++;
             }
             return taskList;
-        }
-    }
-
-    /**
-     * Part of CRUD: Add
-     *
-     * @param task
-     * @return true if adding the task was successful, otherwise returns false
-     */
-    public boolean taskAdd(Task task) {
-        try {
-            /* Check if key is already existing in taskMap */
-            if (!this.taskMap.containsKey(task)) {
-                this.taskMap.put(task.getTaskTitle(), task);
-                this.database.saveTask(task);
-                return true;
-            } else {
-                throw new Exception(ErrorMessage.TASK_KEY_ALREADY_EXISTS);
-            }
-        } catch (Exception e) {
-            // TODO: define a more specific exception
-            return false;
         }
     }
 
@@ -221,18 +231,18 @@ public class Terminal {
          */
 
         Task[] allTasks = this.makeDummyTaskList();/*
-                                                    * TODO: currently a
-                                                    * placeholder to simulate
-                                                    * task adding to tree
-                                                    */
+         * TODO: currently a
+         * placeholder to simulate
+         * task adding to tree
+         */
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null); /*
-             * All task objects in allTasks[] should not
-             * be null
-             */
+                                    * All task objects in allTasks[] should not
+                                    * be null
+                                    */
             assert (!this.taskMap.containsKey(task.getTaskTitle()));
             /*
              * The taskmap should not already contain a task with the same key
