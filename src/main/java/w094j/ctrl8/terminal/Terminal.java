@@ -9,6 +9,7 @@ import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecutionException;
+import w094j.ctrl8.exception.TaskOverwriteException;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
@@ -27,10 +28,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-     * a task map should
-     * contain at least one
-     * entry
-     */
+                                                         * a task map should
+                                                         * contain at least one
+                                                         * entry
+                                                         */
 
     Database database;
     Display display;
@@ -71,8 +72,6 @@ public class Terminal {
         assert (task.getTaskTitle() != null);
 
         try {
-            // Add to taskmap?
-            this.taskMap.put(task.getTaskTitle(), task);
             // Add to database
             this.database.saveTask(task);
 
@@ -82,7 +81,11 @@ public class Terminal {
 
         } catch (Exception e) {
             try {
-                throw new CommandExecutionException(e.getMessage());
+                if (e instanceof TaskOverwriteException) {
+                    throw e;
+                } else {
+                    throw new CommandExecutionException(e.getMessage());
+                }
             } catch (CommandExecutionException e1) {
                 // Program should not reach here
             }
@@ -96,7 +99,7 @@ public class Terminal {
     public void displayNextCommandRequest() {
         if (this.display instanceof CLIDisplay) {
             this.display
-            .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
+                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
         } else {
             // TODO When GUI Display development begins
         }
@@ -231,18 +234,18 @@ public class Terminal {
          */
 
         Task[] allTasks = this.makeDummyTaskList();/*
-         * TODO: currently a
-         * placeholder to simulate
-         * task adding to tree
-         */
+                                                    * TODO: currently a
+                                                    * placeholder to simulate
+                                                    * task adding to tree
+                                                    */
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null); /*
-                                    * All task objects in allTasks[] should not
-                                    * be null
-                                    */
+             * All task objects in allTasks[] should not
+             * be null
+             */
             assert (!this.taskMap.containsKey(task.getTaskTitle()));
             /*
              * The taskmap should not already contain a task with the same key
