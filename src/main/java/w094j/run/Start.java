@@ -12,15 +12,16 @@ import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.message.ErrorMessage;
+import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OptionsConstants;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
  * Class to start the Task Manager.
- * 
- * @author Chen Tze Cheng(A0112092W)
  */
+// @author A0112092W
+
 public class Start {
 
     /**
@@ -38,7 +39,7 @@ public class Start {
     private static Options optionList = new Options();
 
     public static void main(String[] args) {
-        logger.info("Starting <Ctrl> + <8>.");
+        logger.info(NormalMessage.START_MESSAGE);
         // add all existing Options
         addOptions();
 
@@ -46,7 +47,9 @@ public class Start {
 
             parseArgs(args);
             Display display = new CLIDisplay();
-            new Terminal(Config.parseArgs(args), display);
+            Terminal terminal = new Terminal(Config.parseArgs(args), display);
+            logger.info(NormalMessage.WELCOME_MESSAGE);
+            terminal.runTerminal();
         } else {
             printHelp();
         }
