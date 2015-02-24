@@ -10,6 +10,9 @@ package w094j.ctrl8.message;
  * @author Lin Chen-Hsin
  */
 public class NormalMessage {
+    // @author A0110787A
+    public static final String ADD_TASK_SUCCESSFUL = " added successfully!";
+
     public static final String DISPLAY_NEXT_COMMAND_REQUEST = "Next command: ";
     public static final String EXIT_COMMAND = "Thank you for using Ctrl Infinity!";
 }

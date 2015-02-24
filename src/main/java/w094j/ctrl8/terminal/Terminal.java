@@ -8,7 +8,8 @@ import java.util.Map;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
-import w094j.ctrl8.message.ErrorMessage;
+import w094j.ctrl8.exception.CommandExecutionException;
+import w094j.ctrl8.exception.TaskOverwriteException;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
@@ -58,6 +59,43 @@ public class Terminal {
     }
 
     /**
+     * Part of CRUD: Add. Throws two types of Exceptions [1:
+     * CommandExecutionException] [2. TaskOverwriteException (expected throw
+     * from Database)] Refer to Issue #47
+     *
+     * @param task
+     *            The task to add to the database, it should be properly
+     *            constructed otherwise Database would run into issues
+     */
+    public void add(Task task) {
+        // Make sure there is at least a proper task title
+        assert (task.getTaskTitle() != null);
+
+        try {
+            // Update Taskmap
+            this.updateTaskMap(task);
+
+            // Add to database
+            this.database.saveTask(task);
+
+            // Informs user that his add statement is successful
+            this.display.outputMessage(task.getTaskTitle()
+                    + NormalMessage.ADD_TASK_SUCCESSFUL);
+
+        } catch (Exception e) {
+            try {
+                if (e instanceof TaskOverwriteException) {
+                    throw e;
+                } else {
+                    throw new CommandExecutionException(e.getMessage());
+                }
+            } catch (CommandExecutionException e1) {
+                // Program should not reach here
+            }
+        }
+    }
+
+    /**
      * Displays an output message requesting for the next user input. This may
      * be empty if the UI does not require such.
      */
@@ -104,28 +142,6 @@ public class Terminal {
                 i++;
             }
             return taskList;
-        }
-    }
-
-    /**
-     * Part of CRUD: Add
-     *
-     * @param task
-     * @return true if adding the task was successful, otherwise returns false
-     */
-    public boolean taskAdd(Task task) {
-        try {
-            /* Check if key is already existing in taskMap */
-            if (!this.taskMap.containsKey(task)) {
-                this.taskMap.put(task.getTaskName(), task);
-                this.database.saveTask(task);
-                return true;
-            } else {
-                throw new Exception(ErrorMessage.TASK_KEY_ALREADY_EXISTS);
-            }
-        } catch (Exception e) {
-            // TODO: define a more specific exception
-            return false;
         }
     }
 
@@ -185,8 +201,8 @@ public class Terminal {
      * @param newTaskName
      */
     public void taskUpdate(Task task, String newTaskName) {
-        String oldTaskName = task.getTaskName();
-        task.setTaskName(newTaskName);
+        String oldTaskName = task.getTaskTitle();
+        task.setTaskTitle(newTaskName);
 
         this.updateTaskMap(oldTaskName, task);
     }
@@ -202,8 +218,8 @@ public class Terminal {
      */
     public void taskUpdate(Task task, String newTaskName, Date newStartDate,
             Date newEndDate, int newPriority) {
-        String oldTaskName = task.getTaskName();
-        task.setTaskName(newTaskName);
+        String oldTaskName = task.getTaskTitle();
+        task.setTaskTitle(newTaskName);
         task.setStartDate(newStartDate);
         task.setEndDate(newEndDate);
         task.setPriority(newPriority);
@@ -233,13 +249,13 @@ public class Terminal {
                                     * All task objects in allTasks[] should not
                                     * be null
                                     */
-            assert (!this.taskMap.containsKey(task.getTaskName()));
+            assert (!this.taskMap.containsKey(task.getTaskTitle()));
             /*
              * The taskmap should not already contain a task with the same key
              * Assert fail implies database has overlap
              */
 
-            this.taskMap.put(task.getTaskName(), task);
+            this.taskMap.put(task.getTaskTitle(), task);
         }
     }
 
@@ -297,9 +313,9 @@ public class Terminal {
      */
     private void updateTaskMap(String oldKey, Task task) {
         assert (this.taskMap.containsKey(oldKey));
-        assert (this.taskMap.containsKey(task.getTaskName()));
+        assert (this.taskMap.containsKey(task.getTaskTitle()));
         this.taskMap.remove(oldKey);
-        this.taskMap.put(task.getTaskName(), task);
+        this.taskMap.put(task.getTaskTitle(), task);
     }
 
     /**
@@ -308,8 +324,8 @@ public class Terminal {
      * @param task
      */
     private void updateTaskMap(Task task) {
-        assert (this.taskMap.containsKey(task.getTaskName()));
-        this.taskMap.replace(task.getTaskName(), task);
+        assert (this.taskMap.containsKey(task.getTaskTitle()));
+        this.taskMap.replace(task.getTaskTitle(), task);
 
     }
 }
