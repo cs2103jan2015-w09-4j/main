@@ -3,9 +3,8 @@ package w094j.ctrl8.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Lin Chen-Hsin A0112521B
- */
+//@author A0112521B
+
 public class DBfile {
 
     private Config config;
@@ -19,6 +18,19 @@ public class DBfile {
     public DBfile(List<Task> taskList, Config config) {
         this.taskList = taskList;
         this.config = config;
+    }
+
+    /**
+     * @param taskTitle
+     * @return true if taskTitle is in taskList
+     */
+    public boolean containsTaskTitle(String taskTitle) {
+        for (Task i : this.taskList) {
+            if (i.getTaskTitle().equals(taskTitle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
