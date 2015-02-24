@@ -1,14 +1,45 @@
 package w094j.ctrl8.statement.parameter;
 
 /**
- * Represents a parameter, its symbol with its payload.
+ * Represents a parameter, its symbol with its payload. This class presents no
+ * understanding of the payload.
  *
  * @author Han Liang Wee, Eric(A0065517A)
  */
-public class Parameter {
+public abstract class Parameter {
 
     private String payload;
     private ParameterSymbol symbol;
+
+    /**
+     * Creates a Parameter. The syntax accepted on the command line is
+     *
+     * <pre>
+     * \<symbol\>{\<payload\>}
+     * </pre>
+     *
+     * @param symbol
+     * @param payload
+     */
+    public Parameter(ParameterSymbol symbol, String payload) {
+        this.symbol = symbol;
+        this.payload = payload;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Parameter) {
+            Parameter objParameter = (Parameter) obj;
+            if (objParameter.payload.equals(this.payload)
+                    && objParameter.symbol.equals(this.symbol)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 
     /**
      * @return the payload
@@ -38,6 +69,11 @@ public class Parameter {
      */
     public void setSymbol(ParameterSymbol symbol) {
         this.symbol = symbol;
+    }
+
+    @Override
+    public String toString() {
+        return this.symbol.toString() + "{" + this.payload + "}";
     }
 
 }
