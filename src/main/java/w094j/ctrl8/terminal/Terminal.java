@@ -27,10 +27,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-                                                         * a task map should
-                                                         * contain at least one
-                                                         * entry
-                                                         */
+     * a task map should
+     * contain at least one
+     * entry
+     */
 
     Database database;
     Display display;
@@ -64,10 +64,19 @@ public class Terminal {
     public void displayNextCommandRequest() {
         if (this.display instanceof CLIDisplay) {
             this.display
-                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
+            .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
         } else {
             // TODO When GUI Display development begins
         }
+    }
+
+    /*
+     * Function is called when an exit statement is executed. Performs a cleanup
+     * before terminating the terminal See Issue #74 on github
+     */
+    public void exit() {
+        this.display.outputMessage(NormalMessage.EXIT_COMMAND);
+        this.cleanUp();
     }
 
     /**
@@ -212,18 +221,18 @@ public class Terminal {
          */
 
         Task[] allTasks = this.makeDummyTaskList();/*
-                                                    * TODO: currently a
-                                                    * placeholder to simulate
-                                                    * task adding to tree
-                                                    */
+         * TODO: currently a
+         * placeholder to simulate
+         * task adding to tree
+         */
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null); /*
-             * All task objects in allTasks[] should not
-             * be null
-             */
+                                    * All task objects in allTasks[] should not
+                                    * be null
+                                    */
             assert (!this.taskMap.containsKey(task.getTaskName()));
             /*
              * The taskmap should not already contain a task with the same key
@@ -277,9 +286,6 @@ public class Terminal {
             }
 
         }
-
-        this.cleanUp();
-
     }
 
     /**
