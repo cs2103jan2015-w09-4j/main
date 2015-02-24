@@ -13,6 +13,8 @@ import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Statement;
 
+//@author A0110787A
+
 /**
  * Class encapsulates an object that acts as a driver for the program. It
  * accepts a config object and an object that implements the Display Interface
@@ -20,12 +22,7 @@ import w094j.ctrl8.statement.Statement;
  * operations. It parses user inputs and translates them into statements for
  * command objects to perform needed operations (e.g ADD operation)
  */
-/**
- * @author Chen Tze Cheng
- */
-/**
- * @author Rodson Chue Le Sheng(A0110787)
- */
+
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
@@ -268,9 +265,6 @@ public class Terminal {
      * loop) unless 'exit' command is invoked
      *
      * @return true unless 'exit' command is specified indicating end of program
-     */
-    /**
-     * @author Rodson Chue Le Sheng (A0110787)
      */
     private boolean parseInput() {
         String userInput = this.display.getUserInput();
