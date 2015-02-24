@@ -40,13 +40,11 @@ public class Terminal {
     public Terminal(Config conf, Display window) {
         this.display = window;
         this.buildTaskMap();
-        this.runTerminal();
     }
 
     public Terminal(Display window) {
         this.display = window;
         this.buildTaskMap();
-        this.runTerminal();
     }
 
     /**
@@ -169,66 +167,68 @@ public class Terminal {
     }
 
     /**
-     * Part of CRUD: Update
-     *
-     * @param task
-     * @param newStartDate
-     * @param newEndDate
-     */
-    public void taskUpdate(Task task, Date newStartDate, Date newEndDate) {
-        task.setStartDate(newStartDate);
-        task.setEndDate(newEndDate);
-
-        this.updateTaskMap(task);
+     * Modify the specified Task with new incomplete Task that contains new information
+     *  Throws two types of Exceptions [1:CommandExecutionException] [2. MissingTaskException] 
+     *  Refer to Issue #50
+     * @param query
+     * @param incompleteTask
+     *  
+    */
+    public void modify(String query, Task incompleteTask) {
+            
+        try{
+            //check if the task exists
+            if(isTaskExist(query)){
+                
+                Task task = this.taskMap.get(query);
+                // Add to database
+                this.database.delete(task);
+                task.update(incompleteTask);
+                this.database.saveTask(task);
+                // Update the TaskMap
+                this.updateTaskMap(query,task);
+                
+                // Informs user that his add statement is successful
+                this.display.outputMessage(task.getTaskTitle()
+                        + NormalMessage.MODIFY_TASK_SUCCESSFUL);
+                }
+                else{
+                    throw new Exception("MissingTaskException");
+                }
+            }
+        catch (Exception e){
+            if (e instanceof MissingTaskException) {
+                throw e;
+            } else {
+                throw new CommandExecutionException(e.getMessage());
+            } 
+        }
     }
 
     /**
-     * Part of CRUD: Update
+     * This is a function to check is a task exist in the task map
+     * @param task 
      *
-     * @param task
-     * @param newPriority
+     * @return boolean that true shows the task exist in the task map
      */
-    public void taskUpdate(Task task, int newPriority) {
-        task.setPriority(newPriority);
-
-        this.updateTaskMap(task);
+    private boolean isTaskExist(Task task){
+        return this.taskMap.containsKey(task.getTaskTitle());
     }
-
+    
+    
     /**
-     * Part of CRUD: Update
+     * This is a function to check is a task exist in the task map
+     * @param query 
      *
-     * @param task
-     * @param newTaskName
+     * @return boolean that true shows the task exist in the task map
      */
-    public void taskUpdate(Task task, String newTaskName) {
-        String oldTaskName = task.getTaskTitle();
-        task.setTaskTitle(newTaskName);
-
-        this.updateTaskMap(oldTaskName, task);
+    private boolean isTaskExist(String query){
+        return this.taskMap.containsKey(query);
     }
-
+    
+    
     /**
-     * Part of CRUD: Update
-     *
-     * @param task
-     * @param newTaskName
-     * @param newStartDate
-     * @param newEndDate
-     * @param newPriority
-     */
-    public void taskUpdate(Task task, String newTaskName, Date newStartDate,
-            Date newEndDate, int newPriority) {
-        String oldTaskName = task.getTaskTitle();
-        task.setTaskTitle(newTaskName);
-        task.setStartDate(newStartDate);
-        task.setEndDate(newEndDate);
-        task.setPriority(newPriority);
-
-        this.updateTaskMap(oldTaskName, task);
-    }
-
-    /**
-     * Initialises the taskMap based on what the datastore currently contains
+     * Initializes the taskMap based on what the datastore currently contains
      */
     private void buildTaskMap() {
         /*
@@ -289,7 +289,7 @@ public class Terminal {
      * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
      * user inputs until 'exit' is invoked
      */
-    private void runTerminal() {
+    public void runTerminal() {
         boolean continueExecution = true;
         while (continueExecution) {
             this.displayNextCommandRequest();
