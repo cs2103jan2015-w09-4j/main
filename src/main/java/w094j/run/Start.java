@@ -25,7 +25,8 @@ import w094j.ctrl8.terminal.Terminal;
 public class Start {
 
     /**
-     * Runs the Task Manager with some parameters
+     * Runs the Task Manager with the file path to extract the data from the
+     * file.
      * 
      * @param args
      *            TODO
@@ -36,10 +37,11 @@ public class Start {
     // create the command line parser
     private static CommandLineParser parser = new GnuParser();
     // create the Options
-    private static Options optionList = new Options();
+    private static Options optionList;
 
     public static void main(String[] args) {
         logger.info(NormalMessage.START_MESSAGE);
+
         // add all existing Options
         addOptions();
 
@@ -58,6 +60,7 @@ public class Start {
 
     // This will add all the existing options
     private static void addOptions() {
+        optionList = new Options();
         OptionsConstants.addAllOptions();
         for (int i = 0; i < OptionsConstants.getOptionNumber(); i++) {
             optionList.addOption(OptionsConstants.getOption(i));
@@ -73,6 +76,7 @@ public class Start {
             // validate that file's Path has been set
             if (line.hasOption("filePath")) {
                 try {
+                    // initiate the database with the file's path
                     Database database = new Database(
                             line.getOptionValue("filePath"));
                     // print the value of filePath
