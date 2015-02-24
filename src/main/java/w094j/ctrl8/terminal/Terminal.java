@@ -27,10 +27,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-     * a task map should
-     * contain at least one
-     * entry
-     */
+                                                         * a task map should
+                                                         * contain at least one
+                                                         * entry
+                                                         */
 
     Database database;
     Display display;
@@ -64,7 +64,7 @@ public class Terminal {
     public void displayNextCommandRequest() {
         if (this.display instanceof CLIDisplay) {
             this.display
-            .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
+                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
         } else {
             // TODO When GUI Display development begins
         }
@@ -117,7 +117,7 @@ public class Terminal {
         try {
             /* Check if key is already existing in taskMap */
             if (!this.taskMap.containsKey(task)) {
-                this.taskMap.put(task.getTaskName(), task);
+                this.taskMap.put(task.getTaskTitle(), task);
                 this.database.saveTask(task);
                 return true;
             } else {
@@ -185,8 +185,8 @@ public class Terminal {
      * @param newTaskName
      */
     public void taskUpdate(Task task, String newTaskName) {
-        String oldTaskName = task.getTaskName();
-        task.setTaskName(newTaskName);
+        String oldTaskName = task.getTaskTitle();
+        task.setTaskTitle(newTaskName);
 
         this.updateTaskMap(oldTaskName, task);
     }
@@ -202,8 +202,8 @@ public class Terminal {
      */
     public void taskUpdate(Task task, String newTaskName, Date newStartDate,
             Date newEndDate, int newPriority) {
-        String oldTaskName = task.getTaskName();
-        task.setTaskName(newTaskName);
+        String oldTaskName = task.getTaskTitle();
+        task.setTaskTitle(newTaskName);
         task.setStartDate(newStartDate);
         task.setEndDate(newEndDate);
         task.setPriority(newPriority);
@@ -221,25 +221,25 @@ public class Terminal {
          */
 
         Task[] allTasks = this.makeDummyTaskList();/*
-         * TODO: currently a
-         * placeholder to simulate
-         * task adding to tree
-         */
+                                                    * TODO: currently a
+                                                    * placeholder to simulate
+                                                    * task adding to tree
+                                                    */
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null); /*
-                                    * All task objects in allTasks[] should not
-                                    * be null
-                                    */
-            assert (!this.taskMap.containsKey(task.getTaskName()));
+             * All task objects in allTasks[] should not
+             * be null
+             */
+            assert (!this.taskMap.containsKey(task.getTaskTitle()));
             /*
              * The taskmap should not already contain a task with the same key
              * Assert fail implies database has overlap
              */
 
-            this.taskMap.put(task.getTaskName(), task);
+            this.taskMap.put(task.getTaskTitle(), task);
         }
     }
 
@@ -297,9 +297,9 @@ public class Terminal {
      */
     private void updateTaskMap(String oldKey, Task task) {
         assert (this.taskMap.containsKey(oldKey));
-        assert (this.taskMap.containsKey(task.getTaskName()));
+        assert (this.taskMap.containsKey(task.getTaskTitle()));
         this.taskMap.remove(oldKey);
-        this.taskMap.put(task.getTaskName(), task);
+        this.taskMap.put(task.getTaskTitle(), task);
     }
 
     /**
@@ -308,8 +308,8 @@ public class Terminal {
      * @param task
      */
     private void updateTaskMap(Task task) {
-        assert (this.taskMap.containsKey(task.getTaskName()));
-        this.taskMap.replace(task.getTaskName(), task);
+        assert (this.taskMap.containsKey(task.getTaskTitle()));
+        this.taskMap.replace(task.getTaskTitle(), task);
 
     }
 }
