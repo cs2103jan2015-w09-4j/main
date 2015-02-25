@@ -44,16 +44,17 @@ public class Task {
     private static final int DEFAULT_PRIORITY = 0;
     
     /* Global parameters for isSet boolean array */
-    private static final int TITLE = 0;
-    private static final int LOCATION = 1;
-    private static final int STARTDATE = 2;
-    private static final int ENDDATE = 3;
-    private static final int CATEGORY = 4;
-    private static final int DESCRIPTION = 5;
-    private static final int REMINDER = 6;
-    private static final int PRIORITY = 7;
-    private static final int STATUS = 8;
-    private static final int ISSET_SIZE = 9;
+    private static final int IS_COMPLETE = 0;
+    private static final int TITLE = 1;
+    private static final int LOCATION = 2;
+    private static final int STARTDATE = 3;
+    private static final int ENDDATE = 4;
+    private static final int CATEGORY = 5;
+    private static final int DESCRIPTION = 6;
+    private static final int REMINDER = 7;
+    private static final int PRIORITY = 8;
+    private static final int STATUS = 9;
+    private static final int ISSET_SIZE = 10;
     
     /* Global parameters for isRemoved boolean array */
     private static final int REMOVE_STARTDATE = 0;
@@ -157,7 +158,9 @@ public class Task {
      * @return task type
      */
     public TaskType getTaskType() {
-        changeTaskType();
+        if(this.isSet[IS_COMPLETE]){
+            changeTaskType();
+        }
         return this.taskType;
     }
 
@@ -362,6 +365,8 @@ public class Task {
      *  Change incomplete task to complete task
      */
     public void toCompleteTask() {
+        this.isSet[IS_COMPLETE] = true;
+        
         if(this.isSet[LOCATION] && this.location.equals("")){
             this.isSet[LOCATION] = false;
         }
