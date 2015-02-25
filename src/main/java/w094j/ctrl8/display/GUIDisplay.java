@@ -1,5 +1,6 @@
 package w094j.ctrl8.display;
 
+import w094j.ctrl8.pojo.Task;
 
 /**
  * Class implements Display Interface as a simple CLI with additional GUI
@@ -21,6 +22,12 @@ public class GUIDisplay implements Display {
 
     @Override
     public void outputMessage(String message) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void outputTask(Task[] taskList) {
         // TODO Auto-generated method stub
 
     }

@@ -5,14 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
 
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.pojo.TaskType;
-import w094j.ctrl8.statement.Statement;
 
 /**
  * Class implements Display Interface as a simple CLI
@@ -34,6 +30,42 @@ public class CLIDisplay implements Display {
         this.br = new BufferedReader(new InputStreamReader(System.in));
     }
 
+    /**
+     * This method is used to print a table with format of following the format
+     * of right justified table x xxx yyy y zz zz
+     *
+     * @param table
+     */
+    private static void printTable(String[][] table) {
+        // Find out what the maximum number of columns is in any row
+        int maxColumns = 0;
+        for (String[] element : table) {
+            maxColumns = Math.max(element.length, maxColumns);
+        }
+
+        // Find the maximum length of a string in each column
+        int[] lengths = new int[maxColumns];
+        for (String[] element : table) {
+            for (int j = 0; j < element.length; j++) {
+                lengths[j] = Math.max(element[j].length(), lengths[j]);
+            }
+        }
+
+        // Generate a format string for each column
+        String[] formats = new String[lengths.length];
+        for (int i = 0; i < lengths.length; i++) {
+            formats[i] = "%1$" + lengths[i] + "s"
+                    + ((i + 1) == lengths.length ? "\n" : " ");
+        }
+
+        // Print 'em out
+        for (String[] element : table) {
+            for (int j = 0; j < element.length; j++) {
+                System.out.printf(formats[j], element[j]);
+            }
+        }
+    }
+
     @Override
     public String getUserInput() {
         String nextLine = null;
@@ -53,36 +85,37 @@ public class CLIDisplay implements Display {
 
     /**
      * This method is used to outout the task for the user in certain format.
-     * 
+     *
      * @param taskList
      */
     @Override
     public void outputTask(Task[] taskList) {
-        String[][] table = initTable(taskList.length+1,MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
+        String[][] table = this.initTable(taskList.length + 1,
+                MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        for(int i=1;i<taskList.length+1;i++){
-            table[i][0] = taskList[i-1].getTitle();
-            table[i][1] = taskList[i-1].getCategory();
-            table[i][2] = taskList[i-1].getDescription();
-            table[i][3] = df.format(taskList[i-1].getStartDate());
-            table[i][4] = df.format(taskList[i-1].getEndDate());
-            table[i][5] = taskList[i-1].getLocation();
-            table[i][6] = String.valueOf(taskList[i-1].getPriority());
-            table[i][7] = df.format(taskList[i-1].getReminder());
-            table[i][8] = taskList[i-1].getTaskType();
-            if(taskList[i-1].getStatus()== true){
+        for (int i = 1; i < (taskList.length + 1); i++) {
+            table[i][0] = taskList[i - 1].getTitle();
+            table[i][1] = taskList[i - 1].getCategory();
+            table[i][2] = taskList[i - 1].getDescription();
+            table[i][3] = df.format(taskList[i - 1].getStartDate());
+            table[i][4] = df.format(taskList[i - 1].getEndDate());
+            table[i][5] = taskList[i - 1].getLocation();
+            table[i][6] = String.valueOf(taskList[i - 1].getPriority());
+            table[i][7] = df.format(taskList[i - 1].getReminder());
+            table[i][8] = taskList[i - 1].getTaskType().toString();
+            if (taskList[i - 1].getStatus() == true) {
                 table[i][9] = "Done";
-            }
-            else{
+            } else {
                 table[i][9] = "Not Done Yet";
             }
         }
         printTable(table);
-      
+
     }
-    
-    //initialize the table with adding the first row for each of the task's properties
-    private String[][] initTable(int taskNumber, int taskProperties){
+
+    // initialize the table with adding the first row for each of the task's
+// properties
+    private String[][] initTable(int taskNumber, int taskProperties) {
         String[][] table = new String[taskNumber][taskProperties];
         table[0][0] = "Title";
         table[0][1] = "Category";
@@ -94,46 +127,8 @@ public class CLIDisplay implements Display {
         table[0][7] = "Reminder";
         table[0][8] = "TaskType";
         table[0][9] = "Status";
-        
+
         return table;
-    }
-    
-    /**
-     * This method is used to print a table with format of following the format of right justified table
-     *     x xxx
-     *   yyy   y
-     *    zz  zz
-     * 
-     * @param table
-     */
-    private static void printTable(String[][] table) {
-        // Find out what the maximum number of columns is in any row
-        int maxColumns = 0;
-        for (int i = 0; i < table.length; i++) {
-            maxColumns = Math.max(table[i].length, maxColumns);
-        }
-
-        // Find the maximum length of a string in each column
-        int[] lengths = new int[maxColumns];
-        for (int i = 0; i < table.length; i++) {
-            for (int j = 0; j < table[i].length; j++) {
-                lengths[j] = Math.max(table[i][j].length(), lengths[j]);
-            }
-        }
-
-        // Generate a format string for each column
-        String[] formats = new String[lengths.length];
-        for (int i = 0; i < lengths.length; i++) {
-            formats[i] = "%1$" + lengths[i] + "s"
-                    + (i + 1 == lengths.length ? "\n" : " ");
-        }
-
-        // Print 'em out
-        for (int i = 0; i < table.length; i++) {
-            for (int j = 0; j < table[i].length; j++) {
-                System.out.printf(formats[j], table[i][j]);
-            }
-        }
     }
 
 }

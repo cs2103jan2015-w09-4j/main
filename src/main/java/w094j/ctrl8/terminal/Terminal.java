@@ -120,32 +120,11 @@ public class Terminal {
         this.cleanUp();
     }
 
-    /**
-     *  View all the task and their information in table format
-     *  display 
-     * 
-     */
-    public void view(){
-        if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
-            /*
-             * taskMap size is illegal, most likely cause is that the task map
-             * is empty
-             */
-            display.outputMessage(NormalMessage.NO_TASK_FOUND);
-        } else {
-        Task[] taskList = new Task[this.taskMap.size()];
-        int i = 0;
-        for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
-            // String key = taskEntry.getKey();
-            Task task = taskEntry.getValue();
+    public void help() {
+        // TODO Auto-generated method stub
 
-            taskList[i] = task;
-            i++;
-        }
-        display.outputTask(taskList);
-        }
     }
-    
+
     /**
      * Modify the specified Task with new incomplete Task that contains new
      * information Throws [CommandExecutionException] Refer to Issue #50
@@ -163,7 +142,7 @@ public class Terminal {
 
             try {
                 // Add to database
-                this.database.delete(task);
+                this.database.deleteTask(task);
                 task.update(incompleteTask);
                 this.database.saveTask(task);
             } catch (Exception e) {
@@ -217,7 +196,7 @@ public class Terminal {
         try {
             /* Check if key exists in taskmap */
             if (this.taskMap.containsKey(taskID)) {
-                this.database.delete(this.taskMap.get(taskID));
+                this.database.deleteTask(this.taskMap.get(taskID));
                 this.taskMap.remove(taskID);
                 return true;
             } else {
@@ -225,6 +204,30 @@ public class Terminal {
             }
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /**
+     * View all the task and their information in table format display
+     */
+    public void view() {
+        if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
+            /*
+             * taskMap size is illegal, most likely cause is that the task map
+             * is empty
+             */
+            this.display.outputMessage(NormalMessage.NO_TASK_FOUND);
+        } else {
+            Task[] taskList = new Task[this.taskMap.size()];
+            int i = 0;
+            for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
+                // String key = taskEntry.getKey();
+                Task task = taskEntry.getValue();
+
+                taskList[i] = task;
+                i++;
+            }
+            this.display.outputTask(taskList);
         }
     }
 
