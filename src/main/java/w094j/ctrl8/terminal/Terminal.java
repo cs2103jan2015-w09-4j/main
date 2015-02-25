@@ -121,33 +121,31 @@ public class Terminal {
     }
 
     /**
-     * TODO Part of CRUD: Display
-     *
-     * @return an array of all the Task objects, returns null if task map does
-     *         not contain any entry
+     *  View all the task and their information in table format
+     *  display 
+     * 
      */
-    public Task[] getAllTask() {
+    public void view(){
         if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
             /*
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
              */
-            return null;
+            display.outputMessage(NormalMessage.NO_TASK_FOUND);
         } else {
-            Task[] taskList = new Task[this.taskMap.size()];
+        Task[] taskList = new Task[this.taskMap.size()];
+        int i = 0;
+        for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
+            // String key = taskEntry.getKey();
+            Task task = taskEntry.getValue();
 
-            int i = 0;
-            for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
-                // String key = taskEntry.getKey();
-                Task task = taskEntry.getValue();
-
-                taskList[i] = task;
-                i++;
-            }
-            return taskList;
+            taskList[i] = task;
+            i++;
+        }
+        display.outputTask(taskList);
         }
     }
-
+    
     /**
      * Modify the specified Task with new incomplete Task that contains new
      * information Throws [CommandExecutionException] Refer to Issue #50
