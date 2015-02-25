@@ -19,9 +19,8 @@ import com.google.gson.GsonBuilder;
  * statement history into an output file. TODO: Cater for Google integration
  */
 
-/**
- * @author Lin Chen-Hsin A0112521B
- */
+//@author A0112521B
+
 public class Database {
 
     private DBfile file;
@@ -42,11 +41,24 @@ public class Database {
     }
 
     /**
+     * @param title
+     * @return true if taskTitle is in taskList
+     */
+    public boolean containsTaskTitle(String title) {
+        for (Task i : this.file.getTaskList()) {
+            if (i.getTitle().equals(title)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Delete a task.
      *
      * @param task
      */
-    public void delete(Task task) {
+    public void deleteTask(Task task) {
         this.file.getTaskList().remove(task);
         this.save();
     }
