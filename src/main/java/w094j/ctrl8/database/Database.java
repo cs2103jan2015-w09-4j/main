@@ -23,15 +23,27 @@ import com.google.gson.GsonBuilder;
 
 public class Database {
 
+    private static final String DEFAULT_FILE_NAME = "database.txt";
     private DBfile file;
     private Path filePath;
+
+    /**
+     * @throws IOException
+     */
+    public Database() throws IOException {
+        this.filePath = Paths.get(DEFAULT_FILE_NAME);
+        if (!Files.exists(this.filePath)) {
+            this.file = new DBfile();
+        } else {
+            this.readFile();
+        }
+    }
 
     /**
      * @param filePathString
      * @throws IOException
      */
     public Database(String filePathString) throws IOException {
-
         this.filePath = Paths.get(filePathString);
         if (!Files.exists(this.filePath)) {
             this.file = new DBfile();
