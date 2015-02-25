@@ -15,6 +15,7 @@ public class ErrorMessage {
 
     // @author A0110787A
     public static final String EXCEPTION_IS_INCOMPLETE_TASK = "TaskType=INCOMPLETE";
+    public static final String EXCEPTION_MISSING_TASK = "Database does not contain Task";
     public static final String EXCEPTION_UPDATE_TASK_MAP = "Update TaskMap Error";
 
     public static final String OPTION_NOT_FOUND = "Error: Option can't be found";

@@ -8,7 +8,6 @@ import java.util.Map;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecutionException;
-import w094j.ctrl8.exception.MissingTaskException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
@@ -28,10 +27,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-     * a task map should
-     * contain at least one
-     * entry
-     */
+                                                         * a task map should
+                                                         * contain at least one
+                                                         * entry
+                                                         */
 
     // Temporary Static constants
     private static final String tempDB = "tmp.db";
@@ -157,38 +156,42 @@ public class Terminal {
 
     /**
      * Modify the specified Task with new incomplete Task that contains new
-     * information Throws two types of Exceptions [1:CommandExecutionException]
-     * [2. MissingTaskException] Refer to Issue #50
+     * information Throws [1:CommandExecutionException] [2. Exception (from
+     * database)] Refer to Issue #50
      *
      * @param query
      * @param incompleteTask
      */
-    public void modify(String query, Task incompleteTask) {
+    public void modify(String query, Task incompleteTask) throws Exception {
 
-        try {
-            // check if the task exists
-            if (this.isTaskExist(query)) {
+        // check if the task exists
+        if (this.isTaskExist(query)) {
 
-                Task task = this.taskMap.get(query);
+            Task task = this.taskMap.get(query);
+
+            try {
                 // Add to database
                 this.database.delete(task);
                 task.update(incompleteTask);
                 this.database.saveTask(task);
+            } catch (Exception e) {
+                throw e;
+            }
+
+            try {
                 // Update the TaskMap
                 this.updateTaskMap(query, task);
+            } catch (Exception e) {
+                throw new CommandExecutionException(
+                        ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
+            }
 
-                // Informs user that his add statement is successful
-                this.display.outputMessage(task.getTitle()
-                        + NormalMessage.MODIFY_TASK_SUCCESSFUL);
-            } else {
-                throw new Exception("MissingTaskException");
-            }
-        } catch (Exception e) {
-            if (e instanceof MissingTaskException) {
-                throw e;
-            } else {
-                throw new CommandExecutionException(e.getMessage());
-            }
+            // Informs user that his add statement is successful
+            this.display.outputMessage(task.getTitle()
+                    + NormalMessage.MODIFY_TASK_SUCCESSFUL);
+        } else {
+            throw new CommandExecutionException(
+                    ErrorMessage.EXCEPTION_MISSING_TASK);
         }
     }
 
