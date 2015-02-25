@@ -2,6 +2,8 @@ package w094j.ctrl8.statement.parameter;
 
 import java.security.InvalidParameterException;
 
+import w094j.ctrl8.pojo.Task;
+
 /**
  * Priority must be a number between 0 and 10. Inclusive of both numbers.
  *
@@ -9,7 +11,7 @@ import java.security.InvalidParameterException;
  */
 public class PriorityParameter extends Parameter {
 
-    private int piority;
+    private int priority;
 
     /**
      * Creates a new Priority Parameter.
@@ -22,34 +24,40 @@ public class PriorityParameter extends Parameter {
         assert (payload != null);
         if (!payload.isEmpty()) {
             try {
-                this.piority = Integer.parseInt(payload);
+                this.priority = Integer.parseInt(payload);
             } catch (NumberFormatException nfe) {
                 throw new InvalidParameterException(
                         "Priority must be an integer.");
             }
 
-            if ((this.piority < 0) || (this.piority > 10)) {
+            if ((this.priority < 0) || (this.priority > 10)) {
                 throw new InvalidParameterException(
                         "Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
             }
         } else {
-            this.piority = 0;
+            this.priority = 0;
         }
 
     }
 
-    /**
-     * @return the piority
-     */
-    public int getPiority() {
-        return this.piority;
+    @Override
+    public void add(Task task) {
+        task.setPriority(this.priority);
     }
 
     /**
-     * @param piority
-     *            the piority to set
+     * @return the priority
      */
-    public void setPiority(int piority) {
-        this.piority = piority;
+    public int getPriority() {
+        return this.priority;
     }
+
+    /**
+     * @param priority
+     *            the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
 }
