@@ -260,6 +260,7 @@ public class Task {
         this.isSet[IS_COMPLETE] = true;
 
         if (this.isSet[LOCATION] && this.location.equals("")) {
+            this.location = null;
             this.isSet[LOCATION] = false;
         }
 
@@ -272,10 +273,12 @@ public class Task {
         }
 
         if (this.isSet[CATEGORY] && this.category.equals("")) {
+            this.category = null;
             this.isSet[CATEGORY] = false;
         }
 
         if (this.isSet[DESCRIPTION] && this.description.equals("")) {
+            this.description = null;
             this.isSet[DESCRIPTION] = false;
         }
 
@@ -290,9 +293,12 @@ public class Task {
     }
 
     /**
+     * Updates the current task and changes it to a complete task
+     *
      * @param incompleteTask
      */
     public void update(Task incompleteTask) {
+        this.isSet[IS_COMPLETE] = true;
 
         if (incompleteTask.isSet[TITLE] && !incompleteTask.title.equals("")) {
             this.title = incompleteTask.title;
@@ -349,10 +355,12 @@ public class Task {
         if (incompleteTask.isSet[PRIORITY]) {
             this.priority = incompleteTask.priority;
         }
+        this.isSet[PRIORITY] = true;
 
         if (incompleteTask.isSet[STATUS]) {
             this.isDone = incompleteTask.isDone;
         }
+        this.isSet[STATUS] = true;
 
         this.changeTaskType();
 
@@ -367,14 +375,11 @@ public class Task {
         if (!this.isSet[ENDDATE]) {
             this.startDate = null;
             this.isSet[STARTDATE] = false;
-        }
-
-        if (this.isSet[STARTDATE] && this.isSet[ENDDATE]) {
-            this.taskType = TaskType.TIMED;
-        } else if (this.isSet[ENDDATE]) {
+            this.taskType = TaskType.FLOATING;
+        } else if (!this.isSet[STARTDATE] && this.isSet[ENDDATE]) {
             this.taskType = TaskType.DEADLINE;
         } else {
-            this.taskType = TaskType.FLOATING;
+            this.taskType = TaskType.TIMED;
         }
     }
 
