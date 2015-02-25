@@ -62,9 +62,9 @@ public enum ParameterSymbol {
     private static String bannedSymbolsRegex;
     private static Logger logger = LoggerFactory
             .getLogger(ParameterSymbol.class);
+
     private static Map<String, ParameterSymbol> parameterLookup = new HashMap<String, ParameterSymbol>();
     private static Pattern parameterPattern;
-
     private String symbol;
 
     static {
@@ -93,12 +93,20 @@ public enum ParameterSymbol {
     }
 
     /**
+     * @return the bannedSymbolsRegex
+     */
+    public static String getBannedSymbolsRegex() {
+        return bannedSymbolsRegex;
+    }
+
+    /**
      * Parses the parameter taken from the terminal.
      *
      * @param parameterString
-     * @return List of Parsed Parameters.
+     * @return the container that contains all the parameters parsed in this
+     *         string.
      */
-    public static List<Parameter> parse(String parameterString) {
+    public static ParameterContainer parse(String parameterString) {
 
         Matcher parameterMatcher = parameterPattern.matcher(parameterString);
 
@@ -109,12 +117,15 @@ public enum ParameterSymbol {
             String eaParameterPayload = eaParameter.replaceAll(
                     bannedSymbolsRegex, "");
             parameterList
-            .add(createParameter(
-                    parameterLookup.get(eaParameterSymbol),
-                    eaParameterPayload));
+                    .add(createParameter(
+                            parameterLookup.get(eaParameterSymbol),
+                            eaParameterPayload));
         }
 
-        return parameterList;
+        ParameterContainer parameterContainer = new ParameterContainer(
+                parameterList);
+
+        return parameterContainer;
     }
 
     /**
