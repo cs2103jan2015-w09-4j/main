@@ -43,15 +43,18 @@ public class CommandTestBasic {
                  * Normal tests
                  */
                 { "add", Command.ADD }, { "alias", Command.ALIAS },
-                { "alias-add", Command.ALIAS_ADD }, { "alias-delete", Command.ALIAS_DELETE },
+                { "alias-add", Command.ALIAS_ADD },
+                { "alias-delete", Command.ALIAS_DELETE },
                 { "delete", Command.DELETE }, { "done", Command.DONE },
-                { "exit", Command.EXIT }, {"help", Command.HELP}, { "history", Command.HISTORY },
-                { "history-clear", Command.HISTORY_CLEAR }, { "history-undo", Command.HISTORY_UNDO },
+                { "exit", Command.EXIT }, { "help", Command.HELP },
+                { "history", Command.HISTORY },
+                { "history-clear", Command.HISTORY_CLEAR },
+                { "history-undo", Command.HISTORY_UNDO },
                 { "modify", Command.MODIFY }, { "search", Command.SEARCH },
-                { "view", Command.VIEW } });
+                { "view", Command.VIEW }, { "help", Command.HELP } });
     }
 
-    //@formatter:on
+    // @formatter:on
 
     /**
      * Tests the parsing of the command text
