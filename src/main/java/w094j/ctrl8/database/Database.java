@@ -1,5 +1,6 @@
 package w094j.ctrl8.database;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +32,7 @@ public class Database {
      * @throws IOException
      */
     public Database() throws IOException {
-        this(DEFAULT_FILE_NAME);
+        this("");
     }
 
     /**
@@ -39,12 +40,22 @@ public class Database {
      * @throws IOException
      */
     public Database(String filePathString) throws IOException {
-        this.filePath = Paths.get(filePathString);
-        if (!Files.exists(this.filePath)) {
-            this.file = new DBfile();
-        } else {
-            this.readFile();
+
+        try {
+            File f = new File(filePathString);
+            f.mkdirs();
+            new File(filePathString + DEFAULT_FILE_NAME);
+            this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
+            if (!Files.exists(this.filePath)) {
+                this.file = new DBfile();
+            } else {
+                this.readFile();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
 
     /**
