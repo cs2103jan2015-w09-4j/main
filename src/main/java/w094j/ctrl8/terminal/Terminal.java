@@ -2,10 +2,10 @@ package w094j.ctrl8.terminal;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import w094j.ctrl8.database.Database;
-import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecutionException;
 import w094j.ctrl8.exception.MissingTaskException;
@@ -28,22 +28,37 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-                                                         * a task map should
-                                                         * contain at least one
-                                                         * entry
-                                                         */
+     * a task map should
+     * contain at least one
+     * entry
+     */
+
+    // Temporary Static constants
+    private static final String tempDB = "tmp.db";
 
     Database database;
     Display display;
     HashMap<String, Task> taskMap;
 
+    // Constructor for terminal with a config object
     public Terminal(Config conf, Display window) {
         this.display = window;
+        try {
+            this.database = new Database(tempDB);
+        } catch (Exception e) {
+            this.display.outputMessage(e.getMessage());
+        }
         this.buildTaskMap();
     }
 
+    // Constructor for a default terminal
     public Terminal(Display window) {
         this.display = window;
+        try {
+            this.database = new Database(tempDB);
+        } catch (Exception e) {
+            this.display.outputMessage(e.getMessage());
+        }
         this.buildTaskMap();
     }
 
@@ -100,12 +115,7 @@ public class Terminal {
      * be empty if the UI does not require such.
      */
     public void displayNextCommandRequest() {
-        if (this.display instanceof CLIDisplay) {
-            this.display
-                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
-        } else {
-            // TODO When GUI Display development begins
-        }
+        this.display.outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
     }
 
     /*
@@ -202,7 +212,7 @@ public class Terminal {
     }
 
     /**
-     * Part of CRUD: Delete
+     * TODO Part of CRUD: Delete
      *
      * @param taskID
      * @return true if deleting the task with the given ID was successful,
@@ -219,7 +229,6 @@ public class Terminal {
                 throw new Exception("TaskID does not exist");
             }
         } catch (Exception e) {
-            // TODO: Define a more specific exception
             return false;
         }
     }
@@ -228,28 +237,24 @@ public class Terminal {
      * Initializes the taskMap based on what the datastore currently contains
      */
     private void buildTaskMap() {
+        assert (this.database != null);
         /*
-         * TODO: Instantiate a database object and get all the tasks from the
-         * data base
+         * The database should already be instantiated
          */
 
-        Task[] allTasks = this.makeDummyTaskList();/*
-                                                    * TODO: currently a
-                                                    * placeholder to simulate
-                                                    * task adding to tree
-                                                    */
+        List<Task> allTasks = this.database.getTaskList();
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
-            assert (task != null); /*
-             * All task objects in allTasks[] should not
-             * be null
+            assert (task != null);
+            /*
+             * All task objects in allTasks should not be null
              */
             assert (!this.taskMap.containsKey(task.getTitle()));
             /*
              * The taskmap should not already contain a task with the same key
-             * Assert fail implies database has overlap
+             * Assert fail implies database has problems
              */
 
             this.taskMap.put(task.getTitle(), task);
@@ -285,21 +290,6 @@ public class Terminal {
      */
     private boolean isTaskExist(Task task) {
         return this.taskMap.containsKey(task.getTitle());
-    }
-
-    /**
-     * This is a temporary function to create a dummy task list for testing
-     * purposes
-     *
-     * @return Task[] that contains a series of tasks
-     */
-    private Task[] makeDummyTaskList() {
-        Task[] taskList = new Task[2];
-        /* for convenience, all tasks are floating tasks(least parameters) */
-        taskList[0] = new Task("Complete CS2103T", 1000, null);
-        taskList[1] = new Task("S/U CS2103T", 1, null);
-
-        return taskList;
     }
 
     /**
