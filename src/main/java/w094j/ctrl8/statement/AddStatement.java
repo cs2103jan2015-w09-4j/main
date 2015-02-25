@@ -1,10 +1,11 @@
 package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
-
-import org.quartz.CronTrigger;
+import java.util.List;
 
 import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.parameter.Parameter;
+import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
@@ -15,9 +16,7 @@ import w094j.ctrl8.terminal.Terminal;
  */
 public class AddStatement extends Statement {
 
-    private CronTrigger cronString;
-    private long durationInSeconds;
-    private String taskName;
+    private Task task;
 
     /**
      * Initializes an add statement, ensures that the add statement is a valid
@@ -38,6 +37,11 @@ public class AddStatement extends Statement {
      */
     public AddStatement(String statementString) {
         super(Command.ADD, statementString);
+        this.task = new Task();
+        List<Parameter> parameterList = ParameterSymbol.parse(statementString);
+        for (Parameter eaParameter : parameterList) {
+            eaParameter.add(this.task);
+        }
     }
 
     @Override

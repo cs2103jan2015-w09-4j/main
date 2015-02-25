@@ -20,7 +20,7 @@ public class ExitStatement extends StatementNoParams {
 
     @Override
     public void execute(Terminal terminal) {
-        // TODO Link to Terminal
+        terminal.exit();
     }
 
 }
