@@ -1,5 +1,7 @@
 package w094j.ctrl8.statement.parameter;
 
+import w094j.ctrl8.pojo.Task;
+
 /**
  * Represents a parameter, its symbol with its payload. This class presents no
  * understanding of the payload.
@@ -25,6 +27,13 @@ public abstract class Parameter {
         this.symbol = symbol;
         this.payload = payload;
     }
+
+    /**
+     * Adds the current parameter to the task specified.
+     * 
+     * @param task
+     */
+    public abstract void add(Task task);
 
     @Override
     public boolean equals(Object obj) {
