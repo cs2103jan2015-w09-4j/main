@@ -11,9 +11,9 @@ import w094j.ctrl8.statement.Statement;
  * level TODO: Additional support for custom priority
  */
 
-// @author A0065517A
-// @author A0110787
-// @author A0112521B
+//@author A0065517A
+//@author A0110787A
+//@author A0112521B
 
 public class Task {
 
@@ -243,17 +243,17 @@ public class Task {
     }
 
     /**
-     * @return title
-     */
-    public String getTaskTitle() {
-        return this.title;
-    }
-
-    /**
      * @return task type
      */
     public TaskType getTaskType() {
         return this.taskType;
+    }
+
+    /**
+     * @return title
+     */
+    public String getTitle() {
+        return this.title;
     }
 
     /**
@@ -329,19 +329,19 @@ public class Task {
     }
 
     /**
-     * @param title
-     *            the title to set
-     */
-    public void setTaskTitle(String title) {
-        this.title = title;
-    }
-
-    /**
      * @param taskType
      *            the taskType to set
      */
     public void setTaskType(TaskType taskType) {
         this.taskType = taskType;
+    }
+
+    /**
+     * @param title
+     *            the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**
