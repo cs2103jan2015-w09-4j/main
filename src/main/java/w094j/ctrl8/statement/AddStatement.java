@@ -46,6 +46,6 @@ public class AddStatement extends Statement {
 
     @Override
     public void execute(Terminal terminal) {
-        terminal.add(new Task("Test", 0, this));
+        terminal.add(this.task);
     }
 }
