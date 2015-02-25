@@ -40,21 +40,21 @@ public class Task {
         TIMED
     }
 
+    private static final int CATEGORY = 5;
+
     /* Global parameters for all tasks */
     private static final int DEFAULT_PRIORITY = 0;
-
+    private static final int DESCRIPTION = 6;
+    private static final int ENDDATE = 4;
     /* Global parameters for isSet boolean array */
     private static final int IS_COMPLETE = 0;
-    private static final int TITLE = 1;
-    private static final int LOCATION = 2;
-    private static final int STARTDATE = 3;
-    private static final int ENDDATE = 4;
-    private static final int CATEGORY = 5;
-    private static final int DESCRIPTION = 6;
-    private static final int REMINDER = 7;
-    private static final int PRIORITY = 8;
-    private static final int STATUS = 9;
     private static final int ISSET_SIZE = 10;
+    private static final int LOCATION = 2;
+    private static final int PRIORITY = 8;
+    private static final int REMINDER = 7;
+    private static final int STARTDATE = 3;
+    private static final int STATUS = 9;
+    private static final int TITLE = 1;
 
     /* Variables */
     private String category;
@@ -78,6 +78,25 @@ public class Task {
         this.taskType = TaskType.INCOMPLETE;
         this.priority = DEFAULT_PRIORITY;
         this.isSet[PRIORITY] = true;
+    }
+
+    /**
+     * @param task
+     * @return true if the tasks are the same
+     */
+    public boolean equals(Task task) {
+        return this.title.equals(task.getTitle())
+                && (((this.location == null) && (task.location == null)) || this.location
+                        .equals(task.location))
+                && (((this.startDate == null) && (task.startDate == null)) || (this.startDate == task.startDate))
+                && (((this.endDate == null) && (task.endDate == null)) || (this.endDate == task.endDate))
+                && (((this.category == null) && (task.category == null)) || this.category
+                        .equals(task.category))
+                && (((this.description == null) && (task.description == null)) || this.description
+                        .equals(task.description))
+                && (((this.reminder == null) && (task.reminder == null)) || (this.reminder == task.reminder))
+                && (this.priority == task.priority)
+                && (this.isDone == task.isDone);
     }
 
     /**
