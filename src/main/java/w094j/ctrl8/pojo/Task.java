@@ -40,157 +40,68 @@ public class Task {
         TIMED
     }
 
-    /* Global parameters for all tasks */
+    /* Global parameters for all tasks */  
     private static final int DEFAULT_PRIORITY = 0;
+    
+    /* Global parameters for isSet boolean array */
+    private static final int TITLE = 0;
+    private static final int LOCATION = 1;
+    private static final int STARTDATE = 2;
+    private static final int ENDDATE = 3;
+    private static final int CATEGORY = 4;
+    private static final int DESCRIPTION = 5;
+    private static final int REMINDER = 6;
+    private static final int PRIORITY = 7;
+    private static final int STATUS = 8;
+    private static final int ISSET_SIZE = 9;
+    
+    /* Global parameters for isRemoved boolean array */
+    private static final int REMOVE_STARTDATE = 0;
+    private static final int REMOVE_ENDDATE = 1;
+    private static final int REMOVE_REMINDER = 2;
+    private static final int ISREMOVED_SIZE = 3;
 
     /* Variables */
     private String category;
     private String description;
     private Date endDate;
     private boolean isDone;
+    private boolean isSet[];
+    private boolean isRemoved[];
     private String location;
     private int priority;
     private Date reminder;
     private Date startDate;
-
-    /*
-     * Full Statement history of the particular Task.
-     */
     private LinkedList<Statement> statementHistory;
     private TaskType taskType;
     private String title;
 
     /**
-     * Constructor for Floating tasks
-     *
-     * @param inputTaskTitle
-     * @param inputPriority
+     * default constructor
      */
-    public Task(String inputTaskTitle, int inputPriority, Statement st) {
-        this.taskType = TaskType.FLOATING;
-        this.title = inputTaskTitle;
-        this.priority = inputPriority;
-        this.statementHistory = new LinkedList<Statement>();
-        this.statementHistory.addLast(st);
-    }
-
-    /**
-     * Constructor for Timed tasks
-     *
-     * @param inputTaskTitle
-     * @param inputStartDate
-     * @param inputEndDate
-     * @param inputPriority
-     */
-    private Task(String inputTaskTitle, Date inputStartDate, Date inputEndDate,
-            int inputPriority, Statement st) {
-        this.taskType = TaskType.TIMED;
-        this.title = inputTaskTitle;
-        this.startDate = inputStartDate;
-        this.endDate = inputEndDate;
-        this.priority = inputPriority;
-        this.statementHistory = new LinkedList<Statement>();
-        this.statementHistory.addLast(st);
-    }
-
-    /**
-     * Constructor for Incomplete tasks
-     *
-     * @param inputLocation
-     * @param inputStartDate
-     * @param inputEndDate
-     * @param inputCategory
-     * @param inputReminder
-     * @param inputPriority
-     * @param inputStatus
-     */
-    private Task(String inputLocation, Date inputStartDate, Date inputEndDate,
-            String inputCategory, Date inputReminder, int inputPriority,
-            boolean inputStatus, Statement st) {
+    public Task() {
+        this.isSet = new boolean[ISSET_SIZE];
+        this.isRemoved = new boolean[ISREMOVED_SIZE];
         this.taskType = TaskType.INCOMPLETE;
-        this.location = inputLocation;
-        this.startDate = inputStartDate;
-        this.endDate = inputEndDate;
-        this.category = inputCategory;
-        this.reminder = inputReminder;
-        this.priority = inputPriority;
-        this.isDone = inputStatus;
-        this.statementHistory = new LinkedList<Statement>();
-        this.statementHistory.addLast(st);
+        this.priority = DEFAULT_PRIORITY;
     }
 
     /**
-     * Constructor for Deadline tasks
-     *
-     * @param inputTaskTitle
-     * @param inputDeadlineDate
-     * @param inputPriority
+     * @return category
      */
-    private Task(String inputTaskTitle, Date inputDeadlineDate,
-            int inputPriority, Statement st) {
-        this.taskType = TaskType.DEADLINE;
-        this.title = inputTaskTitle;
-        this.endDate = inputDeadlineDate;
-        this.priority = inputPriority;
-        this.statementHistory = new LinkedList<Statement>();
-        this.statementHistory.addLast(st);
-    }
-
-    public static Task createNewTask(Statement st) {
-        // TODO: refer to @author Eric for how to access statements
-        return null;
-    }
-
-    private static Task createDeadlineTask(String inputTaskTitle,
-            Date inputDeadlineDate, int inputPriority, Statement st) {
-        return new Task(inputTaskTitle, inputDeadlineDate, inputPriority, st);
-    }
-
-    private static Task createDeadlineTask(String inputTaskTitle,
-            Date inputDeadlineDate, Statement st) {
-        return new Task(inputTaskTitle, inputDeadlineDate, DEFAULT_PRIORITY, st);
-    }
-
-    private static Task createFloatingTask(String inputTaskTitle,
-            int inputPriority, Statement st) {
-        return new Task(inputTaskTitle, inputPriority, st);
-    }
-
-    private static Task createFloatingTask(String inputTaskTitle, Statement st) {
-        return new Task(inputTaskTitle, DEFAULT_PRIORITY, st);
-    }
-
-    private static Task createIncompleteTask(String inputLocation,
-            Date inputStartDate, Date inputEndDate, String inputCategory,
-            Date inputReminder, int inputPriority, boolean inputStatus,
-            Statement st) {
-        return new Task(inputLocation, inputStartDate, inputEndDate,
-                inputCategory, inputReminder, inputPriority, inputStatus, st);
-    }
-
-    private static Task createTimedTask(String inputTaskTitle,
-            Date inputStartDate, Date inputEndDate, int inputPriority,
-            Statement st) {
-        return new Task(inputTaskTitle, inputStartDate, inputEndDate,
-                inputPriority, st);
-    }
-
-    private static Task createTimedTask(String inputTaskTitle,
-            Date inputStartDate, Date inputEndDate, Statement st) {
-        return new Task(inputTaskTitle, inputStartDate, inputEndDate,
-                DEFAULT_PRIORITY, st);
-    }
-
     public String getCategory() {
         return this.category;
     }
 
+    /**
+     * @return description
+     */
     public String getDescription() {
         return this.description;
     }
 
     /**
-     * @return Date :the end Date of the task
+     * @return end date
      */
     public Date getEndDate() {
         // Only timed and deadline tasks have an end date
@@ -227,7 +138,7 @@ public class Task {
         assert (this.taskType == TaskType.TIMED);
         return this.startDate;
     }
-
+    
     /**
      * @return the statementHistory
      */
@@ -246,6 +157,7 @@ public class Task {
      * @return task type
      */
     public TaskType getTaskType() {
+        changeTaskType();
         return this.taskType;
     }
 
@@ -262,6 +174,7 @@ public class Task {
      */
     public void setCategory(String category) {
         this.category = category;
+        this.isSet[CATEGORY] = true;
     }
 
     /**
@@ -270,6 +183,7 @@ public class Task {
      */
     public void setDescription(String description) {
         this.description = description;
+        this.isSet[DESCRIPTION] = true;
     }
 
     /**
@@ -278,6 +192,7 @@ public class Task {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+        this.isSet[ENDDATE] = true;
     }
 
     /**
@@ -286,6 +201,7 @@ public class Task {
      */
     public void setLocation(String location) {
         this.location = location;
+        this.isSet[LOCATION] = true;
     }
 
     /**
@@ -294,6 +210,7 @@ public class Task {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+        this.isSet[PRIORITY] = true;
     }
 
     /**
@@ -302,6 +219,7 @@ public class Task {
      */
     public void setReminder(Date reminder) {
         this.reminder = reminder;
+        this.isSet[REMINDER] = true;
     }
 
     /**
@@ -310,6 +228,31 @@ public class Task {
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+        this.isSet[STARTDATE] = true;
+    }
+    
+    /**
+     * remove start date
+     */
+    public void removeStartDate() {
+        this.isRemoved[REMOVE_STARTDATE] = true;
+        this.isSet[STARTDATE] = false;
+    }
+    
+    /**
+     * remove end date
+     */
+    public void removeEndDate() {
+        this.isRemoved[REMOVE_ENDDATE] = true;
+        this.isSet[ENDDATE] = false;
+    }
+    
+    /**
+     * remove reminder
+     */
+    public void removeReminder() {
+        this.isRemoved[REMOVE_REMINDER] = true;
+        this.isSet[REMINDER] = false;
     }
 
     /**
@@ -326,66 +269,125 @@ public class Task {
      */
     public void setStatus(boolean isDone) {
         this.isDone = isDone;
+        this.isSet[STATUS] = true;
     }
 
-    /**
-     * @param taskType
-     *            the taskType to set
+    /*
+     * /**
+     * @param taskType the taskType to set public void setTaskType(TaskType
+     * taskType) { this.taskType = taskType; }
      */
-    public void setTaskType(TaskType taskType) {
-        this.taskType = taskType;
-    }
-
     /**
      * @param title
      *            the title to set
      */
     public void setTitle(String title) {
         this.title = title;
+        this.isSet[TITLE] = true;
     }
 
     /**
      * @param incompleteTask
      */
     public void update(Task incompleteTask) {
-        this.priority = incompleteTask.priority;
-        this.isDone = incompleteTask.isDone;
-
-        if (incompleteTask.category != null) {
+        
+        if(incompleteTask.isSet[LOCATION]){
+            if (incompleteTask.location == "") {
+                this.location = null;
+                this.isSet[LOCATION] = false;
+            } else {
+                this.location = incompleteTask.location;
+                this.isSet[LOCATION] = true;
+            }
+        }
+        
+        if(incompleteTask.isSet[STARTDATE]){
+            this.startDate = incompleteTask.startDate;
+            this.isSet[STARTDATE] = true;
+        }
+        
+        if(incompleteTask.isRemoved[REMOVE_STARTDATE]){
+            this.isSet[STARTDATE] = false;
+        }
+        
+        if(incompleteTask.isSet[ENDDATE]){
+            this.endDate = incompleteTask.endDate;
+            this.isSet[ENDDATE] = true;
+        }
+        
+        if(incompleteTask.isRemoved[REMOVE_ENDDATE]){
+            this.isSet[ENDDATE] = false;
+        }
+        
+        if (incompleteTask.isSet[CATEGORY]) {
             if (incompleteTask.category == "") {
                 this.category = null;
             } else {
                 this.category = incompleteTask.category;
             }
         }
-        if (incompleteTask.location != null) {
-            if (incompleteTask.location == "") {
-                this.location = null;
+        
+        if (incompleteTask.isSet[DESCRIPTION]) {
+            if (incompleteTask.description == "") {
+                this.description = null;
             } else {
-                this.location = incompleteTask.location;
+                this.description = incompleteTask.description;
             }
         }
-
-        if (incompleteTask.startDate != new Date()) {
-            this.startDate = incompleteTask.startDate;
-        }
-        if (incompleteTask.endDate != new Date()) {
-            this.endDate = incompleteTask.endDate;
-        }
-        if (incompleteTask.reminder != new Date()) {
+        
+        if(incompleteTask.isSet[REMINDER]){
             this.reminder = incompleteTask.reminder;
+            this.isSet[REMINDER] = true;
         }
-
-        if (this.endDate == new Date()) {
-            this.taskType = TaskType.FLOATING;
-        } else if (this.startDate == new Date()) {
-            this.taskType = TaskType.DEADLINE;
-        } else {
-            this.taskType = TaskType.TIMED;
+        
+        if(incompleteTask.isRemoved[REMOVE_REMINDER]){
+            this.isSet[REMINDER] = false;
         }
+        
+        if(incompleteTask.isSet[PRIORITY]){
+            this.priority = incompleteTask.priority;
+        }
+        
+        if(incompleteTask.isSet[STATUS]){
+            this.isDone = incompleteTask.isDone;
+        }        
+       
+        changeTaskType();
 
         this.statementHistory
                 .addLast(incompleteTask.statementHistory.getLast());
+    }
+    
+    /**
+     *  Change incomplete task to complete task
+     */
+    public void toCompleteTask() {
+        if(this.isSet[LOCATION] && this.location.equals("")){
+            this.isSet[LOCATION] = false;
+        }
+        
+        if(this.isSet[CATEGORY] && this.category.equals("")){
+            this.isSet[CATEGORY] = false;
+        }
+        
+        if(this.isSet[DESCRIPTION] && this.description.equals("")){
+            this.isSet[DESCRIPTION] = false;
+        }
+        
+        changeTaskType();
+    }
+    
+    /**
+     *  Change Task Type (deadline/floating/timed)
+     */
+    private void changeTaskType(){
+        if (this.isSet[STARTDATE] && this.isSet[ENDDATE]) {
+            this.taskType = TaskType.TIMED;          
+        } else if (this.isSet[ENDDATE]) {
+            this.taskType = TaskType.DEADLINE;
+        } else {
+            this.taskType = TaskType.FLOATING;
+        }
     }
 
 }
