@@ -19,20 +19,26 @@ import com.google.gson.GsonBuilder;
  * statement history into an output file. TODO: Cater for Google integration
  */
 
-/**
- * @author Lin Chen-Hsin A0112521B
- */
+//@author A0112521B
+
 public class Database {
 
+    private static final String DEFAULT_FILE_NAME = "database.txt";
     private DBfile file;
     private Path filePath;
+
+    /**
+     * @throws IOException
+     */
+    public Database() throws IOException {
+        this(DEFAULT_FILE_NAME);
+    }
 
     /**
      * @param filePathString
      * @throws IOException
      */
     public Database(String filePathString) throws IOException {
-
         this.filePath = Paths.get(filePathString);
         if (!Files.exists(this.filePath)) {
             this.file = new DBfile();
@@ -42,13 +48,30 @@ public class Database {
     }
 
     /**
+     * @param title
+     * @return true if taskTitle is in taskList
+     */
+    public boolean containsTaskTitle(String title) {
+        for (Task i : this.file.getTaskList()) {
+            if (i.getTitle().equals(title)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Delete a task.
      *
      * @param task
      */
-    public void delete(Task task) {
-        this.file.getTaskList().remove(task);
-        this.save();
+    public void deleteTask(Task task) {
+        for (int i = 0; i < this.file.getTaskList().size(); i++) {
+            if (this.file.getTaskList().get(i).equals(task)) {
+                this.file.getTaskList().remove(i);
+                break;
+            }
+        }
     }
 
     /**

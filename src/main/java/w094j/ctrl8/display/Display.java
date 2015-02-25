@@ -1,5 +1,7 @@
 package w094j.ctrl8.display;
 
+import w094j.ctrl8.pojo.Task;
+
 /**
  * This interface describes the possible interactions a Terminal object can with
  * a display UI. Any display method (CLI/GUI) should (minimally) implement this
@@ -23,4 +25,11 @@ public interface Display {
      *            String to display to the user
      */
     public void outputMessage(String message);
+
+    /**
+     * display the task to user
+     * 
+     * @param taskList
+     */
+    public void outputTask(Task[] taskList);
 }

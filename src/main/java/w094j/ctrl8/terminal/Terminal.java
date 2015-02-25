@@ -7,7 +7,7 @@ import java.util.Map;
 
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.Display;
-import w094j.ctrl8.exception.CommandExecutionException;
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
@@ -26,24 +26,19 @@ import w094j.ctrl8.statement.Statement;
 
 public class Terminal {
     // Static constants
-    private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-                                                         * a task map should
-                                                         * contain at least one
-                                                         * entry
-                                                         */
-
-    // Temporary Static constants
-    private static final String tempDB = "tmp.db";
+    private static final String DEFAULT_DATABASE_FILEPATH = "tmp.db";
+    private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
     Database database;
     Display display;
     HashMap<String, Task> taskMap;
 
+    // TODO This function is currently a stub.
     // Constructor for terminal with a config object
     public Terminal(Config conf, Display window) {
         this.display = window;
         try {
-            this.database = new Database(tempDB);
+            this.database = new Database(DEFAULT_DATABASE_FILEPATH);
         } catch (Exception e) {
             this.display.outputMessage(e.getMessage());
         }
@@ -54,7 +49,7 @@ public class Terminal {
     public Terminal(Display window) {
         this.display = window;
         try {
-            this.database = new Database(tempDB);
+            this.database = new Database(DEFAULT_DATABASE_FILEPATH);
         } catch (Exception e) {
             this.display.outputMessage(e.getMessage());
         }
@@ -71,17 +66,16 @@ public class Terminal {
     }
 
     /**
-     * Part of CRUD: Add. Throws [1. CommandExecutionException] [2. Exception
-     * (from database)] Refer to Issue #47
+     * Part of CRUD: Add. Throws [CommandExecuteException] Refer to Issue #47
      *
      * @param task
      *            The Task to add to the database, it should be properly
      *            constructed otherwise Database would run into issues
      */
-    public void add(Task task) throws Exception {
+    public void add(Task task) throws CommandExecuteException {
         // Make sure we are not adding an Incomplete task to database
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
-            throw new CommandExecutionException(
+            throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_IS_INCOMPLETE_TASK);
         }
 
@@ -92,7 +86,7 @@ public class Terminal {
             // Update Taskmap
             this.updateTaskMap(task);
         } catch (Exception e) {
-            throw new CommandExecutionException(
+            throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
         }
         try {
@@ -101,7 +95,7 @@ public class Terminal {
 
         } catch (Exception e) {
             // Whatever Exception database throws, throw forward
-            throw e;
+            throw new CommandExecuteException(e.getMessage());
         }
 
         // Informs user that his add statement is successful
@@ -127,42 +121,40 @@ public class Terminal {
     }
 
     /**
-     * Part of CRUD: Display
-     *
-     * @return an array of all the Task objects, returns null if task map does
-     *         not contain any entry
+     *  View all the task and their information in table format
+     *  display 
+     * 
      */
-    public Task[] getAllTask() {
+    public void view(){
         if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
             /*
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
              */
-            return null;
+            display.outputMessage(NormalMessage.NO_TASK_FOUND);
         } else {
-            Task[] taskList = new Task[this.taskMap.size()];
+        Task[] taskList = new Task[this.taskMap.size()];
+        int i = 0;
+        for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
+            // String key = taskEntry.getKey();
+            Task task = taskEntry.getValue();
 
-            int i = 0;
-            for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
-                // String key = taskEntry.getKey();
-                Task task = taskEntry.getValue();
-
-                taskList[i] = task;
-                i++;
-            }
-            return taskList;
+            taskList[i] = task;
+            i++;
+        }
+        display.outputTask(taskList);
         }
     }
-
+    
     /**
      * Modify the specified Task with new incomplete Task that contains new
-     * information Throws [1:CommandExecutionException] [2. Exception (from
-     * database)] Refer to Issue #50
+     * information Throws [CommandExecutionException] Refer to Issue #50
      *
      * @param query
      * @param incompleteTask
      */
-    public void modify(String query, Task incompleteTask) throws Exception {
+    public void modify(String query, Task incompleteTask)
+            throws CommandExecuteException {
 
         // check if the task exists
         if (this.isTaskExist(query)) {
@@ -175,14 +167,14 @@ public class Terminal {
                 task.update(incompleteTask);
                 this.database.saveTask(task);
             } catch (Exception e) {
-                throw e;
+                throw new CommandExecuteException(e.getMessage());
             }
 
             try {
                 // Update the TaskMap
                 this.updateTaskMap(query, task);
             } catch (Exception e) {
-                throw new CommandExecutionException(
+                throw new CommandExecuteException(
                         ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
 
@@ -190,7 +182,7 @@ public class Terminal {
             this.display.outputMessage(task.getTitle()
                     + NormalMessage.MODIFY_TASK_SUCCESSFUL);
         } else {
-            throw new CommandExecutionException(
+            throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_MISSING_TASK);
         }
     }

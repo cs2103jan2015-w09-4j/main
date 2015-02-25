@@ -21,19 +21,6 @@ public class DBfile {
     }
 
     /**
-     * @param taskTitle
-     * @return true if taskTitle is in taskList
-     */
-    public boolean containsTaskTitle(String taskTitle) {
-        for (Task i : this.taskList) {
-            if (i.getTaskTitle().equals(taskTitle)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * @return the config
      */
     public Config getConfig() {
