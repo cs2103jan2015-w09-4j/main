@@ -50,4 +50,13 @@ public class ParameterContainer {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ParameterContainer) {
+            ParameterContainer paramContainerObj = (ParameterContainer) obj;
+            return (this.parameterLookup
+                    .equals(paramContainerObj.parameterLookup));
+        }
+        return false;
+    }
 }

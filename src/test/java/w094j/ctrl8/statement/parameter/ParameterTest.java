@@ -18,7 +18,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(value = Parameterized.class)
 public class ParameterTest {
 
-    private List<Parameter> expectedList;
+    private ParameterContainer expectedParamContainer;
     private String input;
 
     /**
@@ -31,7 +31,7 @@ public class ParameterTest {
      */
     public ParameterTest(String input, List<Parameter> expected) {
         this.input = input;
-        this.expectedList = expected;
+        this.expectedParamContainer = new ParameterContainer(expected);
     }
 
     /**
@@ -73,6 +73,7 @@ public class ParameterTest {
      */
     @Test
     public void test() {
-        assertTrue(this.expectedList.equals(ParameterSymbol.parse(this.input)));
+        assertTrue(this.expectedParamContainer.equals(ParameterSymbol
+                .parse(this.input)));
     }
 }
