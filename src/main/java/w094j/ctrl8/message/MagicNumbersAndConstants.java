@@ -7,5 +7,6 @@ package w094j.ctrl8.message;
  * @author A0112092W
  */
 public class MagicNumbersAndConstants {
-
+    // number of task's properties such as title, description etc.
+    public static int NUMBER_TASK_PROPERTIES = 10;
 }
