@@ -1,7 +1,6 @@
 package w094j.ctrl8.terminal;
 
 import java.security.InvalidParameterException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,12 +9,11 @@ import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecutionException;
 import w094j.ctrl8.exception.MissingTaskException;
-import w094j.ctrl8.exception.TaskOverwriteException;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Statement;
- 
+
 //@author A0110787A
 
 /**
@@ -66,32 +64,28 @@ public class Terminal {
      *            The task to add to the database, it should be properly
      *            constructed otherwise Database would run into issues
      */
-    public void add(Task task) {
+    public void add(Task task) throws Exception {
         // Make sure there is at least a proper task title
-        assert (task.getTaskTitle() != null);
+        assert (task.getTitle() != null);
 
         try {
             // Update Taskmap
             this.updateTaskMap(task);
-
+        } catch (Exception e) {
+            throw new CommandExecutionException();
+        }
+        try {
             // Add to database
             this.database.saveTask(task);
 
-            // Informs user that his add statement is successful
-            this.display.outputMessage(task.getTaskTitle()
-                    + NormalMessage.ADD_TASK_SUCCESSFUL);
-
         } catch (Exception e) {
-            try {
-                if (e instanceof TaskOverwriteException) {
-                    throw e;
-                } else {
-                    throw new CommandExecutionException(e.getMessage());
-                }
-            } catch (CommandExecutionException e1) {
-                // Program should not reach here
-            }
+            // Whatever Exception database throws, throw forward
+            throw e;
         }
+
+        // Informs user that his add statement is successful
+        this.display.outputMessage(task.getTitle()
+                + NormalMessage.ADD_TASK_SUCCESSFUL);
     }
 
     /**
@@ -145,6 +139,62 @@ public class Terminal {
     }
 
     /**
+     * Modify the specified Task with new incomplete Task that contains new
+     * information Throws two types of Exceptions [1:CommandExecutionException]
+     * [2. MissingTaskException] Refer to Issue #50
+     *
+     * @param query
+     * @param incompleteTask
+     */
+    public void modify(String query, Task incompleteTask) {
+
+        try {
+            // check if the task exists
+            if (this.isTaskExist(query)) {
+
+                Task task = this.taskMap.get(query);
+                // Add to database
+                this.database.delete(task);
+                task.update(incompleteTask);
+                this.database.saveTask(task);
+                // Update the TaskMap
+                this.updateTaskMap(query, task);
+
+                // Informs user that his add statement is successful
+                this.display.outputMessage(task.getTitle()
+                        + NormalMessage.MODIFY_TASK_SUCCESSFUL);
+            } else {
+                throw new Exception("MissingTaskException");
+            }
+        } catch (Exception e) {
+            if (e instanceof MissingTaskException) {
+                throw e;
+            } else {
+                throw new CommandExecutionException(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
+     * user inputs until 'exit' is invoked
+     */
+    public void runTerminal() {
+        boolean continueExecution = true;
+        while (continueExecution) {
+            this.displayNextCommandRequest();
+
+            // Passes string to Statement.java to parse into a command
+            try {
+                Statement.parse(this.display.getUserInput());
+            } catch (InvalidParameterException e) {
+                this.display.outputMessage(e.getMessage());
+            }
+
+        }
+    }
+
+    /**
      * Part of CRUD: Delete
      *
      * @param taskID
@@ -168,67 +218,6 @@ public class Terminal {
     }
 
     /**
-     * Modify the specified Task with new incomplete Task that contains new information
-     *  Throws two types of Exceptions [1:CommandExecutionException] [2. MissingTaskException] 
-     *  Refer to Issue #50
-     * @param query
-     * @param incompleteTask
-     *  
-    */
-    public void modify(String query, Task incompleteTask) {
-            
-        try{
-            //check if the task exists
-            if(isTaskExist(query)){
-                
-                Task task = this.taskMap.get(query);
-                // Add to database
-                this.database.delete(task);
-                task.update(incompleteTask);
-                this.database.saveTask(task);
-                // Update the TaskMap
-                this.updateTaskMap(query,task);
-                
-                // Informs user that his add statement is successful
-                this.display.outputMessage(task.getTaskTitle()
-                        + NormalMessage.MODIFY_TASK_SUCCESSFUL);
-                }
-                else{
-                    throw new Exception("MissingTaskException");
-                }
-            }
-        catch (Exception e){
-            if (e instanceof MissingTaskException) {
-                throw e;
-            } else {
-                throw new CommandExecutionException(e.getMessage());
-            } 
-        }
-    }
-
-    /**
-     * This is a function to check is a task exist in the task map
-     * @param task 
-     *
-     * @return boolean that true shows the task exist in the task map
-     */
-    private boolean isTaskExist(Task task){
-        return this.taskMap.containsKey(task.getTaskTitle());
-    }
-    
-    
-    /**
-     * This is a function to check is a task exist in the task map
-     * @param query 
-     *
-     * @return boolean that true shows the task exist in the task map
-     */
-    private boolean isTaskExist(String query){
-        return this.taskMap.containsKey(query);
-    }
-    
-    
-    /**
      * Initializes the taskMap based on what the datastore currently contains
      */
     private void buildTaskMap() {
@@ -250,13 +239,13 @@ public class Terminal {
                                     * All task objects in allTasks[] should not
                                     * be null
                                     */
-            assert (!this.taskMap.containsKey(task.getTaskTitle()));
+            assert (!this.taskMap.containsKey(task.getTitle()));
             /*
              * The taskmap should not already contain a task with the same key
              * Assert fail implies database has overlap
              */
 
-            this.taskMap.put(task.getTaskTitle(), task);
+            this.taskMap.put(task.getTitle(), task);
         }
     }
 
@@ -269,6 +258,26 @@ public class Terminal {
         // TODO Auto-generated method stub
         pushData();
 
+    }
+
+    /**
+     * This is a function to check is a task exist in the task map
+     *
+     * @param query
+     * @return boolean that true shows the task exist in the task map
+     */
+    private boolean isTaskExist(String query) {
+        return this.taskMap.containsKey(query);
+    }
+
+    /**
+     * This is a function to check is a task exist in the task map
+     *
+     * @param task
+     * @return boolean that true shows the task exist in the task map
+     */
+    private boolean isTaskExist(Task task) {
+        return this.taskMap.containsKey(task.getTitle());
     }
 
     /**
@@ -287,25 +296,6 @@ public class Terminal {
     }
 
     /**
-     * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
-     * user inputs until 'exit' is invoked
-     */
-    public void runTerminal() {
-        boolean continueExecution = true;
-        while (continueExecution) {
-            this.displayNextCommandRequest();
-
-            // Passes string to Statement.java to parse into a command
-            try {
-                Statement.parse(this.display.getUserInput());
-            } catch (InvalidParameterException e) {
-                this.display.outputMessage(e.getMessage());
-            }
-
-        }
-    }
-
-    /**
      * Updates the taskMap, removing an old entry and adding a new entry with
      * the input task object
      *
@@ -314,9 +304,9 @@ public class Terminal {
      */
     private void updateTaskMap(String oldKey, Task task) {
         assert (this.taskMap.containsKey(oldKey));
-        assert (this.taskMap.containsKey(task.getTaskTitle()));
+        assert (this.taskMap.containsKey(task.getTitle()));
         this.taskMap.remove(oldKey);
-        this.taskMap.put(task.getTaskTitle(), task);
+        this.taskMap.put(task.getTitle(), task);
     }
 
     /**
@@ -325,8 +315,8 @@ public class Terminal {
      * @param task
      */
     private void updateTaskMap(Task task) {
-        assert (this.taskMap.containsKey(task.getTaskTitle()));
-        this.taskMap.replace(task.getTaskTitle(), task);
+        assert (this.taskMap.containsKey(task.getTitle()));
+        this.taskMap.replace(task.getTitle(), task);
 
     }
 }
