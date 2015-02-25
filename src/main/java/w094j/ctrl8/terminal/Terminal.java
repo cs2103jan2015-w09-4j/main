@@ -27,11 +27,7 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final String DEFAULT_DATABASE_FILEPATH = "tmp.db";
-    private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-                                                         * a task map should
-                                                         * contain at least one
-                                                         * entry
-                                                         */
+    private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
     Database database;
     Display display;
