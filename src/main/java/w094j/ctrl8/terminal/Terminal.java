@@ -7,7 +7,7 @@ import java.util.Map;
 
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.Display;
-import w094j.ctrl8.exception.CommandExecutionException;
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
@@ -76,10 +76,10 @@ public class Terminal {
      *            The Task to add to the database, it should be properly
      *            constructed otherwise Database would run into issues
      */
-    public void add(Task task) throws CommandExecutionException {
+    public void add(Task task) throws CommandExecuteException {
         // Make sure we are not adding an Incomplete task to database
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
-            throw new CommandExecutionException(
+            throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_IS_INCOMPLETE_TASK);
         }
 
@@ -90,7 +90,7 @@ public class Terminal {
             // Update Taskmap
             this.updateTaskMap(task);
         } catch (Exception e) {
-            throw new CommandExecutionException(
+            throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
         }
         try {
@@ -99,7 +99,7 @@ public class Terminal {
 
         } catch (Exception e) {
             // Whatever Exception database throws, throw forward
-            throw new CommandExecutionException(e.getMessage());
+            throw new CommandExecuteException(e.getMessage());
         }
 
         // Informs user that his add statement is successful
@@ -160,7 +160,7 @@ public class Terminal {
      * @param incompleteTask
      */
     public void modify(String query, Task incompleteTask)
-            throws CommandExecutionException {
+            throws CommandExecuteException {
 
         // check if the task exists
         if (this.isTaskExist(query)) {
@@ -173,14 +173,14 @@ public class Terminal {
                 task.update(incompleteTask);
                 this.database.saveTask(task);
             } catch (Exception e) {
-                throw new CommandExecutionException(e.getMessage());
+                throw new CommandExecuteException(e.getMessage());
             }
 
             try {
                 // Update the TaskMap
                 this.updateTaskMap(query, task);
             } catch (Exception e) {
-                throw new CommandExecutionException(
+                throw new CommandExecuteException(
                         ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
 
@@ -188,7 +188,7 @@ public class Terminal {
             this.display.outputMessage(task.getTitle()
                     + NormalMessage.MODIFY_TASK_SUCCESSFUL);
         } else {
-            throw new CommandExecutionException(
+            throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_MISSING_TASK);
         }
     }

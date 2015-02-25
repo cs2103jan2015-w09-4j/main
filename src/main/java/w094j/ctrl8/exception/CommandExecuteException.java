@@ -5,13 +5,13 @@ package w094j.ctrl8.exception;
 /*
  * Exception class thrown for any errors encountered in execution when Statement object calls .execute()
  */
-public class CommandExecutionException extends Exception {
+public class CommandExecuteException extends Exception {
     // Parameterless constructor
-    public CommandExecutionException() {
+    public CommandExecuteException() {
     }
 
     // Constructor that accepts a String message
-    public CommandExecutionException(String message) {
+    public CommandExecuteException(String message) {
         super(message);
     }
 }
