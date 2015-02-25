@@ -9,6 +9,7 @@ import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecutionException;
 import w094j.ctrl8.exception.MissingTaskException;
+import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
@@ -27,10 +28,10 @@ import w094j.ctrl8.statement.Statement;
 public class Terminal {
     // Static constants
     private static final int TASK_MAP_MINIMUM_SIZE = 1; /*
-     * a task map should
-     * contain at least one
-     * entry
-     */
+                                                         * a task map should
+                                                         * contain at least one
+                                                         * entry
+                                                         */
 
     Database database;
     Display display;
@@ -56,23 +57,29 @@ public class Terminal {
     }
 
     /**
-     * Part of CRUD: Add. Throws two types of Exceptions [1:
-     * CommandExecutionException] [2. TaskOverwriteException (expected throw
-     * from Database)] Refer to Issue #47
+     * Part of CRUD: Add. Throws [1. CommandExecutionException] [2. Exception
+     * (from database)] Refer to Issue #47
      *
      * @param task
-     *            The task to add to the database, it should be properly
+     *            The Task to add to the database, it should be properly
      *            constructed otherwise Database would run into issues
      */
     public void add(Task task) throws Exception {
-        // Make sure there is at least a proper task title
+        // Make sure we are not adding an Incomplete task to database
+        if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
+            throw new CommandExecutionException(
+                    ErrorMessage.EXCEPTION_IS_INCOMPLETE_TASK);
+        }
+
+        // (deprecated) TaskTitle should not be null
         assert (task.getTitle() != null);
 
         try {
             // Update Taskmap
             this.updateTaskMap(task);
         } catch (Exception e) {
-            throw new CommandExecutionException();
+            throw new CommandExecutionException(
+                    ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
         }
         try {
             // Add to database
@@ -95,7 +102,7 @@ public class Terminal {
     public void displayNextCommandRequest() {
         if (this.display instanceof CLIDisplay) {
             this.display
-            .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
+                    .outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
         } else {
             // TODO When GUI Display development begins
         }
@@ -227,18 +234,18 @@ public class Terminal {
          */
 
         Task[] allTasks = this.makeDummyTaskList();/*
-         * TODO: currently a
-         * placeholder to simulate
-         * task adding to tree
-         */
+                                                    * TODO: currently a
+                                                    * placeholder to simulate
+                                                    * task adding to tree
+                                                    */
 
         /* Intialise the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null); /*
-                                    * All task objects in allTasks[] should not
-                                    * be null
-                                    */
+             * All task objects in allTasks[] should not
+             * be null
+             */
             assert (!this.taskMap.containsKey(task.getTitle()));
             /*
              * The taskmap should not already contain a task with the same key
