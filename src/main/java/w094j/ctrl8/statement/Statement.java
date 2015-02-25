@@ -2,6 +2,7 @@ package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
 
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
@@ -44,11 +45,11 @@ public abstract class Statement {
         }
         switch (command) {
 
-            /*
-             * 1. add 2. delete 3. exit 4. history 5. list 6. modify 7. search
-             */
             case ADD :
                 statement = new AddStatement(statementString);
+                break;
+            case ALIAS :
+                statement = new AliasStatement(statementString);
                 break;
             case EXIT :
                 statement = new ExitStatement(statementString);
@@ -56,9 +57,13 @@ public abstract class Statement {
             case HISTORY :
                 statement = new HistoryStatement(statementString);
                 break;
-            case ALIAS :
-                statement = new AliasStatement(statementString);
+            case MODIFY :
+                statement = new ModifyStatement(statementString);
                 break;
+            case VIEW :
+                statement = new ViewStatement(statementString);
+                break;
+
             default :
                 // should never reach here
                 assert (false);
@@ -83,8 +88,11 @@ public abstract class Statement {
      *
      * @param terminal
      *            to execute the command in.
+     * @throws CommandExecuteException
+     *             when the execution of the command has problems.
      */
-    public abstract void execute(Terminal terminal);
+    public abstract void execute(Terminal terminal)
+            throws CommandExecuteException;
 
     /**
      * @return the argumentsString

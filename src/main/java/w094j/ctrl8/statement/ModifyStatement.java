@@ -1,21 +1,32 @@
 package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.parameter.ParameterContainer;
+import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
- * Class to encapsulate an add statement. Add statements must be matchable to
- * the following regex: ^add\s[A-Za-z0-9]+$ .
+ * Class to encapsulate a modify statement. Essentially a modify statement is an
+ * add statement with a query. The syntax must be in the form:
+ *
+ * <pre>
+ * \<modify\> \<query\> \<parameters\>
+ * </pre>
  *
  * @author Han Liang Wee Eric(A0065517A)
  */
 public class ModifyStatement extends Statement {
 
-    private String toAdd;
+    private String query;
+    private Task task;
 
     /**
-     * Initializes an add statement, ensures that the statement is valid.
+     * Initializes a modify statement, parses the query first.
      *
      * @param statementString
      * @exception InvalidParameterException
@@ -23,15 +34,39 @@ public class ModifyStatement extends Statement {
      */
     public ModifyStatement(String statementString) {
         super(Command.MODIFY, statementString);
-        if ((this.toAdd == null) || (this.toAdd.length() == 0)) {
+
+        int indexOfCommandCharacters = 0;
+        String bannedSymbolsRegex = ParameterSymbol.getBannedSymbolsRegex();
+        Matcher m = Pattern.compile(bannedSymbolsRegex).matcher(
+                this.getArgumentsString());
+        // find the first command character if it exist
+        if (m.find()) {
+            indexOfCommandCharacters = m.start();
+        } else {
             throw new InvalidParameterException(
-                    "add command must have valid parameters.");
+                    "Modify statement must specify the parameter that is different.");
         }
-        this.toAdd = this.toAdd;
+
+        if (indexOfCommandCharacters == 0) {
+            throw new InvalidParameterException(
+                    "Modify statement must have a query.");
+        }
+
+        // from the start of the parameter string to the index of the command
+        // character, not inclusive of the command character
+        this.query = this.getArgumentsString().substring(0,
+                indexOfCommandCharacters);
+
+        this.task = new Task();
+        ParameterContainer container = ParameterSymbol.parse(this
+                .getArgumentsString().substring(indexOfCommandCharacters));
+        // TODO no validation rules for the statement
+        container.addAll(null, this.task);
+
     }
 
     @Override
-    public void execute(Terminal terminal) {
-// terminal.add(this.toAdd);
+    public void execute(Terminal terminal) throws CommandExecuteException {
+        terminal.modify(this.query, this.task);
     }
 }

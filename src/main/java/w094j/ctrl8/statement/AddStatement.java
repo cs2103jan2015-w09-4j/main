@@ -1,10 +1,10 @@
 package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
-import java.util.List;
 
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.parameter.Parameter;
+import w094j.ctrl8.statement.parameter.ParameterContainer;
 import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
 
@@ -38,14 +38,14 @@ public class AddStatement extends Statement {
     public AddStatement(String statementString) {
         super(Command.ADD, statementString);
         this.task = new Task();
-        List<Parameter> parameterList = ParameterSymbol.parse(statementString);
-        for (Parameter eaParameter : parameterList) {
-            eaParameter.add(this.task);
-        }
+        ParameterContainer container = ParameterSymbol.parse(statementString);
+        // TODO no validation rules for the statement
+        container.addAll(null, this.task);
+
     }
 
     @Override
-    public void execute(Terminal terminal) {
+    public void execute(Terminal terminal) throws CommandExecuteException {
         terminal.add(this.task);
     }
 }
