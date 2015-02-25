@@ -31,12 +31,7 @@ public class Database {
      * @throws IOException
      */
     public Database() throws IOException {
-        this.filePath = Paths.get(DEFAULT_FILE_NAME);
-        if (!Files.exists(this.filePath)) {
-            this.file = new DBfile();
-        } else {
-            this.readFile();
-        }
+        this(DEFAULT_FILE_NAME);
     }
 
     /**
@@ -71,8 +66,12 @@ public class Database {
      * @param task
      */
     public void deleteTask(Task task) {
-        this.file.getTaskList().remove(task);
-        this.save();
+        for (int i = 0; i < this.file.getTaskList().size(); i++) {
+            if (this.file.getTaskList().get(i).equals(task)) {
+                this.file.getTaskList().remove(i);
+                break;
+            }
+        }
     }
 
     /**
