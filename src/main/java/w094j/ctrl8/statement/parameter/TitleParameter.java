@@ -16,6 +16,6 @@ public class TitleParameter extends Parameter {
 
     @Override
     public void add(Task task) {
-        task.setTaskTitle(this.getPayload());
+        task.setTitle(this.getPayload());
     }
 }
