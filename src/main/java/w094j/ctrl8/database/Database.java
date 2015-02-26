@@ -3,6 +3,7 @@ package w094j.ctrl8.database;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -38,22 +39,47 @@ public class Database {
     /**
      * @param filePathString
      * @throws IOException
+     * @throws NoSuchFileException
      */
-    public Database(String filePathString) throws IOException {
+    public Database(String filePathString) throws IOException,
+    NoSuchFileException {
 
-        try {
-            File f = new File(filePathString);
-            f.mkdirs();
-            new File(filePathString + DEFAULT_FILE_NAME);
+        if (filePathString.equals("")) {
+            filePathString = DEFAULT_FILE_NAME;
+        }
+
+        File f = new File(filePathString);
+        this.file = new DBfile();
+
+        if (f.isFile()) {
+            this.filePath = Paths.get(filePathString);
+            this.readFile();
+        } else if (f.isDirectory()) {
             this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
-            if (!Files.exists(this.filePath)) {
+            this.file = new DBfile();
+        } else if (filePathString.endsWith(".txt")) {
+            try {
+                this.filePath = Paths.get(filePathString);
+                if (filePathString.lastIndexOf(File.separator) != -1) {
+                    String directory = filePathString.substring(0,
+                            filePathString.lastIndexOf(File.separator));
+                    f = new File(directory);
+                    f.mkdirs();
+                }
                 this.file = new DBfile();
-            } else {
-                this.readFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                f.mkdirs();
+                new File(filePathString + DEFAULT_FILE_NAME);
+                this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
+                this.file = new DBfile();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
     }
