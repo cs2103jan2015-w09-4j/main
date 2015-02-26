@@ -69,7 +69,7 @@ public class Terminal {
 
     /**
      * Part of CRUD: Add. Throws [CommandExecuteException] Refer to Issue #47
-     *
+     * 
      * @param task
      *            The Task to add to the database, it should be properly
      *            constructed otherwise Database would run into issues
@@ -112,7 +112,7 @@ public class Terminal {
      * #48 Takes in taskID as a String and tests whether it exists on the
      * taskMap. If it does then delete it from the taskMap as well as the
      * Database
-     *
+     * 
      * @param taskID
      */
     public void delete(String taskID) throws CommandExecuteException {
@@ -162,7 +162,7 @@ public class Terminal {
     /**
      * Modify the specified Task with new incomplete Task that contains new
      * information Throws [CommandExecutionException] Refer to Issue #50
-     *
+     * 
      * @param query
      * @param incompleteTask
      */
@@ -230,24 +230,31 @@ public class Terminal {
     /**
      * View all the task and their information in table format display
      */
-    public void view() {
+    public void view() throws CommandExecuteException {
         if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
             /*
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
              */
             this.display.outputMessage(NormalMessage.NO_TASK_FOUND);
+            throw new CommandExecuteException(
+                    ErrorMessage.EXCEPTION_MISSING_TASK);
         } else {
-            Task[] taskList = new Task[this.taskMap.size()];
-            int i = 0;
-            for (Map.Entry<String, Task> taskEntry : this.taskMap.entrySet()) {
-                // String key = taskEntry.getKey();
-                Task task = taskEntry.getValue();
+            try {
+                Task[] taskList = new Task[this.taskMap.size()];
+                int i = 0;
+                for (Map.Entry<String, Task> taskEntry : this.taskMap
+                        .entrySet()) {
+                    // String key = taskEntry.getKey();
+                    Task task = taskEntry.getValue();
 
-                taskList[i] = task;
-                i++;
+                    taskList[i] = task;
+                    i++;
+                }
+                this.display.outputTask(taskList);
+            } catch (Exception e) {
+                throw new CommandExecuteException(e.getMessage());
             }
-            this.display.outputTask(taskList);
         }
     }
 
@@ -291,7 +298,7 @@ public class Terminal {
 
     /**
      * This is a function to check is a task exist in the task map
-     *
+     * 
      * @param query
      * @return boolean that true shows the task exist in the task map
      */
@@ -301,7 +308,7 @@ public class Terminal {
 
     /**
      * This is a function to check is a task exist in the task map
-     *
+     * 
      * @param task
      * @return boolean that true shows the task exist in the task map
      */
@@ -312,7 +319,7 @@ public class Terminal {
     /**
      * Updates the taskMap, removing an old entry and adding a new entry with
      * the input task object
-     *
+     * 
      * @param oldKey
      * @param task
      */
@@ -325,7 +332,7 @@ public class Terminal {
 
     /**
      * Updates the taskMap when the task key already exists on the taskMap
-     *
+     * 
      * @param task
      */
     private void updateTaskMap(Task task) {
