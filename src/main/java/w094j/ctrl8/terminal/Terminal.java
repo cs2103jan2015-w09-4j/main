@@ -154,11 +154,7 @@ public class Terminal {
      * Displays the list of supported syntax. See Issue #80
      */
     public void help() {
-        this.display.outputMessage(NormalMessage.HELP_HEADER
-                + NormalMessage.HELP_ADD_COMMAND_SYNTAX + "\n"
-                + NormalMessage.HELP_DELETE_COMMAND_SYNTAX + "\n"
-                + NormalMessage.HELP_MODIFY_COMMAND_SYNTAX + "\n"
-                + NormalMessage.HELP_VIEW_COMMAND_SYNTAX + "\n");
+        this.display.outputMessage(NormalMessage.HELP_ALL);
     }
 
     /**

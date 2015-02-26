@@ -18,6 +18,11 @@ public class NormalMessage {
 
     // @author A0110787A
     public static final String HELP_ADD_COMMAND_SYNTAX = "add ={<title>} $";
+    public static final String HELP_ALL = NormalMessage.HELP_HEADER
+            + NormalMessage.HELP_ADD_COMMAND_SYNTAX + "\n"
+            + NormalMessage.HELP_DELETE_COMMAND_SYNTAX + "\n"
+            + NormalMessage.HELP_MODIFY_COMMAND_SYNTAX + "\n"
+            + NormalMessage.HELP_VIEW_COMMAND_SYNTAX + "\n";
     public static final String HELP_DELETE_COMMAND_SYNTAX = "delete <query>";
     public static final String HELP_HEADER = "List of supported commands: \n";
     public static final String HELP_MODIFY_COMMAND_SYNTAX = "modify <query> ={<title>}..";

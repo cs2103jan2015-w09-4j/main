@@ -11,18 +11,19 @@ import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.pojo.Task;
 
 /**
- * Class implements Display Interface as a simple CLI
- * How to use:
- * To get userinput as a String, call CLIDisplay.getUserInput()
- * To display an output, call CLIDisplay.outputMessage(message)
+ * Class implements Display Interface as a simple CLI How to use: To get
+ * userinput as a String, call CLIDisplay.getUserInput() To display an output,
+ * call CLIDisplay.outputMessage(message)
  */
 
-/**
- * @author Rodson Chue Le Sheng(A0110787), Chen Tze Cheng (A0112092W)
- */
+// @author A0112092W
 public class CLIDisplay implements Display {
     private BufferedReader br;
 
+    // @author A0110787A
+    private String lastMessage;
+
+    // @author A0112092W
     /**
      * Public constructor for a CLI Display
      */
@@ -66,6 +67,17 @@ public class CLIDisplay implements Display {
         }
     }
 
+    // @author A0110787A
+    /*
+     * For testing purposes. Facilitates JUnit testing of individual modules
+     * using CLIDisplay
+     */
+    public String getLastMessage() {
+        return this.lastMessage;
+
+    }
+
+    // @author A0112092W
     @Override
     public String getUserInput() {
         String nextLine = null;
@@ -80,11 +92,18 @@ public class CLIDisplay implements Display {
 
     @Override
     public void outputMessage(String message) {
+        // @author A0110787A
+        /*
+         * For testing purposes. see getLastMessage()
+         */
+        this.lastMessage = message;
+
+        // @author A0112092W
         System.out.println(message);
     }
 
     /**
-     * This method is used to outout the task for the user in certain format.
+     * This method is used to output the task for the user in certain format.
      *
      * @param taskList
      */
