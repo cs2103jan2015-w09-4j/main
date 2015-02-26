@@ -8,7 +8,7 @@ import java.util.Map;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.message.ErrorMessage;
+import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
@@ -77,12 +77,13 @@ public class Terminal {
     public void add(Task task) throws CommandExecuteException {
         // Task object should not be null
         if (task == null) {
-            throw new CommandExecuteException(ErrorMessage.EXCEPTION_NULL_TASK);
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_NULL_TASK);
         }
         // Make sure we are not adding an Incomplete task to database
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
             throw new CommandExecuteException(
-                    ErrorMessage.EXCEPTION_IS_INCOMPLETE_TASK);
+                    CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK);
         }
 
         try {
@@ -90,7 +91,7 @@ public class Terminal {
             this.updateTaskMap(task);
         } catch (Exception e) {
             throw new CommandExecuteException(
-                    ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
+                    CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
         }
         try {
             // Add to database
@@ -124,7 +125,7 @@ public class Terminal {
                 this.database.deleteTask(removedTask);
             } else {
                 throw new CommandExecuteException(
-                        ErrorMessage.EXCEPTION_BAD_TASKID);
+                        CommandExecutionMessage.EXCEPTION_BAD_TASKID);
             }
         } catch (Exception e) {
             throw new CommandExecuteException(e.getMessage());
@@ -187,7 +188,7 @@ public class Terminal {
                 this.updateTaskMap(query, task);
             } catch (Exception e) {
                 throw new CommandExecuteException(
-                        ErrorMessage.EXCEPTION_UPDATE_TASK_MAP);
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
 
             // Informs user that his add statement is successful
@@ -195,7 +196,7 @@ public class Terminal {
                     + NormalMessage.MODIFY_TASK_SUCCESSFUL);
         } else {
             throw new CommandExecuteException(
-                    ErrorMessage.EXCEPTION_MISSING_TASK);
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         }
     }
 

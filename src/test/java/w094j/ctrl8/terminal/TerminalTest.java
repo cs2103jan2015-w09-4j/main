@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import w094j.ctrl8.display.CLIDisplay;
-import w094j.ctrl8.message.ErrorMessage;
+import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Task;
 
@@ -29,7 +29,7 @@ public class TerminalTest {
      */
     public void basicAddIncompleteTaskTest() {
         // Expected result
-        this.expected = ErrorMessage.EXCEPTION_IS_INCOMPLETE_TASK;
+        this.expected = CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK;
 
         // Function to test
         try {
@@ -48,7 +48,7 @@ public class TerminalTest {
      */
     public void basicAddNullTaskTest() {
         // Expected result
-        this.expected = ErrorMessage.EXCEPTION_NULL_TASK;
+        this.expected = CommandExecutionMessage.EXCEPTION_NULL_TASK;
 
         // Function to test
         try {
