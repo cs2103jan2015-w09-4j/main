@@ -29,9 +29,17 @@ public class Terminal {
     private static final String DEFAULT_DATABASE_FILEPATH = "tmp.db";
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
+    // Storage object (External)
     Database database;
+
     Display display;
+
+    // Storage object (Internal)
     HashMap<String, Task> taskMap;
+
+    // Flag that determines whether terminal continues to run or not
+    // Default: true
+    private boolean continueExecution = true;
 
     /*
      * TODO This function is currently a stub. Until Config object has completed
@@ -41,7 +49,7 @@ public class Terminal {
     public Terminal(Config conf, Display window) {
         this.display = window;
         try {
-            this.database = new Database(DEFAULT_DATABASE_FILEPATH);
+            this.database = new Database();
         } catch (Exception e) {
             this.display.outputMessage(e.getMessage());
         }
@@ -52,7 +60,7 @@ public class Terminal {
     public Terminal(Display window) {
         this.display = window;
         try {
-            this.database = new Database(DEFAULT_DATABASE_FILEPATH);
+            this.database = new Database();
         } catch (Exception e) {
             this.display.outputMessage(e.getMessage());
         }
@@ -137,11 +145,20 @@ public class Terminal {
     public void exit() {
         this.display.outputMessage(NormalMessage.EXIT_COMMAND);
         this.cleanUp();
+
+        // stop loop
+        this.continueExecution = false;
     }
 
+    /**
+     * Displays the list of supported syntax. See Issue #80
+     */
     public void help() {
-        // TODO Auto-generated method stub
-
+        this.display.outputMessage(NormalMessage.HELP_HEADER
+                + NormalMessage.HELP_ADD_COMMAND_SYNTAX + "\n"
+                + NormalMessage.HELP_DELETE_COMMAND_SYNTAX + "\n"
+                + NormalMessage.HELP_MODIFY_COMMAND_SYNTAX + "\n"
+                + NormalMessage.HELP_VIEW_COMMAND_SYNTAX + "\n");
     }
 
     /**
@@ -198,8 +215,8 @@ public class Terminal {
      * user inputs until 'exit' is invoked
      */
     public void runTerminal() {
-        boolean continueExecution = true;
-        while (continueExecution) {
+        this.continueExecution = true;
+        while (this.continueExecution) {
             this.displayNextCommandRequest();
 
             // Passes string to Statement.java to parse into a command
