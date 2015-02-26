@@ -33,7 +33,10 @@ public class Terminal {
     Display display;
     HashMap<String, Task> taskMap;
 
-    // TODO This function is currently a stub.
+    /*
+     * TODO This function is currently a stub. Until Config object has completed
+     * implementation
+     */
     // Constructor for terminal with a config object
     public Terminal(Config conf, Display window) {
         this.display = window;
@@ -54,15 +57,6 @@ public class Terminal {
             this.display.outputMessage(e.getMessage());
         }
         this.buildTaskMap();
-    }
-
-    /**
-     * TODO: implement a way to dump data from program to an external file for
-     * future reference. E.g for next time the program is run.
-     */
-    public static void pushData() {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -167,6 +161,14 @@ public class Terminal {
     }
 
     /**
+     * Instructs database explicitly to save tasks to external file
+     */
+    public void pushData() {
+        this.database.save();
+
+    }
+
+    /**
      * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
      * user inputs until 'exit' is invoked
      */
@@ -265,8 +267,7 @@ public class Terminal {
      * Or (maybe) editing an external config file
      */
     private void cleanUp() {
-        // TODO Auto-generated method stub
-        pushData();
+        this.pushData();
 
     }
 
