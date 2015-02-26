@@ -42,19 +42,22 @@ public class Start {
     public static void main(String[] args) {
         logger.info(NormalMessage.START_MESSAGE);
         // add all existing Options
+
         addOptions();
+        Display display = new CLIDisplay();
+        Terminal terminal;
 
         if (checkArgs(args)) {
-
             parseArgs(args);
-            Display display = new CLIDisplay();
-            Terminal terminal = new Terminal(Config.parseArgs(args), display);
-            logger.info(NormalMessage.WELCOME_MESSAGE);
-            terminal.runTerminal();
+            terminal = new Terminal(Config.parseArgs(args), display);
         } else {
-            printHelp();
+            // Default database and terminal will be created if no file path
+            // specified.
+            logger.info(NormalMessage.NO_FILEPATH_MESSAGE);
+            terminal = new Terminal(display);
         }
-
+        logger.info(NormalMessage.WELCOME_MESSAGE);
+        terminal.runTerminal();
     }
 
     // This will add all the existing options

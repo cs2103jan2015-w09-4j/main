@@ -34,5 +34,6 @@ public class NormalMessage {
     // @author A0110787A, A0112092W
     public static final String START_MESSAGE = "Starting Ctrl-8...";
     public static final String WELCOME_MESSAGE = "Welcome for using Ctrl-8!";
+    public static final String NO_FILEPATH_MESSAGE = "No filepath entered. Starting at default filepath..";
 
 }
