@@ -33,8 +33,28 @@ public class TerminalTest {
 
         // Function to test
         try {
+            // Should work correctly regardless of Terminal's state
             this.testTerminal.add(new Task());
-            ;
+        } catch (Exception e) {
+            assertEquals(this.expected, e.getMessage());
+        }
+
+    }
+
+    @Test
+    /*
+     * [BASIC] Tests whether the correct exception is thrown when add() is given
+     * a null object
+     */
+    public void basicAddNullTaskTest() {
+        // Expected result
+        this.expected = ErrorMessage.EXCEPTION_NULL_TASK;
+
+        // Function to test
+        try {
+            // Should work correctly regardless of Terminal's state
+            this.testTerminal.add(null);
+
         } catch (Exception e) {
             assertEquals(this.expected, e.getMessage());
         }

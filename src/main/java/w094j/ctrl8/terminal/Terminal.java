@@ -75,14 +75,15 @@ public class Terminal {
      *            constructed otherwise Database would run into issues
      */
     public void add(Task task) throws CommandExecuteException {
+        // Task object should not be null
+        if (task == null) {
+            throw new CommandExecuteException(ErrorMessage.EXCEPTION_NULL_TASK);
+        }
         // Make sure we are not adding an Incomplete task to database
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
             throw new CommandExecuteException(
                     ErrorMessage.EXCEPTION_IS_INCOMPLETE_TASK);
         }
-
-        // (deprecated) TaskTitle should not be null
-        assert (task.getTitle() != null);
 
         try {
             // Update Taskmap
