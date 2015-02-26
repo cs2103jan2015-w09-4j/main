@@ -14,6 +14,7 @@ public class ErrorMessage {
     public static final String ERROR_READING_INPUT = "Error: User Input Failed!";
 
     // @author A0110787A
+    public static final String EXCEPTION_BAD_TASKID = "TaskID does not exist in TaskMap";
     public static final String EXCEPTION_IS_INCOMPLETE_TASK = "TaskType=INCOMPLETE";
     public static final String EXCEPTION_MISSING_TASK = "Database does not contain Task";
     public static final String EXCEPTION_UPDATE_TASK_MAP = "Update TaskMap Error";

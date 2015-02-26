@@ -98,6 +98,31 @@ public class Terminal {
     }
 
     /**
+     * Part of CRUD: Delete. Throws [CommandExecuteException]. Refer to Issue
+     * #48 Takes in taskID as a String and tests whether it exists on the
+     * taskMap. If it does then delete it from the taskMap as well as the
+     * Database
+     *
+     * @param taskID
+     */
+    public void delete(String taskID) throws CommandExecuteException {
+        try {
+            /* Check if key exists in taskmap */
+            if (this.taskMap.containsKey(taskID)) {
+                Task removedTask = this.taskMap.remove(taskID);
+
+                // Update the database
+                this.database.deleteTask(removedTask);
+            } else {
+                throw new CommandExecuteException(
+                        ErrorMessage.EXCEPTION_BAD_TASKID);
+            }
+        } catch (Exception e) {
+            throw new CommandExecuteException(e.getMessage());
+        }
+    }
+
+    /**
      * Displays an output message requesting for the next user input. This may
      * be empty if the UI does not require such.
      */
@@ -184,28 +209,6 @@ public class Terminal {
                 this.display.outputMessage(e.getMessage());
             }
 
-        }
-    }
-
-    /**
-     * TODO Part of CRUD: Delete
-     *
-     * @param taskID
-     * @return true if deleting the task with the given ID was successful,
-     *         otherwise returns false
-     */
-    public boolean taskDelete(String taskID) {
-        try {
-            /* Check if key exists in taskmap */
-            if (this.taskMap.containsKey(taskID)) {
-                this.database.deleteTask(this.taskMap.get(taskID));
-                this.taskMap.remove(taskID);
-                return true;
-            } else {
-                throw new Exception("TaskID does not exist");
-            }
-        } catch (Exception e) {
-            return false;
         }
     }
 
