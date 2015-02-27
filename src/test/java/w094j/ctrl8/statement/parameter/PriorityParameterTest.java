@@ -4,12 +4,13 @@ package w094j.ctrl8.statement.parameter;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.pojo.Task;
 
 /**
  * Tests parsing of the priority parameter.
@@ -58,11 +59,10 @@ public class PriorityParameterTest {
     @Test
     public void test() {
 
-        List<Parameter> parameterList = ParameterSymbol.parse(this.input);
-        assert (parameterList.size() == 1);
-        assert (parameterList.get(0) instanceof PriorityParameter);
-        PriorityParameter priorityParameter = (PriorityParameter) parameterList
-                .get(0);
-        assertEquals(this.expectedPriority, priorityParameter.getPiority());
+        ParameterContainer parameterContainer = ParameterSymbol
+                .parse(this.input);
+        Task task = new Task();
+        parameterContainer.addAll(null, task);
+        assertEquals(this.expectedPriority, task.getPriority());
     }
 }
