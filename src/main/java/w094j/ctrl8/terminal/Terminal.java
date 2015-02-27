@@ -1,11 +1,14 @@
 package w094j.ctrl8.terminal;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import w094j.ctrl8.database.Database;
+import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.message.CommandExecutionMessage;
@@ -41,13 +44,11 @@ public class Terminal {
     // Default: true
     private boolean continueExecution = true;
 
-    /*
-     * TODO This function is currently a stub. Until Config object has completed
-     * implementation
+    /**
+     * Default Constructor for a terminal with no specifications
      */
-    // Constructor for terminal with a config object
-    public Terminal(Config conf, Display window) {
-        this.display = window;
+    public Terminal() {
+        this.display = new CLIDisplay(); // Use CLIDisplay
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -56,8 +57,65 @@ public class Terminal {
         this.buildTaskMap();
     }
 
-    // Constructor for a default terminal
+    /*
+     * TODO This function is currently a stub. Until Config object has completed
+     * implementation
+     */
+    /**
+     * Constructor for terminal with a config object
+     *
+     * @param conf
+     *            Configuration information specifying how Terminal/Display is
+     *            to be setup
+     */
+    public Terminal(Config conf) {
+        assertNotNull(conf); // Should not be a null object
+
+        this.display = new CLIDisplay(); /*
+                                          * TODO replace with proper
+                                          * configuration
+                                          */
+        try {
+            this.database = new Database();
+        } catch (Exception e) {
+            this.display.outputMessage(e.getMessage());
+        }
+        this.buildTaskMap();
+    }
+
+    /**
+     * @deprecated switch to Terminal(Config)
+     *
+     *             <pre>
+     * Constructor for terminal with a Config object and Display object
+     * </pre>
+     * @param conf
+     * @param display
+     */
+    @Deprecated
+    public Terminal(Config conf, Display display) {
+        assertNotNull(conf); // Should not be a null object
+        assertNotNull(display); // Should not be a null object
+
+        this.display = new CLIDisplay();
+        try {
+            this.database = new Database();
+        } catch (Exception e) {
+            this.display.outputMessage(e.getMessage());
+        }
+        this.buildTaskMap();
+    }
+
+    /**
+     * Constructor for a terminal with a display provided
+     *
+     * @param window
+     *            Display object specifying how/where messages should be
+     *            displayed
+     */
     public Terminal(Display window) {
+        assertNotNull(window); // Should not be a null object
+
         this.display = window;
         try {
             this.database = new Database();
@@ -205,7 +263,6 @@ public class Terminal {
      */
     public void pushData() {
         this.database.save();
-
     }
 
     /**
@@ -293,7 +350,6 @@ public class Terminal {
      */
     private void cleanUp() {
         this.pushData();
-
     }
 
     /**

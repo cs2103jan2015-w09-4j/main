@@ -2,6 +2,7 @@
 package w094j.ctrl8.terminal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Task;
 
 public class TerminalTest {
+    private static String NO_EXCEPTION_THROWN = "No Exception Thrown";
     CLIDisplay display;
     Terminal testTerminal;
     private String expected;
@@ -32,11 +34,16 @@ public class TerminalTest {
         this.expected = CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK;
 
         // Function to test
+        boolean caughtException = false;
         try {
             // Should work correctly regardless of Terminal's state
             this.testTerminal.add(new Task());
         } catch (Exception e) {
             assertEquals(this.expected, e.getMessage());
+            caughtException = true;
+        }
+        if (!caughtException) {
+            fail(NO_EXCEPTION_THROWN);
         }
 
     }
