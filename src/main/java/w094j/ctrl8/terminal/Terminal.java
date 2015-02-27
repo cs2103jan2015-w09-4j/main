@@ -407,8 +407,11 @@ public class Terminal {
      * @param task
      */
     private void updateTaskMap(Task task) {
-        assert (this.taskMap.containsKey(task.getTitle()));
-        this.taskMap.replace(task.getTitle(), task);
+        if (this.taskMap.containsKey(task.getTitle())) {
+            this.taskMap.replace(task.getTitle(), task);
+        } else {
+            this.taskMap.put(task.getTitle(), task);
+        }
 
     }
 }
