@@ -2,6 +2,9 @@ package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
@@ -14,7 +17,9 @@ import w094j.ctrl8.terminal.Terminal;
  */
 public abstract class Statement {
 
+    private static Logger logger = LoggerFactory.getLogger(Statement.class);
     private String argumentsString;
+
     private Command command;
 
     /**
@@ -43,6 +48,8 @@ public abstract class Statement {
             throw new InvalidParameterException(
                     "statement does not contain a valid command.");
         }
+        logger.debug("Valid Command, parsed \"" + statementString
+                + "\": Command=" + command);
         switch (command) {
 
             case ADD :

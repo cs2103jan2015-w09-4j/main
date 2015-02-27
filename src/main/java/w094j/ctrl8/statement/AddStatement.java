@@ -2,11 +2,16 @@ package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
 import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
+
+import com.google.gson.Gson;
 
 /**
  * Class to encapsulate an add statement. Add statements must be matchable to
@@ -15,6 +20,8 @@ import w094j.ctrl8.terminal.Terminal;
  * @author Han Liang Wee Eric(A0065517A)
  */
 public class AddStatement extends Statement {
+
+    private static Logger logger = LoggerFactory.getLogger(AddStatement.class);
 
     private Task task;
 
@@ -41,7 +48,9 @@ public class AddStatement extends Statement {
         ParameterContainer container = ParameterSymbol.parse(statementString);
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
-
+        this.task.toCompleteTask();
+        logger.debug("Valid add Command, parsed \"" + statementString
+                + "\": task=" + new Gson().toJson(this.task));
     }
 
     @Override

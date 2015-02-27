@@ -4,11 +4,16 @@ import java.security.InvalidParameterException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
 import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
+
+import com.google.gson.Gson;
 
 /**
  * Class to encapsulate a modify statement. Essentially a modify statement is an
@@ -22,7 +27,10 @@ import w094j.ctrl8.terminal.Terminal;
  */
 public class ModifyStatement extends Statement {
 
+    private static Logger logger = LoggerFactory
+            .getLogger(ModifyStatement.class);
     private String query;
+
     private Task task;
 
     /**
@@ -54,14 +62,18 @@ public class ModifyStatement extends Statement {
 
         // from the start of the parameter string to the index of the command
         // character, not inclusive of the command character
-        this.query = this.getArgumentsString().substring(0,
-                indexOfCommandCharacters);
+        this.query = this.getArgumentsString()
+                .substring(0, indexOfCommandCharacters).trim();
 
         this.task = new Task();
         ParameterContainer container = ParameterSymbol.parse(this
                 .getArgumentsString().substring(indexOfCommandCharacters));
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
+
+        logger.debug("Valid modify Command, parsed \"" + statementString
+                + "\": query=\"" + this.query + "\" task="
+                + new Gson().toJson(this.task));
 
     }
 
