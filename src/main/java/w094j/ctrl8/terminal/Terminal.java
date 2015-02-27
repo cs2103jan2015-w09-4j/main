@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
@@ -16,6 +19,8 @@ import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Statement;
+
+import com.google.gson.Gson;
 
 //@author A0110787A
 
@@ -28,8 +33,10 @@ import w094j.ctrl8.statement.Statement;
  */
 
 public class Terminal {
+
     // Static constants
     private static final String DEFAULT_DATABASE_FILEPATH = "tmp.db";
+    private static Logger logger = LoggerFactory.getLogger(Terminal.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
     // Storage object (External)
@@ -163,6 +170,8 @@ public class Terminal {
         // Informs user that his add statement is successful
         this.display.outputMessage(task.getTitle()
                 + NormalMessage.ADD_TASK_SUCCESSFUL);
+
+        logger.debug("Number of Tasks:" + this.taskMap.values().size());
     }
 
     /**
@@ -276,8 +285,10 @@ public class Terminal {
 
             // Passes string to Statement.java to parse into a command
             try {
-                Statement.parse(this.display.getUserInput());
+                Statement.parse(this.display.getUserInput()).execute(this);
             } catch (InvalidParameterException e) {
+                this.display.outputMessage(e.getMessage());
+            } catch (CommandExecuteException e) {
                 this.display.outputMessage(e.getMessage());
             }
 
@@ -299,6 +310,7 @@ public class Terminal {
         } else {
             try {
                 Task[] taskList = new Task[this.taskMap.size()];
+                logger.debug("Number of Tasks:" + this.taskMap.values().size());
                 int i = 0;
                 for (Map.Entry<String, Task> taskEntry : this.taskMap
                         .entrySet()) {
@@ -306,8 +318,11 @@ public class Terminal {
                     Task task = taskEntry.getValue();
 
                     taskList[i] = task;
+                    logger.debug("Task#" + i + "="
+                            + new Gson().toJson(taskList[i]));
                     i++;
                 }
+
                 this.display.outputTask(taskList);
             } catch (Exception e) {
                 throw new CommandExecuteException(e.getMessage());
