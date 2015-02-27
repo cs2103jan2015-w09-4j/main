@@ -24,6 +24,6 @@ public class Config {
          * TODO: Read an external file as a config file and produce a config
          * object based on it.
          */
-        return null;
+        return new Config();
     }
 }
