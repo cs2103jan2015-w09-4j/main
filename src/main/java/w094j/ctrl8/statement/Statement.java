@@ -70,6 +70,9 @@ public abstract class Statement {
             case VIEW :
                 statement = new ViewStatement(statementString);
                 break;
+            case HELP :
+                statement = new HelpStatement(statementString);
+                break;
 
             default :
                 // should never reach here
