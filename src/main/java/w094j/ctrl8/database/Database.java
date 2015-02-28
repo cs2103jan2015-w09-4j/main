@@ -42,7 +42,7 @@ public class Database {
      * @throws NoSuchFileException
      */
     public Database(String filePathString) throws IOException,
-    NoSuchFileException {
+            NoSuchFileException {
 
         if (filePathString.equals("")) {
             filePathString = DEFAULT_FILE_NAME;
@@ -72,6 +72,10 @@ public class Database {
             }
         } else {
             try {
+                if (filePathString.substring(filePathString.length() - 1) != File.separator) {
+                    filePathString += File.separator;
+                    f = new File(filePathString);
+                }
                 f.mkdirs();
                 new File(filePathString + DEFAULT_FILE_NAME);
                 this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
