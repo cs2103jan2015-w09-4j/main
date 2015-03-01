@@ -79,9 +79,9 @@ public class Terminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-                                          * TODO replace with proper
-                                          * configuration
-                                          */
+         * TODO replace with proper
+         * configuration
+         */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -406,7 +406,6 @@ public class Terminal {
 
         this.taskMap.remove(oldKey);
         if (this.taskMap.containsKey(task.getTitle())) {
-            // TODO add a logger here record overwrite
             this.taskMap.replace(task.getTitle(), task);
             logger.debug("TaskMap: Replace entry with key " + task.getTitle()
                     + " with " + new Gson().toJson(task));
