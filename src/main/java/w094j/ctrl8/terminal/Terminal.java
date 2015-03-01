@@ -35,7 +35,6 @@ import com.google.gson.Gson;
 public class Terminal {
 
     // Static constants
-    private static final String DEFAULT_DATABASE_FILEPATH = "tmp.db";
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
@@ -79,9 +78,9 @@ public class Terminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-         * TODO replace with proper
-         * configuration
-         */
+                                          * TODO replace with proper
+                                          * configuration
+                                          */
         try {
             this.database = new Database();
         } catch (Exception e) {
