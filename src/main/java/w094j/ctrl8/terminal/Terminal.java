@@ -32,7 +32,7 @@ import com.google.gson.Gson;
  * command objects to perform needed operations (e.g ADD operation)
  */
 
-public class Terminal {
+public class Terminal implements ITerminal {
 
     // Static constants
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);
@@ -41,6 +41,7 @@ public class Terminal {
     // Storage object (External)
     Database database;
 
+    // Interface supporting interaction with user
     Display display;
 
     // Storage object (Internal)
@@ -78,9 +79,9 @@ public class Terminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-                                          * TODO replace with proper
-                                          * configuration
-                                          */
+         * TODO replace with proper
+         * configuration
+         */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -132,12 +133,13 @@ public class Terminal {
     }
 
     /**
-     * Part of CRUD: Add. Throws [CommandExecuteException] Refer to Issue #47
+     * Part of CRUD: Create. Throws [CommandExecuteException] Refer to Issue #47
      *
      * @param task
      *            The Task to add to the database, it should be properly
      *            constructed otherwise Database would run into issues
      */
+    @Override
     public void add(Task task) throws CommandExecuteException {
         // Task object should not be null
         if (task == null) {
@@ -181,6 +183,7 @@ public class Terminal {
      *
      * @param taskID
      */
+    @Override
     public void delete(String taskID) throws CommandExecuteException {
         try {
             /* Check if key exists in taskmap */
@@ -198,18 +201,11 @@ public class Terminal {
         }
     }
 
-    /**
-     * Displays an output message requesting for the next user input. This may
-     * be empty if the UI does not require such.
-     */
-    public void displayNextCommandRequest() {
-        this.display.outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
-    }
-
     /*
      * Function is called when an exit statement is executed. Performs a cleanup
      * before terminating the terminal See Issue #74 on github
      */
+    @Override
     public void exit() {
         this.display.outputMessage(NormalMessage.EXIT_COMMAND);
         this.cleanUp();
@@ -221,17 +217,20 @@ public class Terminal {
     /**
      * Displays the list of supported syntax. See Issue #80
      */
+    @Override
     public void help() {
         this.display.outputMessage(NormalMessage.HELP_ALL);
     }
 
     /**
-     * Modify the specified Task with new incomplete Task that contains new
-     * information Throws [CommandExecutionException] Refer to Issue #50
+     * Part of CRUD: Update. Modifies the specified Task with new incomplete
+     * Task that contains new information Throws [CommandExecutionException]
+     * Refer to Issue #50
      *
      * @param query
      * @param incompleteTask
      */
+    @Override
     public void modify(String query, Task incompleteTask)
             throws CommandExecuteException {
 
@@ -269,6 +268,7 @@ public class Terminal {
     /**
      * Instructs database explicitly to save tasks to external file
      */
+    @Override
     public void pushData() {
         this.database.save();
     }
@@ -277,6 +277,7 @@ public class Terminal {
      * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
      * user inputs until 'exit' is invoked
      */
+    @Override
     public void runTerminal() {
         this.continueExecution = true;
         while (this.continueExecution) {
@@ -295,8 +296,10 @@ public class Terminal {
     }
 
     /**
-     * View all the task and their information in table format display
+     * Part of CRUD: Display. View all the task and their information in table
+     * format display
      */
+    @Override
     public void view() throws CommandExecuteException {
         if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
             /*
@@ -364,6 +367,14 @@ public class Terminal {
      */
     private void cleanUp() {
         this.pushData();
+    }
+
+    /**
+     * Displays an output message requesting for the next user input. This may
+     * be empty if the UI does not require such.
+     */
+    private void displayNextCommandRequest() {
+        this.display.outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
     }
 
     /**
