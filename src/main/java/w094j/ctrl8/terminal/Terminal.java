@@ -388,29 +388,54 @@ public class Terminal {
     }
 
     /**
-     * Updates the taskMap, removing an old entry and adding a new entry with
-     * the input task object
+     * Adds a task to the taskMap as well as removing an older entry. To be used
+     * together with modify() command. When taskTitle is modified, its key in
+     * the hashmap also changes.
      *
      * @param oldKey
      * @param task
      */
     private void updateTaskMap(String oldKey, Task task) {
+        // Check for null params
+        assert (oldKey != null);
+        assert (task != null);
+        // Task should not be incomplete (not a Task delta)
+        assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
+        // The old key specified should exist
         assert (this.taskMap.containsKey(oldKey));
-        assert (this.taskMap.containsKey(task.getTitle()));
+
         this.taskMap.remove(oldKey);
-        this.taskMap.put(task.getTitle(), task);
+        if (this.taskMap.containsKey(task.getTitle())) {
+            // TODO add a logger here record overwrite
+            this.taskMap.replace(task.getTitle(), task);
+            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
+        } else {
+            logger.debug("TaskMap: Add new entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
+        }
     }
 
     /**
-     * Updates the taskMap when the task key already exists on the taskMap
+     * Adds a task to the taskMap using taskTitle as the key. If key already
+     * exists, it overwrites the entry.
      *
      * @param task
      */
     private void updateTaskMap(Task task) {
+        // Check for null params
+        assert (task != null);
+        // Task should not be incomplete (not a Task delta)
+        assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
+
         if (this.taskMap.containsKey(task.getTitle())) {
             this.taskMap.replace(task.getTitle(), task);
+            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
         } else {
             this.taskMap.put(task.getTitle(), task);
+            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
         }
 
     }
