@@ -1,5 +1,6 @@
 package w094j.ctrl8.display;
 
+import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.pojo.Task;
 
 /**
@@ -30,6 +31,7 @@ public interface Display {
      * display the task to user
      * 
      * @param taskList
+     * @throws OutputExecuteException
      */
-    public void outputTask(Task[] taskList);
+    public void outputTask(Task[] taskList) throws OutputExecuteException;
 }
