@@ -8,23 +8,24 @@ import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
 
-public class DeleteStatement extends Statement {
+public class DeleteStatement extends StatementQuery {
 
-    private static Logger logger = LoggerFactory.getLogger(AddStatement.class);
-    private String title;
+    private static Logger logger = LoggerFactory
+            .getLogger(DeleteStatement.class);
+    private String query;
 
     /**
      * @param statementString
      */
     public DeleteStatement(String statementString) {
         super(Command.DELETE, statementString);
-        this.title = this.getArgumentsString();
+        this.query = this.getArgumentsString();
         logger.debug("Valid delete Command, query \"" + statementString + "\"");
     }
 
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.delete(this.title);
+        terminal.delete(this.query);
     }
 
 }
