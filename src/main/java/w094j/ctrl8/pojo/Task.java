@@ -40,22 +40,22 @@ public class Task {
         TIMED
     }
 
-    private static final int CATEGORY = 5;
-
     /* Global parameters for all tasks */
     private static final int DEFAULT_PRIORITY = 0;
-    private static final int DESCRIPTION = 6;
-    private static final int ENDDATE = 4;
+  
     /* Global parameters for isSet boolean array */
     private static final int IS_COMPLETE = 0;
-    private static final int ISSET_SIZE = 10;
-    private static final int LOCATION = 2;
-    private static final int PRIORITY = 8;
-    private static final int REMINDER = 7;
-    private static final int STARTDATE = 3;
-    private static final int STATUS = 9;
     private static final int TITLE = 1;
-
+    private static final int LOCATION = 2;
+    private static final int STARTDATE = 3;
+    private static final int ENDDATE = 4;
+    private static final int CATEGORY = 5;
+    private static final int DESCRIPTION = 6;
+    private static final int REMINDER = 7;
+    private static final int PRIORITY = 8;
+    private static final int STATUS = 9;
+    private static final int ISSET_SIZE = 10;
+ 
     /* Variables */
     private String category;
     private String description;
@@ -77,7 +77,6 @@ public class Task {
         this.isSet = new boolean[ISSET_SIZE];
         this.taskType = TaskType.INCOMPLETE;
         this.priority = DEFAULT_PRIORITY;
-        this.isSet[PRIORITY] = true;
     }
 
     /**
@@ -88,15 +87,15 @@ public class Task {
         return this.title.equals(task.getTitle())
                 && (((this.location == null) && (task.location == null)) || this.location
                         .equals(task.location))
-                && (((this.startDate == null) && (task.startDate == null)) || (this.startDate == task.startDate))
-                && (((this.endDate == null) && (task.endDate == null)) || (this.endDate == task.endDate))
-                && (((this.category == null) && (task.category == null)) || this.category
-                        .equals(task.category))
-                && (((this.description == null) && (task.description == null)) || this.description
-                        .equals(task.description))
-                && (((this.reminder == null) && (task.reminder == null)) || (this.reminder == task.reminder))
-                && (this.priority == task.priority)
-                && (this.isDone == task.isDone);
+                        && (((this.startDate == null) && (task.startDate == null)) || (this.startDate == task.startDate))
+                        && (((this.endDate == null) && (task.endDate == null)) || (this.endDate == task.endDate))
+                        && (((this.category == null) && (task.category == null)) || this.category
+                                .equals(task.category))
+                                && (((this.description == null) && (task.description == null)) || this.description
+                                        .equals(task.description))
+                                        && (((this.reminder == null) && (task.reminder == null)) || (this.reminder == task.reminder))
+                                        && (this.priority == task.priority)
+                                        && (this.isDone == task.isDone);
     }
 
     /**
@@ -274,9 +273,11 @@ public class Task {
 
     /**
      * Change incomplete task to complete task
+     * this.task should have a title
+     *
+     * @return true if it is changed to a complete task successfully
      */
-    public void toCompleteTask() {
-        this.isSet[IS_COMPLETE] = true;
+    public boolean toCompleteTask() {
 
         if (this.isSet[LOCATION] && this.location.equals("")) {
             this.location = null;
@@ -308,90 +309,101 @@ public class Task {
         this.isSet[PRIORITY] = true;
         this.isSet[STATUS] = true;
 
-        this.changeTaskType();
+        return this.changeTaskType();
+
     }
 
     /**
-     * Updates the current task and changes it to a complete task
+     * Updates the current task and changes it to a complete task.
+     * this.task should not be an incomplete task.
      *
      * @param incompleteTask
+     * @return true if it updates successfully
      */
-    public void update(Task incompleteTask) {
-        this.isSet[IS_COMPLETE] = true;
+    public boolean update(Task incompleteTask) {
+        if (this.taskType != TaskType.INCOMPLETE) {
 
-        if (incompleteTask.isSet[TITLE] && !incompleteTask.title.equals("")) {
-            this.title = incompleteTask.title;
-        }
-
-        if (incompleteTask.isSet[LOCATION]) {
-            if (incompleteTask.location == "") {
-                this.location = null;
-                this.isSet[LOCATION] = false;
-            } else {
-                this.location = incompleteTask.location;
-                this.isSet[LOCATION] = true;
+            if (incompleteTask.isSet[TITLE] && !incompleteTask.title.equals("")) {
+                this.title = incompleteTask.title;
             }
-        }
 
-        if (incompleteTask.isSet[STARTDATE]) {
-            this.isSet[STARTDATE] = (incompleteTask.startDate == null) ? false
-                    : true;
-            this.startDate = incompleteTask.startDate;
-        }
-
-        if (incompleteTask.isSet[ENDDATE]) {
-            this.isSet[ENDDATE] = (incompleteTask.endDate == null) ? false
-                    : true;
-            this.endDate = incompleteTask.endDate;
-        }
-
-        if (incompleteTask.isSet[CATEGORY]) {
-            if (incompleteTask.category == "") {
-                this.category = null;
-                this.isSet[CATEGORY] = false;
-            } else {
-                this.category = incompleteTask.category;
-                this.isSet[CATEGORY] = true;
+            if (incompleteTask.isSet[LOCATION]) {
+                if (incompleteTask.location == "") {
+                    this.location = null;
+                    this.isSet[LOCATION] = false;
+                } else {
+                    this.location = incompleteTask.location;
+                    this.isSet[LOCATION] = true;
+                }
             }
-        }
 
-        if (incompleteTask.isSet[DESCRIPTION]) {
-            if (incompleteTask.description == "") {
-                this.description = null;
-                this.isSet[DESCRIPTION] = false;
-            } else {
-                this.description = incompleteTask.description;
-                this.isSet[DESCRIPTION] = true;
+            if (incompleteTask.isSet[STARTDATE]) {
+                this.isSet[STARTDATE] = (incompleteTask.startDate == null) ? false
+                        : true;
+                this.startDate = incompleteTask.startDate;
             }
+
+            if (incompleteTask.isSet[ENDDATE]) {
+                this.isSet[ENDDATE] = (incompleteTask.endDate == null) ? false
+                        : true;
+                this.endDate = incompleteTask.endDate;
+            }
+
+            if (incompleteTask.isSet[CATEGORY]) {
+                if (incompleteTask.category == "") {
+                    this.category = null;
+                    this.isSet[CATEGORY] = false;
+                } else {
+                    this.category = incompleteTask.category;
+                    this.isSet[CATEGORY] = true;
+                }
+            }
+
+            if (incompleteTask.isSet[DESCRIPTION]) {
+                if (incompleteTask.description == "") {
+                    this.description = null;
+                    this.isSet[DESCRIPTION] = false;
+                } else {
+                    this.description = incompleteTask.description;
+                    this.isSet[DESCRIPTION] = true;
+                }
+            }
+
+            if (incompleteTask.isSet[REMINDER]) {
+                this.isSet[REMINDER] = (incompleteTask.reminder == null) ? false
+                        : true;
+                this.reminder = incompleteTask.reminder;
+            }
+
+            if (incompleteTask.isSet[PRIORITY]) {
+                this.priority = incompleteTask.priority;
+            }
+            this.isSet[PRIORITY] = true;
+
+            if (incompleteTask.isSet[STATUS]) {
+                this.isDone = incompleteTask.isDone;
+            }
+            this.isSet[STATUS] = true;
+
+            this.changeTaskType();
+
+            this.statementHistory.addLast(incompleteTask.statementHistory
+                    .getLast());
+            return true;
+        } else {
+            return false;
         }
-
-        if (incompleteTask.isSet[REMINDER]) {
-            this.isSet[REMINDER] = (incompleteTask.reminder == null) ? false
-                    : true;
-            this.reminder = incompleteTask.reminder;
-        }
-
-        if (incompleteTask.isSet[PRIORITY]) {
-            this.priority = incompleteTask.priority;
-        }
-        this.isSet[PRIORITY] = true;
-
-        if (incompleteTask.isSet[STATUS]) {
-            this.isDone = incompleteTask.isDone;
-        }
-        this.isSet[STATUS] = true;
-
-        this.changeTaskType();
-
-        this.statementHistory
-                .addLast(incompleteTask.statementHistory.getLast());
     }
 
     /**
-     * Change Task Type (deadline/floating/timed)
+     * Change Task Type (incomplete/deadline/floating/timed)
      */
-    private void changeTaskType() {
-        if (!this.isSet[ENDDATE]) {
+    private boolean changeTaskType() {
+        if (!this.isSet[TITLE] || (this.title == null) || this.title.equals("")) {
+            this.taskType = TaskType.INCOMPLETE;
+            this.isSet[IS_COMPLETE] = false;
+            return false;
+        } else if (!this.isSet[ENDDATE]) {
             this.startDate = null;
             this.isSet[STARTDATE] = false;
             this.taskType = TaskType.FLOATING;
@@ -400,6 +412,8 @@ public class Task {
         } else {
             this.taskType = TaskType.TIMED;
         }
+        this.isSet[IS_COMPLETE] = true;
+        return true;
     }
 
 }
