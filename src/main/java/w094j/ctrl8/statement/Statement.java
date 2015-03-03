@@ -61,6 +61,9 @@ public abstract class Statement {
             case ALIAS :
                 statement = new AliasStatement(statementString);
                 break;
+            case DONE :
+                statement = new DoneStatement(statementString);
+                break;
             case EXIT :
                 statement = new ExitStatement(statementString);
                 break;
