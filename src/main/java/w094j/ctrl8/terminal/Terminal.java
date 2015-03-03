@@ -14,6 +14,7 @@ import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
@@ -79,9 +80,9 @@ public class Terminal implements ITerminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-         * TODO replace with proper
-         * configuration
-         */
+                                          * TODO replace with proper
+                                          * configuration
+                                          */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -290,6 +291,9 @@ public class Terminal implements ITerminal {
                 this.display.outputMessage(e.getMessage());
             } catch (CommandExecuteException e) {
                 this.display.outputMessage(e.getMessage());
+            } catch (ParameterParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
 
         }

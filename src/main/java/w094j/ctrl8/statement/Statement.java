@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
@@ -38,10 +39,12 @@ public abstract class Statement {
      * @param statementString
      *            a statement string to work on
      * @return the Statement object.
+     * @throws ParameterParseException
      * @throws InvalidParameterException
      *             when command is not well formed.
      */
-    public static Statement parse(String statementString) {
+    public static Statement parse(String statementString)
+            throws ParameterParseException {
         Command command = Command.parse(statementString);
         Statement statement = null;
         if (command == null) {

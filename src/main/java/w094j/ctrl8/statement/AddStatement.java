@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
 import w094j.ctrl8.statement.parameter.ParameterSymbol;
@@ -42,13 +43,17 @@ public class AddStatement extends Statement {
      * @exception InvalidParameterException
      *                if the parameters does not exist.
      */
-    public AddStatement(String statementString) {
+    public AddStatement(String statementString) throws ParameterParseException {
         super(Command.ADD, statementString);
         this.task = new Task();
         ParameterContainer container = ParameterSymbol.parse(statementString);
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
         this.task.toCompleteTask();
+        if (this.task.getTaskType() == Task.TaskType.INCOMPLETE) {
+            throw new ParameterParseException(
+                    "Task added must be a Complete tasks of the 3 types.");
+        }
         logger.debug("Valid add Command, parsed \"" + statementString
                 + "\": task=" + new Gson().toJson(this.task));
     }
