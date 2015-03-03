@@ -73,7 +73,9 @@ public abstract class Statement {
             case HELP :
                 statement = new HelpStatement(statementString);
                 break;
-
+            case DELETE :
+                statement = new DeleteStatement(statementString);
+                break;
             default :
                 // should never reach here
                 assert (false);
