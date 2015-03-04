@@ -80,9 +80,9 @@ public class Terminal implements ITerminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-                                          * TODO replace with proper
-                                          * configuration
-                                          */
+         * TODO replace with proper
+         * configuration
+         */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -292,8 +292,7 @@ public class Terminal implements ITerminal {
             } catch (CommandExecuteException e) {
                 this.display.outputMessage(e.getMessage());
             } catch (ParameterParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                this.display.outputMessage(e.getMessage());
             }
 
         }
