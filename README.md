@@ -44,8 +44,8 @@ you may share your calender with friends and sync across all of your devices.
   * For floating tasks/deadlines, adding to Google Task
 
 #### Currently in test
-#51 @ericvader Terminal
-#57 @rodsonchue Command
-#71 @imchenchen1994 Parameter
-#72 @chenhsin ParameterDatePayload
-#73 @chenhisn PriorityParameter
+ * #51 @ericvader Terminal
+ * #57 @rodsonchue Command
+ * #71 @imchenchen1994 Parameter
+ * #72 @chenhsin ParameterDatePayload
+ * #73 @chenhisn PriorityParameter
