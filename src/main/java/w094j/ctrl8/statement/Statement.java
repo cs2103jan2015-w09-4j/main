@@ -70,6 +70,12 @@ public abstract class Statement {
             case HISTORY :
                 statement = new HistoryStatement(statementString);
                 break;
+            case HISTORY_CLEAR :
+                statement = new HistoryClearStatement(statementString);
+                break;
+            case HISTORY_UNDO :
+                statement = new HistoryUndoStatement(statementString);
+                break;
             case MODIFY :
                 statement = new ModifyStatement(statementString);
                 break;
