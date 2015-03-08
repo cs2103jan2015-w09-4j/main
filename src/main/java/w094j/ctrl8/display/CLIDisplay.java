@@ -209,6 +209,10 @@ public class CLIDisplay implements Display {
                     printTableWithBorder(HelpMessage.ALIAS_DELETE_INDEX,
                             HelpMessage.ALIAS_DELETE_INDEX, HelpMessage.TABLE);
                     break;
+                case DELETE :
+                    printTableWithBorder(HelpMessage.DELETE_INDEX,
+                            HelpMessage.DELETE_INDEX, HelpMessage.TABLE);
+                    break;
                 case DONE :
                     printTableWithBorder(HelpMessage.DONE_INDEX,
                             HelpMessage.DONE_INDEX, HelpMessage.TABLE);
@@ -233,14 +237,15 @@ public class CLIDisplay implements Display {
                     printTableWithBorder(HelpMessage.MODIFY_INDEX,
                             HelpMessage.MODIFY_INDEX, HelpMessage.TABLE);
                     break;
+                case SEARCH :
+                    printTableWithBorder(HelpMessage.SEARCH_INDEX,
+                            HelpMessage.SEARCH_INDEX, HelpMessage.TABLE);
+                    break;
                 case VIEW :
                     printTableWithBorder(HelpMessage.VIEW_INDEX,
                             HelpMessage.VIEW_INDEX, HelpMessage.TABLE);
                     break;
-                case DELETE :
-                    printTableWithBorder(HelpMessage.DELETE_INDEX,
-                            HelpMessage.DELETE_INDEX, HelpMessage.TABLE);
-                    break;
+
                 default :
                     assert (false);
 
