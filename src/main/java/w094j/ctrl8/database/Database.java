@@ -23,7 +23,7 @@ import com.google.gson.GsonBuilder;
 
 //@author A0112521B
 
-public class Database {
+public class Database implements IDatabase {
 
     private static final String DEFAULT_FILE_NAME = "database.txt";
     private DBfile file;
@@ -42,7 +42,7 @@ public class Database {
      * @throws NoSuchFileException
      */
     public Database(String filePathString) throws IOException,
-            NoSuchFileException {
+    NoSuchFileException {
 
         if (filePathString.equals("")) {
             filePathString = DEFAULT_FILE_NAME;
@@ -92,6 +92,7 @@ public class Database {
      * @param title
      * @return true if taskTitle is in taskList
      */
+    @Override
     public boolean containsTaskTitle(String title) {
         for (Task i : this.file.getTaskList()) {
             if (i.getTitle().equals(title)) {
@@ -106,18 +107,22 @@ public class Database {
      *
      * @param task
      */
-    public void deleteTask(Task task) {
+    @Override
+    public boolean deleteTask(Task task) {
         for (int i = 0; i < this.file.getTaskList().size(); i++) {
             if (this.file.getTaskList().get(i).equals(task)) {
                 this.file.getTaskList().remove(i);
-                break;
+                this.save();
+                return true;
             }
         }
+        return false;
     }
 
     /**
      * @return config
      */
+    @Override
     public Config getConfig() {
         return this.file.getConfig();
     }
@@ -125,10 +130,12 @@ public class Database {
     /**
      * @return taskList
      */
+    @Override
     public List<Task> getTaskList() {
         return this.file.getTaskList();
     }
 
+    @Override
     public void pushToGoogleCal() {
         /*
          * TODO: Find out how to interact with Google Calendar API. Implement
@@ -139,6 +146,7 @@ public class Database {
     /**
      * Save and write file.
      */
+    @Override
     public void save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(this.file);
@@ -154,6 +162,7 @@ public class Database {
      *
      * @param newTask
      */
+    @Override
     public void saveTask(Task newTask) {
         this.file.getTaskList().add(newTask);
         this.save();

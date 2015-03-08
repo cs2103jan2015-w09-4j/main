@@ -1,6 +1,7 @@
 package w094j.ctrl8.display;
 
 import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.Command;
 
 /**
  * Class implements Display Interface as a simple CLI with additional GUI
@@ -18,6 +19,12 @@ public class GUIDisplay implements Display {
     public String getUserInput() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void outputHelpMessage(Command command) {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
