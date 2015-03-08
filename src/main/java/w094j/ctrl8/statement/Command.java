@@ -64,7 +64,7 @@ public enum Command {
      */
     EXIT("exit"),
     /**
-     * Help command to help the user with the commands and its syntax.
+     * Displays the command syntax and example.
      */
     HELP("help"),
     /**
