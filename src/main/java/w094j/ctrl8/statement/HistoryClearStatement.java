@@ -26,7 +26,9 @@ public class HistoryClearStatement extends StatementOnePosInt {
 
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.historyClear(this.query);
+        // TODO Link to Terminal
+        //terminal.historyClear(this.query);
+        logger.debug("historyClear not implemented yet.");
     }
 
 }

@@ -61,6 +61,12 @@ public abstract class Statement {
             case ALIAS :
                 statement = new AliasStatement(statementString);
                 break;
+            case ALIAS_ADD :
+                statement = new AliasAddStatement(statementString);
+                break;
+            case ALIAS_DELETE :
+                statement = new AliasDeleteStatement(statementString);
+                break;
             case DONE :
                 statement = new DoneStatement(statementString);
                 break;

@@ -26,6 +26,8 @@ public class HistoryUndoStatement extends StatementOnePosInt {
 
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.historyUndo(this.query);
+        // TODO Link to Terminal
+        //terminal.historyUndo(this.query);
+        logger.debug("historyUndo not implemented yet.");
     }
 }
