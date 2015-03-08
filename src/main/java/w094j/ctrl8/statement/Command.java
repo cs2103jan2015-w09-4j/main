@@ -21,12 +21,13 @@ import org.slf4j.LoggerFactory;
  * 5. delete
  * 6. done
  * 7. exit
- * 8. history
- * 9. history-clear
- * 10. history-undo
- * 11. modify
- * 12. search
- * 13. view
+ * 8. help
+ * 9. history
+ * 10. history-clear
+ * 11. history-undo
+ * 12. modify
+ * 13. search
+ * 14. view
  * </pre>
  *
  * @author Han Liang Wee Eric(A0065517A)
