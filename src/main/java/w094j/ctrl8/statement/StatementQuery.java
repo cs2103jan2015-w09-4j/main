@@ -6,7 +6,9 @@ import java.security.InvalidParameterException;
  * Abstract Class to encapsulate a statement which has parameters.
  */
 
+//@formatter:off
 //@author A0112521B
+//@formatter:on
 
 public abstract class StatementQuery extends Statement {
 

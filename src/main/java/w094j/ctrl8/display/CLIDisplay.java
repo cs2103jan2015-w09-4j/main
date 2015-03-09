@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
+import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.Command;
 
 /**
  * Class implements Display Interface as a simple CLI How to use: To get
@@ -23,8 +25,8 @@ import w094j.ctrl8.pojo.Task;
 
 // @author A0112092W
 public class CLIDisplay implements Display {
-    private BufferedReader br;
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
+    private BufferedReader br;
 
     // @author A0110787A
     private String lastMessage;
@@ -40,7 +42,7 @@ public class CLIDisplay implements Display {
     /**
      * This method is used to print a table with format of following the format
      * of right justified table x xxx yyy y zz zz
-     * 
+     *
      * @param table
      */
     private static void printTable(String[][] table) {
@@ -73,6 +75,93 @@ public class CLIDisplay implements Display {
         }
     }
 
+    /**
+     * This method is used to print the help table. (modified from printTable)
+     */
+    // @author A0112521B
+    private static void printTableWithBorder(int startIndex, int endIndex,
+            String[][] table) {
+        char borderKnot = '+';
+        char horizontalBorder = '-';
+        char verticalBorder = '|';
+        int spaceInfront = 1;
+        int spaceBehind = 2;
+
+        // Find out what the maximum number of columns is in any row
+        int maxColumns = 0;
+        for (String[] element : table) {
+            maxColumns = Math.max(element.length, maxColumns);
+        }
+
+        // Find the maximum length of a string in each column
+        int[] lengths = new int[maxColumns];
+        for (int j = 0; j < maxColumns; j++) {
+            lengths[j] = Math.max(table[0][j].length(), lengths[j]);
+        }
+        for (int i = startIndex; i <= endIndex; i++) {
+            for (int j = 0; j < maxColumns; j++) {
+                lengths[j] = Math.max(table[i][j].length(), lengths[j]);
+            }
+        }
+
+        for (int j = 0; j < maxColumns; j++) {
+            lengths[j] += spaceBehind;
+        }
+
+        // Print header
+        for (int i = 0; i < maxColumns; i++) {
+            System.out.print(borderKnot);
+            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
+                System.out.print(horizontalBorder);
+            }
+        }
+        System.out.println(borderKnot);
+        for (int i = 0; i < maxColumns; i++) {
+            System.out.print(verticalBorder);
+            for (int k = 0; k < spaceInfront; k++) {
+                System.out.print(" ");
+            }
+            System.out.print(table[0][i]);
+            for (int j = 0; j < (lengths[i] - table[0][i].length()); j++) {
+                System.out.print(" ");
+            }
+        }
+        System.out.println(verticalBorder);
+        for (int i = 0; i < maxColumns; i++) {
+            System.out.print(borderKnot);
+            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
+                System.out.print(horizontalBorder);
+            }
+        }
+        System.out.println(borderKnot);
+
+        // Print content (from startIndex to endIndex)
+
+        for (int i = startIndex; i <= endIndex; i++) {
+            System.out.print(verticalBorder);
+            for (int j = 0; j < maxColumns; j++) {
+                for (int k = 0; k < spaceInfront; k++) {
+                    System.out.print(" ");
+                }
+                System.out.print(table[i][j]);
+                for (int k = 0; k < (lengths[j] - table[i][j].length()); k++) {
+                    System.out.print(" ");
+                }
+                System.out.print(verticalBorder);
+            }
+            System.out.println("");
+
+        }
+        for (int i = 0; i < maxColumns; i++) {
+            System.out.print(borderKnot);
+            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
+                System.out.print(horizontalBorder);
+            }
+        }
+        System.out.println(borderKnot);
+
+    }
+
     // @author A0110787A
     /*
      * For testing purposes. Facilitates JUnit testing of individual modules
@@ -96,6 +185,75 @@ public class CLIDisplay implements Display {
         return nextLine;
     }
 
+    // @author A0112521B
+    @Override
+    public void outputHelpMessage(Command command) {
+        if ((command == null) || (command == Command.HELP)) {
+            printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
+        } else {
+
+            switch (command) {
+                case ADD :
+                    printTableWithBorder(HelpMessage.ADD_START_INDEX,
+                            HelpMessage.ADD_END_INDEX, HelpMessage.TABLE);
+                    break;
+                case ALIAS :
+                    printTableWithBorder(HelpMessage.ALIAS_INDEX,
+                            HelpMessage.ALIAS_INDEX, HelpMessage.TABLE);
+                    break;
+                case ALIAS_ADD :
+                    printTableWithBorder(HelpMessage.ALIAS_ADD_INDEX,
+                            HelpMessage.ALIAS_ADD_INDEX, HelpMessage.TABLE);
+                    break;
+                case ALIAS_DELETE :
+                    printTableWithBorder(HelpMessage.ALIAS_DELETE_INDEX,
+                            HelpMessage.ALIAS_DELETE_INDEX, HelpMessage.TABLE);
+                    break;
+                case DELETE :
+                    printTableWithBorder(HelpMessage.DELETE_INDEX,
+                            HelpMessage.DELETE_INDEX, HelpMessage.TABLE);
+                    break;
+                case DONE :
+                    printTableWithBorder(HelpMessage.DONE_INDEX,
+                            HelpMessage.DONE_INDEX, HelpMessage.TABLE);
+                    break;
+                case EXIT :
+                    printTableWithBorder(HelpMessage.EXIT_INDEX,
+                            HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
+                    break;
+                case HISTORY :
+                    printTableWithBorder(HelpMessage.HISTORY_INDEX,
+                            HelpMessage.HISTORY_INDEX, HelpMessage.TABLE);
+                    break;
+                case HISTORY_CLEAR :
+                    printTableWithBorder(HelpMessage.HISTORY_CLEAR_INDEX,
+                            HelpMessage.HISTORY_CLEAR_INDEX, HelpMessage.TABLE);
+                    break;
+                case HISTORY_UNDO :
+                    printTableWithBorder(HelpMessage.HISTORY_UNDO_INDEX,
+                            HelpMessage.HISTORY_UNDO_INDEX, HelpMessage.TABLE);
+                    break;
+                case MODIFY :
+                    printTableWithBorder(HelpMessage.MODIFY_INDEX,
+                            HelpMessage.MODIFY_INDEX, HelpMessage.TABLE);
+                    break;
+                case SEARCH :
+                    printTableWithBorder(HelpMessage.SEARCH_INDEX,
+                            HelpMessage.SEARCH_INDEX, HelpMessage.TABLE);
+                    break;
+                case VIEW :
+                    printTableWithBorder(HelpMessage.VIEW_INDEX,
+                            HelpMessage.VIEW_INDEX, HelpMessage.TABLE);
+                    break;
+
+                default :
+                    assert (false);
+
+            }
+        }
+
+    }
+
     @Override
     public void outputMessage(String message) {
         // @author A0110787A
@@ -110,7 +268,7 @@ public class CLIDisplay implements Display {
 
     /**
      * This method is used to output the task for the user in certain format.
-     * 
+     *
      * @param taskList
      * @throws OutputExecuteException
      */
@@ -120,7 +278,7 @@ public class CLIDisplay implements Display {
                 MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
         int iteration = taskList.length + 1;
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        table = initNullTaskTable(table, 1);
+        table = this.initNullTaskTable(table, 1);
 
         for (int i = 1; i < iteration; i++) {
             // task should be not null

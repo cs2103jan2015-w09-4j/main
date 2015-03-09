@@ -7,8 +7,7 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
-
-public class DoneStatement extends StatementQuery {
+public class AliasDeleteStatement extends StatementQuery {
 
     private static Logger logger = LoggerFactory.getLogger(DoneStatement.class);
     private String query;
@@ -16,17 +15,19 @@ public class DoneStatement extends StatementQuery {
     /**
      * @param statementString
      */
-    public DoneStatement(String statementString) {
-        super(Command.DONE, statementString);
+    public AliasDeleteStatement(String statementString) {
+        super(Command.ALIAS_DELETE, statementString);
         this.query = this.getArgumentsString();
-        logger.debug("Valid done Command, query \"" + statementString + "\"");
+        logger.debug("Valid alias-delete Command, query \"" + statementString
+                + "\"");
     }
 
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
         // TODO Link to Terminal
-        //terminal.done(this.query);
-        logger.debug("done not implemented yet.");
+        //terminal.aliasDelete(this.query);
+        logger.debug("aliasDelete not implemented yet.");
+
     }
 
 }
