@@ -299,6 +299,11 @@ public class Terminal implements ITerminal {
         }
     }
 
+    public void search(String query, Task task) {
+        // TODO task is the temporary filter, we need to come up with a specific
+        // filter object
+    }
+
     /**
      * Part of CRUD: Display. View all the task and their information in table
      * format display

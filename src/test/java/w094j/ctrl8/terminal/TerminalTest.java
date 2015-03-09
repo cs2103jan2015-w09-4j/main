@@ -78,7 +78,7 @@ public class TerminalTest {
         this.expected = NormalMessage.HELP_ALL;
 
         // Function to test
-        this.testTerminal.help();
+// this.testTerminal.help(command);
 
         // Output from terminal
         this.output = this.display.getLastMessage();

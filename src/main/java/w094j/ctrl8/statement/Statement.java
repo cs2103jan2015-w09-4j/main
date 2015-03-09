@@ -94,6 +94,9 @@ public abstract class Statement {
             case DELETE :
                 statement = new DeleteStatement(statementString);
                 break;
+            case SEARCH :
+                statement = new SearchStatement(statementString);
+                break;
             default :
                 // should never reach here
                 assert (false);
