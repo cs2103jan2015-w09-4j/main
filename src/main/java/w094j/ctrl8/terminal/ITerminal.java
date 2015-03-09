@@ -2,6 +2,7 @@ package w094j.ctrl8.terminal;
 
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.Command;
 
 public interface ITerminal {
 
@@ -45,7 +46,7 @@ public interface ITerminal {
      * Generates information to assist the user in understanding the available
      * syntax and displays it.
      */
-    public void help(); // TODO add parameter to support help for specific
+    public void help(Command command); // TODO add parameter to support help for specific
 // commands
 
     /**

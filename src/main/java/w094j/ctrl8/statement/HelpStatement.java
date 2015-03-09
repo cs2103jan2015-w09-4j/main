@@ -6,20 +6,26 @@ import w094j.ctrl8.terminal.Terminal;
 
 /**
  */
-public class HelpStatement extends StatementNoParams {
+public class HelpStatement extends Statement {
 
     /**
      * Creates a new help Statement.
      *
      * @param statementString
      */
+    Command command;
+
+    /**
+     * @param statementString
+     */
     public HelpStatement(String statementString) {
         super(Command.HELP, statementString);
+        this.command = Command.parse(this.getArgumentsString());
     }
 
     @Override
     public void execute(Terminal terminal) {
-        terminal.help();
+        terminal.help(this.command);
     }
 
 }
