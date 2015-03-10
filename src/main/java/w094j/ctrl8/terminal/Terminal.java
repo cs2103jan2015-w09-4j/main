@@ -36,6 +36,7 @@ public class Terminal implements ITerminal {
     // Static constants
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
+    private static boolean continueExecution = true;
 
     // Storage object (External)
     Database database;
@@ -425,5 +426,16 @@ public class Terminal implements ITerminal {
                     + " with " + new Gson().toJson(task));
         }
 
+    }
+
+    /**
+     * This method return the caller a boolean whether this terminal should
+     * continue to be executed.
+     * 
+     * @return continueExecution
+     */
+    public boolean getContinueExecution() {
+
+        return this.continueExecution;
     }
 }

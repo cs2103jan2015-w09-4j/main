@@ -165,7 +165,7 @@ public class Start {
             } catch (ParameterParseException e) {
                 display.outputMessage(e.getMessage());
             }
-
+            continueExecution = terminal.getContinueExecution();
         }
     }
 
