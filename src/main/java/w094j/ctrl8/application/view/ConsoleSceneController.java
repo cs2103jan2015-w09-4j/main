@@ -33,17 +33,22 @@ public class ConsoleSceneController {
 		this.displayBuffer = "";
 
 		// Initialise text display
-		this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 14;"); // Black
-																				// text
-																				// size
-																				// 14
+		this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 14;"); /*
+																				 * Black
+																				 * text
+																				 * size
+																				 * 14
+																				 */
+		this.textDisplay.setWrapText(true); // wraps display
 		this.textDisplay.setText(this.displayBuffer);
 
 		// Initialise text input
-		this.textInput.setStyle("-fx-text-fill: black; -fx-font-size: 20;"); // Black
-																				// text
-																				// size
-																				// 20
+		this.textInput.setStyle("-fx-text-fill: black; -fx-font-size: 20;"); /*
+																			 * Black
+																			 * text
+																			 * size
+																			 * 20
+																			 */
 		this.textInput.setAlignment(Pos.TOP_LEFT); // Align top left
 	}
 
