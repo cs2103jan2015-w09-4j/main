@@ -46,7 +46,8 @@ public interface ITerminal {
      * Generates information to assist the user in understanding the available
      * syntax and displays it.
      */
-    public void help(Command command); // TODO add parameter to support help for specific
+    public void help(Command command); // TODO add parameter to support help for
+// specific
 // commands
 
     /**
@@ -78,11 +79,6 @@ public interface ITerminal {
      * termination.
      */
     public void pushData();
-
-    /**
-     * Begins the REPL process of the terminal.
-     */
-    public void runTerminal();
 
     /**
      * <pre>
