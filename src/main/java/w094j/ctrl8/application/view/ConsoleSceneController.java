@@ -2,6 +2,8 @@ package w094j.ctrl8.application.view;
 
 import java.security.InvalidParameterException;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextArea;
@@ -18,12 +20,12 @@ import w094j.ctrl8.statement.Statement;
 public class ConsoleSceneController {
     private static final String __newline = "\n";
 
-    private static Logger logger = LoggerFactory
-            .getLogger(ConsoleSceneController.class);
-
     private String displayBuffer; // Buffer for the display
 
     private String lastTextInput;
+
+    private Logger logger = LoggerFactory
+            .getLogger(ConsoleSceneController.class);
     private GUICore root; // Pointer back to the root
 
     @FXML
@@ -42,7 +44,7 @@ public class ConsoleSceneController {
      */
     public void appendToDisplay(String input) {
         this.displayBuffer += input + __newline;
-        this.textDisplay.setText(displayBuffer);
+        this.textDisplay.appendText(input + __newline);
     }
 
     public String getTextInput() {
@@ -91,6 +93,7 @@ public class ConsoleSceneController {
 
         // Update displayed text
         this.textDisplay.setText(displayBuffer);
+        this.textDisplay.appendText(""); // Activates listener
     }
 
     @FXML
@@ -99,14 +102,28 @@ public class ConsoleSceneController {
         this.displayBuffer = "";
 
         // Initialise text display
-        this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 14;"); /*
+        this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 12;"); /*
                                                                                 * Black
                                                                                 * text
                                                                                 * size
-                                                                                * 14
+                                                                                * 12
                                                                                 */
         this.textDisplay.setWrapText(true); // wraps display
-        this.textDisplay.setText(this.displayBuffer);
+
+        /*
+         * Add a listener that auto-scrolls the display to the bottom whenever
+         * there are new strings appended
+         */
+        this.textDisplay.textProperty().addListener(
+                new ChangeListener<Object>() {
+                    @Override
+                    public void changed(ObservableValue<?> observable,
+                            Object oldValue, Object newValue) {
+                        textDisplay.setScrollTop(Double.MAX_VALUE);
+                    }
+                });
+
+        this.textDisplay.appendText(this.displayBuffer);
 
         // Initialise text input
         this.textInput.setStyle("-fx-text-fill: black; -fx-font-size: 20;"); /*
