@@ -81,9 +81,9 @@ public class Terminal implements ITerminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-         * TODO replace with proper
-         * configuration
-         */
+                                          * TODO replace with proper
+                                          * configuration
+                                          */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -382,7 +382,7 @@ public class Terminal implements ITerminal {
      * Displays an output message requesting for the next user input. This may
      * be empty if the UI does not require such.
      */
-    private void displayNextCommandRequest() {
+    public void displayNextCommandRequest() {
         this.display.outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
     }
 

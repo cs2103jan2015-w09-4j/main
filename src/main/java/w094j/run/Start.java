@@ -1,5 +1,7 @@
 package w094j.run;
 
+import java.security.InvalidParameterException;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -11,10 +13,13 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
+import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OptionsConstants;
 import w094j.ctrl8.pojo.Config;
+import w094j.ctrl8.statement.Statement;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
@@ -27,9 +32,6 @@ public class Start {
     /**
      * Runs the Task Manager with the file path to extract the data from the
      * file.
-     * 
-     * @param args
-     *            TODO
      */
 
     // create the logger
@@ -39,6 +41,10 @@ public class Start {
     // create the Options
     private static Options optionList;
 
+    /**
+     * @param args
+     *            TODO
+     */
     public static void main(String[] args) {
         logger.info(NormalMessage.START_MESSAGE);
         // add all existing Options
@@ -46,9 +52,10 @@ public class Start {
         addOptions();
         Display display = new CLIDisplay();
         Terminal terminal;
+        Database database;
 
         if (checkArgs(args)) {
-            parseArgs(args);
+            database = parseArgs(args);
             terminal = new Terminal(Config.parseArgs(args), display);
         } else {
             // Default database and terminal will be created if no file path
@@ -57,7 +64,7 @@ public class Start {
             terminal = new Terminal(display);
         }
         logger.info(NormalMessage.WELCOME_MESSAGE);
-        terminal.runTerminal();
+        runTerminal(terminal, display);
     }
 
     // This will add all the existing options
@@ -70,7 +77,7 @@ public class Start {
     }
 
     // This is the parser for the args
-    private static void parseArgs(String[] args) {
+    private static Database parseArgs(String[] args) {
         try {
             // parse the command line arguments
             CommandLine line = parser.parse(optionList, args);
@@ -83,6 +90,7 @@ public class Start {
                     // print the value of filePath
                     logger.info("Opening file at "
                             + line.getOptionValue("filePath"));
+                    return database;
                 } catch (Exception e) {
                     logger.info("Something is wrong with your file");
                     System.exit(1);
@@ -93,17 +101,19 @@ public class Start {
             if (line.hasOption("help")) {
                 printHelp(optionList);
             }
+            return null;
         }
 
         catch (org.apache.commons.cli.ParseException e) {
             logger.info(ErrorMessage.OPTION_NOT_FOUND);
             printHelp(optionList);
         }
+        return null;
 
     }
 
     // check if the args is valid
-    public static boolean checkArgs(String[] args) {
+    private static boolean checkArgs(String[] args) {
 
         if (args.length == 0) {
             return false;
@@ -125,6 +135,25 @@ public class Start {
                         optionList,
                         "For more information please refer to https://github.com/cs2103jan2015-w09-4j/main",
                         true);
+    }
+
+    public static void runTerminal(Terminal terminal, Display display) {
+        boolean continueExecution = true;
+        while (continueExecution) {
+            terminal.displayNextCommandRequest();
+
+            // Passes string to Statement.java to parse into a command
+            try {
+                Statement.parse(display.getUserInput()).execute(terminal);
+            } catch (InvalidParameterException e) {
+                display.outputMessage(e.getMessage());
+            } catch (CommandExecuteException e) {
+                display.outputMessage(e.getMessage());
+            } catch (ParameterParseException e) {
+                display.outputMessage(e.getMessage());
+            }
+
+        }
     }
 
 }
