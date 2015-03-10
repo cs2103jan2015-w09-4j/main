@@ -2,7 +2,6 @@ package w094j.ctrl8.terminal;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +13,11 @@ import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Command;
-import w094j.ctrl8.statement.Statement;
 
 import com.google.gson.Gson;
 
@@ -48,10 +45,6 @@ public class Terminal implements ITerminal {
 
     // Storage object (Internal)
     HashMap<String, Task> taskMap;
-
-    // Flag that determines whether terminal continues to run or not
-    // Default: true
-    private boolean continueExecution = true;
 
     /**
      * Default Constructor for a terminal with no specifications
@@ -273,30 +266,6 @@ public class Terminal implements ITerminal {
     @Override
     public void pushData() {
         this.database.save();
-    }
-
-    /**
-     * The Read-Evaluate-Reply-Loop (REPL) of the program. Continues to parse
-     * user inputs until 'exit' is invoked
-     */
-    @Override
-    public void runTerminal() {
-        this.continueExecution = true;
-        while (this.continueExecution) {
-            this.displayNextCommandRequest();
-
-            // Passes string to Statement.java to parse into a command
-            try {
-                Statement.parse(this.display.getUserInput()).execute(this);
-            } catch (InvalidParameterException e) {
-                this.display.outputMessage(e.getMessage());
-            } catch (CommandExecuteException e) {
-                this.display.outputMessage(e.getMessage());
-            } catch (ParameterParseException e) {
-                this.display.outputMessage(e.getMessage());
-            }
-
-        }
     }
 
     public void search(String query, Task task) {

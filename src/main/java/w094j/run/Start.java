@@ -50,8 +50,13 @@ public class Start {
         // add all existing Options
 
         addOptions();
+
+        // Interface supporting interaction with user
         Display display = new CLIDisplay();
+
+        // The terminal that performs all the actions
         Terminal terminal;
+        // The database for storage
         Database database;
 
         if (checkArgs(args)) {
@@ -61,7 +66,7 @@ public class Start {
             // Default database and terminal will be created if no file path
             // specified.
             logger.info(NormalMessage.NO_FILEPATH_MESSAGE);
-            terminal = new Terminal(display);
+            terminal = new Terminal();
         }
         logger.info(NormalMessage.WELCOME_MESSAGE);
         runTerminal(terminal, display);
@@ -137,7 +142,15 @@ public class Start {
                         true);
     }
 
+    /**
+     * Take in the terminal object and run it to perform actual actions.
+     * 
+     * @param terminal
+     * @param display
+     */
     public static void runTerminal(Terminal terminal, Display display) {
+        // Flag that determines whether terminal continues to run or not
+        // Default: true
         boolean continueExecution = true;
         while (continueExecution) {
             terminal.displayNextCommandRequest();
