@@ -17,33 +17,17 @@ import java.util.List;
  * NULL
  */
 public class Response {
-	/*
-	 * The list of properties(variables) that a response MAY contain
-	 */
-	String reply;
-	List<Task> taskList; // TODO implement a table in GUI to handle**
+    /*
+     * The list of properties(variables) that a response MAY contain
+     */
+    String reply;
+    List<Task> taskList; // TODO implement a table in GUI to handle**
 
-	public String getReply() {
-		return reply;
-	}
-
-	public void setReply(String reply) {
-		this.reply = reply;
-	}
-
-	public List<Task> getTaskList() {
-		return taskList;
-	}
-
-	public void setTaskList(List<Task> taskList) {
-		this.taskList = taskList;
-	}
-
-	/**
-	 * Default constructor. Initializes all properties to be NULL
-	 */
-	public Response() {
-		this.reply = null;
-		this.taskList = null;
-	}
+    /**
+     * Default constructor. Initializes all properties to be NULL
+     */
+    public Response() {
+        this.reply = null;
+        this.taskList = null;
+    }
 }
