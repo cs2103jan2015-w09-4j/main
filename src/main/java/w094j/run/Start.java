@@ -1,6 +1,9 @@
 package w094j.run;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidParameterException;
+import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,6 +22,7 @@ import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OptionsConstants;
 import w094j.ctrl8.pojo.Config;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.statement.Statement;
 import w094j.ctrl8.terminal.Terminal;
 
@@ -147,23 +151,31 @@ public class Start {
      * 
      * @param terminal
      * @param display
+     * @throws IOException
      */
     public static void runTerminal(Terminal terminal, IDisplay display) {
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;
+        Response res = new Response();
+
         while (continueExecution) {
             terminal.displayNextCommandRequest();
-
+            InputStream input = display.getInputStream();
+            String command = new Scanner(input, "UTF-8").useDelimiter("\\A")
+                    .next();
             // Passes string to Statement.java to parse into a command
             try {
-                Statement.parse(display.getUserInput()).execute(terminal);
+                Statement.parse(command).execute(terminal);
             } catch (InvalidParameterException e) {
-                display.outputMessage(e.getMessage());
+                res = new Response(e.getMessage());
+                display.updateUI(res);
             } catch (CommandExecuteException e) {
-                display.outputMessage(e.getMessage());
+                res = new Response(e.getMessage());
+                display.updateUI(res);
             } catch (ParameterParseException e) {
-                display.outputMessage(e.getMessage());
+                res = new Response(e.getMessage());
+                display.updateUI(res);
             }
             continueExecution = terminal.getContinueExecution();
         }
