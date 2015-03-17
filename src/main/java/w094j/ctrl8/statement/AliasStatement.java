@@ -5,10 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.terminal.Terminal;
 
+//@author A0065517A
 /**
  * Alias Statement has no parameters.
- *
- * @author Han Liang Wee, Eric(A0065517A)
  */
 public class AliasStatement extends StatementNoParams {
 

@@ -2,10 +2,9 @@ package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
 
+//@author A0065517A
 /**
  * Abstract Class to encapsulate a statement which has no parameters.
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public abstract class StatementNoParams extends Statement {
 

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
-// @author A0112521B
+//@author A0112521B
 public class AliasAddStatement extends Statement {
     private static Logger logger = LoggerFactory
             .getLogger(AliasAddStatement.class);
@@ -34,7 +34,7 @@ public class AliasAddStatement extends Statement {
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
         // TODO Link to Terminal
-        //terminal.aliasAdd(this.alias, this.phrase);
+        // terminal.aliasAdd(this.alias, this.phrase);
         logger.debug("aliasAdd not implemented yet.");
 
     }

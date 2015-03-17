@@ -7,10 +7,9 @@ import java.util.List;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
+//@author A0065517A
 /**
  * Parameter with a Date payload.
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public abstract class ParameterDatePayload extends Parameter {
 

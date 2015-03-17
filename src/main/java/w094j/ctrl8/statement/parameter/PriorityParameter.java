@@ -4,10 +4,9 @@ import java.security.InvalidParameterException;
 
 import w094j.ctrl8.pojo.Task;
 
+//@author A0065517A
 /**
  * Priority must be a number between 0 and 10. Inclusive of both numbers.
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public class PriorityParameter extends Parameter {
 

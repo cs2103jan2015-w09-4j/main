@@ -1,9 +1,8 @@
 package w094j.ctrl8.exception;
 
+//@author A0065517A
 /**
  * Parse Exception is thrown when there is a problem with Parsing.
- *
- * @author Han Liang Wee, Eric(A0065517A)
  */
 public class ParameterParseException extends Exception {
 

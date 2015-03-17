@@ -7,7 +7,6 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
-
 public class DoneStatement extends StatementQuery {
 
     private static Logger logger = LoggerFactory.getLogger(DoneStatement.class);
@@ -25,7 +24,7 @@ public class DoneStatement extends StatementQuery {
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
         // TODO Link to Terminal
-        //terminal.done(this.query);
+        // terminal.done(this.query);
         logger.debug("done not implemented yet.");
     }
 

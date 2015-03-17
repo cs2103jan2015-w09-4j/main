@@ -7,7 +7,6 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
-
 public class HistoryUndoStatement extends StatementOnePosInt {
 
     private static Logger logger = LoggerFactory
@@ -27,7 +26,7 @@ public class HistoryUndoStatement extends StatementOnePosInt {
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
         // TODO Link to Terminal
-        //terminal.historyUndo(this.query);
+        // terminal.historyUndo(this.query);
         logger.debug("historyUndo not implemented yet.");
     }
 }

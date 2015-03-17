@@ -2,11 +2,10 @@ package w094j.ctrl8.statement.parameter;
 
 import w094j.ctrl8.pojo.Task;
 
+//@author A0065517A
 /**
  * Represents a parameter, its symbol with its payload. This class presents no
  * understanding of the payload.
- *
- * @author Han Liang Wee, Eric(A0065517A)
  */
 public abstract class Parameter {
 
@@ -30,7 +29,7 @@ public abstract class Parameter {
 
     /**
      * Adds the current parameter to the task specified.
-     * 
+     *
      * @param task
      */
     public abstract void add(Task task);

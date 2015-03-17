@@ -2,8 +2,8 @@ package w094j.ctrl8.statement.parameter;
 
 import w094j.ctrl8.pojo.Task;
 
+//@author A0065517A
 /**
- * @author Han Liang Wee Eric(A0065517A)
  */
 public class LocationParameter extends Parameter {
 

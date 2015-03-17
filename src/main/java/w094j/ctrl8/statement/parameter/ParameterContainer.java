@@ -7,11 +7,10 @@ import org.apache.commons.collections4.map.MultiValueMap;
 
 import w094j.ctrl8.pojo.Task;
 
+//@author A0065517A
 /**
  * A Container that handles all the parameters. it will also validates the
  * allowable parameters based on some rules.
- *
- * @author Han Liang Wee, Eric(A0065517A)
  */
 public class ParameterContainer {
 

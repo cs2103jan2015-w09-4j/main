@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//@author A0065517A
 /**
  * Classifies the commands that can be passed in from the user. The list of
  * command accepted are described in this enum:
@@ -29,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * 13. search
  * 14. view
  * </pre>
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public enum Command {
 

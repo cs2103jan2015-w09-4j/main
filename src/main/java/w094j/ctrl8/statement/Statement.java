@@ -9,12 +9,11 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.terminal.Terminal;
 
+//@author A0065517A
 /**
  * Abstract Class to encapsulate a statement, which composes of its command and
  * its parameter(s). The handling of the parameters is to be handled at its
  * subclasses.
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public abstract class Statement {
 

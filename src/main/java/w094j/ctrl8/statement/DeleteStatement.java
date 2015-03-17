@@ -7,7 +7,6 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
-
 public class DeleteStatement extends StatementQuery {
 
     private static Logger logger = LoggerFactory

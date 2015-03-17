@@ -3,7 +3,6 @@ package w094j.ctrl8.statement;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
-
 /**
  */
 public class HelpStatement extends Statement {

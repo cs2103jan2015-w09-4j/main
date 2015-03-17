@@ -2,10 +2,9 @@ package w094j.ctrl8.statement;
 
 import w094j.ctrl8.terminal.Terminal;
 
+//@author A0065517A
 /**
  * Class to encapsulate an exit statement.
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public class ExitStatement extends StatementNoParams {
 

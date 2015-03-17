@@ -1,7 +1,5 @@
 package w094j.ctrl8.statement;
 
-import java.security.InvalidParameterException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +12,10 @@ import w094j.ctrl8.terminal.Terminal;
 
 import com.google.gson.Gson;
 
+//@author A0065517A
 /**
  * Class to encapsulate an add statement. Add statements must be matchable to
  * the following regex: ^add\s[A-Za-z0-9]+$ .
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public class AddStatement extends Statement {
 
@@ -38,10 +35,10 @@ public class AddStatement extends Statement {
      *
      * Each would also have the option to specify a recursion.
      *
-     * @param arguments
+     * @param statementString
      *            the string to be added.
-     * @exception InvalidParameterException
-     *                if the parameters does not exist.
+     * @throws ParameterParseException
+     *             if the parameters does not exist.
      */
     public AddStatement(String statementString) throws ParameterParseException {
         super(Command.ADD, statementString);

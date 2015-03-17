@@ -3,7 +3,6 @@ package w094j.ctrl8.statement;
 import java.security.InvalidParameterException;
 
 //@author A0112521B
-
 /**
  * Abstract Class to encapsulate a statement which has only 1 positive integer
  * parameter.

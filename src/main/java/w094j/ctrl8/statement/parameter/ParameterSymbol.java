@@ -11,10 +11,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//@author A0065517A
 /**
  * Enum to classify the different kinds of parameter symbols.
- *
- * @author Han Liang Wee, Eric(A0065517A)
  */
 public enum ParameterSymbol {
 
@@ -117,9 +116,9 @@ public enum ParameterSymbol {
             String eaParameterPayload = eaParameter.replaceAll(
                     bannedSymbolsRegex, "");
             parameterList
-                    .add(createParameter(
-                            parameterLookup.get(eaParameterSymbol),
-                            eaParameterPayload));
+            .add(createParameter(
+                    parameterLookup.get(eaParameterSymbol),
+                    eaParameterPayload));
         }
 
         ParameterContainer parameterContainer = new ParameterContainer(

@@ -1,15 +1,10 @@
 package w094j.ctrl8.statement;
 
 import java.security.InvalidParameterException;
-
+//@author A0112521B
 /**
  * Abstract Class to encapsulate a statement which has parameters.
  */
-
-//@formatter:off
-//@author A0112521B
-//@formatter:on
-
 public abstract class StatementQuery extends Statement {
 
     /**

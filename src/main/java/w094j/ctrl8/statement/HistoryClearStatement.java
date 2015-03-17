@@ -7,7 +7,6 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
-
 public class HistoryClearStatement extends StatementOnePosInt {
 
     private static Logger logger = LoggerFactory
@@ -27,7 +26,7 @@ public class HistoryClearStatement extends StatementOnePosInt {
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
         // TODO Link to Terminal
-        //terminal.historyClear(this.query);
+        // terminal.historyClear(this.query);
         logger.debug("historyClear not implemented yet.");
     }
 

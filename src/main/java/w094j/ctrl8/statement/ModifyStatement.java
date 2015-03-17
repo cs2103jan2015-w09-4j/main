@@ -15,6 +15,7 @@ import w094j.ctrl8.terminal.Terminal;
 
 import com.google.gson.Gson;
 
+//@author A0065517A
 /**
  * Class to encapsulate a modify statement. Essentially a modify statement is an
  * add statement with a query. The syntax must be in the form:
@@ -22,8 +23,6 @@ import com.google.gson.Gson;
  * <pre>
  * \<modify\> \<query\> \<parameters\>
  * </pre>
- *
- * @author Han Liang Wee Eric(A0065517A)
  */
 public class ModifyStatement extends Statement {
 

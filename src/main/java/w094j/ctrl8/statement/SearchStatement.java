@@ -8,7 +8,6 @@ import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0065517A
-
 /**
  * Represents a Search Statement
  */
