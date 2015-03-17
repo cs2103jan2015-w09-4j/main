@@ -1,7 +1,7 @@
 package w094j.ctrl8.display;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.OutputExecuteException;
-import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Command;
 
@@ -27,6 +27,7 @@ import w094j.ctrl8.statement.Command;
 public class CLIDisplay implements IDisplay {
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
+    private InputStream inStream;
 
     //@author A0110787A
     private String lastMessage;
@@ -174,19 +175,15 @@ public class CLIDisplay implements IDisplay {
 
     //@author A0112092W
     @Override
-    public String getUserInput() {
-        String nextLine = null;
-        try {
-            nextLine = this.br.readLine();
-        } catch (IOException e) {
-            this.outputMessage(ErrorMessage.ERROR_READING_INPUT);
-            return null;
-        }
-        return nextLine;
+    public InputStream getInputStream() {
+
+        return this.inStream;
     }
 
+    /**
+     * @param command
+     */
     //@author A0112521B
-    @Override
     public void outputHelpMessage(Command command) {
         if ((command == null) || (command == Command.HELP)) {
             printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
@@ -254,7 +251,6 @@ public class CLIDisplay implements IDisplay {
 
     }
 
-    @Override
     public void outputMessage(String message) {
         //@author A0110787A
         /*
@@ -272,7 +268,6 @@ public class CLIDisplay implements IDisplay {
      * @param taskList
      * @throws OutputExecuteException
      */
-    @Override
     public void outputTask(Task[] taskList) throws OutputExecuteException {
         String[][] table = this.initTable(taskList.length + 1,
                 MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
@@ -378,6 +373,21 @@ public class CLIDisplay implements IDisplay {
         table[0][9] = "Status";
 
         return table;
+    }
+
+    @Override
+    public void updateUI(Response res) {
+        if (res.reply != null) {
+            outputMessage(res.reply);
+        }
+        if (res.taskList != null) {
+            try {
+                outputTask(res.taskList);
+            } catch (OutputExecuteException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }
