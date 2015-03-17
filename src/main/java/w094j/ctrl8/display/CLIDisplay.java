@@ -23,15 +23,15 @@ import w094j.ctrl8.statement.Command;
  * call CLIDisplay.outputMessage(message)
  */
 
-// @author A0112092W
+//@author A0112092W
 public class CLIDisplay implements IDisplay {
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
 
-    // @author A0110787A
+    //@author A0110787A
     private String lastMessage;
 
-    // @author A0112092W
+    //@author A0112092W
     /**
      * Public constructor for a CLI Display
      */
@@ -78,7 +78,7 @@ public class CLIDisplay implements IDisplay {
     /**
      * This method is used to print the help table. (modified from printTable)
      */
-    // @author A0112521B
+    //@author A0112521B
     private static void printTableWithBorder(int startIndex, int endIndex,
             String[][] table) {
         char borderKnot = '+';
@@ -162,7 +162,7 @@ public class CLIDisplay implements IDisplay {
 
     }
 
-    // @author A0110787A
+    //@author A0110787A
     /*
      * For testing purposes. Facilitates JUnit testing of individual modules
      * using CLIDisplay
@@ -172,7 +172,7 @@ public class CLIDisplay implements IDisplay {
 
     }
 
-    // @author A0112092W
+    //@author A0112092W
     @Override
     public String getUserInput() {
         String nextLine = null;
@@ -185,7 +185,7 @@ public class CLIDisplay implements IDisplay {
         return nextLine;
     }
 
-    // @author A0112521B
+    //@author A0112521B
     @Override
     public void outputHelpMessage(Command command) {
         if ((command == null) || (command == Command.HELP)) {
@@ -256,13 +256,13 @@ public class CLIDisplay implements IDisplay {
 
     @Override
     public void outputMessage(String message) {
-        // @author A0110787A
+        //@author A0110787A
         /*
          * For testing purposes. see getLastMessage()
          */
         this.lastMessage = message;
 
-        // @author A0112092W
+        //@author A0112092W
         System.out.println(message);
     }
 

@@ -1,4 +1,4 @@
-// @author A0110787A
+//@author A0110787A
 package w094j.ctrl8.message;
 
 /**

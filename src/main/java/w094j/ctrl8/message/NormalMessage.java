@@ -15,7 +15,7 @@ public class NormalMessage {
     public static final String DISPLAY_NEXT_COMMAND_REQUEST = "Next command: ";
     public static final String EXIT_COMMAND = "Thank you for using " + APP_NAME;
 
-    // @author A0110787A
+    //@author A0110787A
     public static final String HELP_ADD_COMMAND_SYNTAX = "add ={<title>}";
     public static final String HELP_ALL = NormalMessage.HELP_HEADER
             + NormalMessage.HELP_ADD_COMMAND_SYNTAX + "\n"
@@ -31,7 +31,7 @@ public class NormalMessage {
     public static final String NO_FILEPATH_MESSAGE = "No filepath entered. Using default filepath.";
     public static final String NO_TASK_FOUND = "No Tasks found.";
 
-    // @author A0112092W
+    //@author A0112092W
     public static final String START_MESSAGE = "Starting Ctrl-8...";
     public static final String WELCOME_MESSAGE = "Welcome for using Ctrl-8!";
 
