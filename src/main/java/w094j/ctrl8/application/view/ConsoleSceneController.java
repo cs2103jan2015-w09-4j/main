@@ -1,6 +1,7 @@
 package w094j.ctrl8.application.view;
 
-import java.security.InvalidParameterException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,16 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.application.GUICore;
-import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.ParameterParseException;
-import w094j.ctrl8.statement.Statement;
 
 public class ConsoleSceneController {
     private static final String __newline = "\n";
 
     private String displayBuffer; // Buffer for the display
-
-    private String lastTextInput;
+    private InputStream inStream;
 
     private Logger logger = LoggerFactory
             .getLogger(ConsoleSceneController.class);
@@ -47,8 +44,8 @@ public class ConsoleSceneController {
         this.textDisplay.appendText(input + __newline);
     }
 
-    public String getTextInput() {
-        return this.lastTextInput;
+    public InputStream getInputStream() {
+        return this.inStream;
     }
 
     /**
@@ -62,22 +59,21 @@ public class ConsoleSceneController {
 
         this.logger.debug("Received user string: " + input);
 
-        try {
-            Statement.parse(input).execute(this.root.terminal);
-        } catch (InvalidParameterException e) {
-            this.logger.debug("InvalidParameterException thrown");
-            appendToDisplay(e.getMessage());
-        } catch (CommandExecuteException e) {
-            this.logger.debug("CommandExecuteException thrown");
-            appendToDisplay(e.getMessage());
-        } catch (ParameterParseException e) {
-            this.logger.debug("ParameterParseException thrown");
-            appendToDisplay(e.getMessage());
-        }
+        this.inStream = new ByteArrayInputStream(input.getBytes());
 
-        appendToDisplay(input);
-        this.lastTextInput = this.textInput.toString();
-        this.textInput.setText(""); // clears the buffer
+        // @Deprecated because the main role is simply to put it on the stream
+        /*
+         * try { Statement.parse(input).execute(this.root.terminal); } catch
+         * (InvalidParameterException e) {
+         * this.logger.debug("InvalidParameterException thrown");
+         * appendToDisplay(e.getMessage()); } catch (CommandExecuteException e)
+         * { this.logger.debug("CommandExecuteException thrown");
+         * appendToDisplay(e.getMessage()); } catch (ParameterParseException e)
+         * { this.logger.debug("ParameterParseException thrown");
+         * appendToDisplay(e.getMessage()); } appendToDisplay(input);
+         * this.lastTextInput = this.textInput.toString();
+         * this.textInput.setText(""); // clears the buffer
+         */
     }
 
     /**
@@ -92,14 +88,14 @@ public class ConsoleSceneController {
         this.displayBuffer = this.root.getConsoleInitString();
 
         // Update displayed text
-        this.textDisplay.setText(displayBuffer);
-        this.textDisplay.appendText(""); // Activates listener
+        this.textDisplay.setText(new String()); // Flushes the display
+        this.textDisplay.appendText(displayBuffer); // Activates listener
     }
 
     @FXML
     private void initialize() {
-        // Initialise buffer to be empty string
-        this.displayBuffer = "";
+        // Creates an InputStream that is initially empty
+        this.inStream = new ByteArrayInputStream(new String().getBytes());
 
         // Initialise text display
         this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 12;"); /*
@@ -123,6 +119,8 @@ public class ConsoleSceneController {
                     }
                 });
 
+        // Initialise buffer to be empty string
+        this.displayBuffer = "";
         this.textDisplay.appendText(this.displayBuffer);
 
         // Initialise text input

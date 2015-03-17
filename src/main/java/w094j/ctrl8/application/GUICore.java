@@ -1,6 +1,7 @@
 package w094j.ctrl8.application;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javafx.application.Application;
@@ -16,15 +17,16 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.application.view.ConsoleSceneController;
 import w094j.ctrl8.application.view.LocalResource;
 import w094j.ctrl8.message.NormalMessage;
-import w094j.ctrl8.terminal.GUITerminal;
-import w094j.ctrl8.terminal.Terminal;
 
 //@author A0110787A
 /**
  * The application core of the GUI implementation. To create an application
- * window, invoke the function: GUICore.launch(args), where args
+ * window, simply initialise the object using its constructors.
  * 
  * <pre>
+ * E.g
+ * new GUICore();
+ * 
  * Refer to
  * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
  * </pre>
@@ -34,9 +36,16 @@ public class GUICore extends Application {
     private static final String __newline = "\n";
     private static Logger logger = LoggerFactory.getLogger(GUICore.class);
     public ConsoleSceneController consoleController;
-    public Terminal terminal;
     private Stage primaryStage; // Default stage
     private BorderPane rootLayout; // Wrapper for internal components
+
+    public GUICore() {
+        launch();
+    }
+
+    public GUICore(String[] args) {
+        launch(args);
+    }
 
     // TODO replace with factory calling the launch instead
     public static void main(String[] args) {
@@ -50,6 +59,10 @@ public class GUICore extends Application {
      */
     public String getConsoleInitString() {
         return NormalMessage.WELCOME_MESSAGE + __newline;
+    }
+
+    public InputStream getInputStream() {
+        return consoleController.getInputStream();
     }
 
     /**
@@ -70,8 +83,6 @@ public class GUICore extends Application {
         List<String> args = this.getParameters().getRaw();
         // TODO do something with the arguements
 
-        // Initialises the terminal
-        this.terminal = new GUITerminal(this);
         logger.debug("GUICore initialised!");
     }
 

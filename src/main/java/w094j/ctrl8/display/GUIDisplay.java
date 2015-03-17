@@ -1,13 +1,18 @@
 package w094j.ctrl8.display;
 
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.application.GUICore;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Command;
 
@@ -18,19 +23,78 @@ import w094j.ctrl8.statement.Command;
  */
 
 public class GUIDisplay implements IDisplay {
-    GUICore guiCore;
+    private GUICore guiCore;
+    private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
 
-    public GUIDisplay(GUICore guiCore) {
-        this.guiCore = guiCore;
+    public GUIDisplay() {
+        this.guiCore = new GUICore();
+    }
+
+    public GUIDisplay(String[] args) {
+        this.guiCore = new GUICore(args);
     }
 
     @Override
-    public String getUserInput() {
-        return this.guiCore.consoleController.getTextInput();
+    public InputStream getInputStream() {
+        return this.guiCore.getInputStream();
     }
 
     @Override
-    public void outputHelpMessage(Command command) {
+    public void updateUI(Response res) {
+        if (res.getReply() != null) {
+            this.guiCore.consoleController.appendToDisplay(res.getReply());
+        } else {
+            this.logger
+                    .debug("Respose object does not contain any useful information");
+        }
+
+    }
+
+    private String[][] initNullTaskTable(String[][] table, int taskNumber) {
+        int i = taskNumber;
+        table[i][0] = "-";
+
+        table[i][1] = "-";
+
+        table[i][2] = "-";
+
+        table[i][3] = "-";
+
+        table[i][4] = "-";
+
+        table[i][5] = "-";
+
+        table[i][6] = "-";
+
+        table[i][7] = "-";
+
+        table[i][8] = "-";
+
+        table[i][9] = "-";
+        return table;
+    }
+
+    /*
+     * Initialize the table with adding the first row for each of the task's
+     * properties.
+     */
+    private String[][] initTable(int taskNumber, int taskProperties) {
+        String[][] table = new String[taskNumber][taskProperties];
+        table[0][0] = "Title";
+        table[0][1] = "Category";
+        table[0][2] = "Description";
+        table[0][3] = "StartDate";
+        table[0][4] = "EndDate";
+        table[0][5] = "Location";
+        table[0][6] = "Priority";
+        table[0][7] = "Reminder";
+        table[0][8] = "TaskType";
+        table[0][9] = "Status";
+
+        return table;
+    }
+
+    private void outputHelpMessage(Command command) {
         if ((command == null) || (command == Command.HELP)) {
             printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
         } else {
@@ -96,12 +160,6 @@ public class GUIDisplay implements IDisplay {
 
     }
 
-    @Override
-    public void outputMessage(String message) {
-        this.guiCore.consoleController.appendToDisplay(message);
-
-    }
-
     /**
      * This method is used to output the task for the user in certain format.
      * Modified from CLIDisplay and contextualised for GUI
@@ -109,8 +167,7 @@ public class GUIDisplay implements IDisplay {
      * @param taskList
      * @throws OutputExecuteException
      */
-    @Override
-    public void outputTask(Task[] taskList) throws OutputExecuteException {
+    private void outputTask(Task[] taskList) throws OutputExecuteException {
         String[][] table = this.initTable(taskList.length + 1,
                 MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
         int iteration = taskList.length + 1;
@@ -173,50 +230,6 @@ public class GUIDisplay implements IDisplay {
             }
         }
         printTable(table);
-    }
-
-    private String[][] initNullTaskTable(String[][] table, int taskNumber) {
-        int i = taskNumber;
-        table[i][0] = "-";
-
-        table[i][1] = "-";
-
-        table[i][2] = "-";
-
-        table[i][3] = "-";
-
-        table[i][4] = "-";
-
-        table[i][5] = "-";
-
-        table[i][6] = "-";
-
-        table[i][7] = "-";
-
-        table[i][8] = "-";
-
-        table[i][9] = "-";
-        return table;
-    }
-
-    /*
-     * Initialize the table with adding the first row for each of the task's
-     * properties.
-     */
-    private String[][] initTable(int taskNumber, int taskProperties) {
-        String[][] table = new String[taskNumber][taskProperties];
-        table[0][0] = "Title";
-        table[0][1] = "Category";
-        table[0][2] = "Description";
-        table[0][3] = "StartDate";
-        table[0][4] = "EndDate";
-        table[0][5] = "Location";
-        table[0][6] = "Priority";
-        table[0][7] = "Reminder";
-        table[0][8] = "TaskType";
-        table[0][9] = "Status";
-
-        return table;
     }
 
     /**
@@ -353,8 +366,7 @@ public class GUIDisplay implements IDisplay {
         sb.append(borderKnot);
 
         // Inform the controller to append the string
-        this.outputMessage(sb.toString());
-
+        this.guiCore.consoleController.appendToDisplay(sb.toString());
     }
 
 }
