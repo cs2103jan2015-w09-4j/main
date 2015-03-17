@@ -1,6 +1,5 @@
 package w094j.ctrl8.pojo;
 
-import java.util.List;
 
 //@author A0110787A
 /**
@@ -20,8 +19,8 @@ public class Response {
     /*
      * The list of properties(variables) that a response MAY contain
      */
-    String reply;
-    List<Task> taskList; // TODO implement a table in GUI to handle**
+    public String reply;
+    public Task[] taskList;
 
     /**
      * Default constructor. Initializes all properties to be NULL

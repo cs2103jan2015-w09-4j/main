@@ -16,6 +16,7 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Command;
 
@@ -33,10 +34,10 @@ import com.google.gson.Gson;
 
 public class Terminal implements ITerminal {
 
+    private static boolean continueExecution = true;
     // Static constants
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
-    private static boolean continueExecution = true;
 
     // Storage object (External)
     Database database;
@@ -55,7 +56,9 @@ public class Terminal implements ITerminal {
         try {
             this.database = new Database();
         } catch (Exception e) {
-            this.display.outputMessage(e.getMessage());
+            Response res = new Response();
+            res.reply = e.getMessage();
+            this.display.updateUI(res);
         }
         this.buildTaskMap();
     }
@@ -81,7 +84,9 @@ public class Terminal implements ITerminal {
         try {
             this.database = new Database();
         } catch (Exception e) {
-            this.display.outputMessage(e.getMessage());
+            Response res = new Response();
+            res.reply = e.getMessage();
+            this.display.updateUI(res);
         }
         this.buildTaskMap();
     }
@@ -104,7 +109,9 @@ public class Terminal implements ITerminal {
         try {
             this.database = new Database();
         } catch (Exception e) {
-            this.display.outputMessage(e.getMessage());
+            Response res = new Response();
+            res.reply = e.getMessage();
+            this.display.updateUI(res);
         }
         this.buildTaskMap();
     }
@@ -123,7 +130,9 @@ public class Terminal implements ITerminal {
         try {
             this.database = new Database();
         } catch (Exception e) {
-            this.display.outputMessage(e.getMessage());
+            Response res = new Response();
+            res.reply = e.getMessage();
+            this.display.updateUI(res);
         }
         this.buildTaskMap();
     }
@@ -165,8 +174,9 @@ public class Terminal implements ITerminal {
         }
 
         // Informs user that his add statement is successful
-        this.display.outputMessage(task.getTitle()
-                + NormalMessage.ADD_TASK_SUCCESSFUL);
+        Response res = new Response();
+        res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
+        this.display.updateUI(res);
 
         logger.debug("Number of Tasks:" + this.taskMap.values().size());
     }
@@ -197,13 +207,26 @@ public class Terminal implements ITerminal {
         }
     }
 
+    /**
+     * Displays an output message requesting for the next user input. This may
+     * be empty if the UI does not require such.
+     */
+    public void displayNextCommandRequest() {
+        Response res = new Response();
+        res.reply = NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST;
+        this.display.updateUI(res);
+    }
+
     /*
      * Function is called when an exit statement is executed. Performs a cleanup
      * before terminating the terminal See Issue #74 on github
      */
     @Override
     public void exit() {
-        this.display.outputMessage(NormalMessage.EXIT_COMMAND);
+        Response res = new Response();
+        res.reply = NormalMessage.EXIT_COMMAND;
+        this.display.updateUI(res);
+
         this.cleanUp();
 
         // stop loop
@@ -211,11 +234,27 @@ public class Terminal implements ITerminal {
     }
 
     /**
+     * This method return the caller a boolean whether this terminal should
+     * continue to be executed.
+     * 
+     * @return continueExecution
+     */
+    public boolean getContinueExecution() {
+
+        return this.continueExecution;
+    }
+
+    /**
      * Displays the list of supported syntax. See Issue #80
      */
     @Override
     public void help(Command command) {
-        this.display.outputHelpMessage(command);
+        // this.display.outputHelpMessage(command);
+
+        // TODO correct the quickfix
+        Response res = new Response();
+        res.reply = "Please fix this";
+        this.display.updateUI(res);
     }
 
     /**
@@ -253,8 +292,9 @@ public class Terminal implements ITerminal {
             }
 
             // Informs user that his add statement is successful
-            this.display.outputMessage(task.getTitle()
-                    + NormalMessage.MODIFY_TASK_SUCCESSFUL);
+            Response res = new Response();
+            res.reply = task.getTitle() + NormalMessage.MODIFY_TASK_SUCCESSFUL;
+            this.display.updateUI(res);
         } else {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
@@ -285,7 +325,10 @@ public class Terminal implements ITerminal {
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
              */
-            this.display.outputMessage(NormalMessage.NO_TASK_FOUND);
+            Response res = new Response();
+            res.reply = NormalMessage.NO_TASK_FOUND;
+            this.display.updateUI(res);
+
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         } else {
@@ -304,7 +347,10 @@ public class Terminal implements ITerminal {
                     i++;
                 }
 
-                this.display.outputTask(taskList);
+                Response res = new Response();
+                res.taskList = taskList;
+                this.display.updateUI(res);
+
             } catch (Exception e) {
                 throw new CommandExecuteException(e.getMessage());
             }
@@ -346,14 +392,6 @@ public class Terminal implements ITerminal {
      */
     private void cleanUp() {
         this.pushData();
-    }
-
-    /**
-     * Displays an output message requesting for the next user input. This may
-     * be empty if the UI does not require such.
-     */
-    public void displayNextCommandRequest() {
-        this.display.outputMessage(NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST);
     }
 
     /**
@@ -426,16 +464,5 @@ public class Terminal implements ITerminal {
                     + " with " + new Gson().toJson(task));
         }
 
-    }
-
-    /**
-     * This method return the caller a boolean whether this terminal should
-     * continue to be executed.
-     * 
-     * @return continueExecution
-     */
-    public boolean getContinueExecution() {
-
-        return this.continueExecution;
     }
 }

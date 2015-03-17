@@ -41,8 +41,8 @@ public class GUIDisplay implements IDisplay {
 
     @Override
     public void updateUI(Response res) {
-        if (res.getReply() != null) {
-            this.guiCore.consoleController.appendToDisplay(res.getReply());
+        if (res.reply != null) {
+            this.guiCore.consoleController.appendToDisplay(res.reply);
         } else {
             this.logger
                     .debug("Respose object does not contain any useful information");
