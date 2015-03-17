@@ -17,7 +17,7 @@ import w094j.ctrl8.statement.Command;
  * display for its output in the same window
  */
 
-public class GUIDisplay implements Display {
+public class GUIDisplay implements IDisplay {
     GUICore guiCore;
 
     public GUIDisplay(GUICore guiCore) {

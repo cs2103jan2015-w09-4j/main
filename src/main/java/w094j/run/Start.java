@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
-import w094j.ctrl8.display.Display;
+import w094j.ctrl8.display.IDisplay;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.ParameterParseException;
 import w094j.ctrl8.message.ErrorMessage;
@@ -52,7 +52,7 @@ public class Start {
         addOptions();
 
         // Interface supporting interaction with user
-        Display display = new CLIDisplay();
+        IDisplay display = new CLIDisplay();
 
         // The terminal that performs all the actions
         Terminal terminal;
@@ -148,7 +148,7 @@ public class Start {
      * @param terminal
      * @param display
      */
-    public static void runTerminal(Terminal terminal, Display display) {
+    public static void runTerminal(Terminal terminal, IDisplay display) {
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;

@@ -24,7 +24,7 @@ import w094j.ctrl8.statement.Command;
  */
 
 // @author A0112092W
-public class CLIDisplay implements Display {
+public class CLIDisplay implements IDisplay {
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
 

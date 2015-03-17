@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
-import w094j.ctrl8.display.Display;
+import w094j.ctrl8.display.IDisplay;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
@@ -42,7 +42,7 @@ public class Terminal implements ITerminal {
     Database database;
 
     // Interface supporting interaction with user
-    Display display;
+    IDisplay display;
 
     // Storage object (Internal)
     HashMap<String, Task> taskMap;
@@ -96,7 +96,7 @@ public class Terminal implements ITerminal {
      * @param display
      */
     @Deprecated
-    public Terminal(Config conf, Display display) {
+    public Terminal(Config conf, IDisplay display) {
         assertNotNull(conf); // Should not be a null object
         assertNotNull(display); // Should not be a null object
 
@@ -116,7 +116,7 @@ public class Terminal implements ITerminal {
      *            Display object specifying how/where messages should be
      *            displayed
      */
-    public Terminal(Display window) {
+    public Terminal(IDisplay window) {
         assertNotNull(window); // Should not be a null object
 
         this.display = window;
