@@ -4,6 +4,7 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Command;
 
+//@author A0110787A
 public interface ITerminal {
 
     /**
