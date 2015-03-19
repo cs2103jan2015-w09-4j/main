@@ -1,42 +1,41 @@
 package w094j.ctrl8.parse;
 
-import java.util.Map;
+import w094j.ctrl8.data.AliasData;
 
 public class AliasConfig {
 
     private char aliasCharacter;
-    private Map<String, String> aliasMap;
+    private AliasData aliasData;
 
     public AliasConfig() {
-    }
-
-    /**
-     * @return the aliasMap
-     */
-    public Map<String, String> getAliasMap() {
-        return this.aliasMap;
-    }
-
-    /**
-     * @param aliasMap
-     *            the aliasMap to set
-     */
-    public void setAliasMap(Map<String, String> aliasMap) {
-        this.aliasMap = aliasMap;
     }
 
     /**
      * @return the aliasCharacter
      */
     public char getAliasCharacter() {
-        return aliasCharacter;
+        return this.aliasCharacter;
     }
 
     /**
-     * @param aliasCharacter the aliasCharacter to set
+     * @param aliasCharacter
+     *            the aliasCharacter to set
      */
     public void setAliasCharacter(char aliasCharacter) {
         this.aliasCharacter = aliasCharacter;
     }
 
+    /**
+     * @return the aliasData
+     */
+    public AliasData getAliasData() {
+        return aliasData;
+    }
+
+    /**
+     * @param aliasData the aliasData to set
+     */
+    public void setAliasData(AliasData aliasData) {
+        this.aliasData = aliasData;
+    }
 }

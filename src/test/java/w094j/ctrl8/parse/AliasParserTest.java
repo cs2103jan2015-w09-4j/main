@@ -13,7 +13,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.exception.DataException;
 
 /**
  * Test for Alias Parser
@@ -84,11 +85,13 @@ public class AliasParserTest {
         this.aliasMap.put("profHW", "Prof. Hon Wai");
         this.aliasMap.put("2", "2pm");
 
-        AliasConfig data = new AliasConfig();
+        AliasConfig config = new AliasConfig();
+        AliasData data = new AliasData();
         data.setAliasMap(this.aliasMap);
-        data.setAliasCharacter('|');
+        config.setAliasData(data);
+        config.setAliasCharacter('|');
 
-        this.parser = new AliasParser(data);
+        this.parser = new AliasParser(config);
     }
 
     // @formatter:on
@@ -102,7 +105,7 @@ public class AliasParserTest {
             String replacedAlias = this.parser
                     .replaceAllAlias(this.inputToReplace);
             assertEquals(this.expectedReplaced, replacedAlias);
-        } catch (ParseException e) {
+        } catch (DataException e) {
             if (this.expectedReplaced == null) {
                 assertTrue(true);
             } else {
