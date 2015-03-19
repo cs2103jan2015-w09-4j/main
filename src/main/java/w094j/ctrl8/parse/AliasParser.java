@@ -30,7 +30,7 @@ public class AliasParser {
      * 
      * @param aliasData
      */
-    public AliasParser(AliasData aliasData) {
+    public AliasParser(AliasConfig aliasData) {
         this.aliasMap = aliasData.getAliasMap();
         StringBuilder sb = new StringBuilder();
         // Send all output to the Appendable object sb

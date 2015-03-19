@@ -84,7 +84,7 @@ public class AliasParserTest {
         this.aliasMap.put("profHW", "Prof. Hon Wai");
         this.aliasMap.put("2", "2pm");
 
-        AliasData data = new AliasData();
+        AliasConfig data = new AliasConfig();
         data.setAliasMap(this.aliasMap);
         data.setAliasCharacter('|');
 
