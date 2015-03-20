@@ -1,8 +1,11 @@
 package w094j.ctrl8.display;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.OutputExecuteException;
+import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
@@ -172,11 +176,23 @@ public class CLIDisplay implements IDisplay {
         return this.lastMessage;
 
     }
-
+    //@author A0112092W
+    //temporary function to get user's input before input stream is properly implemented.
+    private String getUserInput() {
+        String nextLine = null;
+        try {
+            nextLine = this.br.readLine();
+        } catch (IOException e) {
+            this.outputMessage(ErrorMessage.ERROR_READING_INPUT);
+            return null;
+        }
+        return nextLine;
+    }
     //@author A0112092W
     @Override
     public InputStream getInputStream() {
-
+        
+        this.inStream = new ByteArrayInputStream(this.getUserInput().getBytes(StandardCharsets.UTF_8));
         return this.inStream;
     }
 
