@@ -1,5 +1,5 @@
 //@author A0065517A
-package w094j.ctrl8.statement;
+package w094j.ctrl8.parse;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.database.config.CommandConfig;
-import w094j.ctrl8.parse.CommandParser;
+import w094j.ctrl8.statement.CommandType;
 
 /**
  * Tests parsing of the basic variant of Commands
@@ -87,7 +87,6 @@ public class CommandParserTest {
     @Before
     public void initParser() {
         CommandConfig config = new CommandConfig();
-        // FIXME some clarity needed for this...
         this.parser = new CommandParser(config);
     }
 
