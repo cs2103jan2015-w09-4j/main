@@ -42,7 +42,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public Database(String filePathString) throws IOException,
-            NoSuchFileException {
+    NoSuchFileException {
 
         if (filePathString.equals("")) {
             filePathString = DEFAULT_FILE_NAME;
@@ -121,6 +121,14 @@ public class Database implements IDatabase {
         return false;
     }
 
+    @Override
+    public void downloadFromStorage() throws IOException {
+        Storage diskStorage = new DiskStorage(this.file, this.filePath);
+        Storage googleCalStorage = new GoogleCalStorage(this.file);
+        diskStorage.readData();
+        googleCalStorage.readData();
+    }
+
     /**
      * @return config
      */
@@ -130,7 +138,7 @@ public class Database implements IDatabase {
     }
 
     /**
-     * @return taskList
+     * @return List of Tasks
      */
     @Override
     public List<Task> getTaskList() {
@@ -164,6 +172,17 @@ public class Database implements IDatabase {
         this.save();
     }
 
+    /**
+     * Save and write file.
+     */
+    @Override
+    public void saveToStorage() {
+        Storage diskStorage = new DiskStorage(this.file, this.filePath);
+        Storage googleCalStorage = new GoogleCalStorage(this.file);
+        diskStorage.storeData();
+        googleCalStorage.storeData();
+    }
+
     // TODO: private DataStore pullFromGoogleCal(GoogleCal googleCalInfo);
     /*
      * TODO: Find out how to interact with Google Calendar API. Determine how to
@@ -172,6 +191,11 @@ public class Database implements IDatabase {
     /*
      * TODO: update return object with relevant parameters
      */
+
+    @Override
+    public void sync() {
+
+    }
 
     private void readFile() throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();

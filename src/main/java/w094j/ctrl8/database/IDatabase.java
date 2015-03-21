@@ -1,5 +1,6 @@
 package w094j.ctrl8.database;
 
+import java.io.IOException;
 import java.util.List;
 
 import w094j.ctrl8.pojo.Config;
@@ -28,6 +29,13 @@ public interface IDatabase {
     boolean deleteTask(Task task);
 
     /**
+     * Download data from Disk and Google
+     *
+     * @throws IOException
+     */
+    void downloadFromStorage() throws IOException;
+
+    /**
      * @return Config
      */
     Config getConfig();
@@ -50,5 +58,15 @@ public interface IDatabase {
      */
     @Deprecated
     void saveTask(Task newTask);
+
+    /**
+     * Store data to Disk and Google
+     */
+    void saveToStorage();
+
+    /**
+     * Sync Data
+     */
+    void sync();
 
 }
