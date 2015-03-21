@@ -14,7 +14,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Tests parsing of the basic variant of Commands
  */
 @RunWith(value = Parameterized.class)
-public class CommandTestBasic {
+public class CommandTest {
 
     private Command expected;
     private String input;
@@ -27,7 +27,7 @@ public class CommandTestBasic {
      * @param expected
      *            Command enum to be expected.
      */
-    public CommandTestBasic(String input, Command expected) {
+    public CommandTest(String input, Command expected) {
         this.input = input;
         this.expected = expected;
     }
@@ -36,12 +36,13 @@ public class CommandTestBasic {
      * @return test data.
      */
     @Parameters(name = "{index}: Parse \"{0}\" to enum({1})")
-    //@formatter:off
+    // @formatter:off
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][] {
                 /**
                  * Normal tests
                  */
+                // Includes all the supported commands as of v0.2
                 { "add", Command.ADD }, { "alias", Command.ALIAS },
                 { "alias-add", Command.ALIAS_ADD },
                 { "alias-delete", Command.ALIAS_DELETE },
@@ -51,9 +52,31 @@ public class CommandTestBasic {
                 { "history-clear", Command.HISTORY_CLEAR },
                 { "history-undo", Command.HISTORY_UNDO },
                 { "modify", Command.MODIFY }, { "search", Command.SEARCH },
-                { "view", Command.VIEW }, { "help", Command.HELP } });
+                { "view", Command.VIEW },
+
+                // @author A0110787A
+                /**
+                 * Errornous tests
+                 */
+                { null, null },
+                { "some really long text", null }, // multiple words
+                { "\r\n", null }, // some unique regex
+                { "add-alias", null }, // lazy pattern detection
+                { ".add", null }, // not 100% match
+                { "clearhistory", null }, // detect whether symbols are caught
+                { "saerch", null }, // typo
+                /**
+                 * Extreme tests
+                 */
+                { "HiStOrY-ClEaR", Command.HISTORY_CLEAR }, // cap and non-caps
+                { "           add               ", Command.ADD }, // buffers
+                { "\r\n    `!@#$%^&*()_+{}[]:'<>/.,~/*-         exit    ",
+                        Command.EXIT } // various useless symbols
+
+                });
     }
 
+    // @author A0065517A
     // @formatter:on
 
     /**
