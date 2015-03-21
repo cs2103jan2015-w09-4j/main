@@ -16,9 +16,9 @@ public abstract class StatementQuery extends Statement {
      * @param statementString
      *            The statement that the user entered into the terminal.
      */
-    protected StatementQuery(Command command, String statementString) {
+    protected StatementQuery(CommandType command, String statementString) {
         super(command, statementString);
-        if (this.getArgumentsString().isEmpty()) {
+        if (this.getStatementArgumentsOnly().isEmpty()) {
             throw new InvalidParameterException(command
                     + " does not have any parameters.");
         }

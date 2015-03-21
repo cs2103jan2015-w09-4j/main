@@ -11,7 +11,7 @@ public class StartTimeParameter extends ParameterDatePayload {
      * @param payload
      */
     public StartTimeParameter(String payload) {
-        super(ParameterSymbol.START_TIME, payload);
+        super(ParameterType.START_TIME, payload);
     }
 
     @Override

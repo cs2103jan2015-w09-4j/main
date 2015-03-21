@@ -6,10 +6,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.parse.ParameterParser;
 
 /**
  * Tests parsing of the explicit parameters to its String representation. This
@@ -18,6 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(value = Parameterized.class)
 public class ParameterTest {
 
+    private static ParameterParser parser;
     private ParameterContainer expectedParamContainer;
     private String input;
 
@@ -66,6 +71,15 @@ public class ParameterTest {
         });
     }
 
+    /**
+     *
+     */
+    @BeforeClass
+    public static void initParser() {
+        ParameterConfig config = new ParameterConfig();
+        parser = new ParameterParser(config);
+    }
+
     // @formatter:on
 
     /**
@@ -73,7 +87,6 @@ public class ParameterTest {
      */
     @Test
     public void test() {
-        assertTrue(this.expectedParamContainer.equals(ParameterSymbol
-                .parse(this.input)));
+        assertTrue(this.expectedParamContainer.equals(parser.parse(this.input)));
     }
 }

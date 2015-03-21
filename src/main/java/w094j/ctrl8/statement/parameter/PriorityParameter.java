@@ -19,7 +19,7 @@ public class PriorityParameter extends Parameter {
      *            to be parsed to 0 to 10.
      */
     public PriorityParameter(String payload) {
-        super(ParameterSymbol.PRIORITY, payload);
+        super(ParameterType.PRIORITY, payload);
         assert (payload != null);
         if (!payload.isEmpty()) {
             try {

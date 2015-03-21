@@ -1,12 +1,11 @@
 package w094j.ctrl8.statement;
 
-import java.security.InvalidParameterException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.ParameterParseException;
+import w094j.ctrl8.parse.CommandParser;
+import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0065517A
@@ -17,101 +16,24 @@ import w094j.ctrl8.terminal.Terminal;
  */
 public abstract class Statement {
 
+    private static CommandParser commandParser = Parser.getInstance()
+            .getStatementParser().getCommandParser();
     private static Logger logger = LoggerFactory.getLogger(Statement.class);
-    private String argumentsString;
 
-    private Command command;
+    // command of the statement
+    private CommandType command;
+    // without command, arguments only
+    private String statementArgumentsOnly;
 
     /**
      * Creates an Statement object with the Command and arguments
      *
      * @param command
      */
-    protected Statement(Command command, String statementString) {
+    protected Statement(CommandType command, String statementString) {
         this.command = command;
-        this.argumentsString = Command.removeCommandKeyword(statementString);
-    }
-
-    /**
-     * Takes in a statement string and parses it into a Statement object.
-     *
-     * @param statementString
-     *            a statement string to work on
-     * @return the Statement object.
-     * @throws ParameterParseException
-     * @throws InvalidParameterException
-     *             when command is not well formed.
-     */
-    public static Statement parse(String statementString)
-            throws ParameterParseException {
-        Command command = Command.parse(statementString);
-        Statement statement = null;
-        if (command == null) {
-            throw new InvalidParameterException(
-                    "statement does not contain a valid command.");
-        }
-        logger.debug("Valid Command, parsed \"" + statementString
-                + "\": Command=" + command);
-        switch (command) {
-
-            case ADD :
-                statement = new AddStatement(statementString);
-                break;
-            case ALIAS :
-                statement = new AliasStatement(statementString);
-                break;
-            case ALIAS_ADD :
-                statement = new AliasAddStatement(statementString);
-                break;
-            case ALIAS_DELETE :
-                statement = new AliasDeleteStatement(statementString);
-                break;
-            case DONE :
-                statement = new DoneStatement(statementString);
-                break;
-            case EXIT :
-                statement = new ExitStatement(statementString);
-                break;
-            case HISTORY :
-                statement = new HistoryStatement(statementString);
-                break;
-            case HISTORY_CLEAR :
-                statement = new HistoryClearStatement(statementString);
-                break;
-            case HISTORY_UNDO :
-                statement = new HistoryUndoStatement(statementString);
-                break;
-            case MODIFY :
-                statement = new ModifyStatement(statementString);
-                break;
-            case VIEW :
-                statement = new ViewStatement(statementString);
-                break;
-            case HELP :
-                statement = new HelpStatement(statementString);
-                break;
-            case DELETE :
-                statement = new DeleteStatement(statementString);
-                break;
-            case SEARCH :
-                statement = new SearchStatement(statementString);
-                break;
-            default :
-                // should never reach here
-                assert (false);
-        }
-        return statement;
-    }
-
-    /**
-     * Checks arguments if it potentially contains some valid argument in it.
-     *
-     * @param arguments
-     * @return <code>true</code> if it contains some arguments, otherwise
-     *         <code>false</code>.
-     */
-    protected static boolean hasParameters(String arguments) {
-        return !arguments.trim().equals("");
+        this.statementArgumentsOnly = commandParser
+                .removeCommandKeyword(statementString);
     }
 
     /**
@@ -127,32 +49,32 @@ public abstract class Statement {
             throws CommandExecuteException;
 
     /**
-     * @return the argumentsString
-     */
-    public String getArgumentsString() {
-        return this.argumentsString;
-    }
-
-    /**
      * @return the command
      */
-    public Command getCommand() {
+    public CommandType getCommand() {
         return this.command;
     }
 
     /**
-     * @param argumentsString
-     *            the argumentsString to set
+     * @return the statementArgumentsOnly
      */
-    public void setArgumentsString(String argumentsString) {
-        this.argumentsString = argumentsString;
+    public String getStatementArgumentsOnly() {
+        return this.statementArgumentsOnly;
     }
 
     /**
      * @param command
      *            the command to set
      */
-    public void setCommand(Command command) {
+    public void setCommand(CommandType command) {
         this.command = command;
+    }
+
+    /**
+     * @param statementArgumentsOnly
+     *            the statementArgumentsOnly to set
+     */
+    public void setStatementArgumentsOnly(String statementArgumentsOnly) {
+        this.statementArgumentsOnly = statementArgumentsOnly;
     }
 }

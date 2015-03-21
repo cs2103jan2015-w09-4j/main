@@ -23,7 +23,7 @@ public abstract class ParameterDatePayload extends Parameter {
      * @param payload
      *            payload to be parsed into date and time.
      */
-    public ParameterDatePayload(ParameterSymbol symbol, String payload) {
+    public ParameterDatePayload(ParameterType symbol, String payload) {
         super(symbol, payload);
 
         // Parses the date using the method specified on Natty.

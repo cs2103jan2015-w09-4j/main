@@ -8,9 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.parse.ParameterParser;
+import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
-import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
 
 import com.google.gson.Gson;
@@ -28,6 +29,9 @@ public class ModifyStatement extends Statement {
 
     private static Logger logger = LoggerFactory
             .getLogger(ModifyStatement.class);
+    private static ParameterParser parameterParser = Parser.getInstance()
+            .getStatementParser().getParameterParser();
+
     private String query;
 
     private Task task;
@@ -40,12 +44,12 @@ public class ModifyStatement extends Statement {
      *                if the parameters does not exist.
      */
     public ModifyStatement(String statementString) {
-        super(Command.MODIFY, statementString);
+        super(CommandType.MODIFY, statementString);
 
         int indexOfCommandCharacters = 0;
-        String bannedSymbolsRegex = ParameterSymbol.getBannedSymbolsRegex();
+        String bannedSymbolsRegex = parameterParser.getBannedSymbolsRegex();
         Matcher m = Pattern.compile(bannedSymbolsRegex).matcher(
-                this.getArgumentsString());
+                this.getStatementArgumentsOnly());
         // find the first command character if it exist
         if (m.find()) {
             indexOfCommandCharacters = m.start();
@@ -61,12 +65,13 @@ public class ModifyStatement extends Statement {
 
         // from the start of the parameter string to the index of the command
         // character, not inclusive of the command character
-        this.query = this.getArgumentsString()
+        this.query = this.getStatementArgumentsOnly()
                 .substring(0, indexOfCommandCharacters).trim();
 
         this.task = new Task();
-        ParameterContainer container = ParameterSymbol.parse(this
-                .getArgumentsString().substring(indexOfCommandCharacters));
+        ParameterContainer container = parameterParser.parse(this
+                .getStatementArgumentsOnly()
+                .substring(indexOfCommandCharacters));
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
 

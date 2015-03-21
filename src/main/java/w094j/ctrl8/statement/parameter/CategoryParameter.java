@@ -11,7 +11,7 @@ public class CategoryParameter extends Parameter {
      * @param payload
      */
     public CategoryParameter(String payload) {
-        super(ParameterSymbol.CATEGORY, payload);
+        super(ParameterType.CATEGORY, payload);
     }
 
     @Override

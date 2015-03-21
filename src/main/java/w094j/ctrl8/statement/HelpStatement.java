@@ -1,5 +1,7 @@
 package w094j.ctrl8.statement;
 
+import w094j.ctrl8.parse.CommandParser;
+import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.terminal.Terminal;
 
 //@author A0112521B
@@ -7,19 +9,17 @@ import w094j.ctrl8.terminal.Terminal;
  */
 public class HelpStatement extends Statement {
 
-    /**
-     * Creates a new help Statement.
-     *
-     * @param statementString
-     */
-    Command command;
+    private static CommandParser commandParser = Parser.getInstance()
+            .getStatementParser().getCommandParser();
+
+    private CommandType command;
 
     /**
      * @param statementString
      */
     public HelpStatement(String statementString) {
-        super(Command.HELP, statementString);
-        this.command = Command.parse(this.getArgumentsString());
+        super(CommandType.HELP, statementString);
+        this.command = commandParser.parse(this.getStatementArgumentsOnly());
     }
 
     @Override

@@ -12,7 +12,7 @@ public class ViewStatement extends StatementNoParams {
      * @param statementString
      */
     public ViewStatement(String statementString) {
-        super(Command.VIEW, statementString);
+        super(CommandType.VIEW, statementString);
     }
 
     @Override

@@ -16,8 +16,8 @@ public class DoneStatement extends StatementQuery {
      * @param statementString
      */
     public DoneStatement(String statementString) {
-        super(Command.DONE, statementString);
-        this.query = this.getArgumentsString();
+        super(CommandType.DONE, statementString);
+        this.query = this.getStatementArgumentsOnly();
         logger.debug("Valid done Command, query \"" + statementString + "\"");
     }
 

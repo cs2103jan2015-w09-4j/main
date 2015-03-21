@@ -20,7 +20,7 @@ public class AliasStatement extends StatementNoParams {
      * @param statementString
      */
     public AliasStatement(String statementString) {
-        super(Command.ALIAS, statementString);
+        super(CommandType.ALIAS, statementString);
     }
 
     @Override

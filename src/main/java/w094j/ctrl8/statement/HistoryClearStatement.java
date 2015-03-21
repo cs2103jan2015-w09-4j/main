@@ -17,8 +17,8 @@ public class HistoryClearStatement extends StatementOnePosInt {
      * @param statementString
      */
     public HistoryClearStatement(String statementString) {
-        super(Command.HISTORY_CLEAR, statementString);
-        this.query = this.getArgumentsString();
+        super(CommandType.HISTORY_CLEAR, statementString);
+        this.query = this.getStatementArgumentsOnly();
         logger.debug("Valid history-clear Command, query \"" + statementString
                 + "\"");
     }

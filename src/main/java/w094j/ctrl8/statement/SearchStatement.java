@@ -22,8 +22,8 @@ public class SearchStatement extends StatementQuery {
      * @param statementString
      */
     public SearchStatement(String statementString) {
-        super(Command.SEARCH, statementString);
-        this.query = this.getArgumentsString();
+        super(CommandType.SEARCH, statementString);
+        this.query = this.getStatementArgumentsOnly();
         logger.debug("Valid search Command, query \"" + statementString + "\"");
     }
 

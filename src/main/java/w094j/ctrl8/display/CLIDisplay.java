@@ -19,7 +19,7 @@ import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.Command;
+import w094j.ctrl8.statement.CommandType;
 
 /**
  * Class implements Display Interface as a simple CLI How to use: To get
@@ -27,16 +27,16 @@ import w094j.ctrl8.statement.Command;
  * call CLIDisplay.outputMessage(message)
  */
 
-//@author A0112092W
+// @author A0112092W
 public class CLIDisplay implements IDisplay {
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
     private InputStream inStream;
 
-    //@author A0110787A
+    // @author A0110787A
     private String lastMessage;
 
-    //@author A0112092W
+    // @author A0112092W
     /**
      * Public constructor for a CLI Display
      */
@@ -83,7 +83,7 @@ public class CLIDisplay implements IDisplay {
     /**
      * This method is used to print the help table. (modified from printTable)
      */
-    //@author A0112521B
+    // @author A0112521B
     private static void printTableWithBorder(int startIndex, int endIndex,
             String[][] table) {
         char borderKnot = '+';
@@ -167,7 +167,16 @@ public class CLIDisplay implements IDisplay {
 
     }
 
-    //@author A0110787A
+    // @author A0112092W
+    @Override
+    public InputStream getInputStream() {
+
+        this.inStream = new ByteArrayInputStream(this.getUserInput().getBytes(
+                StandardCharsets.UTF_8));
+        return this.inStream;
+    }
+
+    // @author A0110787A
     /*
      * For testing purposes. Facilitates JUnit testing of individual modules
      * using CLIDisplay
@@ -176,32 +185,14 @@ public class CLIDisplay implements IDisplay {
         return this.lastMessage;
 
     }
-    //@author A0112092W
-    //temporary function to get user's input before input stream is properly implemented.
-    private String getUserInput() {
-        String nextLine = null;
-        try {
-            nextLine = this.br.readLine();
-        } catch (IOException e) {
-            this.outputMessage(ErrorMessage.ERROR_READING_INPUT);
-            return null;
-        }
-        return nextLine;
-    }
-    //@author A0112092W
-    @Override
-    public InputStream getInputStream() {
-        
-        this.inStream = new ByteArrayInputStream(this.getUserInput().getBytes(StandardCharsets.UTF_8));
-        return this.inStream;
-    }
 
     /**
      * @param command
      */
-    //@author A0112521B
-    public void outputHelpMessage(Command command) {
-        if ((command == null) || (command == Command.HELP)) {
+    // @author A0112521B
+    public void outputHelpMessage(CommandType command) {
+        // todo Help command should not be handled here
+        if ((command == null) || (command == CommandType.HELP)) {
             printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
         } else {
 
@@ -268,13 +259,13 @@ public class CLIDisplay implements IDisplay {
     }
 
     public void outputMessage(String message) {
-        //@author A0110787A
+        // @author A0110787A
         /*
          * For testing purposes. see getLastMessage()
          */
         this.lastMessage = message;
 
-        //@author A0112092W
+        // @author A0112092W
         System.out.println(message);
     }
 
@@ -349,6 +340,35 @@ public class CLIDisplay implements IDisplay {
         printTable(table);
     }
 
+    @Override
+    public void updateUI(Response res) {
+        if (res.reply != null) {
+            this.outputMessage(res.reply);
+        }
+        if (res.taskList != null) {
+            try {
+                this.outputTask(res.taskList);
+            } catch (OutputExecuteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    // @author A0112092W
+    // temporary function to get user's input before input stream is properly
+// implemented.
+    private String getUserInput() {
+        String nextLine = null;
+        try {
+            nextLine = this.br.readLine();
+        } catch (IOException e) {
+            this.outputMessage(ErrorMessage.ERROR_READING_INPUT);
+            return null;
+        }
+        return nextLine;
+    }
+
     private String[][] initNullTaskTable(String[][] table, int taskNumber) {
         int i = taskNumber;
         table[i][0] = "-";
@@ -389,21 +409,6 @@ public class CLIDisplay implements IDisplay {
         table[0][9] = "Status";
 
         return table;
-    }
-
-    @Override
-    public void updateUI(Response res) {
-        if (res.reply != null) {
-            outputMessage(res.reply);
-        }
-        if (res.taskList != null) {
-            try {
-                outputTask(res.taskList);
-            } catch (OutputExecuteException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
 }

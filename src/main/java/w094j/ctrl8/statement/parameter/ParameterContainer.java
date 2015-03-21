@@ -14,7 +14,7 @@ import w094j.ctrl8.pojo.Task;
  */
 public class ParameterContainer {
 
-    private MultiMap<ParameterSymbol, Parameter> parameterLookup;
+    private MultiMap<ParameterType, Parameter> parameterLookup;
 
     /**
      * Initializes the list of parameters to this container.
@@ -22,7 +22,7 @@ public class ParameterContainer {
      * @param parameterList
      */
     public ParameterContainer(List<Parameter> parameterList) {
-        this.parameterLookup = new MultiValueMap<ParameterSymbol, Parameter>();
+        this.parameterLookup = new MultiValueMap<ParameterType, Parameter>();
         for (Parameter eaParameter : parameterList) {
             this.parameterLookup.put(eaParameter.getSymbol(), eaParameter);
         }

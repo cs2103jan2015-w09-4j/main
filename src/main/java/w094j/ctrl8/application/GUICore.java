@@ -3,7 +3,6 @@ package w094j.ctrl8.application;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +21,7 @@ import w094j.ctrl8.message.NormalMessage;
 /**
  * The application core of the GUI implementation. To create an application
  * window, simply initialise the object using its constructors.
- * 
+ *
  * <pre>
  * E.g
  * new GUICore();
@@ -40,7 +39,7 @@ public class GUICore extends Application {
     private BorderPane rootLayout; // Wrapper for internal components
 
     public GUICore() {
-        launch();
+// launch();
     }
 
     public GUICore(String[] args) {
@@ -49,12 +48,12 @@ public class GUICore extends Application {
 
     // TODO replace with factory calling the launch instead
     public static void main(String[] args) {
-        launch(args);
+        new GUICore(args);
     }
 
     /**
      * Generates initial text to display in TextArea textDisplay.
-     * 
+     *
      * @return String
      */
     public String getConsoleInitString() {
@@ -62,17 +61,17 @@ public class GUICore extends Application {
     }
 
     public InputStream getInputStream() {
-        return consoleController.getInputStream();
+        return this.consoleController.getInputStream();
     }
 
     /**
      * Returns the main stage. Main purpose is to allow child-scenes to be able
      * to link back.
-     * 
+     *
      * @return
      */
     public Stage getPrimaryStage() {
-        return primaryStage;
+        return this.primaryStage;
     }
 
     @Override
@@ -80,8 +79,7 @@ public class GUICore extends Application {
         logger.debug("Initialising GUICore...");
         super.init();
 
-        List<String> args = this.getParameters().getRaw();
-        // TODO do something with the arguements
+        this.getParameters().getRaw();
 
         logger.debug("GUICore initialised!");
     }
@@ -91,9 +89,9 @@ public class GUICore extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle(NormalMessage.APP_NAME);
 
-        initRootLayout();
+        this.initRootLayout();
 
-        showConsole();
+        this.showConsole();
     }
 
     /**
@@ -108,10 +106,10 @@ public class GUICore extends Application {
             this.rootLayout = (BorderPane) loader.load();
 
             // Show the scene containing the root layout
-            Scene rootLayoutScene = new Scene(rootLayout);
+            Scene rootLayoutScene = new Scene(this.rootLayout);
             this.primaryStage.setScene(rootLayoutScene);
             this.primaryStage.setResizable(false); // Disable resizing the
-                                                   // window
+            // window
             this.primaryStage.show();
 
         } catch (IOException e) {
