@@ -5,19 +5,24 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import w094j.ctrl8.database.config.CommandConfig;
+import w094j.ctrl8.parse.CommandParser;
+
 /**
  * Tests parsing of the basic variant of Commands
  */
 @RunWith(value = Parameterized.class)
-public class CommandTest {
+public class CommandParserTest {
 
-    private Command expected;
+    private CommandType expected;
     private String input;
+    private CommandParser parser;
 
     /**
      * Creates a Command Test with the input and expected Command enum.
@@ -27,7 +32,7 @@ public class CommandTest {
      * @param expected
      *            Command enum to be expected.
      */
-    public CommandTest(String input, Command expected) {
+    public CommandParserTest(String input, CommandType expected) {
         this.input = input;
         this.expected = expected;
     }
@@ -43,16 +48,16 @@ public class CommandTest {
                  * Normal tests
                  */
                 // Includes all the supported commands as of v0.2
-                { "add", Command.ADD }, { "alias", Command.ALIAS },
-                { "alias-add", Command.ALIAS_ADD },
-                { "alias-delete", Command.ALIAS_DELETE },
-                { "delete", Command.DELETE }, { "done", Command.DONE },
-                { "exit", Command.EXIT }, { "help", Command.HELP },
-                { "history", Command.HISTORY },
-                { "history-clear", Command.HISTORY_CLEAR },
-                { "history-undo", Command.HISTORY_UNDO },
-                { "modify", Command.MODIFY }, { "search", Command.SEARCH },
-                { "view", Command.VIEW },
+                { "add", CommandType.ADD }, { "alias", CommandType.ALIAS },
+                { "alias-add", CommandType.ALIAS_ADD },
+                { "alias-delete", CommandType.ALIAS_DELETE },
+                { "delete", CommandType.DELETE }, { "done", CommandType.DONE },
+                { "exit", CommandType.EXIT }, { "help", CommandType.HELP },
+                { "history", CommandType.HISTORY },
+                { "history-clear", CommandType.HISTORY_CLEAR },
+                { "history-undo", CommandType.HISTORY_UNDO },
+                { "modify", CommandType.MODIFY },
+                { "search", CommandType.SEARCH }, { "view", CommandType.VIEW },
 
                 // @author A0110787A
                 /**
@@ -68,12 +73,22 @@ public class CommandTest {
                 /**
                  * Extreme tests
                  */
-                { "HiStOrY-ClEaR", Command.HISTORY_CLEAR }, // cap and non-caps
-                { "           add               ", Command.ADD }, // buffers
+                { "HiStOrY-ClEaR", CommandType.HISTORY_CLEAR }, // vary caps
+                { "           add               ", CommandType.ADD }, // buffers
                 { "\r\n    `!@#$%^&*()_+{}[]:'<>/.,~/*-         exit    ",
-                        Command.EXIT } // various useless symbols
+                        CommandType.EXIT } // various unused symbols
 
                 });
+    }
+
+    /**
+     * Initializes the command parser.
+     */
+    @Before
+    public void initParser() {
+        CommandConfig config = new CommandConfig();
+        // FIXME some clarity needed for this...
+        this.parser = new CommandParser(config);
     }
 
     // @author A0065517A
@@ -84,7 +99,7 @@ public class CommandTest {
      */
     @Test
     public void test() {
-        assertEquals(this.expected, Command.parse(this.input));
+        assertEquals(this.expected, this.parser.parse(this.input));
     }
 
 }
