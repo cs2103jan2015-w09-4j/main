@@ -18,12 +18,12 @@ public abstract class StatementOnePosInt extends Statement {
      * @param statementString
      *            The statement that the user entered into the terminal.
      */
-    protected StatementOnePosInt(Command command, String statementString) {
+    protected StatementOnePosInt(CommandType command, String statementString) {
         super(command, statementString);
         int index;
 
         try {
-            index = Integer.parseInt(this.getArgumentsString());
+            index = Integer.parseInt(this.getStatementArgumentsOnly());
         } catch (Exception e) {
             throw new InvalidParameterException(command
                     + " takes in 1 positive integer parameter only.");

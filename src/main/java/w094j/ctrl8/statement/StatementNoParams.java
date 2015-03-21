@@ -17,9 +17,9 @@ public abstract class StatementNoParams extends Statement {
      * @param statementString
      *            The statement that the user entered into the terminal.
      */
-    public StatementNoParams(Command command, String statementString) {
+    public StatementNoParams(CommandType command, String statementString) {
         super(command, statementString);
-        if (!this.getArgumentsString().isEmpty()) {
+        if (!this.getStatementArgumentsOnly().isEmpty()) {
             throw new InvalidParameterException(command
                     + " does not take in any parameters.");
         }

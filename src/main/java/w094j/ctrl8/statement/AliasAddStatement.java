@@ -16,13 +16,13 @@ public class AliasAddStatement extends Statement {
     String alias;
     String phrase;
 
-    protected AliasAddStatement(String statementString) {
-        super(Command.ALIAS_ADD, statementString);
-        if (this.getArgumentsString().trim().split("\\s+").length < 2) {
+    public AliasAddStatement(String statementString) {
+        super(CommandType.ALIAS_ADD, statementString);
+        if (this.getStatementArgumentsOnly().trim().split("\\s+").length < 2) {
             throw new InvalidParameterException(
                     "AliasAdd statement must specify an alias and its phrase.");
         } else {
-            String arr[] = this.getArgumentsString().split(" ", 2);
+            String arr[] = this.getStatementArgumentsOnly().split(" ", 2);
             this.alias = arr[0];
             this.phrase = arr[1];
             logger.debug("Valid alias-add Command, query \"" + statementString

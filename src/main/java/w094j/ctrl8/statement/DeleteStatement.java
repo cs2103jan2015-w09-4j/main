@@ -17,8 +17,8 @@ public class DeleteStatement extends StatementQuery {
      * @param statementString
      */
     public DeleteStatement(String statementString) {
-        super(Command.DELETE, statementString);
-        this.query = this.getArgumentsString();
+        super(CommandType.DELETE, statementString);
+        this.query = this.getStatementArgumentsOnly();
         logger.debug("Valid delete Command, query \"" + statementString + "\"");
     }
 

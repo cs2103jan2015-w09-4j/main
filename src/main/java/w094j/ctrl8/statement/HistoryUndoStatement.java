@@ -17,8 +17,8 @@ public class HistoryUndoStatement extends StatementOnePosInt {
      * @param statementString
      */
     public HistoryUndoStatement(String statementString) {
-        super(Command.HISTORY_UNDO, statementString);
-        this.query = this.getArgumentsString();
+        super(CommandType.HISTORY_UNDO, statementString);
+        this.query = this.getStatementArgumentsOnly();
         logger.debug("Valid history-undo Command, query \"" + statementString
                 + "\"");
     }

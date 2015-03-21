@@ -11,7 +11,7 @@ public class TitleParameter extends Parameter {
      * @param payload
      */
     public TitleParameter(String payload) {
-        super(ParameterSymbol.TITLE, payload);
+        super(ParameterType.TITLE, payload);
     }
 
     @Override

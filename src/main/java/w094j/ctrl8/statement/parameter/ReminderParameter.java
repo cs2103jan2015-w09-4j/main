@@ -11,7 +11,7 @@ public class ReminderParameter extends ParameterDatePayload {
      * @param payload
      */
     public ReminderParameter(String payload) {
-        super(ParameterSymbol.REMINDER, payload);
+        super(ParameterType.REMINDER, payload);
     }
 
     @Override

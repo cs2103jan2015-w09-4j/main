@@ -5,11 +5,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.parse.ParameterParser;
 import w094j.ctrl8.pojo.Task;
 
 /**
@@ -18,7 +21,9 @@ import w094j.ctrl8.pojo.Task;
 @RunWith(value = Parameterized.class)
 public class PriorityParameterTest {
 
+    private static ParameterParser parser;
     private int expectedPriority;
+
     private String input;
 
     /**
@@ -51,6 +56,15 @@ public class PriorityParameterTest {
         });
     }
 
+    /**
+     *
+     */
+    @BeforeClass
+    public static void initParser() {
+        ParameterConfig config = new ParameterConfig();
+        parser = new ParameterParser(config);
+    }
+
     // @formatter:on
 
     /**
@@ -59,8 +73,7 @@ public class PriorityParameterTest {
     @Test
     public void test() {
 
-        ParameterContainer parameterContainer = ParameterSymbol
-                .parse(this.input);
+        ParameterContainer parameterContainer = parser.parse(this.input);
         Task task = new Task();
         parameterContainer.addAll(null, task);
         assertEquals(this.expectedPriority, task.getPriority());

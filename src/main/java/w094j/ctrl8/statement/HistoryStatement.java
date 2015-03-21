@@ -20,7 +20,7 @@ public class HistoryStatement extends StatementNoParams {
      * @param statementString
      */
     public HistoryStatement(String statementString) {
-        super(Command.HISTORY, statementString);
+        super(CommandType.HISTORY, statementString);
     }
 
     @Override

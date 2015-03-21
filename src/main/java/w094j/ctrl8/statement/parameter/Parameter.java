@@ -10,7 +10,7 @@ import w094j.ctrl8.pojo.Task;
 public abstract class Parameter {
 
     private String payload;
-    private ParameterSymbol symbol;
+    private ParameterType symbol;
 
     /**
      * Creates a Parameter. The syntax accepted on the command line is
@@ -22,7 +22,7 @@ public abstract class Parameter {
      * @param symbol
      * @param payload
      */
-    public Parameter(ParameterSymbol symbol, String payload) {
+    public Parameter(ParameterType symbol, String payload) {
         this.symbol = symbol;
         this.payload = payload;
     }
@@ -59,7 +59,7 @@ public abstract class Parameter {
     /**
      * @return the symbol
      */
-    public ParameterSymbol getSymbol() {
+    public ParameterType getSymbol() {
         return this.symbol;
     }
 
@@ -75,7 +75,7 @@ public abstract class Parameter {
      * @param symbol
      *            the symbol to set
      */
-    public void setSymbol(ParameterSymbol symbol) {
+    public void setSymbol(ParameterType symbol) {
         this.symbol = symbol;
     }
 

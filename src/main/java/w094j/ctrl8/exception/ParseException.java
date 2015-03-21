@@ -4,7 +4,7 @@ package w094j.ctrl8.exception;
 /**
  * Parse Exception is thrown when there is a problem with Parsing.
  */
-public class ParameterParseException extends Exception {
+public class ParseException extends Exception {
 
     /**
      *
@@ -14,7 +14,7 @@ public class ParameterParseException extends Exception {
     /**
      * @param message
      */
-    public ParameterParseException(String message) {
+    public ParseException(String message) {
         super(message);
     }
 
@@ -22,7 +22,7 @@ public class ParameterParseException extends Exception {
      * @param message
      * @param throwable
      */
-    public ParameterParseException(String message, Throwable throwable) {
+    public ParseException(String message, Throwable throwable) {
         super(message, throwable);
     }
 

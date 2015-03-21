@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.database.config.AliasConfig;
 import w094j.ctrl8.exception.DataException;
 
 /**
@@ -16,13 +17,16 @@ import w094j.ctrl8.exception.DataException;
  */
 public class AliasParser {
 
+    private static final String ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT = "\\\\%1$s";
     /**
      * Regex to match all Alias, the delimiter is filled at runtime.
      */
     private static final String ALIAS_REGEX_FORMAT = "(?<!\\\\)%1$s[\\w]+";
     private static Logger logger = LoggerFactory.getLogger(AliasParser.class);
 
+    private Character aliasCharacter;
     private AliasData aliasData;
+    private String aliasEscapedRegex;
     private Pattern aliasPattern;
 
     /**
@@ -32,17 +36,25 @@ public class AliasParser {
      */
     public AliasParser(AliasConfig aliasConfig) {
         this.aliasData = aliasConfig.getAliasData();
+        this.aliasCharacter = aliasConfig.getAliasCharacter();
         StringBuilder sb = new StringBuilder();
         // Send all output to the Appendable object sb
         try (Formatter formatter = new Formatter(sb, Locale.getDefault())) {
             formatter.format(ALIAS_REGEX_FORMAT, Pattern.quote(Character
                     .toString(aliasConfig.getAliasCharacter())));
             this.aliasPattern = Pattern.compile(sb.toString());
+            sb.setLength(0);
+            formatter
+            .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
+                    .quote(Character.toString(aliasConfig
+                            .getAliasCharacter())));
+            this.aliasEscapedRegex = sb.toString();
         }
     }
 
     /**
-     * Replaces all aliases in inputToReplace to its aliases.
+     * Replaces all aliases in inputToReplace to its aliases, also unescapes all
+     * alias characters.
      *
      * @param inputToReplace
      *            the input string to replace aliases.
@@ -67,8 +79,10 @@ public class AliasParser {
             sb.append(eaAliasReplaced);
         }
         sb.append(inputToReplace.substring(previousMatchEnd));
+        String replacedString = sb.toString().replaceAll(
+                this.aliasEscapedRegex, this.aliasCharacter.toString());
         logger.info("\"" + inputToReplace + "\" was parsed to \""
-                + sb.toString() + "\"");
-        return sb.toString();
+                + replacedString + "\"");
+        return replacedString;
     }
 }

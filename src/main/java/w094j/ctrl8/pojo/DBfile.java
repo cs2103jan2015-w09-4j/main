@@ -3,6 +3,8 @@ package w094j.ctrl8.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
+import w094j.ctrl8.data.AliasData;
+
 //@author A0112521B
 
 public class DBfile {

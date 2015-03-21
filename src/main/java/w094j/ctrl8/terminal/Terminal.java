@@ -18,7 +18,7 @@ import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.Command;
+import w094j.ctrl8.statement.CommandType;
 
 import com.google.gson.Gson;
 
@@ -248,7 +248,7 @@ public class Terminal implements ITerminal {
      * Displays the list of supported syntax. See Issue #80
      */
     @Override
-    public void help(Command command) {
+    public void help(CommandType command) {
         // this.display.outputHelpMessage(command);
 
         // TODO correct the quickfix

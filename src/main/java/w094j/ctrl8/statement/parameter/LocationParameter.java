@@ -11,7 +11,7 @@ public class LocationParameter extends Parameter {
      * @param payload
      */
     public LocationParameter(String payload) {
-        super(ParameterSymbol.LOCATION, payload);
+        super(ParameterType.LOCATION, payload);
     }
 
     @Override

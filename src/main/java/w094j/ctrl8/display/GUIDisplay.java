@@ -14,7 +14,7 @@ import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.Command;
+import w094j.ctrl8.statement.CommandType;
 
 //@author A0110787A
 /**
@@ -94,8 +94,8 @@ public class GUIDisplay implements IDisplay {
         return table;
     }
 
-    private void outputHelpMessage(Command command) {
-        if ((command == null) || (command == Command.HELP)) {
+    private void outputHelpMessage(CommandType command) {
+        if ((command == null) || (command == CommandType.HELP)) {
             printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
         } else {
             switch (command) {

@@ -11,7 +11,7 @@ public class DescriptionParameter extends Parameter {
      * @param payload
      */
     public DescriptionParameter(String payload) {
-        super(ParameterSymbol.DESCRIPTION, payload);
+        super(ParameterType.DESCRIPTION, payload);
     }
 
     @Override

@@ -14,7 +14,7 @@ public class ExitStatement extends StatementNoParams {
      * @param statementString
      */
     public ExitStatement(String statementString) {
-        super(Command.EXIT, statementString);
+        super(CommandType.EXIT, statementString);
     }
 
     @Override

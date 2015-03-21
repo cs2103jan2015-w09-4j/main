@@ -11,7 +11,7 @@ public class DeadlineParameter extends ParameterDatePayload {
      * @param payload
      */
     public DeadlineParameter(String payload) {
-        super(ParameterSymbol.DEADLINE, payload);
+        super(ParameterType.DEADLINE, payload);
     }
 
     @Override

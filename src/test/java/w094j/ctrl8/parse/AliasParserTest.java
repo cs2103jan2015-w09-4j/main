@@ -7,13 +7,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.database.config.AliasConfig;
 import w094j.ctrl8.exception.DataException;
 
 /**
@@ -22,11 +23,10 @@ import w094j.ctrl8.exception.DataException;
 @RunWith(value = Parameterized.class)
 public class AliasParserTest {
 
-    private Map<String, String> aliasMap;
-    private String expectedReplaced;
+    private static AliasParser parser;
 
+    private String expectedReplaced;
     private String inputToReplace;
-    private AliasParser parser;
 
     /**
      * Initializes a test with the input to perform the alias replace on and the
@@ -54,7 +54,7 @@ public class AliasParserTest {
                  */
                 {"add ={eat lunch with |eric, |rod, |C and |CH}","add ={eat lunch with Han Liang Wee Eric, Chue Le Sheng Rodson, Tze Cheng and Chen Hsin}"},
                 {"|a ={|e |profHW} -|2","add ={email Prof. Hon Wai} -2pm"},
-                {"add ={eat\\|sleep}","add ={eat\\|sleep}"},
+                {"add ={eat\\|sleep}","add ={eat|sleep}"},
                 /**
                  * Extreme tests
                  */
@@ -73,25 +73,25 @@ public class AliasParserTest {
     /**
      * Initializes the lookup table with some values
      */
-    @Before
-    public void initMap() {
-        this.aliasMap = new HashMap<String, String>();
-        this.aliasMap.put("eric", "Han Liang Wee Eric");
-        this.aliasMap.put("rod", "Chue Le Sheng Rodson");
-        this.aliasMap.put("C", "Tze Cheng");
-        this.aliasMap.put("CH", "Chen Hsin");
-        this.aliasMap.put("a", "add");
-        this.aliasMap.put("e", "email");
-        this.aliasMap.put("profHW", "Prof. Hon Wai");
-        this.aliasMap.put("2", "2pm");
+    @BeforeClass
+    public static void initParser() {
+        Map<String, String> aliasMap = new HashMap<String, String>();
+        aliasMap.put("eric", "Han Liang Wee Eric");
+        aliasMap.put("rod", "Chue Le Sheng Rodson");
+        aliasMap.put("C", "Tze Cheng");
+        aliasMap.put("CH", "Chen Hsin");
+        aliasMap.put("a", "add");
+        aliasMap.put("e", "email");
+        aliasMap.put("profHW", "Prof. Hon Wai");
+        aliasMap.put("2", "2pm");
 
         AliasConfig config = new AliasConfig();
         AliasData data = new AliasData();
-        data.setAliasMap(this.aliasMap);
+        data.setAliasMap(aliasMap);
         config.setAliasData(data);
         config.setAliasCharacter('|');
 
-        this.parser = new AliasParser(config);
+        parser = new AliasParser(config);
     }
 
     // @formatter:on
@@ -102,8 +102,7 @@ public class AliasParserTest {
     @Test
     public void test() {
         try {
-            String replacedAlias = this.parser
-                    .replaceAllAlias(this.inputToReplace);
+            String replacedAlias = parser.replaceAllAlias(this.inputToReplace);
             assertEquals(this.expectedReplaced, replacedAlias);
         } catch (DataException e) {
             if (this.expectedReplaced == null) {

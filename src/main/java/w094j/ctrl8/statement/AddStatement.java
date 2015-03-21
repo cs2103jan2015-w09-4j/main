@@ -4,10 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.ParameterParseException;
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.ParameterParser;
+import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
-import w094j.ctrl8.statement.parameter.ParameterSymbol;
 import w094j.ctrl8.terminal.Terminal;
 
 import com.google.gson.Gson;
@@ -20,6 +21,8 @@ import com.google.gson.Gson;
 public class AddStatement extends Statement {
 
     private static Logger logger = LoggerFactory.getLogger(AddStatement.class);
+    private static ParameterParser parameterParser = Parser.getInstance()
+            .getStatementParser().getParameterParser();
 
     private Task task;
 
@@ -37,18 +40,18 @@ public class AddStatement extends Statement {
      *
      * @param statementString
      *            the string to be added.
-     * @throws ParameterParseException
+     * @throws ParseException
      *             if the parameters does not exist.
      */
-    public AddStatement(String statementString) throws ParameterParseException {
-        super(Command.ADD, statementString);
+    public AddStatement(String statementString) throws ParseException {
+        super(CommandType.ADD, statementString);
         this.task = new Task();
-        ParameterContainer container = ParameterSymbol.parse(statementString);
+        ParameterContainer container = parameterParser.parse(statementString);
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
         this.task.toCompleteTask();
         if (this.task.getTaskType() == Task.TaskType.INCOMPLETE) {
-            throw new ParameterParseException(
+            throw new ParseException(
                     "Task added must be a Complete tasks of the 3 types.");
         }
         logger.debug("Valid add Command, parsed \"" + statementString
