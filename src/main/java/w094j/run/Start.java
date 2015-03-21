@@ -158,23 +158,29 @@ public class Start {
         // Default: true
         boolean continueExecution = true;
         Response res = new Response();
-
+        String command = null;
         while (continueExecution) {
             terminal.displayNextCommandRequest();
             InputStream input = display.getInputStream();
-            String command = new Scanner(input, "UTF-8").useDelimiter("\\A")
+            
+            try{
+                command = new Scanner(input, "UTF-8").useDelimiter("\\A")
                     .next();
+            }catch (NullPointerException e){
+                logger.info(e.getMessage());
+            }
+
             // Passes string to Statement.java to parse into a command
             try {
                 Statement.parse(command).execute(terminal);
             } catch (InvalidParameterException e) {
-                res = new Response(e.getMessage());
+                res.reply = e.getMessage();
                 display.updateUI(res);
             } catch (CommandExecuteException e) {
-                res = new Response(e.getMessage());
+                res.reply = e.getMessage();
                 display.updateUI(res);
             } catch (ParameterParseException e) {
-                res = new Response(e.getMessage());
+                res.reply = e.getMessage();
                 display.updateUI(res);
             }
             continueExecution = terminal.getContinueExecution();

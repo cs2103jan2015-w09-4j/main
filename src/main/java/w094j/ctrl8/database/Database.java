@@ -42,7 +42,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public Database(String filePathString) throws IOException,
-    NoSuchFileException {
+            NoSuchFileException {
 
         if (filePathString.equals("")) {
             filePathString = DEFAULT_FILE_NAME;
@@ -93,6 +93,7 @@ public class Database implements IDatabase {
      * @return true if taskTitle is in taskList
      */
     @Override
+    @Deprecated
     public boolean containsTaskTitle(String title) {
         for (Task i : this.file.getTaskList()) {
             if (i.getTitle().equals(title)) {
@@ -108,6 +109,7 @@ public class Database implements IDatabase {
      * @param task
      */
     @Override
+    @Deprecated
     public boolean deleteTask(Task task) {
         for (int i = 0; i < this.file.getTaskList().size(); i++) {
             if (this.file.getTaskList().get(i).equals(task)) {
@@ -135,18 +137,11 @@ public class Database implements IDatabase {
         return this.file.getTaskList();
     }
 
-    @Override
-    public void pushToGoogleCal() {
-        /*
-         * TODO: Find out how to interact with Google Calendar API. Implement
-         * the mappings between our variables to their fields and vice versa.
-         */
-    }
-
     /**
      * Save and write file.
      */
     @Override
+    @Deprecated
     public void save() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(this.file);
@@ -163,6 +158,7 @@ public class Database implements IDatabase {
      * @param newTask
      */
     @Override
+    @Deprecated
     public void saveTask(Task newTask) {
         this.file.getTaskList().add(newTask);
         this.save();

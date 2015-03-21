@@ -13,6 +13,7 @@ public interface IDatabase {
      * @param title
      * @return true if the title is in taskList
      */
+    @Deprecated
     boolean containsTaskTitle(String title);
 
     /**
@@ -23,6 +24,7 @@ public interface IDatabase {
      * @param task
      * @return true if the task is found and deleted
      */
+    @Deprecated
     boolean deleteTask(Task task);
 
     /**
@@ -36,13 +38,9 @@ public interface IDatabase {
     List<Task> getTaskList();
 
     /**
-     * Push tasks and events to Google Calendar (Not implemented yet)
-     */
-    void pushToGoogleCal();
-
-    /**
      * Save and write the file
      */
+    @Deprecated
     void save();
 
     /**
@@ -50,6 +48,7 @@ public interface IDatabase {
      *
      * @param newTask
      */
+    @Deprecated
     void saveTask(Task newTask);
 
 }
