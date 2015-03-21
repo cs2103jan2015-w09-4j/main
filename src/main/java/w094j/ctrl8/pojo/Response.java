@@ -1,7 +1,6 @@
+//@author A0110787A
 package w094j.ctrl8.pojo;
 
-
-//@author A0110787A
 /**
  * Response object defines what a Display Interface expects to receive after a
  * user string processed internally for producing the appropriate feedback to

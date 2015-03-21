@@ -1,6 +1,7 @@
+//@author A0110787A
 package w094j.ctrl8.application.view;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import javafx.beans.value.ChangeListener;
@@ -18,6 +19,7 @@ import w094j.ctrl8.application.GUICore;
 public class ConsoleSceneController {
     private static final String __newline = "\n";
 
+    public byte[] input;
     private String displayBuffer; // Buffer for the display
     private InputStream inStream;
 
@@ -55,11 +57,11 @@ public class ConsoleSceneController {
      * instructions.
      */
     public void onEnter() {
-        String input = this.textInput.getText();
+        this.input = this.textInput.getText().getBytes();
 
         this.logger.debug("Received user string: " + input);
 
-        this.inStream = new ByteArrayInputStream(input.getBytes());
+        this.inStream.notifyAll(); // Informs the stream to pickup the data
 
         // @Deprecated because the main role is simply to put it on the stream
         /*
@@ -94,8 +96,48 @@ public class ConsoleSceneController {
 
     @FXML
     private void initialize() {
-        // Creates an InputStream that is initially empty
-        this.inStream = new ByteArrayInputStream(new String().getBytes());
+        /*
+         * Create an InputStream that specifically captures input from the
+         * TextArea. A listener notifies the inputstream to unblock itself once
+         * enter button is pressed
+         */
+        this.inStream = new InputStream() {
+
+            private int pointer = 0; // Initially points to starting point
+
+            @Override
+            public int read() throws IOException {
+                // If there is no input, or pointer is already at end of string,
+                // return -1
+                if (ConsoleSceneController.this.input == null) {
+                    ConsoleSceneController.this.logger
+                            .debug("read() detects null object");
+                    return -1;
+                } else if (this.pointer == ConsoleSceneController.this.input.length) {
+                    ConsoleSceneController.this.logger
+                            .debug("read() at end of string");
+                    return -1;
+                }
+                if (this.pointer > ConsoleSceneController.this.input.length) {
+                    /*
+                     * Reached when pointer has went past the String length
+                     * already. Blocks itself until new input is received
+                     * (notified by onEnter)
+                     */
+                    synchronized (this) {
+                        try {
+                            this.wait();
+                            this.pointer = 0; // Reset pointer back to start
+                        } catch (InterruptedException e) {
+                            ConsoleSceneController.this.logger.debug(e
+                                    .getMessage());
+                            return -1; // "stop" the wait to prevent fatal error
+                        }
+                    }
+                }
+                return ConsoleSceneController.this.input[this.pointer++];
+            }
+        };
 
         // Initialise text display
         this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 12;"); /*
@@ -132,5 +174,4 @@ public class ConsoleSceneController {
                                                                               */
         this.textInput.setAlignment(Pos.TOP_LEFT); // Align top left
     }
-
 }

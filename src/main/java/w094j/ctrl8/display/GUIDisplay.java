@@ -1,3 +1,4 @@
+//@author A0110787A
 package w094j.ctrl8.display;
 
 import java.io.InputStream;
@@ -16,7 +17,6 @@ import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.Command;
 
-//@author A0110787A
 /**
  * Class implements Display Interface as a simple CLI with additional GUI
  * display for its output in the same window

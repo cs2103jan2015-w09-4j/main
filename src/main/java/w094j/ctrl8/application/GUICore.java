@@ -1,3 +1,4 @@
+//@author A0110787A
 package w094j.ctrl8.application;
 
 import java.io.IOException;
@@ -18,7 +19,6 @@ import w094j.ctrl8.application.view.ConsoleSceneController;
 import w094j.ctrl8.application.view.LocalResource;
 import w094j.ctrl8.message.NormalMessage;
 
-//@author A0110787A
 /**
  * The application core of the GUI implementation. To create an application
  * window, simply initialise the object using its constructors.

@@ -1,10 +1,10 @@
+//@author A0110787A
 package w094j.ctrl8.display;
 
 import java.io.InputStream;
 
 import w094j.ctrl8.pojo.Response;
 
-//@author A0110787A
 /**
  * This interface describes the possible interactions a Terminal object can with
  * a display UI. Any display method (CLI/GUI) should (minimally) implement this
