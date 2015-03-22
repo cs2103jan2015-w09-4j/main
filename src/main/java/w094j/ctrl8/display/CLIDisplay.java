@@ -81,7 +81,8 @@ public class CLIDisplay implements IDisplay {
     }
 
     /**
-     * This method is used to print the help table. (modified from printTable)
+     * This method is used to print the table with border. (modified from
+     * printTable)
      */
     // @author A0112521B
     private static void printTableWithBorder(int startIndex, int endIndex,
@@ -91,6 +92,14 @@ public class CLIDisplay implements IDisplay {
         char verticalBorder = '|';
         int spaceInfront = 1;
         int spaceBehind = 2;
+
+        if ((table == null)) {
+            return;
+        }
+
+        if ((startIndex > endIndex) || ((table.length - 1) < endIndex)) {
+            assert (false);
+        }
 
         // Find out what the maximum number of columns is in any row
         int maxColumns = 0;
@@ -141,7 +150,6 @@ public class CLIDisplay implements IDisplay {
         System.out.println(borderKnot);
 
         // Print content (from startIndex to endIndex)
-
         for (int i = startIndex; i <= endIndex; i++) {
             System.out.print(verticalBorder);
             for (int j = 0; j < maxColumns; j++) {
@@ -192,7 +200,7 @@ public class CLIDisplay implements IDisplay {
     // @author A0112521B
     public void outputHelpMessage(CommandType command) {
         // todo Help command should not be handled here
-        if ((command == null) || (command == CommandType.HELP)) {
+        if (command == CommandType.HELP) {
             printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
         } else {
 
@@ -352,7 +360,9 @@ public class CLIDisplay implements IDisplay {
                 e.printStackTrace();
             }
         }
-
+        if (res.command != null) {
+            this.outputHelpMessage(res.command);
+        }
     }
 
     // @author A0112092W
