@@ -84,10 +84,6 @@ public class StatementParser {
 
         CommandType command = this.commandParser.parse(statementString);
         Statement statement = null;
-        if (command == null) {
-            throw new InvalidParameterException(
-                    "statement does not contain a valid command.");
-        }
         logger.debug("Valid Command, parsed \"" + statementString
                 + "\": Command=" + command);
         switch (command) {

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.CommandConfig;
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.statement.CommandType;
 
 /**
@@ -25,7 +26,6 @@ public class CommandParser {
         String delim = "";
         String regex = "^(";
         for (CommandType eaCommand : EnumSet.allOf(CommandType.class)) {
-            System.out.println(eaCommand);
             this.commandLookup.put(eaCommand.toString(), eaCommand);
             regex += delim;
             regex += Pattern.quote(eaCommand.toString());
@@ -37,20 +37,29 @@ public class CommandParser {
     }
 
     /**
-     * Finds the Enum that corresponds to the command given in the nextLine.
+     * Parses the Statement to find the CommandType. This does a strict parsing
+     * of the statement, "HiStOrY-ClEaR" and " add" are not acceptable.
      *
-     * @param commandString
-     *            command to be matched with the respective Enum.
-     * @return Command Enum if found, null otherwise.
+     * @param statement
+     *            Statement provided for parsing.
+     * @return Command Type of the statement.
+     * @throws ParseException
+     *             if there is some problem with the statement; null statement,
+     *             no commands found in the statement.
      */
-    public CommandType parse(String commandString) {
-        Matcher commandMatcher = this.commandPattern.matcher(commandString);
+    public CommandType parse(String statement) throws ParseException {
+
+        if (statement == null) {
+            throw new ParseException("Statement cannot be null.");
+        }
+
+        Matcher commandMatcher = this.commandPattern.matcher(statement);
 
         if (commandMatcher.find()) {
             return this.commandLookup.get(commandMatcher.group().trim()
                     .toLowerCase());
         } else {
-            return null;
+            throw new ParseException("Statement does not contain any commands.");
         }
     }
 
