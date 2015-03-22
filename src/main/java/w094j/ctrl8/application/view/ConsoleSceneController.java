@@ -14,14 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.application.GUICore;
-import w094j.ctrl8.application.model.ConsoleSceneInputStream;
+import w094j.ctrl8.application.model.InputStreamThread;
 
 public class ConsoleSceneController {
     private static final String __newline = "\n";
 
     public byte[] input;
     private String displayBuffer; // Buffer for the display
-    private InputStream inStream;
+    private InputStreamThread isThread;
 
     private Logger logger = LoggerFactory
             .getLogger(ConsoleSceneController.class);
@@ -47,7 +47,7 @@ public class ConsoleSceneController {
     }
 
     public InputStream getInputStream() {
-        return this.inStream;
+        return this.isThread.getInputStream();
     }
 
     /**
@@ -57,25 +57,15 @@ public class ConsoleSceneController {
      * instructions.
      */
     public void onEnter() {
-        this.input = this.textInput.getText().getBytes();
+        synchronized (this.isThread) {
+            this.isThread.run(); // Tells the thread to pick up the String
 
-        this.logger.debug("Received user string: " + input);
+        }
 
-        this.inStream.notifyAll(); // Informs the stream to pickup the data
+        // Update displayed text
+        this.textInput.setText(new String()); // Flushes the display
+        this.textInput.appendText(""); // Activates listener
 
-        // @Deprecated because the main role is simply to put it on the stream
-        /*
-         * try { Statement.parse(input).execute(this.root.terminal); } catch
-         * (InvalidParameterException e) {
-         * this.logger.debug("InvalidParameterException thrown");
-         * appendToDisplay(e.getMessage()); } catch (CommandExecuteException e)
-         * { this.logger.debug("CommandExecuteException thrown");
-         * appendToDisplay(e.getMessage()); } catch (ParameterParseException e)
-         * { this.logger.debug("ParameterParseException thrown");
-         * appendToDisplay(e.getMessage()); } appendToDisplay(input);
-         * this.lastTextInput = this.textInput.toString();
-         * this.textInput.setText(""); // clears the buffer
-         */
     }
 
     /**
@@ -96,13 +86,6 @@ public class ConsoleSceneController {
 
     @FXML
     private void initialize() {
-        /*
-         * Create an InputStream that specifically captures input from the
-         * TextArea. A listener notifies the inputstream to unblock itself once
-         * enter button is pressed
-         */
-        this.inStream = new ConsoleSceneInputStream(this);
-
         // Initialise text display
         this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 12;"); /*
                                                                                 * Black
@@ -129,6 +112,8 @@ public class ConsoleSceneController {
         this.displayBuffer = "";
         this.textDisplay.appendText(this.displayBuffer);
 
+        this.logger.debug("textDisplay Setup successful");
+
         // Initialise text input
         this.textInput.setStyle("-fx-text-fill: black; -fx-font-size: 20;"); /*
                                                                               * Black
@@ -137,5 +122,14 @@ public class ConsoleSceneController {
                                                                               * 20
                                                                               */
         this.textInput.setAlignment(Pos.TOP_LEFT); // Align top left
+
+        this.logger.debug("textDisplay Setup successful");
+        /*
+         * Create an InputStream that specifically captures input from the
+         * TextArea. A listener notifies the inputstream to unblock itself once
+         * enter button is pressed
+         */
+        this.isThread = new InputStreamThread(this.textInput, this);
+        this.logger.debug("InputStream Thread created");
     }
 }

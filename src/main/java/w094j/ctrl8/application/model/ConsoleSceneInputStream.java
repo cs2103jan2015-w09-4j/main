@@ -44,7 +44,7 @@ public class ConsoleSceneInputStream extends InputStream {
              * Reached when pointer has went past the String length already.
              * Blocks itself until new input is received (notified by onEnter)
              */
-            synchronized (this) {
+            synchronized (this.csc) {
                 try {
                     this.wait();
                     this.pointer = 0; // Reset pointer back to start

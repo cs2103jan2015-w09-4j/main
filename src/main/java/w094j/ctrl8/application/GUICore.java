@@ -24,7 +24,7 @@ import w094j.ctrl8.message.NormalMessage;
  *
  * <pre>
  * E.g
- * new GUICore();
+ * new GUICore(new String[] {""});
  * 
  * Refer to
  * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
