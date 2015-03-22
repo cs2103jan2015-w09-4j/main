@@ -27,34 +27,6 @@ public class PriorityParameterExceptionTest {
     }
 
     @Test
-    public void testExtremelyLargeIntValue() throws Exception {
-        try {
-            this.parser.parse("%{" + (Integer.MAX_VALUE + Integer.MAX_VALUE)
-                    + "}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be an integer.")) {
-                Assert.fail("should have printed: Priority must be an integer.");
-            }
-        }
-    }
-
-    @Test
-    public void testExtremelySmallIntValue() throws Exception {
-        try {
-            this.parser.parse("%{" + (Integer.MIN_VALUE + Integer.MIN_VALUE)
-                    + "}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be an integer.")) {
-                Assert.fail("should have printed: Priority must be an integer.");
-            }
-        }
-    }
-
-    @Test
     public void testIntMaxValue() throws Exception {
         try {
             this.parser.parse("%{" + (Integer.MAX_VALUE) + "}");
