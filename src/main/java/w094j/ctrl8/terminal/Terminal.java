@@ -78,9 +78,9 @@ public class Terminal implements ITerminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-                                          * TODO replace with proper
-                                          * configuration
-                                          */
+         * TODO replace with proper
+         * configuration
+         */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -236,7 +236,7 @@ public class Terminal implements ITerminal {
     /**
      * This method return the caller a boolean whether this terminal should
      * continue to be executed.
-     * 
+     *
      * @return continueExecution
      */
     public boolean getContinueExecution() {
@@ -249,11 +249,12 @@ public class Terminal implements ITerminal {
      */
     @Override
     public void help(CommandType command) {
-        // this.display.outputHelpMessage(command);
-
-        // TODO correct the quickfix
         Response res = new Response();
-        res.reply = "Please fix this";
+        if (command == null) {
+            res.command = CommandType.HELP;
+        } else {
+            res.command = command;
+        }
         this.display.updateUI(res);
     }
 
