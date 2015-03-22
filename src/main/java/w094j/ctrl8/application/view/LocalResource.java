@@ -6,7 +6,7 @@ package w094j.ctrl8.application.view;
  * application uses.
  */
 public class LocalResource {
-    public static final String ConsoleScene = "view/ConsoleScene.fxml";
-    public static final String RootLayout = "view/RootLayout.fxml";
+    public static final String ConsoleScene = "/ConsoleScene.fxml";
+    public static final String RootLayout = "/RootLayout.fxml";
 
 }
