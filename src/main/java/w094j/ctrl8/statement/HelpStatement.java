@@ -1,5 +1,6 @@
 package w094j.ctrl8.statement;
 
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.terminal.Terminal;
@@ -19,7 +20,12 @@ public class HelpStatement extends Statement {
      */
     public HelpStatement(String statementString) {
         super(CommandType.HELP, statementString);
-        this.command = commandParser.parse(this.getStatementArgumentsOnly());
+        try {
+            this.command = commandParser
+                    .parse(this.getStatementArgumentsOnly());
+        } catch (ParseException e) {
+            this.command = CommandType.HELP;
+        }
     }
 
     @Override

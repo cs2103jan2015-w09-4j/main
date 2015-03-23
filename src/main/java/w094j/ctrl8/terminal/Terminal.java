@@ -78,9 +78,9 @@ public class Terminal implements ITerminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-         * TODO replace with proper
-         * configuration
-         */
+                                          * TODO replace with proper
+                                          * configuration
+                                          */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -250,11 +250,7 @@ public class Terminal implements ITerminal {
     @Override
     public void help(CommandType command) {
         Response res = new Response();
-        if (command == null) {
-            res.command = CommandType.HELP;
-        } else {
-            res.command = command;
-        }
+        res.command = command;
         this.display.updateUI(res);
     }
 
