@@ -9,10 +9,19 @@ import org.junit.Test;
 import w094j.ctrl8.database.config.ParameterConfig;
 import w094j.ctrl8.parse.ParameterParser;
 
+/**
+ * PriorityParameter Exception Test. Valid priority number(int) ranges from 0 to
+ * 10 inclusive. Exception will be thrown if it is invalid.
+ */
 public class PriorityParameterExceptionTest {
     private ParameterConfig config = new ParameterConfig();
     private ParameterParser parser = new ParameterParser(this.config);
 
+    /**
+     * Test for error value: double
+     *
+     * @throws Exception
+     */
     @Test
     public void testDouble() throws Exception {
         try {
@@ -26,6 +35,11 @@ public class PriorityParameterExceptionTest {
         }
     }
 
+    /**
+     * Boundary Testing: Extreme Value (Integer.MAX_VALUE)
+     *
+     * @throws Exception
+     */
     @Test
     public void testIntMaxValue() throws Exception {
         try {
@@ -39,6 +53,11 @@ public class PriorityParameterExceptionTest {
         }
     }
 
+    /**
+     * Boundary Testing: Extreme Value (Integer.MIN_VALUE)
+     *
+     * @throws Exception
+     */
     @Test
     public void testIntMinValue() throws Exception {
         try {
@@ -52,6 +71,11 @@ public class PriorityParameterExceptionTest {
         }
     }
 
+    /**
+     * Boundary Testing: Just Below Range
+     *
+     * @throws Exception
+     */
     @Test
     public void testOutOfRangeNegative() throws Exception {
         try {
@@ -66,6 +90,11 @@ public class PriorityParameterExceptionTest {
 
     }
 
+    /**
+     * Boundary Testing: Just Above Range
+     *
+     * @throws Exception
+     */
     @Test
     public void testOutOfRangePositive() throws Exception {
         try {
@@ -80,6 +109,11 @@ public class PriorityParameterExceptionTest {
         }
     }
 
+    /**
+     * Test for error value: String (2 words)
+     *
+     * @throws Exception
+     */
     @Test
     public void testString() throws Exception {
         try {
@@ -93,6 +127,11 @@ public class PriorityParameterExceptionTest {
         }
     }
 
+    /**
+     * Test for error value: String (1 word)
+     *
+     * @throws Exception
+     */
     @Test
     public void testWord() throws Exception {
         try {
