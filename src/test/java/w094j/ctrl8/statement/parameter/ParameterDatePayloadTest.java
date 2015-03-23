@@ -49,7 +49,13 @@ public class ParameterDatePayloadTest {
                 /**
                  * Normal tests
                  */
-                { "3 Aug 1992 00:00:00", new Date(92,7,3,0,0,0)  }
+                { "3 Aug 1992 00:00:00", new Date(92, 7, 3, 0, 0, 0) },
+
+                //@author A0112521B
+                { "June 15 1992 6:01:00", new Date(92, 5, 15, 6, 1, 0) },
+                { "30 january 1993 23:59", new Date(93, 0, 30, 23, 59, 0) },
+                { "31 dec 1994 12:00", new Date(94, 11, 31, 12, 00, 0) }
+
         });
     }
 
