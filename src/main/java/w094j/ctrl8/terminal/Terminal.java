@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.IDisplay;
@@ -47,6 +48,7 @@ public class Terminal implements ITerminal {
 
     // Storage object (Internal)
     HashMap<String, Task> taskMap;
+    private AliasData aliasData;
 
     /**
      * Default Constructor for a terminal with no specifications
@@ -78,9 +80,9 @@ public class Terminal implements ITerminal {
         assertNotNull(conf); // Should not be a null object
 
         this.display = new CLIDisplay(); /*
-                                          * TODO replace with proper
-                                          * configuration
-                                          */
+         * TODO replace with proper
+         * configuration
+         */
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -101,9 +103,11 @@ public class Terminal implements ITerminal {
      * @param display
      */
     @Deprecated
-    public Terminal(Config conf, IDisplay display) {
+    public Terminal(Config conf, IDisplay display, AliasData aliasData) {
         assertNotNull(conf); // Should not be a null object
         assertNotNull(display); // Should not be a null object
+
+        this.aliasData = aliasData;
 
         this.display = new CLIDisplay();
         try {
@@ -179,6 +183,18 @@ public class Terminal implements ITerminal {
         this.display.updateUI(res);
 
         logger.debug("Number of Tasks:" + this.taskMap.values().size());
+    }
+
+    /**
+     * TODO Test implementation
+     * 
+     * @param alias
+     * @param value
+     * @throws CommandExecuteException
+     */
+    public void aliasAdd(String alias, String value)
+            throws CommandExecuteException {
+        this.aliasData.addAlias(alias, value);
     }
 
     /**

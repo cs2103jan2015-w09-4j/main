@@ -35,6 +35,9 @@ import w094j.ctrl8.terminal.Terminal;
 
 public class Start {
 
+    // create the command line parser
+    private static CommandLineParser commandLineParser = new GnuParser();
+
     /**
      * Runs the Task Manager with the file path to extract the data from the
      * file.
@@ -44,8 +47,7 @@ public class Start {
     private static Logger logger = LoggerFactory.getLogger(Start.class);
     // create the Options
     private static Options optionList;
-    // create the command line parser
-    private static CommandLineParser parser = new GnuParser();
+    private static Parser parser;
 
     /**
      * @param args
@@ -60,11 +62,14 @@ public class Start {
         // Interface supporting interaction with user
         IDisplay display = new CLIDisplay();
 
+        ParserConfig config = new ParserConfig();
+
         // The terminal that performs all the actions
         Terminal terminal;
         if (checkArgs(args)) {
             parseArgs(args);
-            terminal = new Terminal(Config.parseArgs(args), display);
+            terminal = new Terminal(Config.parseArgs(args), display, config
+                    .getAlias().getAliasData());
         } else {
             // Default database and terminal will be created if no file path
             // specified.
@@ -72,6 +77,8 @@ public class Start {
             terminal = new Terminal();
         }
         logger.info(NormalMessage.WELCOME_MESSAGE);
+
+        parser = Parser.initInstance(config);
         runTerminal(terminal, display);
     }
 
@@ -92,9 +99,6 @@ public class Start {
         boolean continueExecution = true;
         Response res = new Response();
         String command = null;
-
-        ParserConfig config = new ParserConfig();
-        Parser parser = Parser.initInstance(config);
 
         while (continueExecution) {
             terminal.displayNextCommandRequest();
@@ -149,7 +153,7 @@ public class Start {
     private static Database parseArgs(String[] args) {
         try {
             // parse the command line arguments
-            CommandLine line = parser.parse(optionList, args);
+            CommandLine line = commandLineParser.parse(optionList, args);
 
             // validate that file's Path has been set
             if (line.hasOption("filePath")) {
@@ -185,12 +189,12 @@ public class Start {
     private static void printHelp(Options optionList) {
         HelpFormatter formatter = new HelpFormatter();
         formatter
-        .printHelp(
-                "Ctrl-8",
-                "Welcome to Ctrl-8. Below are the options you can choose",
-                optionList,
-                "For more information please refer to https://github.com/cs2103jan2015-w09-4j/main",
-                true);
+                .printHelp(
+                        "Ctrl-8",
+                        "Welcome to Ctrl-8. Below are the options you can choose",
+                        optionList,
+                        "For more information please refer to https://github.com/cs2103jan2015-w09-4j/main",
+                        true);
     }
 
 }

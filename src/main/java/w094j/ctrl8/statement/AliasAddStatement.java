@@ -33,9 +33,7 @@ public class AliasAddStatement extends Statement {
 
     @Override
     public void execute(Terminal terminal) throws CommandExecuteException {
-        // TODO Link to Terminal
-        // terminal.aliasAdd(this.alias, this.phrase);
-        logger.debug("aliasAdd not implemented yet.");
+        terminal.aliasAdd(this.alias, this.phrase);
 
     }
 

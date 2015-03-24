@@ -1,5 +1,6 @@
 package w094j.ctrl8.data;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ public class AliasData {
      *
      */
     public AliasData() {
+        this.aliasMap = new HashMap<String, String>();
     }
 
     /**
