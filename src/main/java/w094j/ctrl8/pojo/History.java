@@ -47,7 +47,7 @@ public class History {
     /**
      * delete the entire history list
      */
-    public void deleteHistory(){
+    public void deleteAllHistory(){
         this.ActionList.clear();
     }
     

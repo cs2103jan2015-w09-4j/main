@@ -408,6 +408,10 @@ public class Terminal implements ITerminal {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
+         // Informs user that his add statement is successful
+            Response res = new Response();
+            res.reply = task.getTitle() + NormalMessage.DONE_TASK_SUCCESSFUL;
+            this.display.updateUI(res);
             //update history
             updateHistory(statement);
         }

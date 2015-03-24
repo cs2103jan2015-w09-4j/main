@@ -3,6 +3,7 @@ package w094j.ctrl8.terminal;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.statement.Statement;
 
 //@author A0110787A
 public interface ITerminal {
@@ -18,9 +19,10 @@ public interface ITerminal {
      * @param task
      *            Task object. Expects a well defined Task, otherwise throws
      *            CommandExecuteException
+     * @param statement 
      * @throws CommandExecuteException
      */
-    public void add(Task task) throws CommandExecuteException;
+    public void add(Task task,Statement statement) throws CommandExecuteException;
 
     /**
      * <pre>
@@ -34,9 +36,10 @@ public interface ITerminal {
      *
      * @param taskID
      *            key that represents the task object
+     * @param statement 
      * @throws CommandExecuteException
      */
-    public void delete(String taskID) throws CommandExecuteException;
+    public void delete(String taskID,Statement statement) throws CommandExecuteException;
 
     /**
      * Stops the Terminal from continuing its REPL loop
@@ -46,6 +49,7 @@ public interface ITerminal {
     /**
      * Generates information to assist the user in understanding the available
      * syntax and displays it.
+     * @param command 
      */
     public void help(CommandType command); // TODO add parameter to support help for
 // specific
@@ -68,9 +72,10 @@ public interface ITerminal {
      * @param incompleteTask
      *            a Task that may not neccessarily have all its fields
      *            completed. Is used as an overwrite.
+     * @param statement 
      * @throws CommandExecuteException
      */
-    public void modify(String query, Task incompleteTask)
+    public void modify(String query, Task incompleteTask,Statement statement)
             throws CommandExecuteException;
 
     /**
@@ -93,4 +98,16 @@ public interface ITerminal {
      */
     public void view() throws CommandExecuteException;
 
+    
+    
+    /**
+     * adding of alias from user
+     * @param alias
+     * @param value
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void aliasAdd(String alias, String value,Statement statement)
+            throws CommandExecuteException;
+    
 }
