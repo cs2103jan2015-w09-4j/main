@@ -1,6 +1,9 @@
 package w094j.ctrl8.database.config;
 
 //@author A0112521B
+/**
+ * Configuration file for Database.
+ */
 public class DatabaseConfig implements IConfig {
 
     public enum Frequency {
@@ -11,7 +14,6 @@ public class DatabaseConfig implements IConfig {
     private Frequency autoClearHistoryFrequency;
 
     public DatabaseConfig() {
-        this.autoClearHistoryFrequency = AUTO_CLEAR_HISTORY_FREQUENCY_DEFAULT;
     }
 
     /**
@@ -20,7 +22,11 @@ public class DatabaseConfig implements IConfig {
      * @return Frequency
      */
     public Frequency getAutoClearHistoryFrequency() {
-        return this.autoClearHistoryFrequency;
+        if (this.autoClearHistoryFrequency == null) {
+            return AUTO_CLEAR_HISTORY_FREQUENCY_DEFAULT;
+        } else {
+            return this.autoClearHistoryFrequency;
+        }
     }
 
     @Override
