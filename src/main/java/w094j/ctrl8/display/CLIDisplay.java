@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,11 @@ import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
+import w094j.ctrl8.pojo.History;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.statement.Statement;
 
 /**
  * Class implements Display Interface as a simple CLI How to use: To get
@@ -363,6 +366,9 @@ public class CLIDisplay implements IDisplay {
         if (res.command != null) {
             this.outputHelpMessage(res.command);
         }
+        if(res.history !=null){
+            this.outputHistory(res.history);
+        }
     }
 
     // @author A0112092W
@@ -421,4 +427,16 @@ public class CLIDisplay implements IDisplay {
         return table;
     }
 
+    
+    private void outputHistory(History history){
+        ArrayList<Statement> historyList = history.getHistoryList();
+        
+        for(int i=0;i<historyList.size();i++){
+            Statement statement = historyList.get(i);
+            System.out.print(i + ". Command:");
+            System.out.print(statement.getCommand().toString());
+            System.out.print(" String:");
+            System.out.println(statement.getStatementArgumentsOnly());
+        }
+    }
 }

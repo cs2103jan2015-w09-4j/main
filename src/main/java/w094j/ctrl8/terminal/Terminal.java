@@ -385,6 +385,13 @@ public class Terminal implements ITerminal {
     }
     
     
+    /** 
+     *  Set the task's status to done
+     *  
+     * @param query
+     * @param statement
+     * @throws CommandExecuteException
+     */
     public void done(String query,Statement statement) throws CommandExecuteException{
         if (this.isTaskExist(query)) {
 
@@ -425,6 +432,36 @@ public class Terminal implements ITerminal {
         this.history.addHistory(statement);
     }
 
+    
+    /**
+     * View all the history
+     * 
+     * @throws CommandExecuteException
+     */
+    public void viewHistory() throws CommandExecuteException{
+        if (this.history.getHistoryList().size() == 0) {
+            /*
+             * history is empty
+             */
+            Response res = new Response();
+            res.reply = NormalMessage.NO_HISTORY_FOUND;
+            this.display.updateUI(res);
+
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        } else {
+            try {
+                
+                Response res = new Response();
+                res.history = this.history;
+                this.display.updateUI(res);
+
+            } catch (Exception e) {
+                throw new CommandExecuteException(e.getMessage());
+            }
+        }
+
+    }
     /**
      * Initializes the taskMap based on what the datastore currently contains
      */

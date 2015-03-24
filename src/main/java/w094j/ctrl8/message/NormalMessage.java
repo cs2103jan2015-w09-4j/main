@@ -35,5 +35,6 @@ public class NormalMessage {
     public static final String START_MESSAGE = "Starting Ctrl-8...";
     public static final String WELCOME_MESSAGE = "Welcome for using Ctrl-8!";
     public static final String DONE_TASK_SUCCESSFUL = " is done!";
+    public static final String NO_HISTORY_FOUND = "No History Found";
 
 }

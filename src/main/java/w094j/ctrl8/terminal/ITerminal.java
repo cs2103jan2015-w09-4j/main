@@ -110,4 +110,11 @@ public interface ITerminal {
     public void aliasAdd(String alias, String value,Statement statement)
             throws CommandExecuteException;
     
+    
+    /**
+     * view the history of actions
+     * @throws CommandExecuteException
+     */
+    public void viewHistory() throws CommandExecuteException;
+    
 }
