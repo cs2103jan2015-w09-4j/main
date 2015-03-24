@@ -68,31 +68,31 @@ public class ParameterTest {
                  */
                 { "={UROP Meeting} ={UROP Meetings}", Arrays.asList(new Parameter[] {new TitleParameter("UROP Meeting"), new TitleParameter("UROP Meetings")}) },
                 { "={UROP Meeting}#{nus}", Arrays.asList(new Parameter[] {new TitleParameter("UROP Meeting"), new CategoryParameter("nus") }) },
-                
-                //@author A0112092W 
+
+                //@author A0112092W
                 /**
                  * Errorneous test cases
                  */
                 //null parameter
-                { "", null},
+                { "", Arrays.asList(new Parameter[]{})},
                 //error parameter
-                {"==", null},
+                {"==", Arrays.asList(new Parameter[]{})},
                 //wrong usage of brackets
-                {"=(meeting)",null},
+                {"=(meeting)",Arrays.asList(new Parameter[]{})},
                 //multiple usage of tags in 1 field
-                {"@#{friends}", null},
+                {"@#{friends}", Arrays.asList(new Parameter[]{})},
                 //random parameter
-                {".{today}",null},
+                {".{today}",Arrays.asList(new Parameter[]{})},
                 //random parameter
-                {"*{tmr}", null},
+                {"*{tmr}", Arrays.asList(new Parameter[]{})},
                 //duplicate parameter
-                
-                
+
+
                 /**
                  * Extreme test cases
                  */
                 //All tags in one time
-                {"={OP2 Meeting} -{tmr 3pm} +{Prepare for own slides} @{biz canteen} %{10} !{tmr 12pm} ~{tmr 2pm} #{cs2101}", 
+                {"={OP2 Meeting} -{tmr 3pm} +{Prepare for own slides} @{biz canteen} %{10} !{tmr 12pm} ~{tmr 2pm} #{cs2101}",
                     Arrays.asList(new Parameter[] {new TitleParameter("OP2 Meeting"), new DeadlineParameter("tmr 3pm"),
                             new DescriptionParameter("Prepare for own slides"),new LocationParameter("biz canteen"),new PriorityParameter("10"),
                             new ReminderParameter("tmr 12pm"), new StartTimeParameter("tmr 2pm"), new CategoryParameter("cs2101") })
@@ -102,10 +102,10 @@ public class ParameterTest {
                     Arrays.asList(new Parameter[] {new TitleParameter("Meeting1"),new TitleParameter("Meeting2"),new TitleParameter("Meeting3"),
                             new TitleParameter("Meeting4"),new TitleParameter("Meeting5"),new TitleParameter("Meeting6"),new TitleParameter("Meeting7"),
                             new TitleParameter("Meeting8"),new TitleParameter("Meeting9"),new TitleParameter("Meeting10"), new TitleParameter("Meeting11")})
-                    
+
                 }
-                
-                
+
+
         });
     }
 
@@ -126,7 +126,7 @@ public class ParameterTest {
     @Test
     public void test() {
 
-            assertTrue(this.expectedParamContainer.equals(parser.parse(this.input)));
-        
+        assertTrue(this.expectedParamContainer.equals(parser.parse(this.input)));
+
     }
 }
