@@ -17,9 +17,11 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
+import w094j.ctrl8.pojo.History;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.statement.Statement;
 
 import com.google.gson.Gson;
 
@@ -48,6 +50,9 @@ public class Terminal implements ITerminal {
 
     // Storage object (Internal)
     HashMap<String, Task> taskMap;
+    
+    //History 
+    private History history = new History();
     private AliasData aliasData;
 
     /**
@@ -149,7 +154,7 @@ public class Terminal implements ITerminal {
      *            constructed otherwise Database would run into issues
      */
     @Override
-    public void add(Task task) throws CommandExecuteException {
+    public void add(Task task,Statement statement) throws CommandExecuteException {
         // Task object should not be null
         if (task == null) {
             throw new CommandExecuteException(
@@ -177,6 +182,9 @@ public class Terminal implements ITerminal {
             throw new CommandExecuteException(e.getMessage());
         }
 
+        //update history
+        updateHistory(statement);
+        
         // Informs user that his add statement is successful
         Response res = new Response();
         res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
@@ -192,7 +200,7 @@ public class Terminal implements ITerminal {
      * @param value
      * @throws CommandExecuteException
      */
-    public void aliasAdd(String alias, String value)
+    public void aliasAdd(String alias, String value,Statement statement)
             throws CommandExecuteException {
         this.aliasData.addAlias(alias, value);
     }
@@ -206,7 +214,7 @@ public class Terminal implements ITerminal {
      * @param taskID
      */
     @Override
-    public void delete(String taskID) throws CommandExecuteException {
+    public void delete(String taskID,Statement statement) throws CommandExecuteException {
         try {
             /* Check if key exists in taskmap */
             if (this.taskMap.containsKey(taskID)) {
@@ -214,6 +222,9 @@ public class Terminal implements ITerminal {
 
                 // Update the database
                 this.database.deleteTask(removedTask);
+                
+               //update history
+                updateHistory(statement);
             } else {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_BAD_TASKID);
@@ -279,7 +290,7 @@ public class Terminal implements ITerminal {
      * @param incompleteTask
      */
     @Override
-    public void modify(String query, Task incompleteTask)
+    public void modify(String query, Task incompleteTask,Statement statement)
             throws CommandExecuteException {
 
         // check if the task exists
@@ -303,7 +314,9 @@ public class Terminal implements ITerminal {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
-
+            //update history
+            updateHistory(statement);
+            
             // Informs user that his add statement is successful
             Response res = new Response();
             res.reply = task.getTitle() + NormalMessage.MODIFY_TASK_SUCCESSFUL;
@@ -312,6 +325,7 @@ public class Terminal implements ITerminal {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         }
+        
     }
 
     /**
@@ -368,6 +382,43 @@ public class Terminal implements ITerminal {
                 throw new CommandExecuteException(e.getMessage());
             }
         }
+    }
+    
+    
+    public void done(String query,Statement statement) throws CommandExecuteException{
+        if (this.isTaskExist(query)) {
+
+            Task task = this.taskMap.get(query);
+            if(task.getStatus() == true){
+                logger.debug("The task is already done");
+            }
+            try {
+                // Add to database
+                this.database.deleteTask(task);
+                task.setStatus(true);
+                this.database.saveTask(task);
+            } catch (Exception e) {
+                throw new CommandExecuteException(e.getMessage());
+            }
+
+            try {
+                // Update the TaskMap
+                this.updateTaskMap(query, task);
+            } catch (Exception e) {
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+            }
+            //update history
+            updateHistory(statement);
+        }
+    }
+        
+    /**
+     * update the history of actions 
+     * @param statement
+     */
+    private void updateHistory(Statement statement){
+        this.history.addHistory(statement);
     }
 
     /**
