@@ -66,7 +66,8 @@ public class AliasParserTest {
                 /**
                  * Errornous tests
                  */
-                {"add ={|sleep}",null}
+                {"add ={|sleep}",null},
+                {"add ={s\\leep}",null}
         });
     }
 
