@@ -33,8 +33,8 @@ public class AliasAddStatement extends Statement {
 
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        //Statement to be added
-        taskManager.aliasAdd(this.alias, this.phrase, null);
+        // Statement to be added
+        taskManager.aliasAdd(this.alias, this.phrase, this);
 
     }
 

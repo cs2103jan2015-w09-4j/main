@@ -3,6 +3,7 @@ package w094j.ctrl8.statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0065517A
@@ -24,8 +25,9 @@ public class HistoryStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(TaskManager taskManager) {
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
         // TODO Link to Terminal
+        taskManager.viewHistory();
         logger.debug("History command not implemented yet.");
     }
 

@@ -58,4 +58,9 @@ public class ParameterContainer {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return this.parameterLookup.toString();
+    }
 }

@@ -81,11 +81,10 @@ public class ModifyStatement extends Statement {
 
     }
 
-
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        //Statement to be added
-        taskManager.modify(this.query, this.task, null);
-        
+        // Statement to be added
+        taskManager.modify(this.query, this.task, this);
+
     }
 }

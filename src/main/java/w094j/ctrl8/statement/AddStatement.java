@@ -46,7 +46,8 @@ public class AddStatement extends Statement {
     public AddStatement(String statementString) throws ParseException {
         super(CommandType.ADD, statementString);
         this.task = new Task();
-        ParameterContainer container = parameterParser.parse(statementString);
+        ParameterContainer container = parameterParser.parse(this
+                .getStatementArgumentsOnly());
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
         this.task.toCompleteTask();
@@ -60,7 +61,7 @@ public class AddStatement extends Statement {
 
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        //Statement to be added
-        taskManager.add(this.task, null);
+        // Statement to be added
+        taskManager.add(this.task, this);
     }
 }
