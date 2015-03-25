@@ -1,4 +1,4 @@
-package w094j.ctrl8.terminal;
+package w094j.ctrl8.taskmanager;
 
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
@@ -6,7 +6,7 @@ import w094j.ctrl8.statement.CommandType;
 import w094j.ctrl8.statement.Statement;
 
 //@author A0110787A
-public interface ITerminal {
+public interface ITaskManager {
 
     /**
      * <pre>
