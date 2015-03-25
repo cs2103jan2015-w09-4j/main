@@ -30,8 +30,6 @@ public class ParameterConfig implements IConfig {
 
     static {
 
-        System.out.println(ACCEPTABLE_SYMBOL_REGEX);
-
         // Initialize the Default Symbol Pairings
         SYMBOL_PAIRING_DEFAULTS.put(ParameterType.CATEGORY, CATEGORY_DEFAULT);
         SYMBOL_PAIRING_DEFAULTS.put(ParameterType.DEADLINE, DEADLINE_DEFAULT);

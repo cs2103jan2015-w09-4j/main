@@ -29,8 +29,8 @@ public class SearchStatement extends StatementQuery {
 
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        //Statement to be added
-        terminal.search(this.query, this.task, null);
+        // Statement to be added
+        taskManager.search(this.query, this.task);
     }
 
 }

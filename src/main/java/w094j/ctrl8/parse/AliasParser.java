@@ -43,11 +43,13 @@ public class AliasParser {
             formatter.format(ALIAS_REGEX_FORMAT, Pattern.quote(Character
                     .toString(aliasConfig.getAliasCharacter())));
             this.aliasPattern = Pattern.compile(sb.toString());
+            logger.debug("Alias Regex(" + sb.toString() + ").");
             sb.setLength(0);
             formatter
             .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
                     .quote(Character.toString(aliasConfig
                             .getAliasCharacter())));
+            logger.debug("Escaped alias Regex(" + sb.toString() + ").");
             this.aliasEscapedRegex = sb.toString();
         }
     }

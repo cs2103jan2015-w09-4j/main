@@ -25,7 +25,7 @@ public class AliasDeleteStatement extends StatementQuery {
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
         // TODO Link to Terminal
-        //terminal.aliasDelete(this.query);
+        taskManager.aliasDelete(this.query);
         logger.debug("aliasDelete not implemented yet.");
 
     }
