@@ -3,8 +3,10 @@ package w094j.ctrl8.parse;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,12 +31,16 @@ import w094j.ctrl8.statement.parameter.TitleParameter;
  */
 public class ParameterParser {
 
-    private String bannedSymbolsRegex;
+    private ParameterConfig config;
+    private Set<String> escapableSymbols;
 
+    private Pattern explicitParameterPattern;
+    private Pattern explicitParameterPayloadPattern;
+
+    private Pattern explicitShortParameterPattern;
+    private Pattern explicitShortParameterPayloadPattern;
     private Logger logger = LoggerFactory.getLogger(ParameterType.class);
     private Map<Character, ParameterType> parameterLookup = new HashMap<Character, ParameterType>();
-
-    private Pattern parameterPattern;
 
     /**
      * Creates a Parameter Parser.
@@ -44,26 +50,63 @@ public class ParameterParser {
      */
     public ParameterParser(ParameterConfig config) {
 
+        this.config = config;
+        this.escapableSymbols = new HashSet<String>();
+
         for (ParameterType eaSymbol : EnumSet.allOf(ParameterType.class)) {
-            this.parameterLookup.put(config.get(eaSymbol), eaSymbol);
+            this.escapableSymbols.add(this.config.get(eaSymbol).toString());
+            this.parameterLookup.put(this.config.get(eaSymbol), eaSymbol);
         }
+        this.escapableSymbols.add("{");
+        this.escapableSymbols.add("}");
+        this.escapableSymbols.add("\\");
 
         String delim = "";
-        String regex = "(";
         String symbolSelection = "";
         for (Character eaParamSymbol : this.parameterLookup.keySet()) {
             symbolSelection += delim;
             symbolSelection += Pattern.quote(Character.toString(eaParamSymbol));
             delim = "|";
         }
-        regex += symbolSelection;
-        regex += ")\\{([^\\r\\n\\{\\}" + symbolSelection + "]+)?\\}";
-        this.logger.info(regex);
-        this.parameterPattern = Pattern.compile(regex);
-        this.bannedSymbolsRegex = "(" + symbolSelection + "|\\{|\\})";
-        this.logger.info("Parameter Parser initialized with REGEX:"
-                + this.parameterPattern.pattern());
-        this.logger.info("Banned Symbols Regex:" + this.bannedSymbolsRegex);
+
+        delim = "";
+        String escapableSymbolSelection = "";
+        for (String eaSymbol : this.escapableSymbols) {
+            escapableSymbolSelection += delim;
+            escapableSymbolSelection += Pattern.quote(eaSymbol);
+            delim = "|";
+        }
+
+        System.out.println(escapableSymbolSelection);
+
+        String regexExplicit = "(^|\\s)(" + symbolSelection
+                + ")\\{([^\\r\\n\\\\\\{\\}" + symbolSelection + "]|\\\\("
+                + escapableSymbolSelection + ")|\\\\.){0,}\\}";
+        String regexExplicitShort = "(^|\\s)(" + symbolSelection
+                + ")([^\\s\\r\\n\\\\\\{\\}" + symbolSelection + "]|\\\\("
+                + escapableSymbolSelection + ")|\\\\.){1,}";
+
+        this.explicitParameterPattern = Pattern.compile(regexExplicit);
+        this.explicitShortParameterPattern = Pattern
+                .compile(regexExplicitShort);
+
+        String explicitParameterPayloadRegex = "(?<=(^" + symbolSelection
+                + ")\\{).{0,}(?=\\}$)";
+        String explicitShortParameterPayloadRegex = "(?<=(^" + symbolSelection
+                + ")).{1,}$";
+
+        this.explicitParameterPayloadPattern = Pattern
+                .compile(explicitParameterPayloadRegex);
+        this.explicitShortParameterPayloadPattern = Pattern
+                .compile(explicitShortParameterPayloadRegex);
+
+        this.logger.info("Explicit parameter: Regex(" + regexExplicit + ")");
+        this.logger.info("Explicit parameter payload: Regex("
+                + explicitParameterPayloadRegex + ")");
+        this.logger.info("Explicit short parameter: Regex("
+                + regexExplicitShort + ")");
+        this.logger.info("Explicit parameter payload: Regex("
+                + explicitShortParameterPayloadRegex + ")");
 
     }
 
@@ -104,13 +147,6 @@ public class ParameterParser {
     }
 
     /**
-     * @return the bannedSymbolsRegex
-     */
-    public String getBannedSymbolsRegex() {
-        return this.bannedSymbolsRegex;
-    }
-
-    /**
      * Parses the parameter taken from the terminal.
      *
      * @param parameterString
@@ -119,24 +155,79 @@ public class ParameterParser {
      */
     public ParameterContainer parse(String parameterString) {
 
-        Matcher parameterMatcher = this.parameterPattern
-                .matcher(parameterString);
-
         List<Parameter> parameterList = new ArrayList<>();
-        while (parameterMatcher.find()) {
-            String eaParameter = parameterMatcher.group();
-            Character eaParameterSymbol = eaParameter.charAt(0);
-            String eaParameterPayload = eaParameter.replaceAll(
-                    this.bannedSymbolsRegex, "");
-            parameterList.add(createParameter(
-                    this.parameterLookup.get(eaParameterSymbol),
-                    eaParameterPayload));
+
+        // Parse Explicit Long First
+        parameterString = this.parse(parameterString, parameterList,
+                this.explicitParameterPattern,
+                this.explicitParameterPayloadPattern);
+        this.logger.debug("Parameters after parsing explicit long: String("
+                + parameterString + ")");
+
+        // Parse Explicit Short Next if applicable
+        if (this.config.isExplicitShortMode()) {
+            parameterString = this.parse(parameterString, parameterList,
+                    this.explicitShortParameterPattern,
+                    this.explicitShortParameterPayloadPattern);
+            this.logger
+            .debug("Parameters after parsing explicit short: String("
+                    + parameterString + ")");
+        }
+
+        // Parses Implicit for the rest
+        if (this.config.isImplicitMode()) {
+            this.parseImplicit(parameterString);
         }
 
         ParameterContainer parameterContainer = new ParameterContainer(
                 parameterList);
 
         return parameterContainer;
+    }
+
+    /**
+     * @param parameterString
+     * @param parameterList
+     * @param parameterPattern
+     * @param parameterPayloadPattern
+     * @return
+     */
+    private String parse(String parameterString, List<Parameter> parameterList,
+            Pattern parameterPattern, Pattern parameterPayloadPattern) {
+        Matcher parameterMatcher = parameterPattern.matcher(parameterString);
+
+        while (parameterMatcher.find()) {
+            String eaParameter = parameterMatcher.group().trim();
+            Character eaParameterSymbol = eaParameter.charAt(0);
+
+            // Matches the payload of the parameter
+            Matcher explicitParameterPayloadMatcher = parameterPayloadPattern
+                    .matcher(eaParameter);
+            if (explicitParameterPayloadMatcher.find()
+                    && (explicitParameterPayloadMatcher.groupCount() == 1)) {
+
+                String eaParameterPayload = explicitParameterPayloadMatcher
+                        .group();
+                // unescape all the characters inside the payload
+                for (Character eaParameterInMap : this.parameterLookup.keySet()) {
+                    eaParameterPayload = eaParameterPayload.replaceAll("\\\\"
+                            + Pattern.quote(eaParameterInMap.toString()),
+                            eaParameterInMap.toString());
+                }
+
+                parameterList.add(createParameter(
+                        this.parameterLookup.get(eaParameterSymbol),
+                        eaParameterPayload));
+            } else {
+                throw new RuntimeException("Payload should contain ");
+            }
+
+        }
+        return parameterMatcher.replaceAll("");
+    }
+
+    private String parseImplicit(String parameterString) {
+        return null;
     }
 
 }

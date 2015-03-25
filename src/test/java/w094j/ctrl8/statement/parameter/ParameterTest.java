@@ -1,7 +1,7 @@
 //@author A0065517A
 package w094j.ctrl8.statement.parameter;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
@@ -67,7 +67,7 @@ public class ParameterTest {
                  * Normal tests: Multi-Tags tests
                  */
                 { "={UROP Meeting} ={UROP Meetings}", Arrays.asList(new Parameter[] {new TitleParameter("UROP Meeting"), new TitleParameter("UROP Meetings")}) },
-                { "={UROP Meeting}#{nus}", Arrays.asList(new Parameter[] {new TitleParameter("UROP Meeting"), new CategoryParameter("nus") }) },
+                { "={UROP \\=Meeting} #{nus}", Arrays.asList(new Parameter[] {new TitleParameter("UROP =Meeting"), new CategoryParameter("nus") }) },
 
                 //@author A0112092W
                 /**
@@ -126,7 +126,7 @@ public class ParameterTest {
     @Test
     public void test() {
 
-        assertTrue(this.expectedParamContainer.equals(parser.parse(this.input)));
+        assertEquals(this.expectedParamContainer, parser.parse(this.input));
 
     }
 }
