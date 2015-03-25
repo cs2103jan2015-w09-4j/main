@@ -114,8 +114,8 @@ public class GUICore extends Application {
             // Show the scene containing the root layout
             Scene rootLayoutScene = new Scene(this.rootLayout);
             this.primaryStage.setScene(rootLayoutScene);
-            this.primaryStage.setMinHeight(438);
-            this.primaryStage.setMinWidth(516);
+            this.primaryStage.setMinHeight(438); // trial and error numbers
+            this.primaryStage.setMinWidth(516); // trial and error numbers
             this.primaryStage.setResizable(true); /*
                                                    * Enable resizing the window
                                                    */
@@ -137,6 +137,10 @@ public class GUICore extends Application {
             loader.setLocation(GUICore.class
                     .getResource(LocalResource.ConsoleScene));
             BorderPane consoleScene = (BorderPane) loader.load();
+
+            // TODO
+            consoleScene
+                    .setStyle("-fx-faint-focus-color: transparent;-fx-focus-color: transparent;");
 
             // Place console scene in center pane of the rootLayout
             this.rootLayout.setCenter(consoleScene);

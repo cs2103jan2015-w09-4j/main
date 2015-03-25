@@ -21,7 +21,9 @@ import w094j.ctrl8.database.config.GUITextInputConfig;
 
 public class ConsoleSceneController {
     private static final String __newline = "\n";
+    private static final String CSS_FAINT_FOCUS_TRANSPARENT = "-fx-faint-focus-color: transparent;";
     private static final String CSS_FOCUS_TRANSPARENT = "-fx-focus-color: transparent;";
+
     private static final String CSS_FONT_SIZE = "-fx-font-size: %1$2s ;";
     private static final String CSS_TEXT_FILL = "-fx-text-fill: %1$2s ;";
 
@@ -118,6 +120,7 @@ public class ConsoleSceneController {
         this.textDisplay.setWrapText(false); // disable wrapping
         this.textDisplay.setEditable(false); // Disables editing
         this.textDisplay.setStyle(CSS_FOCUS_TRANSPARENT);
+        this.textDisplay.setStyle(CSS_FAINT_FOCUS_TRANSPARENT);
 
         /*
          * Add a listener that auto-scrolls the display to the bottom whenever
@@ -139,6 +142,7 @@ public class ConsoleSceneController {
         // Initialise text input
         this.textInput.setAlignment(Pos.TOP_LEFT); // Align top left
         this.textInput.setStyle(CSS_FOCUS_TRANSPARENT);
+        this.textInput.setStyle(CSS_FAINT_FOCUS_TRANSPARENT);
 
         /*
          * Create an InputStream that specifically captures input from the
