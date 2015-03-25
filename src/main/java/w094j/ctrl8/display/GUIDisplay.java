@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.application.GUICore;
+import w094j.ctrl8.database.config.GUIDisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
@@ -27,11 +28,17 @@ public class GUIDisplay implements IDisplay {
     private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
 
     public GUIDisplay() {
-        this.guiCore = new GUICore();
+        this.guiCore = new GUICore(new GUIDisplayConfig());
     }
 
-    public GUIDisplay(String[] args) {
-        this.guiCore = new GUICore(args);
+    public GUIDisplay(GUIDisplayConfig config) {
+        if (config == null || !config.isValid()) {
+            this.logger
+                    .debug("Invalid or null config received! Reverting to defaults.");
+            this.guiCore = new GUICore(new GUIDisplayConfig());
+        } else {
+            this.guiCore = new GUICore(config);
+        }
     }
 
     @Override
@@ -41,13 +48,28 @@ public class GUIDisplay implements IDisplay {
 
     @Override
     public void updateUI(Response res) {
+        boolean allNull = true; // Initial assumption
         if (res.reply != null) {
             this.guiCore.consoleController.appendToDisplay(res.reply);
-        } else {
+            allNull = false;
+        }
+        if (res.command != null) {
+            this.outputHelpMessage(res.command);
+            allNull = false;
+        }
+        if (res.taskList != null) {
+            try {
+                this.outputTask(res.taskList);
+            } catch (OutputExecuteException e) {
+                this.logger.debug(e.getMessage());
+            }
+            allNull = false;
+        }
+
+        if (allNull) {
             this.logger
                     .debug("Respose object does not contain any useful information");
         }
-
     }
 
     private String[][] initNullTaskTable(String[][] table, int taskNumber) {

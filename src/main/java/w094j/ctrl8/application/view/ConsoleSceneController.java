@@ -15,9 +15,14 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.application.GUICore;
 import w094j.ctrl8.application.model.InputStreamThread;
+import w094j.ctrl8.database.config.DisplayControllerConfig;
+import w094j.ctrl8.database.config.GUITextDisplayConfig;
+import w094j.ctrl8.database.config.GUITextInputConfig;
 
 public class ConsoleSceneController {
     private static final String __newline = "\n";
+    private static final String CSS_FONT_SIZE = "-fx-font-size: %1$2s ;";
+    private static final String CSS_TEXT_FILL = "-fx-text-fill: %1$2s ;";
 
     public byte[] input;
     private String displayBuffer; // Buffer for the display
@@ -44,6 +49,12 @@ public class ConsoleSceneController {
     public void appendToDisplay(String input) {
         this.displayBuffer += input + __newline;
         this.textDisplay.appendText(input + __newline);
+    }
+
+    public void applyConfig(DisplayControllerConfig controllerConfig) {
+        applyToTextDisplay(controllerConfig.textDisplayConfig);
+        applyToTextInput(controllerConfig.textInputConfig);
+
     }
 
     public InputStream getInputStream() {
@@ -84,16 +95,27 @@ public class ConsoleSceneController {
         this.textDisplay.appendText(displayBuffer); // Activates listener
     }
 
+    private void applyToTextDisplay(GUITextDisplayConfig textDisplayConfig) {
+        this.textDisplay.setStyle(String.format(CSS_FONT_SIZE,
+                textDisplayConfig.getTextSize()));
+        this.textDisplay.setStyle(String.format(CSS_TEXT_FILL,
+                textDisplayConfig.getTextColour()));
+
+    }
+
+    private void applyToTextInput(GUITextInputConfig textInputConfig) {
+        this.textInput.setStyle(String.format(CSS_FONT_SIZE,
+                textInputConfig.getTextSize()));
+        this.textInput.setStyle(String.format(CSS_TEXT_FILL,
+                textInputConfig.getTextColour()));
+
+    }
+
     @FXML
     private void initialize() {
         // Initialise text display
-        this.textDisplay.setStyle("-fx-text-fill: black; -fx-font-size: 12;"); /*
-                                                                                * Black
-                                                                                * text
-                                                                                * size
-                                                                                * 12
-                                                                                */
         this.textDisplay.setWrapText(true); // wraps display
+        this.textDisplay.setEditable(false); // Disables editing
 
         /*
          * Add a listener that auto-scrolls the display to the bottom whenever
@@ -112,24 +134,15 @@ public class ConsoleSceneController {
         this.displayBuffer = "";
         this.textDisplay.appendText(this.displayBuffer);
 
-        this.logger.debug("textDisplay Setup successful");
-
         // Initialise text input
-        this.textInput.setStyle("-fx-text-fill: black; -fx-font-size: 20;"); /*
-                                                                              * Black
-                                                                              * text
-                                                                              * size
-                                                                              * 20
-                                                                              */
         this.textInput.setAlignment(Pos.TOP_LEFT); // Align top left
 
-        this.logger.debug("textDisplay Setup successful");
         /*
          * Create an InputStream that specifically captures input from the
          * TextArea. A listener notifies the inputstream to unblock itself once
          * enter button is pressed
          */
         this.isThread = new InputStreamThread(this.textInput, this);
-        this.logger.debug("InputStream Thread created");
+        this.logger.debug("InputStream Thread created, Init complete");
     }
 }
