@@ -17,10 +17,10 @@ import w094j.ctrl8.statement.CommandType;
  * NULL
  */
 public class Response {
-    public CommandType command;
     /*
      * The list of properties(variables) that a response MAY contain
      */
+    public CommandType command;
     public String reply;
     public Task[] taskList;
 

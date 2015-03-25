@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.application.view.ConsoleSceneController;
 import w094j.ctrl8.application.view.LocalResource;
+import w094j.ctrl8.database.config.GUIDisplayConfig;
 import w094j.ctrl8.message.NormalMessage;
 
 /**
@@ -35,20 +36,27 @@ public class GUICore extends Application {
     private static final String __newline = "\n";
     private static Logger logger = LoggerFactory.getLogger(GUICore.class);
     public ConsoleSceneController consoleController;
+    private GUIDisplayConfig guiDisplayConfig;
     private Stage primaryStage; // Default stage
     private BorderPane rootLayout; // Wrapper for internal components
 
     public GUICore() {
-// launch();
+        /*
+         * To be left empty. Because Application.launch invokes the default
+         * constructor, but we use the loaded constructor to initialise the
+         * application
+         */
     }
 
-    public GUICore(String[] args) {
-        launch(args);
+    public GUICore(GUIDisplayConfig config) {
+        launch(config.appArgs);
+        this.consoleController.applyConfig(config.controllerConfig);
     }
 
-    // TODO replace with factory calling the launch instead
+    // The main function here is meant for debugging the GUI Application only
+    @Deprecated
     public static void main(String[] args) {
-        new GUICore(args);
+        new GUICore(new GUIDisplayConfig());
     }
 
     /**
@@ -108,8 +116,10 @@ public class GUICore extends Application {
             // Show the scene containing the root layout
             Scene rootLayoutScene = new Scene(this.rootLayout);
             this.primaryStage.setScene(rootLayoutScene);
-            this.primaryStage.setResizable(false); // Disable resizing the
-            // window
+            this.primaryStage.setResizable(false); /*
+                                                    * Disable resizing the
+                                                    * window
+                                                    */
             this.primaryStage.show();
 
         } catch (IOException e) {
