@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0112521B
 public class DeleteStatement extends StatementQuery {
@@ -23,8 +23,9 @@ public class DeleteStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.delete(this.query);
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
+        //statement to be added
+        taskManager.delete(this.query, null);
     }
 
 }

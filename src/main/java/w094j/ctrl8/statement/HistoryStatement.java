@@ -3,7 +3,7 @@ package w094j.ctrl8.statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0065517A
 /**
@@ -24,7 +24,7 @@ public class HistoryStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(Terminal terminal) {
+    public void execute(TaskManager taskManager) {
         // TODO Link to Terminal
         logger.debug("History command not implemented yet.");
     }

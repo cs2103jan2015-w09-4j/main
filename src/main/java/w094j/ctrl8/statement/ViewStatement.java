@@ -1,7 +1,7 @@
 package w094j.ctrl8.statement;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0112521B
 public class ViewStatement extends StatementNoParams {
@@ -16,8 +16,8 @@ public class ViewStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.view();
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
+        taskManager.view();
     }
 
 }

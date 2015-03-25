@@ -12,7 +12,7 @@ import w094j.ctrl8.parse.ParameterParser;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 import com.google.gson.Gson;
 
@@ -81,8 +81,11 @@ public class ModifyStatement extends Statement {
 
     }
 
+
     @Override
-    public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.modify(this.query, this.task);
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
+        //Statement to be added
+        taskManager.modify(this.query, this.task, null);
+        
     }
 }

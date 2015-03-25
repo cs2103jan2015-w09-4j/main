@@ -3,7 +3,7 @@ package w094j.ctrl8.statement;
 import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0112521B
 /**
@@ -29,8 +29,8 @@ public class HelpStatement extends Statement {
     }
 
     @Override
-    public void execute(Terminal terminal) {
-        terminal.help(this.command);
+    public void execute(TaskManager taskManager) {
+        taskManager.help(this.command);
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.database.config.DisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.HelpMessage;
@@ -35,6 +36,7 @@ public class CLIDisplay implements IDisplay {
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
     private InputStream inStream;
+    private static CLIDisplay instance;
 
     // @author A0110787A
     private String lastMessage;
@@ -439,4 +441,30 @@ public class CLIDisplay implements IDisplay {
             System.out.println(statement.getStatementArgumentsOnly());
         }
     }
+    
+    /**
+    * Gets the current instance of the CLIDisplay.
+    *
+    * @return the current instance.
+    */
+   public static CLIDisplay getInstance() {
+       return instance;
+   }
+
+   /**
+    * Creates a Task Manager 
+    *
+    *
+    * @return return the display instance.
+    */
+   public static CLIDisplay initInstance(DisplayConfig displayConfig) {
+       if (instance != null) {
+           throw new RuntimeException(
+                   "Cannot initialize when it was initialized.");
+       } else {
+           //TO-DO add in config when config is done
+           instance = new CLIDisplay();
+       }
+       return instance;
+   }
 }

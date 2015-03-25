@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0065517A
 /**
@@ -40,12 +40,12 @@ public abstract class Statement {
      * Executes the command in the specified terminal, performing the specific
      * command related to the respective commands.
      *
-     * @param terminal
+     * @param taskManager
      *            to execute the command in.
      * @throws CommandExecuteException
      *             when the execution of the command has problems.
      */
-    public abstract void execute(Terminal terminal)
+    public abstract void execute(TaskManager taskManager)
             throws CommandExecuteException;
 
     /**

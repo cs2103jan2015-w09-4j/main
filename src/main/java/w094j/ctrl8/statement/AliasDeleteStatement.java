@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0112521B
 public class AliasDeleteStatement extends StatementQuery {
@@ -23,7 +23,7 @@ public class AliasDeleteStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(Terminal terminal) throws CommandExecuteException {
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
         // TODO Link to Terminal
         //terminal.aliasDelete(this.query);
         logger.debug("aliasDelete not implemented yet.");
