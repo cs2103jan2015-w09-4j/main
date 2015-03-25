@@ -1,6 +1,6 @@
 package w094j.ctrl8.statement;
 
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0065517A
 /**
@@ -18,8 +18,8 @@ public class ExitStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(Terminal terminal) {
-        terminal.exit();
+    public void execute(TaskManager taskManager) {
+        taskManager.exit();
     }
 
 }

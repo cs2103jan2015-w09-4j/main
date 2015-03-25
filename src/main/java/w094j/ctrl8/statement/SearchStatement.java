@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0065517A
 /**
@@ -28,8 +28,9 @@ public class SearchStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(Terminal terminal) throws CommandExecuteException {
-        terminal.search(this.query, this.task);
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
+        //Statement to be added
+        terminal.search(this.query, this.task, null);
     }
 
 }

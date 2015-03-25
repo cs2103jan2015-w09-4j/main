@@ -24,8 +24,9 @@ public class DoneStatement extends StatementQuery {
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
         // TODO Link to Terminal
-        taskManager.done(this.query);
-        logger.debug("done not implemented yet.");
+        //statement to be added
+        taskManager.done(this.query, null);
+        
     }
 
 }

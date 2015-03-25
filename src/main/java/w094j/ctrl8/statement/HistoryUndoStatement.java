@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.terminal.Terminal;
+import w094j.ctrl8.taskmanager.TaskManager;
 
 //@author A0112521B
 public class HistoryUndoStatement extends StatementOnePosInt {
@@ -24,7 +24,7 @@ public class HistoryUndoStatement extends StatementOnePosInt {
     }
 
     @Override
-    public void execute(Terminal terminal) throws CommandExecuteException {
+    public void execute(TaskManager taskManager) throws CommandExecuteException {
         // TODO Link to Terminal
         // terminal.historyUndo(this.query);
         logger.debug("historyUndo not implemented yet.");

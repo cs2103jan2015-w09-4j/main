@@ -60,6 +60,7 @@ public class AddStatement extends Statement {
 
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        taskManager.add(this.task);
+        //Statement to be added
+        taskManager.add(this.task, null);
     }
 }
