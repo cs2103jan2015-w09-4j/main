@@ -1,10 +1,5 @@
 package w094j.run;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.InvalidParameterException;
-import java.util.Scanner;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -14,18 +9,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.Database;
+import w094j.ctrl8.database.Factory;
+import w094j.ctrl8.database.config.DisplayConfig;
 import w094j.ctrl8.database.config.ParserConfig;
+import w094j.ctrl8.database.config.TaskManagerConfig;
+import w094j.ctrl8.database.config.TerminalConfig;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.IDisplay;
-import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.DataException;
-import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OptionsConstants;
 import w094j.ctrl8.parse.Parser;
-import w094j.ctrl8.pojo.Config;
-import w094j.ctrl8.pojo.Response;
+import w094j.ctrl8.taskmanager.TaskManager;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
@@ -48,7 +43,11 @@ public class Start {
     // create the Options
     private static Options optionList;
     private static Parser parser;
-
+    private static Factory factory;
+    private static Terminal terminal;
+    private static TaskManager taskManager;
+    private static IDisplay display;
+    
     /**
      * @param args
      *            TODO
@@ -59,77 +58,39 @@ public class Start {
 
         addOptions();
 
-        // Interface supporting interaction with user
-        IDisplay display = new CLIDisplay();
-
-        ParserConfig config = new ParserConfig();
 
         // The terminal that performs all the actions
         Terminal terminal;
         if (checkArgs(args)) {
             parseArgs(args);
-            terminal = new Terminal(Config.parseArgs(args), display, config
-                    .getAlias().getAliasData());
+           
+            factory = new Factory(args);
+          //these of the following should be done by factory when factory is completed
+            terminal = Terminal.initInstance(new TerminalConfig());
+            display = CLIDisplay.initInstance(new DisplayConfig());
+            taskManager = taskManager.initInstance(new TaskManagerConfig());
+            parser = parser.initInstance(new ParserConfig());
+            
         } else {
             // Default database and terminal will be created if no file path
             // specified.
             logger.info(NormalMessage.NO_FILEPATH_MESSAGE);
-            terminal = new Terminal();
+            factory = new Factory();
+            //these of the following should be done by factory when factory is completed
+            terminal = Terminal.initInstance(new TerminalConfig());
+            display = CLIDisplay.initInstance(new DisplayConfig());
+            taskManager = taskManager.initInstance(new TaskManagerConfig());
+            parser = parser.initInstance(new ParserConfig());
         }
         logger.info(NormalMessage.WELCOME_MESSAGE);
-
-        parser = Parser.initInstance(config);
-        runTerminal(terminal, display);
+        terminal.runTerminal(taskManager,display,parser);
     }
 
     public static void printHelp() {
         printHelp(optionList);
     }
 
-    /**
-     * Take in the terminal object and run it to perform actual actions.
-     *
-     * @param terminal
-     * @param display
-     * @throws IOException
-     */
-    public static void runTerminal(Terminal terminal, IDisplay display) {
-        // Flag that determines whether terminal continues to run or not
-        // Default: true
-        boolean continueExecution = true;
-        Response res = new Response();
-        String command = null;
-
-        while (continueExecution) {
-            terminal.displayNextCommandRequest();
-            InputStream input = display.getInputStream();
-
-            try {
-                command = new Scanner(input, "UTF-8").useDelimiter("\\A")
-                        .next();
-            } catch (NullPointerException e) {
-                logger.info(e.getMessage());
-            }
-
-            // Passes string to Statement.java to parse into a command
-            try {
-                parser.parse(command).execute(terminal);
-            } catch (InvalidParameterException e) {
-                res.reply = e.getMessage();
-                display.updateUI(res);
-            } catch (CommandExecuteException e) {
-                res.reply = e.getMessage();
-                display.updateUI(res);
-            } catch (ParseException e) {
-                res.reply = e.getMessage();
-                display.updateUI(res);
-            } catch (DataException e) {
-                res.reply = e.getMessage();
-                display.updateUI(res);
-            }
-            continueExecution = terminal.getContinueExecution();
-        }
-    }
+    
 
     // This will add all the existing options
     private static void addOptions() {

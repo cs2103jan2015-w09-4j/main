@@ -16,7 +16,11 @@ public class Factory {
         this.initTerminal();
     }
 
-     public IDisplay initDisplay() {
+     public Factory(String[] args) {
+        // TODO Auto-generated constructor stub
+    }
+
+    public IDisplay initDisplay() {
          return IDisplay.getInstance();
      }
     
@@ -28,7 +32,7 @@ public class Factory {
         return Parser.getInstance();
     }
 
-    private Terminal initTerminal() {
+    public Terminal initTerminal() {
          return Terminal.getInstance();
     }
 

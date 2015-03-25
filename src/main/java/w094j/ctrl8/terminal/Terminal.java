@@ -27,14 +27,18 @@ public class Terminal{
         assert(terminalConfig.isValid());
         
     }
+    public Terminal() {
+        // TODO Auto-generated constructor stub
+    }
     /**
      * Take in the terminal object and run it to perform actual actions.
+     * @param taskManager 
      *
      * @param terminal
      * @param display
      * @throws IOException
      */
-    public static void runTerminal(TaskManager taskManager, IDisplay display) {
+    public void runTerminal(TaskManager taskManager, IDisplay display, Parser parser) {
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;
@@ -93,7 +97,8 @@ public class Terminal{
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
         } else {
-            instance = new Terminal(config);
+            //TO-DO put in config when config is done
+            instance = new Terminal();
         }
         return instance;
     }
