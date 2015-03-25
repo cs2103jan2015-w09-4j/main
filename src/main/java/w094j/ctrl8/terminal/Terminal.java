@@ -17,28 +17,55 @@ import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.TaskManager;
 
-
-
-public class Terminal{
-    private static Parser parser;
-    private static Logger logger = LoggerFactory.getLogger(Terminal.class);
+public class Terminal {
     private static Terminal instance;
-    public Terminal(TerminalConfig terminalConfig){
-        assert(terminalConfig.isValid());
-        
-    }
-    public Terminal() {
+    private static Logger logger = LoggerFactory.getLogger(Terminal.class);
+    private static Parser parser;
+
+    private Terminal() {
         // TODO Auto-generated constructor stub
     }
+
+    private Terminal(TerminalConfig terminalConfig) {
+        assert (terminalConfig.isValid());
+
+    }
+
+    /**
+     * Gets the current instance of the Terminal.
+     *
+     * @return the current instance.
+     */
+    public static Terminal getInstance() {
+        return instance;
+    }
+
+    /**
+     * Creates a Task Manager
+     *
+     * @return return the Task manager.
+     */
+    public static Terminal initInstance(TerminalConfig config) {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            // TO-DO put in config when config is done
+            instance = new Terminal();
+        }
+        return instance;
+    }
+
     /**
      * Take in the terminal object and run it to perform actual actions.
-     * @param taskManager 
-     *
+     * 
+     * @param taskManager
      * @param terminal
      * @param display
      * @throws IOException
      */
-    public void runTerminal(TaskManager taskManager, IDisplay display, Parser parser) {
+    public void runTerminal(TaskManager taskManager, IDisplay display,
+            Parser parser) {
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;
@@ -74,32 +101,5 @@ public class Terminal{
             }
             continueExecution = taskManager.getContinueExecution();
         }
-    }
-    
-    
-    /**
-     * Gets the current instance of the Terminal.
-     *
-     * @return the current instance.
-     */
-    public static Terminal getInstance() {
-        return instance;
-    }
-
-    /**
-     * Creates a Task Manager 
-     *
-     *
-     * @return return the Task manager.
-     */
-    public static Terminal initInstance(TerminalConfig config) {
-        if (instance != null) {
-            throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
-        } else {
-            //TO-DO put in config when config is done
-            instance = new Terminal();
-        }
-        return instance;
     }
 }
