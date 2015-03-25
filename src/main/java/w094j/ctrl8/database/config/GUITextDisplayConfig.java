@@ -1,18 +1,19 @@
+//@author A0110787A
 package w094j.ctrl8.database.config;
 
-public class GUITextDisplayConfig extends GUITextGenericConfig implements IConfig {
-    
-    //Uses a different default
-    GUITextDisplayConfig(){
+public class GUITextDisplayConfig extends GUITextGenericConfig implements
+        IConfig {
+
+    // Uses a different default
+    GUITextDisplayConfig() {
         this.textColour = TextColour.Black;
         this.textSize = 12;
     }
-    
-    GUITextDisplayConfig(TextColour textColour, int textSize){
+
+    GUITextDisplayConfig(TextColour textColour, int textSize) {
         super(textColour, textSize);
     }
-    
-    
+
     @Override
     public boolean isValid() {
         return true;
