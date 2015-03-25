@@ -5,29 +5,41 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <MenuBar prefHeight="26.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+      <MenuBar maxHeight="25.0" minHeight="25.0" minWidth="500.0" prefHeight="25.0" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="menuChangeFile" mnemonicParsing="false" text="Change file location.." />
+              <MenuItem fx:id="menuQuitProgram" mnemonicParsing="false" text="Quit the program" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Options">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+                  <Menu mnemonicParsing="false" text="Display">
+                    <items>
+                    <MenuItem fx:id="menuDisplayTextColour" mnemonicParsing="false" text="Text Colour" />
+                        <MenuItem fx:id="menuDisplayTextSize" mnemonicParsing="false" text="Text Size" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Command Line">
+                     <items>
+                        <MenuItem fx:id="menuCommandLineTextColour" mnemonicParsing="false" text="Text Colour" />
+                        <MenuItem fx:id="menuCommandLineTextSize" mnemonicParsing="false" text="Text Size" />
+                     </items>
+                  </Menu>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem fx:id="menuHelp" mnemonicParsing="false" text="List of commands..." />
             </items>
           </Menu>
         </menus>
       </MenuBar>
    </top>
    <center>
-      <Pane prefHeight="374.0" prefWidth="500.0" BorderPane.alignment="CENTER" />
+      <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="374.0" minWidth="500.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

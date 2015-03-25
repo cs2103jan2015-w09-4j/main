@@ -6,9 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="374.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="w094j.ctrl8.application.view.ConsoleSceneController">
-   <children>
-      <TextArea id="textDisplay" fx:id="textDisplay" prefHeight="334.0" prefWidth="500.0" />
-      <TextField id="textInput" fx:id="textInput" alignment="TOP_LEFT" layoutY="334.0" onAction="#onEnter" pickOnBounds="false" prefHeight="40.0" prefWidth="500.0" />
-   </children>
-</AnchorPane>
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="w094j.ctrl8.application.view.ConsoleSceneController">
+   <bottom>
+      <TextField id="textInput" fx:id="textInput" alignment="TOP_LEFT" maxHeight="40.0" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="500.0" onAction="#onEnter" pickOnBounds="false" prefHeight="40.0" BorderPane.alignment="CENTER" />
+   </bottom>
+   <center>
+      <TextArea id="textDisplay" fx:id="textDisplay" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="334.0" minWidth="500.0" prefHeight="334.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

@@ -7,7 +7,6 @@ import java.io.InputStream;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -36,7 +35,6 @@ public class GUICore extends Application {
     private static final String __newline = "\n";
     private static Logger logger = LoggerFactory.getLogger(GUICore.class);
     public ConsoleSceneController consoleController;
-    private GUIDisplayConfig guiDisplayConfig;
     private Stage primaryStage; // Default stage
     private BorderPane rootLayout; // Wrapper for internal components
 
@@ -50,7 +48,7 @@ public class GUICore extends Application {
 
     public GUICore(GUIDisplayConfig config) {
         launch(config.appArgs);
-        this.consoleController.applyConfig(config.controllerConfig);
+        // TODO this.consoleController.applyConfig(config.controllerConfig);
     }
 
     // The main function here is meant for debugging the GUI Application only
@@ -116,10 +114,11 @@ public class GUICore extends Application {
             // Show the scene containing the root layout
             Scene rootLayoutScene = new Scene(this.rootLayout);
             this.primaryStage.setScene(rootLayoutScene);
-            this.primaryStage.setResizable(false); /*
-                                                    * Disable resizing the
-                                                    * window
-                                                    */
+            this.primaryStage.setMinHeight(438);
+            this.primaryStage.setMinWidth(516);
+            this.primaryStage.setResizable(true); /*
+                                                   * Enable resizing the window
+                                                   */
             this.primaryStage.show();
 
         } catch (IOException e) {
@@ -137,7 +136,7 @@ public class GUICore extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(GUICore.class
                     .getResource(LocalResource.ConsoleScene));
-            AnchorPane consoleScene = (AnchorPane) loader.load();
+            BorderPane consoleScene = (BorderPane) loader.load();
 
             // Place console scene in center pane of the rootLayout
             this.rootLayout.setCenter(consoleScene);
