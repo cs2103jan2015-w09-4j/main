@@ -172,6 +172,7 @@ public class TaskManager implements ITaskManager {
         try {
             // Update Taskmap
             this.updateTaskMap(task);
+          
         } catch (Exception e) {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
@@ -206,6 +207,7 @@ public class TaskManager implements ITaskManager {
     public void aliasAdd(String alias, String value,Statement statement)
             throws CommandExecuteException {
         this.aliasData.addAlias(alias, value);
+        updateHistory(statement);
     }
 
     /**
@@ -224,10 +226,9 @@ public class TaskManager implements ITaskManager {
                 Task removedTask = this.taskMap.remove(taskID);
 
                 // Update the database
-                this.database.deleteTask(removedTask);
-                
-               //update history
-                updateHistory(statement);
+//                this.database.deleteTask(removedTask);
+                logger.debug("task removed successfully");
+               
             } else {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_BAD_TASKID);
@@ -235,6 +236,8 @@ public class TaskManager implements ITaskManager {
         } catch (Exception e) {
             throw new CommandExecuteException(e.getMessage());
         }
+      //update history
+        updateHistory(statement);
     }
 
     /**
@@ -303,9 +306,9 @@ public class TaskManager implements ITaskManager {
 
             try {
                 // Add to database
-                this.database.deleteTask(task);
+//                this.database.deleteTask(task);
                 task.update(incompleteTask);
-                this.database.saveTask(task);
+//                this.database.saveTask(task);
                 logger.debug( new Gson().toJson(task));
             } catch (Exception e) {
                 logger.debug(e.getMessage());
@@ -352,7 +355,7 @@ public class TaskManager implements ITaskManager {
      */
     @Override
     public void view() throws CommandExecuteException {
-        if (this.taskMap.size() < TASK_MAP_MINIMUM_SIZE) {
+        if (this.taskMap.size() <= TASK_MAP_MINIMUM_SIZE) {
             /*
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
@@ -360,7 +363,7 @@ public class TaskManager implements ITaskManager {
             Response res = new Response();
             res.reply = NormalMessage.NO_TASK_FOUND;
             this.display.updateUI(res);
-
+            logger.debug("no task found"+this.taskMap.size());
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         } else {
@@ -478,7 +481,7 @@ public class TaskManager implements ITaskManager {
 
         List<Task> allTasks = this.database.getTaskList();
 
-        /* Intialise the taskMap with all the tasks that datastore provides */
+        /* Initialize the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
         for (Task task : allTasks) {
             assert (task != null);
