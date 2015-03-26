@@ -31,6 +31,9 @@ public class Parser implements IParser {
      * @return the current instance.
      */
     public static Parser getInstance() {
+        if(instance == null){
+            instance = initInstance(new ParserConfig());
+        }
         return instance;
     }
 

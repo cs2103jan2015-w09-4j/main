@@ -23,6 +23,7 @@ public class Response {
     public CommandType command;
     public String reply;
     public Task[] taskList;
+    public History history;
 
     /**
      * Default constructor. Initializes all properties to be NULL
@@ -30,5 +31,6 @@ public class Response {
     public Response() {
         this.reply = null;
         this.taskList = null;
+        this.history = null;
     }
 }

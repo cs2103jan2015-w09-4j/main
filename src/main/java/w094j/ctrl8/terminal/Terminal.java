@@ -37,6 +37,10 @@ public class Terminal {
      * @return the current instance.
      */
     public static Terminal getInstance() {
+        if(instance == null){
+            instance = initInstance(new TerminalConfig());
+        }
+        
         return instance;
     }
 
@@ -52,6 +56,7 @@ public class Terminal {
         } else {
             // TO-DO put in config when config is done
             instance = new Terminal();
+            logger.debug("terminal is initialized");
         }
         return instance;
     }
@@ -62,6 +67,7 @@ public class Terminal {
      * @param taskManager
      * @param terminal
      * @param display
+     * @param parser 
      * @throws IOException
      */
     public void runTerminal(TaskManager taskManager, IDisplay display,

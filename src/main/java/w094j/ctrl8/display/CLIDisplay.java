@@ -370,6 +370,7 @@ public class CLIDisplay implements IDisplay {
         }
         if(res.history !=null){
             this.outputHistory(res.history);
+         
         }
     }
 
@@ -448,6 +449,9 @@ public class CLIDisplay implements IDisplay {
     * @return the current instance.
     */
    public static CLIDisplay getInstance() {
+       if(instance == null){
+           instance = initInstance(new DisplayConfig());
+       }
        return instance;
    }
 

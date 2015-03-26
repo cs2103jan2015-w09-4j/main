@@ -10,10 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.database.Factory;
-import w094j.ctrl8.database.config.DisplayConfig;
-import w094j.ctrl8.database.config.ParserConfig;
-import w094j.ctrl8.database.config.TaskManagerConfig;
-import w094j.ctrl8.database.config.TerminalConfig;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.IDisplay;
 import w094j.ctrl8.message.ErrorMessage;
@@ -60,16 +56,16 @@ public class Start {
 
 
         // The terminal that performs all the actions
-        Terminal terminal;
+
         if (checkArgs(args)) {
             parseArgs(args);
            
             factory = new Factory(args);
           //these of the following should be done by factory when factory is completed
-            terminal = Terminal.initInstance(new TerminalConfig());
-            display = CLIDisplay.initInstance(new DisplayConfig());
-            taskManager = taskManager.initInstance(new TaskManagerConfig());
-            parser = parser.initInstance(new ParserConfig());
+            terminal = Terminal.getInstance();
+            display = CLIDisplay.getInstance();
+            taskManager = TaskManager.getInstance();
+            parser = Parser.getInstance();
             
         } else {
             // Default database and terminal will be created if no file path
@@ -77,10 +73,10 @@ public class Start {
             logger.info(NormalMessage.NO_FILEPATH_MESSAGE);
             factory = new Factory();
             //these of the following should be done by factory when factory is completed
-            terminal = Terminal.initInstance(new TerminalConfig());
-            display = CLIDisplay.initInstance(new DisplayConfig());
-            taskManager = taskManager.initInstance(new TaskManagerConfig());
-            parser = parser.initInstance(new ParserConfig());
+            terminal = Terminal.getInstance();
+            display = CLIDisplay.getInstance();
+            taskManager = TaskManager.getInstance();
+            parser = Parser.getInstance();
         }
         logger.info(NormalMessage.WELCOME_MESSAGE);
         terminal.runTerminal(taskManager,display,parser);

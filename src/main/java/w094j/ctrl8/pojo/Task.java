@@ -387,8 +387,8 @@ public class Task {
 
             this.changeTaskType();
 
-            this.statementHistory.addLast(incompleteTask.statementHistory
-                    .getLast());
+//            this.statementHistory.addLast(incompleteTask.statementHistory
+//                    .getLast());
             return true;
         } else {
             return false;

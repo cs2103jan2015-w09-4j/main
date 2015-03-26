@@ -38,7 +38,7 @@ import com.google.gson.Gson;
 
 public class TaskManager implements ITaskManager {
 
-    private static boolean continueExecution = true;
+    private boolean continueExecution = true;
     // Static constants
     private static Logger logger = LoggerFactory.getLogger(TaskManager.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
@@ -50,7 +50,7 @@ public class TaskManager implements ITaskManager {
     IDisplay display;
 
     // Storage object (Internal)
-    HashMap<String, Task> taskMap;
+    private HashMap<String, Task> taskMap;
     
     //History 
     private History history = new History();
@@ -298,7 +298,7 @@ public class TaskManager implements ITaskManager {
 
         // check if the task exists
         if (this.isTaskExist(query)) {
-
+            logger.debug("Modify: the task exist");
             Task task = this.taskMap.get(query);
 
             try {
@@ -306,13 +306,15 @@ public class TaskManager implements ITaskManager {
                 this.database.deleteTask(task);
                 task.update(incompleteTask);
                 this.database.saveTask(task);
+                logger.debug( new Gson().toJson(task));
             } catch (Exception e) {
+                logger.debug(e.getMessage());
                 throw new CommandExecuteException(e.getMessage());
             }
-
             try {
                 // Update the TaskMap
                 this.updateTaskMap(query, task);
+                logger.debug("update task");
             } catch (Exception e) {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
@@ -580,6 +582,9 @@ public class TaskManager implements ITaskManager {
      * @return the current instance.
      */
     public static TaskManager getInstance() {
+        if(instance == null){
+            instance = initInstance(new TaskManagerConfig());
+        }
         return instance;
     }
 
@@ -589,7 +594,7 @@ public class TaskManager implements ITaskManager {
      *
      * @return return the Task manager.
      */
-    public static TaskManager initInstance(TaskManagerConfig config) {
+    private static TaskManager initInstance(TaskManagerConfig config) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
