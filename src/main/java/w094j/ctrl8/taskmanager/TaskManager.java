@@ -2,6 +2,7 @@ package w094j.ctrl8.taskmanager;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,8 @@ public class TaskManager implements ITaskManager {
     
     //History 
     private History history = new History();
+    
+    private HashMap<String, Task> iniTaskMap;
     private AliasData aliasData;
     
     private static TaskManager instance;
@@ -381,7 +384,7 @@ public class TaskManager implements ITaskManager {
                             + new Gson().toJson(taskList[i]));
                     i++;
                 }
-
+                Arrays.sort(taskList);
                 Response res = new Response();
                 res.taskList = taskList;
                 this.display.updateUI(res);
@@ -470,6 +473,24 @@ public class TaskManager implements ITaskManager {
         }
 
     }
+    
+    
+    /**
+     * undo the action with index in history
+     * @param index
+     * @throws CommandExecuteException
+     */
+    public void historyUndo(int index) throws CommandExecuteException{
+        logger.debug(iniTaskMap.size()+" in History undo");
+        this.taskMap = new HashMap<String,Task>(this.iniTaskMap);
+        History tempHistory = new History(this.history);
+        this.history.deleteAllHistory();
+        for(int i=0;i<index-1;i++){
+            Statement statement = tempHistory.getHistory(i);
+            statement.execute(this);
+        }
+        
+    }
     /**
      * Initializes the taskMap based on what the datastore currently contains
      */
@@ -483,6 +504,7 @@ public class TaskManager implements ITaskManager {
 
         /* Initialize the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
+        
         for (Task task : allTasks) {
             assert (task != null);
             /*
@@ -496,6 +518,8 @@ public class TaskManager implements ITaskManager {
 
             this.taskMap.put(task.getTitle(), task);
         }
+        this.iniTaskMap = new HashMap<String,Task>(this.taskMap);
+        logger.debug(iniTaskMap.size()+"");
     }
 
     /**

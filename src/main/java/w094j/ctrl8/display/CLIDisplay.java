@@ -436,7 +436,7 @@ public class CLIDisplay implements IDisplay {
         
         for(int i=0;i<historyList.size();i++){
             Statement statement = historyList.get(i);
-            System.out.print(i + ". Command:");
+            System.out.print(i+1 + ". Command:");
             System.out.print(statement.getCommand().toString());
             System.out.print(" String:");
             System.out.println(statement.getStatementArgumentsOnly());

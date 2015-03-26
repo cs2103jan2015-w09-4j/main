@@ -20,6 +20,13 @@ public class History {
         this.ActionList = new ArrayList<Statement>();
     }
     
+    public History(History history) {
+        this.ActionList = new ArrayList<Statement>();
+        for(int i=0;i<history.getHistorySize();i++){
+            this.ActionList.add(history.getHistory(i));
+        }
+    }
+
     /**
      * return the specific history with an index in the ArrayList
      * @param index
@@ -51,6 +58,20 @@ public class History {
         this.ActionList.clear();
     }
     
+    /**
+     * delete the specific history
+     * @param index
+     */
+    public void deleteHistory(int index){
+        this.ActionList.remove(index);
+    }
     
+    /**
+     * 
+     * @return the size of the history
+     */
+    public int getHistorySize(){
+        return this.ActionList.size();
+    }
 }
 

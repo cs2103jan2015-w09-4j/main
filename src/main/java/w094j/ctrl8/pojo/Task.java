@@ -15,7 +15,7 @@ import w094j.ctrl8.statement.Statement;
 //@author A0110787A
 //@author A0112521B
 
-public class Task {
+public class Task implements Comparable<Task>{
 
     /**
      * Enumerates the current list of task types.
@@ -415,5 +415,12 @@ public class Task {
         this.isSet[IS_COMPLETE] = true;
         return true;
     }
-
+    
+    @Override
+    public int compareTo(final Task task) {
+        return this.title.compareTo(task.getTitle());
+    }
+    
+    
+    
 }

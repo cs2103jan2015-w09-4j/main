@@ -26,7 +26,7 @@ public class HistoryUndoStatement extends StatementOnePosInt {
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
         // TODO Link to Terminal
-        taskManager.historyUndo(this.query);
-        logger.debug("historyUndo not implemented yet.");
+        //temporary index to be passed before search implemented.
+        taskManager.historyUndo(Integer.parseInt(this.query));
     }
 }
