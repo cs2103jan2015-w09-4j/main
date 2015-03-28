@@ -15,17 +15,21 @@ public class ParameterConfig implements IConfig {
     private static Character CATEGORY_DEFAULT = '#';
     private static Character DEADLINE_DEFAULT = '-';
     private static Character DESCRIPTION_DEFAULT = '+';
+    private static Character END_DELIMITER_SYMBOL_DEFAULT = '}';
     private static Boolean IS_EXPLICIT_SHORT_MODE = true;
     private static Boolean IS_IMPLICIT_MODE = true;
     private static Character LOCATION_DEFAULT = '@';
     private static Character PRIORITY_DEFAULT = '%';
     private static Character REMINDER_DEFAULT = '!';
+    private static Character START_DELIMITER_SYMBOL_DEFAULT = '{';
     private static Character START_TIME_DEFAULT = '~';
     private static Map<ParameterType, Character> SYMBOL_PAIRING_DEFAULTS = new HashMap<ParameterType, Character>();
     private static Character TITLE_DEFAULT = '=';
 
+    private Character endDelimiterSymbol;
     private Boolean isExplicitShortMode;
     private Boolean isImplicitMode;
+    private Character startDelimiterSymbol;
     private Map<ParameterType, Character> symbolPairing;
 
     static {
@@ -65,6 +69,28 @@ public class ParameterConfig implements IConfig {
             return SYMBOL_PAIRING_DEFAULTS.get(parameterSymbol);
         } else {
             return parameterCharacter;
+        }
+    }
+
+    /**
+     * @return the endDelimiterSymbol
+     */
+    public Character getEndDelimiterSymbol() {
+        if (this.endDelimiterSymbol == null) {
+            return END_DELIMITER_SYMBOL_DEFAULT;
+        } else {
+            return this.endDelimiterSymbol;
+        }
+    }
+
+    /**
+     * @return the startDelimiterSymbol
+     */
+    public Character getStartDelimiterSymbol() {
+        if (this.startDelimiterSymbol == null) {
+            return START_DELIMITER_SYMBOL_DEFAULT;
+        } else {
+            return this.startDelimiterSymbol;
         }
     }
 
@@ -120,6 +146,14 @@ public class ParameterConfig implements IConfig {
     }
 
     /**
+     * @param endDelimiterSymbol
+     *            the endDelimiterSymbol to set
+     */
+    public void setEndDelimiterSymbol(Character endDelimiterSymbol) {
+        this.endDelimiterSymbol = endDelimiterSymbol;
+    }
+
+    /**
      * @param isExplicitShortMode
      *            the isExplicitShortMode to set
      */
@@ -133,6 +167,14 @@ public class ParameterConfig implements IConfig {
      */
     public void setImplicitMode(boolean isImplicitMode) {
         this.isImplicitMode = isImplicitMode;
+    }
+
+    /**
+     * @param startDelimiterSymbol
+     *            the startDelimiterSymbol to set
+     */
+    public void setStartDelimiterSymbol(Character startDelimiterSymbol) {
+        this.startDelimiterSymbol = startDelimiterSymbol;
     }
 
 }

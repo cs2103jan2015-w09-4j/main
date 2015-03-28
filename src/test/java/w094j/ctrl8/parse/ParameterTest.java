@@ -1,7 +1,8 @@
 //@author A0065517A
-package w094j.ctrl8.statement.parameter;
+package w094j.ctrl8.parse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +16,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.ParameterParser;
+import w094j.ctrl8.statement.parameter.CategoryParameter;
+import w094j.ctrl8.statement.parameter.DeadlineParameter;
+import w094j.ctrl8.statement.parameter.DescriptionParameter;
+import w094j.ctrl8.statement.parameter.LocationParameter;
+import w094j.ctrl8.statement.parameter.Parameter;
+import w094j.ctrl8.statement.parameter.ParameterContainer;
+import w094j.ctrl8.statement.parameter.PriorityParameter;
+import w094j.ctrl8.statement.parameter.ReminderParameter;
+import w094j.ctrl8.statement.parameter.StartTimeParameter;
+import w094j.ctrl8.statement.parameter.TitleParameter;
 
 /**
  * Tests parsing of the explicit parameters to its String representation. This
@@ -115,6 +127,8 @@ public class ParameterTest {
     @BeforeClass
     public static void initParser() {
         ParameterConfig config = new ParameterConfig();
+        config.setExplicitShortMode(false);
+        config.setImplicitMode(false);
         parser = new ParameterParser(config);
     }
 
@@ -126,7 +140,12 @@ public class ParameterTest {
     @Test
     public void test() {
 
-        assertEquals(this.expectedParamContainer, parser.parse(this.input));
+        try {
+            assertEquals(this.expectedParamContainer, parser.parse(this.input));
+        } catch (ParseException e) {
+            assertFalse(true);
+            e.printStackTrace();
+        }
 
     }
 }

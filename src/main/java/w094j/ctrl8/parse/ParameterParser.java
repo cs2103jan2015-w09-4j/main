@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.statement.parameter.CategoryParameter;
 import w094j.ctrl8.statement.parameter.DeadlineParameter;
 import w094j.ctrl8.statement.parameter.DescriptionParameter;
@@ -31,16 +32,26 @@ import w094j.ctrl8.statement.parameter.TitleParameter;
  */
 public class ParameterParser {
 
+    private static final String DEADLINED_TASK_TO_KEYWORD = " due ";
+    private static Character ESCAPE_CHARACTER = '\\';
+    private static final String TIMED_TASK_FROM_KEYWORD = " from ";
+    private static final String TIMED_TASK_TO_KEYWORD = " to ";
     private ParameterConfig config;
+
+    private String endDelimiterQuoted;
     private Set<String> escapableSymbols;
 
     private Pattern explicitParameterPattern;
     private Pattern explicitParameterPayloadPattern;
-
     private Pattern explicitShortParameterPattern;
     private Pattern explicitShortParameterPayloadPattern;
+
+    private Pattern implicitDeadlinedTaskPattern;
+    private Pattern implicitTimedTaskPattern;
+    private Pattern implicitTitlePattern;
     private Logger logger = LoggerFactory.getLogger(ParameterType.class);
     private Map<Character, ParameterType> parameterLookup = new HashMap<Character, ParameterType>();
+    private String startDelimiterQuoted;
 
     /**
      * Creates a Parameter Parser.
@@ -48,7 +59,7 @@ public class ParameterParser {
      * @param config
      *            configuration for the parser.
      */
-    public ParameterParser(ParameterConfig config) {
+    ParameterParser(ParameterConfig config) {
 
         this.config = config;
         this.escapableSymbols = new HashSet<String>();
@@ -57,9 +68,16 @@ public class ParameterParser {
             this.escapableSymbols.add(this.config.get(eaSymbol).toString());
             this.parameterLookup.put(this.config.get(eaSymbol), eaSymbol);
         }
-        this.escapableSymbols.add("{");
-        this.escapableSymbols.add("}");
-        this.escapableSymbols.add("\\");
+        this.escapableSymbols.add(this.config.getStartDelimiterSymbol()
+                .toString());
+        this.escapableSymbols.add(this.config.getEndDelimiterSymbol()
+                .toString());
+        this.escapableSymbols.add(ESCAPE_CHARACTER.toString());
+
+        this.startDelimiterQuoted = Pattern.quote(this.config
+                .getStartDelimiterSymbol().toString());
+        this.endDelimiterQuoted = Pattern.quote(this.config
+                .getEndDelimiterSymbol().toString());
 
         String delim = "";
         String symbolSelection = "";
@@ -71,27 +89,53 @@ public class ParameterParser {
 
         delim = "";
         String escapableSymbolSelection = "";
+        String escapableSymbolCharacterClass = "";
         for (String eaSymbol : this.escapableSymbols) {
             escapableSymbolSelection += delim;
+            escapableSymbolCharacterClass += Pattern.quote(eaSymbol);
             escapableSymbolSelection += Pattern.quote(eaSymbol);
             delim = "|";
         }
 
-        System.out.println(escapableSymbolSelection);
+        String regexExplicit = "(?:^|\\s)(?:" + symbolSelection + ")"
+                + this.startDelimiterQuoted + "(?:[^\\r\\n"
+                + escapableSymbolCharacterClass + "]|\\\\(?:"
+                + escapableSymbolSelection + ")|\\\\.){0,}"
+                + this.endDelimiterQuoted;
+        String regexExplicitShort = "(?:^|\\s)(?:" + symbolSelection
+                + ")(?:[^\\s\\r\\n" + escapableSymbolCharacterClass
+                + "]|\\\\(?:" + escapableSymbolSelection + ")|\\\\.){1,}";
 
-        String regexExplicit = "(^|\\s)(" + symbolSelection
-                + ")\\{([^\\r\\n\\\\\\{\\}" + symbolSelection + "]|\\\\("
-                + escapableSymbolSelection + ")|\\\\.){0,}\\}";
-        String regexExplicitShort = "(^|\\s)(" + symbolSelection
-                + ")([^\\s\\r\\n\\\\\\{\\}" + symbolSelection + "]|\\\\("
-                + escapableSymbolSelection + ")|\\\\.){1,}";
+        String implicitTimedTaskRegex = "(?<!\\{[^\\}])(?:"
+                + TIMED_TASK_FROM_KEYWORD + ")(?:[^\\r\\n"
+                + escapableSymbolCharacterClass + "]|\\\\(?:"
+                + escapableSymbolSelection + ")|\\\\.)+(?:"
+                + TIMED_TASK_TO_KEYWORD + ")(?:[^\\r\\n"
+                + escapableSymbolCharacterClass + "]|\\\\(?:"
+                + escapableSymbolSelection + ")|\\\\.)+\\b(?![^\\{]{0,}\\})";
+        String implicitDeadlinedTaskRegex = "(?<!\\{[^\\}])(?:"
+                + DEADLINED_TASK_TO_KEYWORD + ")(?:[^\\r\\n"
+                + escapableSymbolCharacterClass + "]|\\\\(?:"
+                + escapableSymbolSelection + ")|\\\\.)+\\b";
+        String implicitTitleRegex = "^(?:[^\\r\\n"
+                + escapableSymbolCharacterClass + "]|\\\\(?:"
+                + escapableSymbolSelection + ")|\\\\.)+\\b(?![^\\{]{0,}\\})";
+        this.implicitTimedTaskPattern = Pattern.compile(implicitTimedTaskRegex);
+        this.implicitDeadlinedTaskPattern = Pattern
+                .compile(implicitDeadlinedTaskRegex);
+        this.implicitTitlePattern = Pattern.compile(implicitTitleRegex);
+
+        this.logger.debug(implicitTimedTaskRegex);
+        this.logger.debug(implicitDeadlinedTaskRegex);
+        this.logger.debug(implicitTitleRegex);
 
         this.explicitParameterPattern = Pattern.compile(regexExplicit);
         this.explicitShortParameterPattern = Pattern
                 .compile(regexExplicitShort);
 
-        String explicitParameterPayloadRegex = "(?<=(^" + symbolSelection
-                + ")\\{).{0,}(?=\\}$)";
+        String explicitParameterPayloadRegex = "(?<=(^" + symbolSelection + ")"
+                + this.startDelimiterQuoted + ").{0,}(?="
+                + this.endDelimiterQuoted + "$)";
         String explicitShortParameterPayloadRegex = "(?<=(^" + symbolSelection
                 + ")).{1,}$";
 
@@ -152,10 +196,20 @@ public class ParameterParser {
      * @param parameterString
      * @return the container that contains all the parameters parsed in this
      *         string.
+     * @throws ParseException
+     *             TODO
      */
-    public ParameterContainer parse(String parameterString) {
+    public ParameterContainer parse(String parameterString)
+            throws ParseException {
 
         List<Parameter> parameterList = new ArrayList<>();
+
+        // Parses Implicit for tasks first
+        // We parse Implicit first as implicit relies on the relative position
+        // of the tags to determine which is the implicit parameters
+        if (this.config.isImplicitMode()) {
+            this.parseImplicit(parameterString, parameterList);
+        }
 
         // Parse Explicit Long First
         parameterString = this.parse(parameterString, parameterList,
@@ -170,19 +224,22 @@ public class ParameterParser {
                     this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
             this.logger
-            .debug("Parameters after parsing explicit short: String("
-                    + parameterString + ")");
-        }
-
-        // Parses Implicit for the rest
-        if (this.config.isImplicitMode()) {
-            this.parseImplicit(parameterString);
+                    .debug("Parameters after parsing explicit short: String("
+                            + parameterString + ")");
         }
 
         ParameterContainer parameterContainer = new ParameterContainer(
                 parameterList);
 
         return parameterContainer;
+    }
+
+    private List<String> getAllMatches(Matcher matcher) {
+        List<String> allMatches = new ArrayList<>();
+        while (matcher.find()) {
+            allMatches.add(matcher.group());
+        }
+        return allMatches;
     }
 
     /**
@@ -194,6 +251,7 @@ public class ParameterParser {
      */
     private String parse(String parameterString, List<Parameter> parameterList,
             Pattern parameterPattern, Pattern parameterPayloadPattern) {
+
         Matcher parameterMatcher = parameterPattern.matcher(parameterString);
 
         while (parameterMatcher.find()) {
@@ -226,8 +284,106 @@ public class ParameterParser {
         return parameterMatcher.replaceAll("");
     }
 
-    private String parseImplicit(String parameterString) {
-        return null;
+    private String parseImplicit(String parameterString,
+            List<Parameter> parameterList) throws ParseException {
+
+        this.logger.debug("String to be parsed in Implicit Parsing:"
+                + parameterString);
+
+        Matcher implicitTimedTaskMatcher = this.implicitTimedTaskPattern
+                .matcher(parameterString);
+        List<String> implicitTimedTaskMatches = this
+                .getAllMatches(implicitTimedTaskMatcher);
+        switch (implicitTimedTaskMatches.size()) {
+            case 0 :
+                // nothing to do, may be correct behaviour
+                break;
+            case 1 :
+                // one match
+                String timedTaskParameterMatch = implicitTimedTaskMatches
+                .get(0);
+
+                // remove from keyword
+                timedTaskParameterMatch = timedTaskParameterMatch.replaceAll(
+                        TIMED_TASK_FROM_KEYWORD, "");
+                String[] fromToArray = timedTaskParameterMatch
+                        .split(TIMED_TASK_TO_KEYWORD);
+
+                parameterList.add(new StartTimeParameter(fromToArray[0]));
+                parameterList.add(new DeadlineParameter(fromToArray[1]));
+
+                // replaces the parsed item to be removed
+                parameterString = implicitTimedTaskMatcher.replaceAll("");
+                break;
+            default :
+
+                // still has matches
+                // all others are illegal
+                throw new ParseException(
+                        "Can only have one from ... to ... construct");
+        }
+
+        if (implicitTimedTaskMatcher.find()) {
+
+        }
+
+        Matcher implicitDeadlinedTaskMatcher = this.implicitDeadlinedTaskPattern
+                .matcher(parameterString);
+        List<String> implicitDeadlinedTaskMatches = this
+                .getAllMatches(implicitDeadlinedTaskMatcher);
+        switch (implicitDeadlinedTaskMatches.size()) {
+            case 0 :
+                // nothing to do, may be correct behaviour
+                break;
+            case 1 :
+                // one match
+                String deadlinedTaskParameterMatch = implicitDeadlinedTaskMatches
+                        .get(0);
+
+                // remove from keyword
+                deadlinedTaskParameterMatch = deadlinedTaskParameterMatch
+                        .replaceAll(DEADLINED_TASK_TO_KEYWORD, "");
+
+                parameterList.add(new DeadlineParameter(
+                        deadlinedTaskParameterMatch));
+
+                // replaces the parsed item to be removed
+                parameterString = implicitDeadlinedTaskMatcher.replaceAll("");
+                break;
+            default :
+                // all others are illegal
+                throw new ParseException("Can only have one due ... construct");
+        }
+
+        Matcher implicitTitleMatcher = this.implicitTitlePattern
+                .matcher(parameterString);
+        List<String> implicitTitleMatches = this
+                .getAllMatches(implicitTitleMatcher);
+
+        switch (implicitTitleMatches.size()) {
+            case 0 : // ignore as there is no problem with not having it
+                break;
+            case 1 :
+                // one match
+                String titleParameterMatch = implicitTitleMatches.get(0);
+
+                // remove from keyword
+                titleParameterMatch = titleParameterMatch.trim();
+
+                parameterList.add(new TitleParameter(titleParameterMatch));
+
+                // replaces the parsed item to be removed
+                parameterString = implicitTitleMatcher.replaceAll("");
+                break;
+            default :
+                // all others are illegal
+                throw new ParseException(
+                        "Can only have one title, your command may be broken elsewhere.");
+        }
+
+        this.logger.debug("After Implicit Parsing: Parameters(" + parameterList
+                + ")");
+        return parameterString;
     }
 
 }

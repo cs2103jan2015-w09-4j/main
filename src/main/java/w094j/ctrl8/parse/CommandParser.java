@@ -31,7 +31,7 @@ public class CommandParser {
             regex += Pattern.quote(eaCommand.toString());
             delim = "|";
         }
-        regex += ")(\\s|$)";
+        regex += ")(?=\\s|$)";
         this.commandPattern = Pattern.compile(regex);
         this.logger.info("Command Parser initialized with REGEX:" + regex);
     }

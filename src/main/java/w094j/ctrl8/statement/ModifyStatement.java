@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.ParameterParser;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
@@ -40,38 +41,24 @@ public class ModifyStatement extends Statement {
      * Initializes a modify statement, parses the query first.
      *
      * @param statementString
+     * @throws ParseException
      * @exception InvalidParameterException
      *                if the parameters does not exist.
      */
-    public ModifyStatement(String statementString) {
+    public ModifyStatement(String statementString) throws ParseException {
         super(CommandType.MODIFY, statementString);
 
-        int indexOfCommandCharacters = 0;
-        String bannedSymbolsRegex = parameterParser.getBannedSymbolsRegex();
-        Matcher m = Pattern.compile(bannedSymbolsRegex).matcher(
-                this.getStatementArgumentsOnly());
-        // find the first command character if it exist
-        if (m.find()) {
-            indexOfCommandCharacters = m.start();
+        Matcher queryMatcher = Pattern.compile(",").matcher(statementString);
+        if (queryMatcher.find()) {
+            this.query = queryMatcher.group();
         } else {
-            throw new InvalidParameterException(
-                    "Modify statement must specify the parameter that is different.");
+            throw new ParseException(
+                    "Modify statement must contain query argument.");
         }
-
-        if (indexOfCommandCharacters == 0) {
-            throw new InvalidParameterException(
-                    "Modify statement must have a query.");
-        }
-
-        // from the start of the parameter string to the index of the command
-        // character, not inclusive of the command character
-        this.query = this.getStatementArgumentsOnly()
-                .substring(0, indexOfCommandCharacters).trim();
 
         this.task = new Task();
         ParameterContainer container = parameterParser.parse(this
-                .getStatementArgumentsOnly()
-                .substring(indexOfCommandCharacters));
+                .getStatementArgumentsOnly().substring(queryMatcher.end()));
         // TODO no validation rules for the statement
         container.addAll(null, this.task);
 

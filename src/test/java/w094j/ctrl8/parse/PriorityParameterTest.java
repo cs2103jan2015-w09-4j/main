@@ -1,7 +1,8 @@
 //@author A0065517A
-package w094j.ctrl8.statement.parameter;
+package w094j.ctrl8.parse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 
@@ -12,8 +13,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.database.config.ParameterConfig;
-import w094j.ctrl8.parse.ParameterParser;
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.parameter.ParameterContainer;
 
 /**
  * Tests parsing of the priority parameter.
@@ -73,9 +75,17 @@ public class PriorityParameterTest {
     @Test
     public void test() {
 
-        ParameterContainer parameterContainer = parser.parse(this.input);
-        Task task = new Task();
-        parameterContainer.addAll(null, task);
-        assertEquals(this.expectedPriority, task.getPriority());
+        ParameterContainer parameterContainer;
+        try {
+            parameterContainer = parser.parse(this.input);
+            Task task = new Task();
+            parameterContainer.addAll(null, task);
+            assertEquals(this.expectedPriority, task.getPriority());
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            assertFalse(true);
+        }
+
     }
 }

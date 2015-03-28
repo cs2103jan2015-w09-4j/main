@@ -1,5 +1,5 @@
 //@author A0112521B
-package w094j.ctrl8.statement.parameter;
+package w094j.ctrl8.parse;
 
 import java.security.InvalidParameterException;
 
@@ -61,7 +61,7 @@ public class PriorityParameterExceptionTest {
     @Test
     public void testIntMinValue() throws Exception {
         try {
-            this.parser.parse("%{" + (Integer.MIN_VALUE) + "}");
+            this.parser.parse("%{\\" + (Integer.MIN_VALUE) + "}");
             Assert.fail("should have thrown InvalidParameterException");
         } catch (InvalidParameterException e) {
             if (!e.toString()
@@ -79,7 +79,7 @@ public class PriorityParameterExceptionTest {
     @Test
     public void testOutOfRangeNegative() throws Exception {
         try {
-            this.parser.parse("%{-1}");
+            this.parser.parse("%{\\-1}");
             Assert.fail("should have thrown InvalidParameterException");
         } catch (InvalidParameterException e) {
             if (!e.toString()
