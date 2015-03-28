@@ -31,10 +31,13 @@ public class CommandConfig implements IConfig {
     private static CommandType IMPLICIT_COMMAND_DEFAULT = CommandType.ADD;
     private static String MODIFY_DEFAULT = "M";
     private static String SEARCH_DEFAULT = "SE";
+    private static Boolean SHORT_COMMAND_MODE = true;
     private static Map<CommandType, String> SYMBOL_PAIRING_DEFAULTS = new HashMap<CommandType, String>();
-    private static String VIEW_DEFAULT = "V";
 
+    private static String VIEW_DEFAULT = "V";
     private CommandType implicitCommand;
+
+    private Boolean shortCommandMode;
     private Map<CommandType, String> symbolPairing;
 
     static {
@@ -93,6 +96,17 @@ public class CommandConfig implements IConfig {
 
     }
 
+    /**
+     * @return the shortCommandMode
+     */
+    public boolean isShortCommandMode() {
+        if (this.shortCommandMode == null) {
+            return SHORT_COMMAND_MODE;
+        } else {
+            return this.shortCommandMode;
+        }
+    }
+
     @Override
     public boolean isValid() {
         // Flatten the user-defined mappings with the defaults
@@ -126,6 +140,14 @@ public class CommandConfig implements IConfig {
      */
     public void setImplicitCommand(CommandType implicitCommand) {
         this.implicitCommand = implicitCommand;
+    }
+
+    /**
+     * @param shortCommandMode
+     *            the shortCommandMode to set
+     */
+    public void setShortCommandMode(boolean shortCommandMode) {
+        this.shortCommandMode = shortCommandMode;
     }
 
 }

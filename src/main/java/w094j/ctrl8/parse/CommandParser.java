@@ -31,6 +31,12 @@ public class CommandParser {
             regex += Pattern.quote(eaCommand.toString());
             delim = "|";
         }
+        for (CommandType eaCommand : EnumSet.allOf(CommandType.class)) {
+            this.commandLookup.put(commandConfig.get(eaCommand).toString(),
+                    eaCommand);
+            regex += delim;
+            regex += Pattern.quote(commandConfig.get(eaCommand).toString());
+        }
         regex += ")(?=\\s|$)";
         this.commandPattern = Pattern.compile(regex);
         this.logger.info("Command Parser initialized with REGEX:" + regex);
@@ -56,8 +62,7 @@ public class CommandParser {
         Matcher commandMatcher = this.commandPattern.matcher(statement);
 
         if (commandMatcher.find()) {
-            return this.commandLookup.get(commandMatcher.group().trim()
-                    .toLowerCase());
+            return this.commandLookup.get(commandMatcher.group().trim());
         } else {
             throw new ParseException("Statement does not contain any commands.");
         }
