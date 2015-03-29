@@ -20,7 +20,6 @@ public class Response {
     /*
      * The list of properties(variables) that a response MAY contain
      */
-    public CommandType command;
     public String reply;
     public Task[] taskList;
     public History history;
