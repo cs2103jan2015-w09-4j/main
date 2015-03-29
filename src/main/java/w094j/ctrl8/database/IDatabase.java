@@ -32,8 +32,9 @@ public interface IDatabase {
      * Download data from Disk and Google
      *
      * @throws IOException
+     * @throws Exception
      */
-    void downloadFromStorage() throws IOException;
+    void downloadFromStorage() throws IOException, Exception;
 
     /**
      * @return Config
@@ -61,8 +62,10 @@ public interface IDatabase {
 
     /**
      * Store data to Disk and Google
+     * 
+     * @throws Exception
      */
-    void saveToStorage();
+    void saveToStorage() throws Exception;
 
     /**
      * Sync Data

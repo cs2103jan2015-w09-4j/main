@@ -42,7 +42,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public Database(String filePathString) throws IOException,
-    NoSuchFileException {
+            NoSuchFileException {
 
         if (filePathString.equals("")) {
             filePathString = DEFAULT_FILE_NAME;
@@ -122,7 +122,7 @@ public class Database implements IDatabase {
     }
 
     @Override
-    public void downloadFromStorage() throws IOException {
+    public void downloadFromStorage() throws Exception {
         Storage diskStorage = new DiskStorage(this.file, this.filePath);
         Storage googleCalStorage = new GoogleCalStorage(this.file);
         diskStorage.readData();
@@ -174,9 +174,11 @@ public class Database implements IDatabase {
 
     /**
      * Save and write file.
+     * 
+     * @throws Exception
      */
     @Override
-    public void saveToStorage() {
+    public void saveToStorage() throws Exception {
         Storage diskStorage = new DiskStorage(this.file, this.filePath);
         Storage googleCalStorage = new GoogleCalStorage(this.file);
         diskStorage.storeData();
