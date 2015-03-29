@@ -59,6 +59,12 @@ public abstract class Statement {
      * @return the statementArgumentsOnly
      */
     public String getStatementArgumentsOnly() {
+        if(this.statementArgumentsOnly.isEmpty()){
+            return this.statementArgumentsOnly;
+        }
+        if(this.statementArgumentsOnly.charAt(0) == ' '){
+            this.statementArgumentsOnly = this.statementArgumentsOnly.replaceFirst("^ *", "");
+        }
         return this.statementArgumentsOnly;
     }
 
