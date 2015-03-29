@@ -52,29 +52,21 @@ public class TaskManager implements ITaskManager {
     // Interface supporting interaction with user
     IDisplay display;
 
-<<<<<<< HEAD
+
     // Storage object (Internal)
     private HashMap<String, Task> taskMap;
     private HashMap<String, Task> iniTaskMap;
     
-    //History 
-    private History history = new History();
+
     
     private AliasData aliasData;
     
-    private static TaskManager instance;
-=======
-    private AliasData aliasData;
 
     private boolean continueExecution = true;
 
     //History
     private History history = new History();
-    private HashMap<String, Task> iniTaskMap;
 
-    // Storage object (Internal)
-    private HashMap<String, Task> taskMap;
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
 
     /**
      * Default Constructor for a terminal with no specifications
@@ -91,7 +83,6 @@ public class TaskManager implements ITaskManager {
         this.buildTaskMap();
     }
 
-<<<<<<< HEAD
     /*
      * TODO This function is currently a stub. Until Config object has completed
      * implementation
@@ -122,8 +113,7 @@ public class TaskManager implements ITaskManager {
         this.buildTaskMap();
     }
 
-=======
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
+
     /**
      * @deprecated switch to Terminal(Config)
      *
@@ -172,33 +162,6 @@ public class TaskManager implements ITaskManager {
         this.buildTaskMap();
     }
 
-    /*
-     * TODO This function is currently a stub. Until Config object has completed
-     * implementation
-     */
-    /**
-     * Constructor for terminal with a config object
-     *
-     * @param conf
-     *            Configuration information specifying how Terminal/Display is
-     *            to be setup
-     */
-    public TaskManager(TaskManagerConfig conf) {
-        assertNotNull(conf); // Should not be a null object
-
-        this.display = new CLIDisplay(); /*
-                                          * TODO replace with proper
-                                          * configuration
-                                          */
-        try {
-            this.database = new Database();
-        } catch (Exception e) {
-            Response res = new Response();
-            res.reply = e.getMessage();
-            this.display.updateUI(res);
-        }
-        this.buildTaskMap();
-    }
 
     /**
      * Gets the current instance of the TaskManager.
@@ -287,14 +250,14 @@ public class TaskManager implements ITaskManager {
     public void aliasAdd(String alias, String value, Statement statement)
             throws CommandExecuteException {
         this.aliasData.addAlias(alias, value);
-<<<<<<< HEAD
+
         Response res = new Response();
         res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
         this.display.updateUI(res);
         updateHistory(statement);
-=======
+
         this.updateHistory(statement);
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
+
     }
 
     /**
@@ -316,13 +279,14 @@ public class TaskManager implements ITaskManager {
 
             logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
             /* Check if key exists in taskmap */
-<<<<<<< HEAD
+
             if (this.isTaskExist(taskID)) {
                 Task removedTask = this.taskMap.remove(taskID);
-=======
+            }
+
             if (this.taskMap.containsKey(taskID)) {
                 this.taskMap.remove(taskID);
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
+
 
                 // Update the database
 //                this.database.deleteTask(removedTask);
@@ -339,6 +303,7 @@ public class TaskManager implements ITaskManager {
         }
         //update history
         this.updateHistory(statement);
+    
     }
 
     /**
@@ -554,54 +519,8 @@ public class TaskManager implements ITaskManager {
             }
         }
     }
-<<<<<<< HEAD
-    
-    
-    /** 
-     *  Set the task's status to done
-     *  
-     * @param query
-     * @param statement
-     * @throws CommandExecuteException
-     */
-    public void done(String query,Statement statement) throws CommandExecuteException{
-//        if(query.charAt(0) == ' '){
-//            query = query.replaceFirst("^ *", "");
-//        }
-        if (this.isTaskExist(query)) {
 
-            Task task = this.taskMap.get(query);
-            if(task.getStatus() == true){
-                logger.debug("The task is already done");
-            }
-            try {
-                // Add to database
-                this.database.deleteTask(task);
-                task.setStatus(true);
-                this.database.saveTask(task);
-            } catch (Exception e) {
-                throw new CommandExecuteException(e.getMessage());
-            }
-
-            try {
-                // Update the TaskMap
-                this.updateTaskMap(query, task);
-            } catch (Exception e) {
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
-            }
-         // Informs user that his add statement is successful
-            Response res = new Response();
-            res.reply = task.getTitle() + NormalMessage.DONE_TASK_SUCCESSFUL;
-            this.display.updateUI(res);
-            //update history
-            updateHistory(statement);
-        }
-        else{
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        }
-    }
+    
         
     /**
      * update the history of actions 
@@ -611,10 +530,6 @@ public class TaskManager implements ITaskManager {
         this.history.addHistory(statement);
     }
 
-    
-=======
-
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
     /**
      * View all the history
      *
@@ -859,14 +774,7 @@ public class TaskManager implements ITaskManager {
         return sb.toString();
     }
 
-    /**
-     * update the history of actions
-     *
-     * @param statement
-     */
-    private void updateHistory(Statement statement) {
-        this.history.addHistory(statement);
-    }
+
 
     /**
      * Adds a task to the taskMap as well as removing an older entry. To be used
@@ -919,36 +827,9 @@ public class TaskManager implements ITaskManager {
         }
 
     }
-<<<<<<< HEAD
+
     
-    /**
-     * Gets the current instance of the TaskManager.
-     *
-     * @return the current instance.
-     */
-    public static TaskManager getInstance() {
-        if(instance == null){
-            instance = initInstance(new TaskManagerConfig());
-        }
-        return instance;
-    }
-
-    /**
-     * Creates a Task Manager 
-     *
-     *
-     * @return return the Task manager.
-     */
-    private static TaskManager initInstance(TaskManagerConfig config) {
-        if (instance != null) {
-            throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
-        } else {
-            instance = new TaskManager(config);
-        }
-        return instance;
-    }
-
+  
     /**
      * delete a alias 
      * @param query
@@ -998,6 +879,5 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
         
     }
-=======
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
+
 }

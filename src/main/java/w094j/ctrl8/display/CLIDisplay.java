@@ -230,12 +230,7 @@ public class CLIDisplay implements IDisplay {
         }
         if (res.history != null) {
             this.outputHistory(res.history);
-<<<<<<< HEAD
-=======
-
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
         }
-        
         if(res.alias != null){
             this.outputAliases(res.alias);
         }
@@ -309,7 +304,7 @@ public class CLIDisplay implements IDisplay {
             System.out.println(statement.getStatementArgumentsOnly());
         }
     }
-<<<<<<< HEAD
+
     
     private void outputAliases(AliasData alias){
         Map<String,String> aliases = alias.getAliasMap();
@@ -325,35 +320,5 @@ public class CLIDisplay implements IDisplay {
           }
         }
     }
-    
-    /**
-    * Gets the current instance of the CLIDisplay.
-    *
-    * @return the current instance.
-    */
-   public static CLIDisplay getInstance() {
-       if(instance == null){
-           instance = initInstance(new DisplayConfig());
-       }
-       return instance;
-   }
 
-   /**
-    * Creates a Task Manager 
-    *
-    *
-    * @return return the display instance.
-    */
-   public static CLIDisplay initInstance(DisplayConfig displayConfig) {
-       if (instance != null) {
-           throw new RuntimeException(
-                   "Cannot initialize when it was initialized.");
-       } else {
-           //TO-DO add in config when config is done
-           instance = new CLIDisplay();
-       }
-       return instance;
-   }
-=======
->>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
 }
