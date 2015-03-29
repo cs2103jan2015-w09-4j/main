@@ -18,14 +18,12 @@ import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.DisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
-import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.pojo.History;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.CommandType;
 import w094j.ctrl8.statement.Statement;
 
 /**
@@ -36,10 +34,10 @@ import w094j.ctrl8.statement.Statement;
 
 // @author A0112092W
 public class CLIDisplay implements IDisplay {
+    private static CLIDisplay instance;
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
     private InputStream inStream;
-    private static CLIDisplay instance;
 
     // @author A0110787A
     private String lastMessage;
@@ -50,6 +48,34 @@ public class CLIDisplay implements IDisplay {
      */
     public CLIDisplay() {
         this.br = new BufferedReader(new InputStreamReader(System.in));
+    }
+
+    /**
+     * Gets the current instance of the CLIDisplay.
+     *
+     * @return the current instance.
+     */
+    public static CLIDisplay getInstance() {
+        if (instance == null) {
+            instance = initInstance(new DisplayConfig());
+        }
+        return instance;
+    }
+
+    /**
+     * Creates a Task Manager
+     *
+     * @return return the display instance.
+     */
+    public static CLIDisplay initInstance(DisplayConfig displayConfig) {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            //TO-DO add in config when config is done
+            instance = new CLIDisplay();
+        }
+        return instance;
     }
 
     /**
@@ -88,101 +114,6 @@ public class CLIDisplay implements IDisplay {
         }
     }
 
-    /**
-     * This method is used to print the table with border. (modified from
-     * printTable)
-     */
-    // @author A0112521B
-    private static void printTableWithBorder(int startIndex, int endIndex,
-            String[][] table) {
-        char borderKnot = '+';
-        char horizontalBorder = '-';
-        char verticalBorder = '|';
-        int spaceInfront = 1;
-        int spaceBehind = 2;
-
-        if ((table == null)) {
-            return;
-        }
-
-        if ((startIndex > endIndex) || ((table.length - 1) < endIndex)) {
-            assert (false);
-        }
-
-        // Find out what the maximum number of columns is in any row
-        int maxColumns = 0;
-        for (String[] element : table) {
-            maxColumns = Math.max(element.length, maxColumns);
-        }
-
-        // Find the maximum length of a string in each column
-        int[] lengths = new int[maxColumns];
-        for (int j = 0; j < maxColumns; j++) {
-            lengths[j] = Math.max(table[0][j].length(), lengths[j]);
-        }
-        for (int i = startIndex; i <= endIndex; i++) {
-            for (int j = 0; j < maxColumns; j++) {
-                lengths[j] = Math.max(table[i][j].length(), lengths[j]);
-            }
-        }
-
-        for (int j = 0; j < maxColumns; j++) {
-            lengths[j] += spaceBehind;
-        }
-
-        // Print header
-        for (int i = 0; i < maxColumns; i++) {
-            System.out.print(borderKnot);
-            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
-                System.out.print(horizontalBorder);
-            }
-        }
-        System.out.println(borderKnot);
-        for (int i = 0; i < maxColumns; i++) {
-            System.out.print(verticalBorder);
-            for (int k = 0; k < spaceInfront; k++) {
-                System.out.print(" ");
-            }
-            System.out.print(table[0][i]);
-            for (int j = 0; j < (lengths[i] - table[0][i].length()); j++) {
-                System.out.print(" ");
-            }
-        }
-        System.out.println(verticalBorder);
-        for (int i = 0; i < maxColumns; i++) {
-            System.out.print(borderKnot);
-            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
-                System.out.print(horizontalBorder);
-            }
-        }
-        System.out.println(borderKnot);
-
-        // Print content (from startIndex to endIndex)
-        for (int i = startIndex; i <= endIndex; i++) {
-            System.out.print(verticalBorder);
-            for (int j = 0; j < maxColumns; j++) {
-                for (int k = 0; k < spaceInfront; k++) {
-                    System.out.print(" ");
-                }
-                System.out.print(table[i][j]);
-                for (int k = 0; k < (lengths[j] - table[i][j].length()); k++) {
-                    System.out.print(" ");
-                }
-                System.out.print(verticalBorder);
-            }
-            System.out.println("");
-
-        }
-        for (int i = 0; i < maxColumns; i++) {
-            System.out.print(borderKnot);
-            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
-                System.out.print(horizontalBorder);
-            }
-        }
-        System.out.println(borderKnot);
-
-    }
-
     // @author A0112092W
     @Override
     public InputStream getInputStream() {
@@ -199,78 +130,6 @@ public class CLIDisplay implements IDisplay {
      */
     public String getLastMessage() {
         return this.lastMessage;
-
-    }
-
-    /**
-     * @param command
-     */
-    // @author A0112521B
-    public void outputHelpMessage(CommandType command) {
-        // todo Help command should not be handled here
-        if (command == CommandType.HELP) {
-            printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
-        } else {
-
-            switch (command) {
-                case ADD :
-                    printTableWithBorder(HelpMessage.ADD_START_INDEX,
-                            HelpMessage.ADD_END_INDEX, HelpMessage.TABLE);
-                    break;
-                case ALIAS :
-                    printTableWithBorder(HelpMessage.ALIAS_INDEX,
-                            HelpMessage.ALIAS_INDEX, HelpMessage.TABLE);
-                    break;
-                case ALIAS_ADD :
-                    printTableWithBorder(HelpMessage.ALIAS_ADD_INDEX,
-                            HelpMessage.ALIAS_ADD_INDEX, HelpMessage.TABLE);
-                    break;
-                case ALIAS_DELETE :
-                    printTableWithBorder(HelpMessage.ALIAS_DELETE_INDEX,
-                            HelpMessage.ALIAS_DELETE_INDEX, HelpMessage.TABLE);
-                    break;
-                case DELETE :
-                    printTableWithBorder(HelpMessage.DELETE_INDEX,
-                            HelpMessage.DELETE_INDEX, HelpMessage.TABLE);
-                    break;
-                case DONE :
-                    printTableWithBorder(HelpMessage.DONE_INDEX,
-                            HelpMessage.DONE_INDEX, HelpMessage.TABLE);
-                    break;
-                case EXIT :
-                    printTableWithBorder(HelpMessage.EXIT_INDEX,
-                            HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
-                    break;
-                case HISTORY :
-                    printTableWithBorder(HelpMessage.HISTORY_INDEX,
-                            HelpMessage.HISTORY_INDEX, HelpMessage.TABLE);
-                    break;
-                case HISTORY_CLEAR :
-                    printTableWithBorder(HelpMessage.HISTORY_CLEAR_INDEX,
-                            HelpMessage.HISTORY_CLEAR_INDEX, HelpMessage.TABLE);
-                    break;
-                case HISTORY_UNDO :
-                    printTableWithBorder(HelpMessage.HISTORY_UNDO_INDEX,
-                            HelpMessage.HISTORY_UNDO_INDEX, HelpMessage.TABLE);
-                    break;
-                case MODIFY :
-                    printTableWithBorder(HelpMessage.MODIFY_INDEX,
-                            HelpMessage.MODIFY_INDEX, HelpMessage.TABLE);
-                    break;
-                case SEARCH :
-                    printTableWithBorder(HelpMessage.SEARCH_INDEX,
-                            HelpMessage.SEARCH_INDEX, HelpMessage.TABLE);
-                    break;
-                case VIEW :
-                    printTableWithBorder(HelpMessage.VIEW_INDEX,
-                            HelpMessage.VIEW_INDEX, HelpMessage.TABLE);
-                    break;
-
-                default :
-                    assert (false);
-
-            }
-        }
 
     }
 
@@ -367,12 +226,14 @@ public class CLIDisplay implements IDisplay {
             } catch (OutputExecuteException e) {
                 e.printStackTrace();
             }
+
         }
-        if (res.command != null) {
-            this.outputHelpMessage(res.command);
-        }
-        if(res.history !=null){
+        if (res.history != null) {
             this.outputHistory(res.history);
+<<<<<<< HEAD
+=======
+
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
         }
         
         if(res.alias != null){
@@ -437,18 +298,18 @@ public class CLIDisplay implements IDisplay {
         return table;
     }
 
-    
-    private void outputHistory(History history){
+    private void outputHistory(History history) {
         ArrayList<Statement> historyList = history.getHistoryList();
-        
-        for(int i=0;i<historyList.size();i++){
+
+        for (int i = 0; i < historyList.size(); i++) {
             Statement statement = historyList.get(i);
-            System.out.print(i+1 + ". Command:");
+            System.out.print(i + 1 + ". Command:");
             System.out.print(statement.getCommand().toString());
             System.out.print(" String:");
             System.out.println(statement.getStatementArgumentsOnly());
         }
     }
+<<<<<<< HEAD
     
     private void outputAliases(AliasData alias){
         Map<String,String> aliases = alias.getAliasMap();
@@ -493,4 +354,6 @@ public class CLIDisplay implements IDisplay {
        }
        return instance;
    }
+=======
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
 }

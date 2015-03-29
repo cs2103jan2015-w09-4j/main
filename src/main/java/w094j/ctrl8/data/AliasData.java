@@ -93,4 +93,11 @@ public class AliasData {
         }
         return value;
     }
+    
+    public boolean isEmpty(){
+        if(this.aliasMap == null){
+            return true;
+        }
+        return false;
+    }
 }

@@ -11,12 +11,10 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.application.GUICore;
 import w094j.ctrl8.database.config.GUIDisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
-import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.CommandType;
 
 /**
  * Class implements Display Interface as a simple CLI with additional GUI
@@ -32,9 +30,9 @@ public class GUIDisplay implements IDisplay {
     }
 
     public GUIDisplay(GUIDisplayConfig config) {
-        if (config == null || !config.isValid()) {
+        if ((config == null) || !config.isValid()) {
             this.logger
-                    .debug("Invalid or null config received! Reverting to defaults.");
+            .debug("Invalid or null config received! Reverting to defaults.");
             this.guiCore = new GUICore(new GUIDisplayConfig());
         } else {
             this.guiCore = new GUICore(config);
@@ -53,10 +51,6 @@ public class GUIDisplay implements IDisplay {
             this.guiCore.consoleController.appendToDisplay(res.reply);
             allNull = false;
         }
-        if (res.command != null) {
-            this.outputHelpMessage(res.command);
-            allNull = false;
-        }
         if (res.taskList != null) {
             try {
                 this.outputTask(res.taskList);
@@ -68,7 +62,7 @@ public class GUIDisplay implements IDisplay {
 
         if (allNull) {
             this.logger
-                    .debug("Respose object does not contain any useful information");
+            .debug("Respose object does not contain any useful information");
         }
     }
 
@@ -114,72 +108,6 @@ public class GUIDisplay implements IDisplay {
         table[0][9] = "Status";
 
         return table;
-    }
-
-    private void outputHelpMessage(CommandType command) {
-        if ((command == null) || (command == CommandType.HELP)) {
-            printTableWithBorder(1, HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
-        } else {
-            switch (command) {
-                case ADD :
-                    printTableWithBorder(HelpMessage.ADD_START_INDEX,
-                            HelpMessage.ADD_END_INDEX, HelpMessage.TABLE);
-                    break;
-                case ALIAS :
-                    printTableWithBorder(HelpMessage.ALIAS_INDEX,
-                            HelpMessage.ALIAS_INDEX, HelpMessage.TABLE);
-                    break;
-                case ALIAS_ADD :
-                    printTableWithBorder(HelpMessage.ALIAS_ADD_INDEX,
-                            HelpMessage.ALIAS_ADD_INDEX, HelpMessage.TABLE);
-                    break;
-                case ALIAS_DELETE :
-                    printTableWithBorder(HelpMessage.ALIAS_DELETE_INDEX,
-                            HelpMessage.ALIAS_DELETE_INDEX, HelpMessage.TABLE);
-                    break;
-                case DELETE :
-                    printTableWithBorder(HelpMessage.DELETE_INDEX,
-                            HelpMessage.DELETE_INDEX, HelpMessage.TABLE);
-                    break;
-                case DONE :
-                    printTableWithBorder(HelpMessage.DONE_INDEX,
-                            HelpMessage.DONE_INDEX, HelpMessage.TABLE);
-                    break;
-                case EXIT :
-                    printTableWithBorder(HelpMessage.EXIT_INDEX,
-                            HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
-                    break;
-                case HISTORY :
-                    printTableWithBorder(HelpMessage.HISTORY_INDEX,
-                            HelpMessage.HISTORY_INDEX, HelpMessage.TABLE);
-                    break;
-                case HISTORY_CLEAR :
-                    printTableWithBorder(HelpMessage.HISTORY_CLEAR_INDEX,
-                            HelpMessage.HISTORY_CLEAR_INDEX, HelpMessage.TABLE);
-                    break;
-                case HISTORY_UNDO :
-                    printTableWithBorder(HelpMessage.HISTORY_UNDO_INDEX,
-                            HelpMessage.HISTORY_UNDO_INDEX, HelpMessage.TABLE);
-                    break;
-                case MODIFY :
-                    printTableWithBorder(HelpMessage.MODIFY_INDEX,
-                            HelpMessage.MODIFY_INDEX, HelpMessage.TABLE);
-                    break;
-                case SEARCH :
-                    printTableWithBorder(HelpMessage.SEARCH_INDEX,
-                            HelpMessage.SEARCH_INDEX, HelpMessage.TABLE);
-                    break;
-                case VIEW :
-                    printTableWithBorder(HelpMessage.VIEW_INDEX,
-                            HelpMessage.VIEW_INDEX, HelpMessage.TABLE);
-                    break;
-
-                default :
-                    assert (false);
-
-            }
-        }
-
     }
 
     /**
@@ -251,13 +179,13 @@ public class GUIDisplay implements IDisplay {
                 table[i][9] = "Not Done Yet";
             }
         }
-        printTable(table);
+        this.printTable(table);
     }
 
     /**
      * This method is used to print a table with format of following the format
      * of right justified table x xxx yyy y zz zz
-     * 
+     *
      * <pre>
      * Modified from CLIDisplay and contextualised for GUI
      * </pre>
@@ -293,101 +221,6 @@ public class GUIDisplay implements IDisplay {
                 sb.append(String.format(formats[j], element[j]));
             }
         }
-        this.guiCore.consoleController.appendToDisplay(sb.toString());
-    }
-
-    /**
-     * This method is used to print the help table. Modified from CLIDisplay and
-     * contextualised for GUI
-     * 
-     * @param i
-     * @param exitIndex
-     * @param table
-     */
-    private void printTableWithBorder(int startIndex, int endIndex,
-            String[][] table) {
-        char borderKnot = '+';
-        char horizontalBorder = '-';
-        char verticalBorder = '|';
-        int spaceInfront = 1;
-        int spaceBehind = 2;
-        StringBuilder sb = new StringBuilder();
-
-        // Find out what the maximum number of columns is in any row
-        int maxColumns = 0;
-        for (String[] element : table) {
-            maxColumns = Math.max(element.length, maxColumns);
-        }
-
-        // Find the maximum length of a string in each column
-        int[] lengths = new int[maxColumns];
-        for (int j = 0; j < maxColumns; j++) {
-            lengths[j] = Math.max(table[0][j].length(), lengths[j]);
-        }
-        for (int i = startIndex; i <= endIndex; i++) {
-            for (int j = 0; j < maxColumns; j++) {
-                lengths[j] = Math.max(table[i][j].length(), lengths[j]);
-            }
-        }
-
-        for (int j = 0; j < maxColumns; j++) {
-            lengths[j] += spaceBehind;
-        }
-
-        // Print header
-        for (int i = 0; i < maxColumns; i++) {
-            sb.append(borderKnot);
-            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
-                sb.append(horizontalBorder);
-            }
-        }
-        System.out.println(borderKnot);
-        for (int i = 0; i < maxColumns; i++) {
-            System.out.print(verticalBorder);
-            for (int k = 0; k < spaceInfront; k++) {
-                sb.append(" ");
-            }
-            System.out.print(table[0][i]);
-            for (int j = 0; j < (lengths[i] - table[0][i].length()); j++) {
-                sb.append(" ");
-            }
-        }
-        sb.append(verticalBorder);
-        for (int i = 0; i < maxColumns; i++) {
-
-            sb.append(borderKnot);
-            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
-                sb.append(horizontalBorder);
-            }
-        }
-        sb.append(borderKnot);
-
-        // Print content (from startIndex to endIndex)
-
-        for (int i = startIndex; i <= endIndex; i++) {
-            sb.append(verticalBorder);
-            for (int j = 0; j < maxColumns; j++) {
-                for (int k = 0; k < spaceInfront; k++) {
-                    sb.append(" ");
-                }
-                System.out.print(table[i][j]);
-                for (int k = 0; k < (lengths[j] - table[i][j].length()); k++) {
-                    sb.append(" ");
-                }
-                sb.append(verticalBorder);
-            }
-            sb.append("");
-
-        }
-        for (int i = 0; i < maxColumns; i++) {
-            sb.append(borderKnot);
-            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
-                sb.append(horizontalBorder);
-            }
-        }
-        sb.append(borderKnot);
-
-        // Inform the controller to append the string
         this.guiCore.consoleController.appendToDisplay(sb.toString());
     }
 

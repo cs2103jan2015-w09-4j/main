@@ -18,6 +18,7 @@ import w094j.ctrl8.display.IDisplay;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.CommandExecutionMessage;
+import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
 import w094j.ctrl8.pojo.History;
@@ -40,7 +41,7 @@ import com.google.gson.Gson;
 
 public class TaskManager implements ITaskManager {
 
-    private boolean continueExecution = true;
+    private static TaskManager instance;
     // Static constants
     private static Logger logger = LoggerFactory.getLogger(TaskManager.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
@@ -51,6 +52,7 @@ public class TaskManager implements ITaskManager {
     // Interface supporting interaction with user
     IDisplay display;
 
+<<<<<<< HEAD
     // Storage object (Internal)
     private HashMap<String, Task> taskMap;
     private HashMap<String, Task> iniTaskMap;
@@ -61,6 +63,18 @@ public class TaskManager implements ITaskManager {
     private AliasData aliasData;
     
     private static TaskManager instance;
+=======
+    private AliasData aliasData;
+
+    private boolean continueExecution = true;
+
+    //History
+    private History history = new History();
+    private HashMap<String, Task> iniTaskMap;
+
+    // Storage object (Internal)
+    private HashMap<String, Task> taskMap;
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
 
     /**
      * Default Constructor for a terminal with no specifications
@@ -77,6 +91,7 @@ public class TaskManager implements ITaskManager {
         this.buildTaskMap();
     }
 
+<<<<<<< HEAD
     /*
      * TODO This function is currently a stub. Until Config object has completed
      * implementation
@@ -107,6 +122,8 @@ public class TaskManager implements ITaskManager {
         this.buildTaskMap();
     }
 
+=======
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
     /**
      * @deprecated switch to Terminal(Config)
      *
@@ -155,6 +172,61 @@ public class TaskManager implements ITaskManager {
         this.buildTaskMap();
     }
 
+    /*
+     * TODO This function is currently a stub. Until Config object has completed
+     * implementation
+     */
+    /**
+     * Constructor for terminal with a config object
+     *
+     * @param conf
+     *            Configuration information specifying how Terminal/Display is
+     *            to be setup
+     */
+    public TaskManager(TaskManagerConfig conf) {
+        assertNotNull(conf); // Should not be a null object
+
+        this.display = new CLIDisplay(); /*
+                                          * TODO replace with proper
+                                          * configuration
+                                          */
+        try {
+            this.database = new Database();
+        } catch (Exception e) {
+            Response res = new Response();
+            res.reply = e.getMessage();
+            this.display.updateUI(res);
+        }
+        this.buildTaskMap();
+    }
+
+    /**
+     * Gets the current instance of the TaskManager.
+     *
+     * @return the current instance.
+     */
+    public static TaskManager getInstance() {
+        if (instance == null) {
+            instance = initInstance(new TaskManagerConfig());
+        }
+        return instance;
+    }
+
+    /**
+     * Creates a Task Manager
+     *
+     * @return return the Task manager.
+     */
+    private static TaskManager initInstance(TaskManagerConfig config) {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            instance = new TaskManager(config);
+        }
+        return instance;
+    }
+
     /**
      * Part of CRUD: Create. Throws [CommandExecuteException] Refer to Issue #47
      *
@@ -163,7 +235,8 @@ public class TaskManager implements ITaskManager {
      *            constructed otherwise Database would run into issues
      */
     @Override
-    public void add(Task task,Statement statement) throws CommandExecuteException {
+    public void add(Task task, Statement statement)
+            throws CommandExecuteException {
         // Task object should not be null
         if (task == null) {
             throw new CommandExecuteException(
@@ -178,7 +251,7 @@ public class TaskManager implements ITaskManager {
         try {
             // Update Taskmap
             this.updateTaskMap(task);
-          
+
         } catch (Exception e) {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
@@ -193,8 +266,8 @@ public class TaskManager implements ITaskManager {
         }
 
         //update history
-        updateHistory(statement);
-        
+        this.updateHistory(statement);
+
         // Informs user that his add statement is successful
         Response res = new Response();
         res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
@@ -205,18 +278,23 @@ public class TaskManager implements ITaskManager {
 
     /**
      * TODO Test implementation
-     * 
+     *
      * @param alias
      * @param value
      * @throws CommandExecuteException
      */
-    public void aliasAdd(String alias, String value,Statement statement)
+    @Override
+    public void aliasAdd(String alias, String value, Statement statement)
             throws CommandExecuteException {
         this.aliasData.addAlias(alias, value);
+<<<<<<< HEAD
         Response res = new Response();
         res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
         this.display.updateUI(res);
         updateHistory(statement);
+=======
+        this.updateHistory(statement);
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
     }
 
     /**
@@ -228,7 +306,8 @@ public class TaskManager implements ITaskManager {
      * @param taskID
      */
     @Override
-    public void delete(String taskID,Statement statement) throws CommandExecuteException {
+    public void delete(String taskID, Statement statement)
+            throws CommandExecuteException {
         try {
             //BUG: Now the string will contain a white space as first character
 //            if(taskID.charAt(0) == ' '){
@@ -237,13 +316,18 @@ public class TaskManager implements ITaskManager {
 
             logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
             /* Check if key exists in taskmap */
+<<<<<<< HEAD
             if (this.isTaskExist(taskID)) {
                 Task removedTask = this.taskMap.remove(taskID);
+=======
+            if (this.taskMap.containsKey(taskID)) {
+                this.taskMap.remove(taskID);
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
 
                 // Update the database
 //                this.database.deleteTask(removedTask);
                 logger.debug("task removed successfully");
-               
+
             } else {
                 logger.debug("In delete cant find");
                 logger.debug("in delete "+ this.taskMap.size());
@@ -253,8 +337,8 @@ public class TaskManager implements ITaskManager {
         } catch (Exception e) {
             throw new CommandExecuteException(e.getMessage());
         }
-      //update history
-        updateHistory(statement);
+        //update history
+        this.updateHistory(statement);
     }
 
     /**
@@ -265,6 +349,46 @@ public class TaskManager implements ITaskManager {
         Response res = new Response();
         res.reply = NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST;
         this.display.updateUI(res);
+    }
+
+    /**
+     * Set the task's status to done
+     *
+     * @param query
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void done(String query, Statement statement)
+            throws CommandExecuteException {
+        if (this.isTaskExist(query)) {
+
+            Task task = this.taskMap.get(query);
+            if (task.getStatus() == true) {
+                logger.debug("The task is already done");
+            }
+            try {
+                // Add to database
+                this.database.deleteTask(task);
+                task.setStatus(true);
+                this.database.saveTask(task);
+            } catch (Exception e) {
+                throw new CommandExecuteException(e.getMessage());
+            }
+
+            try {
+                // Update the TaskMap
+                this.updateTaskMap(query, task);
+            } catch (Exception e) {
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+            }
+            // Informs user that his add statement is successful
+            Response res = new Response();
+            res.reply = task.getTitle() + NormalMessage.DONE_TASK_SUCCESSFUL;
+            this.display.updateUI(res);
+            //update history
+            this.updateHistory(statement);
+        }
     }
 
     /*
@@ -299,9 +423,28 @@ public class TaskManager implements ITaskManager {
      */
     @Override
     public void help(CommandType command) {
+        String helpMessage = this.outputHelpMessage(command);
         Response res = new Response();
-        res.command = command;
+        res.reply = helpMessage;
         this.display.updateUI(res);
+    }
+
+    /**
+     * undo the action with index in history
+     *
+     * @param index
+     * @throws CommandExecuteException
+     */
+    public void historyUndo(int index) throws CommandExecuteException {
+        logger.debug(this.iniTaskMap.size() + " in History undo");
+        this.taskMap = new HashMap<String, Task>(this.iniTaskMap);
+        History tempHistory = new History(this.history);
+        this.history.deleteAllHistory();
+        for (int i = 0; i < (index - 1); i++) {
+            Statement statement = tempHistory.getHistory(i);
+            statement.execute(this);
+        }
+
     }
 
     /**
@@ -313,7 +456,7 @@ public class TaskManager implements ITaskManager {
      * @param incompleteTask
      */
     @Override
-    public void modify(String query, Task incompleteTask,Statement statement)
+    public void modify(String query, Task incompleteTask, Statement statement)
             throws CommandExecuteException {
         //BUG: Now the string will contain a white space as first character
 //        if(query.charAt(0) == ' '){
@@ -329,7 +472,7 @@ public class TaskManager implements ITaskManager {
 //                this.database.deleteTask(task);
                 task.update(incompleteTask);
 //                this.database.saveTask(task);
-                logger.debug( new Gson().toJson(task));
+                logger.debug(new Gson().toJson(task));
             } catch (Exception e) {
                 logger.debug(e.getMessage());
                 throw new CommandExecuteException(e.getMessage());
@@ -343,8 +486,8 @@ public class TaskManager implements ITaskManager {
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
             //update history
-            updateHistory(statement);
-            
+            this.updateHistory(statement);
+
             // Informs user that his add statement is successful
             Response res = new Response();
             res.reply = task.getTitle() + NormalMessage.MODIFY_TASK_SUCCESSFUL;
@@ -353,7 +496,7 @@ public class TaskManager implements ITaskManager {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         }
-        
+
     }
 
     /**
@@ -383,7 +526,7 @@ public class TaskManager implements ITaskManager {
             Response res = new Response();
             res.reply = NormalMessage.NO_TASK_FOUND;
             this.display.updateUI(res);
-            logger.debug("no task found"+this.taskMap.size());
+            logger.debug("no task found" + this.taskMap.size());
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         } else {
@@ -411,6 +554,7 @@ public class TaskManager implements ITaskManager {
             }
         }
     }
+<<<<<<< HEAD
     
     
     /** 
@@ -468,12 +612,16 @@ public class TaskManager implements ITaskManager {
     }
 
     
+=======
+
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
     /**
      * View all the history
-     * 
+     *
      * @throws CommandExecuteException
      */
-    public void viewHistory() throws CommandExecuteException{
+    @Override
+    public void viewHistory() throws CommandExecuteException {
         if (this.history.getHistoryList().size() == 0) {
             /*
              * history is empty
@@ -486,7 +634,7 @@ public class TaskManager implements ITaskManager {
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         } else {
             try {
-                
+
                 Response res = new Response();
                 res.history = this.history;
                 this.display.updateUI(res);
@@ -497,24 +645,7 @@ public class TaskManager implements ITaskManager {
         }
 
     }
-    
-    
-    /**
-     * undo the action with index in history
-     * @param index
-     * @throws CommandExecuteException
-     */
-    public void historyUndo(int index) throws CommandExecuteException{
-        logger.debug(iniTaskMap.size()+" in History undo");
-        this.taskMap = new HashMap<String,Task>(this.iniTaskMap);
-        History tempHistory = new History(this.history);
-        this.history.deleteAllHistory();
-        for(int i=0;i<index-1;i++){
-            Statement statement = tempHistory.getHistory(i);
-            statement.execute(this);
-        }
-        
-    }
+
     /**
      * Initializes the taskMap based on what the datastore currently contains
      */
@@ -528,7 +659,7 @@ public class TaskManager implements ITaskManager {
 
         /* Initialize the taskMap with all the tasks that datastore provides */
         this.taskMap = new HashMap<String, Task>();
-        
+
         for (Task task : allTasks) {
             assert (task != null);
             /*
@@ -542,8 +673,8 @@ public class TaskManager implements ITaskManager {
 
             this.taskMap.put(task.getTitle(), task);
         }
-        this.iniTaskMap = new HashMap<String,Task>(this.taskMap);
-        logger.debug(iniTaskMap.size()+"");
+        this.iniTaskMap = new HashMap<String, Task>(this.taskMap);
+        logger.debug(this.iniTaskMap.size() + "");
     }
 
     /**
@@ -573,6 +704,168 @@ public class TaskManager implements ITaskManager {
      */
     private boolean isTaskExist(Task task) {
         return this.taskMap.containsKey(task.getTitle());
+    }
+
+    /**
+     * @param command
+     */
+    // @author A0112521B
+    private String outputHelpMessage(CommandType command) {
+        switch (command) {
+            case ADD :
+                return this.printTableWithBorder(HelpMessage.ADD_START_INDEX,
+                        HelpMessage.ADD_END_INDEX, HelpMessage.TABLE);
+            case ALIAS :
+                return this.printTableWithBorder(HelpMessage.ALIAS_INDEX,
+                        HelpMessage.ALIAS_INDEX, HelpMessage.TABLE);
+            case ALIAS_ADD :
+                return this.printTableWithBorder(HelpMessage.ALIAS_ADD_INDEX,
+                        HelpMessage.ALIAS_ADD_INDEX, HelpMessage.TABLE);
+            case ALIAS_DELETE :
+                return this.printTableWithBorder(
+                        HelpMessage.ALIAS_DELETE_INDEX,
+                        HelpMessage.ALIAS_DELETE_INDEX, HelpMessage.TABLE);
+            case DELETE :
+                return this.printTableWithBorder(HelpMessage.DELETE_INDEX,
+                        HelpMessage.DELETE_INDEX, HelpMessage.TABLE);
+            case DONE :
+                return this.printTableWithBorder(HelpMessage.DONE_INDEX,
+                        HelpMessage.DONE_INDEX, HelpMessage.TABLE);
+            case EXIT :
+                return this.printTableWithBorder(HelpMessage.EXIT_INDEX,
+                        HelpMessage.EXIT_INDEX, HelpMessage.TABLE);
+            case HELP :
+                return this.printTableWithBorder(1, HelpMessage.EXIT_INDEX,
+                        HelpMessage.TABLE);
+            case HISTORY :
+                return this.printTableWithBorder(HelpMessage.HISTORY_INDEX,
+                        HelpMessage.HISTORY_INDEX, HelpMessage.TABLE);
+            case HISTORY_CLEAR :
+                return this.printTableWithBorder(
+                        HelpMessage.HISTORY_CLEAR_INDEX,
+                        HelpMessage.HISTORY_CLEAR_INDEX, HelpMessage.TABLE);
+            case HISTORY_UNDO :
+                return this.printTableWithBorder(
+                        HelpMessage.HISTORY_UNDO_INDEX,
+                        HelpMessage.HISTORY_UNDO_INDEX, HelpMessage.TABLE);
+            case MODIFY :
+                return this.printTableWithBorder(HelpMessage.MODIFY_INDEX,
+                        HelpMessage.MODIFY_INDEX, HelpMessage.TABLE);
+            case SEARCH :
+                return this.printTableWithBorder(HelpMessage.SEARCH_INDEX,
+                        HelpMessage.SEARCH_INDEX, HelpMessage.TABLE);
+            case VIEW :
+                return this.printTableWithBorder(HelpMessage.VIEW_INDEX,
+                        HelpMessage.VIEW_INDEX, HelpMessage.TABLE);
+            default :
+                assert (false);
+        }
+        return null;
+
+    }
+
+    /**
+     * This method is used to print the table with border. (modified from
+     * printTable)
+     */
+    // @author A0112521B
+    private String printTableWithBorder(int startIndex, int endIndex,
+            String[][] table) {
+        char borderKnot = '+';
+        char horizontalBorder = '-';
+        char verticalBorder = '|';
+        int spaceInfront = 1;
+        int spaceBehind = 2;
+        char space = ' ';
+        String newLine = "\n";
+        StringBuilder sb = new StringBuilder();
+
+        // Find out what the maximum number of columns is in any row
+        int maxColumns = 0;
+        for (String[] element : table) {
+            maxColumns = Math.max(element.length, maxColumns);
+        }
+
+        // Find the maximum length of a string in each column
+        int[] lengths = new int[maxColumns];
+        for (int j = 0; j < maxColumns; j++) {
+            lengths[j] = Math.max(table[0][j].length(), lengths[j]);
+        }
+        for (int i = startIndex; i <= endIndex; i++) {
+            for (int j = 0; j < maxColumns; j++) {
+                lengths[j] = Math.max(table[i][j].length(), lengths[j]);
+            }
+        }
+
+        for (int j = 0; j < maxColumns; j++) {
+            lengths[j] += spaceBehind;
+        }
+
+        // Print header
+        for (int i = 0; i < maxColumns; i++) {
+            sb.append(borderKnot);
+            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
+                sb.append(horizontalBorder);
+            }
+        }
+        sb.append(borderKnot);
+        sb.append(newLine);
+        for (int i = 0; i < maxColumns; i++) {
+            sb.append(verticalBorder);
+            for (int k = 0; k < spaceInfront; k++) {
+                sb.append(space);
+            }
+            sb.append(table[0][i]);
+            for (int j = 0; j < (lengths[i] - table[0][i].length()); j++) {
+                sb.append(space);
+            }
+        }
+        sb.append(verticalBorder);
+        sb.append(newLine);
+        for (int i = 0; i < maxColumns; i++) {
+
+            sb.append(borderKnot);
+            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
+                sb.append(horizontalBorder);
+            }
+        }
+        sb.append(borderKnot);
+        sb.append(newLine);
+
+        // Print content (from startIndex to endIndex)
+        for (int i = startIndex; i <= endIndex; i++) {
+            sb.append(verticalBorder);
+            for (int j = 0; j < maxColumns; j++) {
+                for (int k = 0; k < spaceInfront; k++) {
+                    sb.append(space);
+                }
+                sb.append(table[i][j]);
+                for (int k = 0; k < (lengths[j] - table[i][j].length()); k++) {
+                    sb.append(space);
+                }
+                sb.append(verticalBorder);
+            }
+            sb.append(newLine);
+
+        }
+        for (int i = 0; i < maxColumns; i++) {
+            sb.append(borderKnot);
+            for (int j = 0; j < (lengths[i] + spaceInfront); j++) {
+                sb.append(horizontalBorder);
+            }
+        }
+        sb.append(borderKnot);
+
+        return sb.toString();
+    }
+
+    /**
+     * update the history of actions
+     *
+     * @param statement
+     */
+    private void updateHistory(Statement statement) {
+        this.history.addHistory(statement);
     }
 
     /**
@@ -626,6 +919,7 @@ public class TaskManager implements ITaskManager {
         }
 
     }
+<<<<<<< HEAD
     
     /**
      * Gets the current instance of the TaskManager.
@@ -704,4 +998,6 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
         
     }
+=======
+>>>>>>> a23f2373f8d2d83a9f0227f25573fa0815a1bccf
 }
