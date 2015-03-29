@@ -16,6 +16,7 @@ import w094j.ctrl8.database.config.TaskManagerConfig;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.IDisplay;
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.pojo.Config;
@@ -90,7 +91,9 @@ public class TaskManager implements ITaskManager {
     public TaskManager(TaskManagerConfig conf) {
         assertNotNull(conf); // Should not be a null object
 
-        this.display = new CLIDisplay(); /*
+        this.display = new CLIDisplay(); 
+        this.aliasData = new AliasData();
+        /*
          * TODO replace with proper
          * configuration
          */
@@ -210,6 +213,9 @@ public class TaskManager implements ITaskManager {
     public void aliasAdd(String alias, String value,Statement statement)
             throws CommandExecuteException {
         this.aliasData.addAlias(alias, value);
+        Response res = new Response();
+        res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
+        this.display.updateUI(res);
         updateHistory(statement);
     }
 
@@ -649,14 +655,53 @@ public class TaskManager implements ITaskManager {
         return instance;
     }
 
-    public void aliasDelete(String query) {
-        // TODO Auto-generated method stub
+    /**
+     * delete a alias 
+     * @param query
+     * @param statement 
+     * @throws DataException 
+     */
+    public void aliasDelete(String query,Statement statement) throws DataException {
+        String value = this.aliasData.toValue(query);
+        AliasData deleted = new AliasData();
+        deleted.addAlias(query,value);
+        this.aliasData.deleteAlias(query);
+        Response res = new Response();
+        res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
+        res.alias = deleted;
+        this.display.updateUI(res);
+        updateHistory(statement);
+    }
+
+    /**
+     * remove the specified history with index
+     * @param index
+     */
+    public void historyClear(int index) {
+        Statement statmentRemoved = this.history.deleteHistory(index);
+        History temp = new History();
+        temp.addHistory(statmentRemoved);
+        Response res = new Response();
+        res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
+        res.history = temp;
+        this.display.updateUI(res);
         
     }
 
-    public void historyClear(int index) {
-        
-        this.history.deleteHistory(index);
+    /**
+     * view all aliases
+     */
+    public void alias() {
+        Response res = new Response();
+        logger.debug("in alias taskmanager");
+        if(this.aliasData.isEmpty()){
+            res.reply = NormalMessage.ALIAS_MAP_EMPTY;
+        }
+        else{
+            logger.info("alias is passed to response");
+            res.alias = this.aliasData;
+        }
+        this.display.updateUI(res);
         
     }
 }

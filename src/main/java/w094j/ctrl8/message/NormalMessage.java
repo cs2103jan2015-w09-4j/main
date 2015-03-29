@@ -36,5 +36,9 @@ public class NormalMessage {
     public static final String WELCOME_MESSAGE = "Welcome for using Ctrl-8!";
     public static final String DONE_TASK_SUCCESSFUL = " is done!";
     public static final String NO_HISTORY_FOUND = "No History Found";
+    public static final String HISTORY_CLEAR_SUCCESSFUL = "The following action history is deleted successfully!";
+    public static final String ALIAS_MAP_EMPTY = "There is no alias.";
+    public static final String ADD_ALIAS_SUCCESSFUL = " is successfully alias to ";
+    public static final String ALIAS_DELETE_SUCCESSFUL = "The following alias is deleted successfully!";
 
 }

@@ -26,7 +26,8 @@ public class AliasStatement extends StatementNoParams {
     @Override
     public void execute(TaskManager taskManager) {
         // TODO Link to Terminal
-        logger.debug("Alias command not implemented yet.");
+        logger.debug("in alias");
+        taskManager.alias();
     }
 
 }

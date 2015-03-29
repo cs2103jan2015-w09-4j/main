@@ -1,6 +1,7 @@
 //@author A0110787A
 package w094j.ctrl8.pojo;
 
+import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.statement.CommandType;
 
 /**
@@ -24,6 +25,7 @@ public class Response {
     public String reply;
     public Task[] taskList;
     public History history;
+    public AliasData alias;
 
     /**
      * Default constructor. Initializes all properties to be NULL
@@ -32,5 +34,6 @@ public class Response {
         this.reply = null;
         this.taskList = null;
         this.history = null;
+        this.alias = null;
     }
 }

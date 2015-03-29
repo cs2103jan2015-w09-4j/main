@@ -61,9 +61,11 @@ public class History {
     /**
      * delete the specific history
      * @param index
+     * @return statement
      */
-    public void deleteHistory(int index){
-        this.ActionList.remove(index-1);
+    public Statement deleteHistory(int index){
+        
+        return this.ActionList.remove(index-1);
     }
     
     /**

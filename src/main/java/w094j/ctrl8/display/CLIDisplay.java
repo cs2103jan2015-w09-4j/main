@@ -9,15 +9,18 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.DisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
+import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.pojo.History;
 import w094j.ctrl8.pojo.Response;
@@ -370,8 +373,12 @@ public class CLIDisplay implements IDisplay {
         }
         if(res.history !=null){
             this.outputHistory(res.history);
-         
         }
+        
+        if(res.alias != null){
+            this.outputAliases(res.alias);
+        }
+
     }
 
     // @author A0112092W
@@ -440,6 +447,21 @@ public class CLIDisplay implements IDisplay {
             System.out.print(statement.getCommand().toString());
             System.out.print(" String:");
             System.out.println(statement.getStatementArgumentsOnly());
+        }
+    }
+    
+    private void outputAliases(AliasData alias){
+        Map<String,String> aliases = alias.getAliasMap();
+        if(aliases.size() == 0){
+            System.out.println(NormalMessage.ALIAS_MAP_EMPTY);
+        }
+        for(int i=0;i<aliases.size();){
+        for (String key : aliases.keySet()) {
+            String value = aliases.get(key);
+            System.out.print(i+1 + ". Alias: "+key);
+            System.out.println(" String: "+ value);
+            i++;
+          }
         }
     }
     
