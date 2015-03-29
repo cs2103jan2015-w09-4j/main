@@ -3,6 +3,7 @@ package w094j.ctrl8.terminal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidParameterException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
@@ -87,6 +88,8 @@ public class Terminal {
                         .next();
             } catch (NullPointerException e) {
                 logger.info(e.getMessage());
+            } catch (NoSuchElementException e){
+                continue;
             }
 
             // Passes string to Statement.java to parse into a command

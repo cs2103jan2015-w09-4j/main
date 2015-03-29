@@ -63,7 +63,7 @@ public class History {
      * @param index
      */
     public void deleteHistory(int index){
-        this.ActionList.remove(index);
+        this.ActionList.remove(index-1);
     }
     
     /**

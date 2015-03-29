@@ -52,11 +52,11 @@ public class TaskManager implements ITaskManager {
 
     // Storage object (Internal)
     private HashMap<String, Task> taskMap;
+    private HashMap<String, Task> iniTaskMap;
     
     //History 
     private History history = new History();
     
-    private HashMap<String, Task> iniTaskMap;
     private AliasData aliasData;
     
     private static TaskManager instance;
@@ -224,8 +224,14 @@ public class TaskManager implements ITaskManager {
     @Override
     public void delete(String taskID,Statement statement) throws CommandExecuteException {
         try {
+            //BUG: Now the string will contain a white space as first character
+//            if(taskID.charAt(0) == ' '){
+//            taskID = taskID.replaceFirst("^ *", "");
+//            }
+
+            logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
             /* Check if key exists in taskmap */
-            if (this.taskMap.containsKey(taskID)) {
+            if (this.isTaskExist(taskID)) {
                 Task removedTask = this.taskMap.remove(taskID);
 
                 // Update the database
@@ -233,6 +239,8 @@ public class TaskManager implements ITaskManager {
                 logger.debug("task removed successfully");
                
             } else {
+                logger.debug("In delete cant find");
+                logger.debug("in delete "+ this.taskMap.size());
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_BAD_TASKID);
             }
@@ -301,7 +309,10 @@ public class TaskManager implements ITaskManager {
     @Override
     public void modify(String query, Task incompleteTask,Statement statement)
             throws CommandExecuteException {
-
+        //BUG: Now the string will contain a white space as first character
+//        if(query.charAt(0) == ' '){
+//            query = query.replaceFirst("^ *", "");
+//        }
         // check if the task exists
         if (this.isTaskExist(query)) {
             logger.debug("Modify: the task exist");
@@ -404,6 +415,9 @@ public class TaskManager implements ITaskManager {
      * @throws CommandExecuteException
      */
     public void done(String query,Statement statement) throws CommandExecuteException{
+//        if(query.charAt(0) == ' '){
+//            query = query.replaceFirst("^ *", "");
+//        }
         if (this.isTaskExist(query)) {
 
             Task task = this.taskMap.get(query);
@@ -432,6 +446,10 @@ public class TaskManager implements ITaskManager {
             this.display.updateUI(res);
             //update history
             updateHistory(statement);
+        }
+        else{
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         }
     }
         
@@ -597,7 +615,7 @@ public class TaskManager implements ITaskManager {
                     + " with " + new Gson().toJson(task));
         } else {
             this.taskMap.put(task.getTitle(), task);
-            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
+            logger.debug("TaskMap: adding new entry with key " + task.getTitle()
                     + " with " + new Gson().toJson(task));
         }
 
@@ -629,5 +647,16 @@ public class TaskManager implements ITaskManager {
             instance = new TaskManager(config);
         }
         return instance;
+    }
+
+    public void aliasDelete(String query) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void historyClear(int index) {
+        
+        this.history.deleteHistory(index);
+        
     }
 }

@@ -24,7 +24,7 @@ public class DeleteStatement extends StatementQuery {
 
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        // statement to be added
+        
         taskManager.delete(this.query, this);
     }
 

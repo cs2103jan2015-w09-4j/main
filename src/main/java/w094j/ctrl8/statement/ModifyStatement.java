@@ -49,6 +49,7 @@ public class ModifyStatement extends Statement {
         super(CommandType.MODIFY, statementString);
 
         Matcher queryMatcher = Pattern.compile(",").matcher(statementString);
+        logger.debug(statementString);
         if (queryMatcher.find()) {
             this.query = queryMatcher.group();
         } else {

@@ -26,9 +26,8 @@ public class HistoryStatement extends StatementNoParams {
 
     @Override
     public void execute(TaskManager taskManager) throws CommandExecuteException {
-        // TODO Link to Terminal
+
         taskManager.viewHistory();
-        logger.debug("History command not implemented yet.");
     }
 
 }
