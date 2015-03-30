@@ -32,8 +32,8 @@ public abstract class Statement {
      */
     protected Statement(CommandType command, String statementString) {
         this.command = command;
-        this.statementArgumentsOnly = commandParser
-                .removeCommandKeyword(statementString);
+        this.statementArgumentsOnly = commandParser.removeCommandKeyword(
+                statementString).trim();
     }
 
     /**
@@ -59,12 +59,6 @@ public abstract class Statement {
      * @return the statementArgumentsOnly
      */
     public String getStatementArgumentsOnly() {
-        if(this.statementArgumentsOnly.isEmpty()){
-            return this.statementArgumentsOnly;
-        }
-        if(this.statementArgumentsOnly.charAt(0) == ' '){
-            this.statementArgumentsOnly = this.statementArgumentsOnly.replaceFirst("^ *", "");
-        }
         return this.statementArgumentsOnly;
     }
 
