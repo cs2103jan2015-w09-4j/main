@@ -72,7 +72,6 @@ public class CommandParserTest {
                 { null, null },
                 { "", null },
                 { "some really long text", null }, // multiple words
-//                { "\r\n", null }, // some unique regex
                 { "add-alias", null }, // lazy pattern detection
                 { ".add", null }, // not 100% match
                 { "clearhistory", null }, // detect whether symbols are caught
@@ -80,10 +79,7 @@ public class CommandParserTest {
                 /**
                  * Extreme tests
                  */
-//                { "HiStOrY-ClEaR", CommandType.HISTORY_CLEAR }, // vary caps
                 { "add               ", CommandType.ADD }, // buffers
-//                { "\r\n    `!@#$%^&*()_+{}[]:'<>/.,~/*-         exit    ",
-//                    CommandType.EXIT } // various unused symbols
 
         });
     }
