@@ -272,21 +272,12 @@ public class TaskManager implements ITaskManager {
     public void delete(String taskID, Statement statement)
             throws CommandExecuteException {
         try {
-            //BUG: Now the string will contain a white space as first character
-//            if(taskID.charAt(0) == ' '){
-//            taskID = taskID.replaceFirst("^ *", "");
-//            }
 
             logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
+            
             /* Check if key exists in taskmap */
-
             if (this.isTaskExist(taskID)) {
-                Task removedTask = this.taskMap.remove(taskID);
-            }
-
-            if (this.taskMap.containsKey(taskID)) {
                 this.taskMap.remove(taskID);
-
 
                 // Update the database
 //                this.database.deleteTask(removedTask);
