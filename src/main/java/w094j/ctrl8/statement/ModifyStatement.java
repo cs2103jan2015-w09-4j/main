@@ -48,10 +48,12 @@ public class ModifyStatement extends Statement {
     public ModifyStatement(String statementString) throws ParseException {
         super(CommandType.MODIFY, statementString);
 
-        Matcher queryMatcher = Pattern.compile(",").matcher(statementString);
-        logger.debug(statementString);
+        Matcher queryMatcher = Pattern.compile(",").matcher(
+                this.getStatementArgumentsOnly());
+
         if (queryMatcher.find()) {
-            this.query = queryMatcher.group();
+            this.query = this.getStatementArgumentsOnly().substring(0,
+                    queryMatcher.start());
         } else {
             throw new ParseException(
                     "Modify statement must contain query argument.");
