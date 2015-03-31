@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.database.Factory;
+import w094j.ctrl8.database.config.ParserConfig;
+import w094j.ctrl8.database.config.TaskManagerConfig;
 import w094j.ctrl8.display.CLIDisplay;
 import w094j.ctrl8.display.IDisplay;
 import w094j.ctrl8.message.ErrorMessage;
@@ -64,8 +66,10 @@ public class Start {
           //these of the following should be done by factory when factory is completed
             terminal = Terminal.getInstance();
             display = CLIDisplay.getInstance();
-            taskManager = TaskManager.getInstance();
-            parser = Parser.getInstance();
+            ParserConfig parserConfig = new ParserConfig();
+            parser = Parser.initInstance(parserConfig);
+            TaskManagerConfig taskManagerConfig = new TaskManagerConfig(parserConfig.getAlias());
+            taskManager = TaskManager.initInstance(taskManagerConfig);
             
         } else {
             // Default database and terminal will be created if no file path

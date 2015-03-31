@@ -73,6 +73,7 @@ public class TaskManager implements ITaskManager {
      */
     public TaskManager() {
         this.display = new CLIDisplay(); // Use CLIDisplay
+        this.aliasData= new AliasData();
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -89,16 +90,16 @@ public class TaskManager implements ITaskManager {
      */
     /**
      * Constructor for terminal with a config object
+     * @param config 
      *
-     * @param conf
      *            Configuration information specifying how Terminal/Display is
      *            to be setup
      */
-    public TaskManager(TaskManagerConfig conf) {
-        assertNotNull(conf); // Should not be a null object
+    public TaskManager(TaskManagerConfig config) {
+        assertNotNull(config); // Should not be a null object
 
         this.display = new CLIDisplay(); 
-        this.aliasData = new AliasData();
+        this.aliasData = config.getAlias().getAliasData();
         /*
          * TODO replace with proper
          * configuration
@@ -122,6 +123,7 @@ public class TaskManager implements ITaskManager {
      * </pre>
      * @param conf
      * @param display
+     * @param aliasData 
      */
     @Deprecated
     public TaskManager(Config conf, IDisplay display, AliasData aliasData) {
@@ -180,7 +182,7 @@ public class TaskManager implements ITaskManager {
      *
      * @return return the Task manager.
      */
-    private static TaskManager initInstance(TaskManagerConfig config) {
+    public static TaskManager initInstance(TaskManagerConfig config) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
@@ -254,8 +256,6 @@ public class TaskManager implements ITaskManager {
         Response res = new Response();
         res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
         this.display.updateUI(res);
-        updateHistory(statement);
-
         this.updateHistory(statement);
 
     }
