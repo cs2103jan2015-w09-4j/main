@@ -31,11 +31,13 @@ public class CommandParser {
             regex += Pattern.quote(eaCommand.toString());
             delim = "|";
         }
-        for (CommandType eaCommand : EnumSet.allOf(CommandType.class)) {
-            this.commandLookup.put(commandConfig.get(eaCommand).toString(),
-                    eaCommand);
-            regex += delim;
-            regex += Pattern.quote(commandConfig.get(eaCommand).toString());
+        if (commandConfig.isShortCommandMode()) {
+            for (CommandType eaCommand : EnumSet.allOf(CommandType.class)) {
+                this.commandLookup.put(commandConfig.get(eaCommand).toString(),
+                        eaCommand);
+                regex += delim;
+                regex += Pattern.quote(commandConfig.get(eaCommand).toString());
+            }
         }
         regex += ")(?=\\s|$)";
         this.commandPattern = Pattern.compile(regex);
