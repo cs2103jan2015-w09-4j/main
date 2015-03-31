@@ -15,53 +15,56 @@ import w094j.ctrl8.terminal.Terminal;
 public class Factory {
 
     public Factory() {
-        AliasData alias = new AliasData();
+        new AliasData();
         AliasConfig aliasConfig = new AliasConfig();
+        DisplayConfig displayConfig = new DisplayConfig();
         ParserConfig paserConfig = new ParserConfig(aliasConfig);
-        TaskManagerConfig taskManagerConfig = new TaskManagerConfig(aliasConfig);
+        TaskManagerConfig taskManagerConfig = new TaskManagerConfig(
+                aliasConfig, displayConfig);
         this.initDisplay();
         this.initTaskManager(taskManagerConfig);
         this.initParser(paserConfig);
         this.initTerminal();
     }
 
-     /**
+    /**
      * @param args
      */
     public Factory(String[] args) {
-         AliasData alias = new AliasData();
-         AliasConfig aliasConfig = new AliasConfig();
-         ParserConfig paserConfig = new ParserConfig(aliasConfig);
-         DisplayConfig displayConfig = new DisplayConfig();
-         TaskManagerConfig taskManagerConfig = new TaskManagerConfig(aliasConfig,displayConfig);
-         this.initDisplay();
-         this.initTaskManager(taskManagerConfig);
-         this.initParser(paserConfig);
-         this.initTerminal();
+        new AliasData();
+        AliasConfig aliasConfig = new AliasConfig();
+        ParserConfig paserConfig = new ParserConfig(aliasConfig);
+        DisplayConfig displayConfig = new DisplayConfig();
+        TaskManagerConfig taskManagerConfig = new TaskManagerConfig(
+                aliasConfig, displayConfig);
+        this.initDisplay();
+        this.initTaskManager(taskManagerConfig);
+        this.initParser(paserConfig);
+        this.initTerminal();
     }
 
-    public CLIDisplay initDisplay() {
-         return CLIDisplay.getInstance();
-     }
-    
-     public TaskManager initTaskManager(TaskManagerConfig taskManagerConfig) {
-         return TaskManager.getInstance(taskManagerConfig);
-     }
-
-    public Parser initParser(ParserConfig paserConfig) {
-        return Parser.getInstance(paserConfig);
-    }
-
-    public Terminal initTerminal() {
-         return Terminal.getInstance();
+    public Parser getParser() {
+        return Parser.getInstance();
     }
 
     public Terminal getTerminal() {
         return Terminal.getInstance();
     }
-    
-    public Parser getParser(){
-        return Parser.getInstance();
+
+    public CLIDisplay initDisplay() {
+        return CLIDisplay.getInstance();
+    }
+
+    public Parser initParser(ParserConfig paserConfig) {
+        return Parser.getInstance(paserConfig);
+    }
+
+    public TaskManager initTaskManager(TaskManagerConfig taskManagerConfig) {
+        return TaskManager.getInstance(taskManagerConfig);
+    }
+
+    public Terminal initTerminal() {
+        return Terminal.getInstance();
     }
 
 }
