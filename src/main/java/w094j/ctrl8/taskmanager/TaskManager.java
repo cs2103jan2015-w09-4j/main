@@ -73,6 +73,7 @@ public class TaskManager implements ITaskManager {
      */
     public TaskManager() {
         this.display = new CLIDisplay(); // Use CLIDisplay
+        this.aliasData= new AliasData();
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -89,16 +90,16 @@ public class TaskManager implements ITaskManager {
      */
     /**
      * Constructor for terminal with a config object
+     * @param config 
      *
-     * @param conf
      *            Configuration information specifying how Terminal/Display is
      *            to be setup
      */
-    public TaskManager(TaskManagerConfig conf) {
-        assertNotNull(conf); // Should not be a null object
+    public TaskManager(TaskManagerConfig config) {
+        assertNotNull(config); // Should not be a null object
 
-        this.display = new CLIDisplay(); 
-        this.aliasData = new AliasData();
+        this.display = CLIDisplay.getInstance();
+        this.aliasData = config.getAlias().getAliasData();
         /*
          * TODO replace with proper
          * configuration
@@ -122,6 +123,7 @@ public class TaskManager implements ITaskManager {
      * </pre>
      * @param conf
      * @param display
+     * @param aliasData 
      */
     @Deprecated
     public TaskManager(Config conf, IDisplay display, AliasData aliasData) {
@@ -171,6 +173,19 @@ public class TaskManager implements ITaskManager {
     public static TaskManager getInstance() {
         if (instance == null) {
             instance = initInstance(new TaskManagerConfig());
+        }
+        return instance;
+    }
+    
+    /**
+     * Create a instance with taskManager config and return it if the instance is not created
+     * 
+     * @param taskManagerConfig
+     * @return
+     */
+    public static TaskManager getInstance(TaskManagerConfig taskManagerConfig) {
+        if (instance == null) {
+            instance = initInstance(taskManagerConfig);
         }
         return instance;
     }
@@ -254,8 +269,6 @@ public class TaskManager implements ITaskManager {
         Response res = new Response();
         res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
         this.display.updateUI(res);
-        updateHistory(statement);
-
         this.updateHistory(statement);
 
     }
@@ -272,21 +285,12 @@ public class TaskManager implements ITaskManager {
     public void delete(String taskID, Statement statement)
             throws CommandExecuteException {
         try {
-            //BUG: Now the string will contain a white space as first character
-//            if(taskID.charAt(0) == ' '){
-//            taskID = taskID.replaceFirst("^ *", "");
-//            }
 
             logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
+            
             /* Check if key exists in taskmap */
-
             if (this.isTaskExist(taskID)) {
-                Task removedTask = this.taskMap.remove(taskID);
-            }
-
-            if (this.taskMap.containsKey(taskID)) {
                 this.taskMap.remove(taskID);
-
 
                 // Update the database
 //                this.database.deleteTask(removedTask);
@@ -879,5 +883,6 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
         
     }
+
 
 }

@@ -61,7 +61,6 @@ public class Start {
             parseArgs(args);
            
             factory = new Factory(args);
-          //these of the following should be done by factory when factory is completed
             terminal = Terminal.getInstance();
             display = CLIDisplay.getInstance();
             taskManager = TaskManager.getInstance();
@@ -72,12 +71,13 @@ public class Start {
             // specified.
             logger.info(NormalMessage.NO_FILEPATH_MESSAGE);
             factory = new Factory();
-            //these of the following should be done by factory when factory is completed
             terminal = Terminal.getInstance();
             display = CLIDisplay.getInstance();
             taskManager = TaskManager.getInstance();
             parser = Parser.getInstance();
+            
         }
+
         logger.info(NormalMessage.WELCOME_MESSAGE);
         terminal.runTerminal(taskManager,display,parser);
     }

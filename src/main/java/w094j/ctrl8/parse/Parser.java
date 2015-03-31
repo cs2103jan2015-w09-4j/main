@@ -26,13 +26,27 @@ public class Parser implements IParser {
     }
 
     /**
-     * Gets the current instance of the Parser.
+     * Gets the current instance of the Parser.If there is no instance,
+     *  create the instance wiht a new ParserConfig
      *
      * @return the current instance.
      */
     public static Parser getInstance() {
         if(instance == null){
             instance = initInstance(new ParserConfig());
+        }
+        return instance;
+    }
+    
+    /**
+     *  Gets the current instance of the Parser. If there is no instance,
+     *  create the instance wiht parserConfig
+     * @param paserConfig
+     * @return the current instance
+     */
+    public static Parser getInstance(ParserConfig paserConfig) {
+        if(instance == null){
+            instance = initInstance(paserConfig);
         }
         return instance;
     }
@@ -43,7 +57,7 @@ public class Parser implements IParser {
      * @param config
      * @return return the configured parser.
      */
-    public static Parser initInstance(ParserConfig config) {
+    private static Parser initInstance(ParserConfig config) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
@@ -73,5 +87,7 @@ public class Parser implements IParser {
         String inputWithoutAliases = this.aliasParser.replaceAllAlias(rawInput);
         return this.statementParser.parse(inputWithoutAliases);
     }
+
+
 
 }

@@ -132,5 +132,15 @@
 			<artifactId>google-oauth-client-jetty</artifactId>
 			<version>1.16.0-rc</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-tasks</artifactId>
+			<version>v1-rev41-1.20.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client-appengine</artifactId>
+			<version>1.20.0</version>
+		</dependency>
 	</dependencies>
 </project>
