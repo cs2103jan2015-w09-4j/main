@@ -10,6 +10,7 @@
 		<jdk.version>1.8</jdk.version>
 		<jodatime.version>2.5</jodatime.version>
 		<junit.version>4.11</junit.version>
+		<lucene.version>5.0.0</lucene.version>
 	</properties>
 
 	<build>
@@ -99,7 +100,22 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>4.10.3</version>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queries</artifactId>
+			<version>${lucene.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
