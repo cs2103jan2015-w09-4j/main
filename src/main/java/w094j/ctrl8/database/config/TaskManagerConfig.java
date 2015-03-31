@@ -1,4 +1,5 @@
 package w094j.ctrl8.database.config;
+
 //@ A0112092W
 
 /**
@@ -10,6 +11,7 @@ public class TaskManagerConfig implements IConfig{
     
     
     private AliasConfig alias;
+    private DisplayConfig display;
     
     /**
      * Default constructor for task manager
@@ -22,8 +24,9 @@ public class TaskManagerConfig implements IConfig{
      * constructor for task manager who takes in a alias config
      * @param aliasConfig
      */
-    public TaskManagerConfig(AliasConfig aliasConfig){
+    public TaskManagerConfig(AliasConfig aliasConfig,DisplayConfig displayConfig){
         this.alias = aliasConfig;
+        this.display = displayConfig;
     }
     
     /**
@@ -32,7 +35,7 @@ public class TaskManagerConfig implements IConfig{
     public AliasConfig getAlias(){
         return this.alias;
     }
-    
+
     /**
      * @param aliasConfig
      */
@@ -43,5 +46,7 @@ public class TaskManagerConfig implements IConfig{
     public boolean isValid() {
         return true;
     }
+
+
 
 }

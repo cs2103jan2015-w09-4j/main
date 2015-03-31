@@ -98,7 +98,7 @@ public class TaskManager implements ITaskManager {
     public TaskManager(TaskManagerConfig config) {
         assertNotNull(config); // Should not be a null object
 
-        this.display = new CLIDisplay(); 
+        this.display = CLIDisplay.getInstance();
         this.aliasData = config.getAlias().getAliasData();
         /*
          * TODO replace with proper
@@ -176,13 +176,26 @@ public class TaskManager implements ITaskManager {
         }
         return instance;
     }
+    
+    /**
+     * Create a instance with taskManager config and return it if the instance is not created
+     * 
+     * @param taskManagerConfig
+     * @return
+     */
+    public static TaskManager getInstance(TaskManagerConfig taskManagerConfig) {
+        if (instance == null) {
+            instance = initInstance(taskManagerConfig);
+        }
+        return instance;
+    }
 
     /**
      * Creates a Task Manager
      *
      * @return return the Task manager.
      */
-    public static TaskManager initInstance(TaskManagerConfig config) {
+    private static TaskManager initInstance(TaskManagerConfig config) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
@@ -870,5 +883,6 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
         
     }
+
 
 }

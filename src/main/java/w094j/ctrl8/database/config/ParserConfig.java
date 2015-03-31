@@ -46,6 +46,10 @@ public class ParserConfig implements IConfig {
         this.statement = new StatementConfig();
     }
 
+    public ParserConfig(AliasConfig alias) {
+        this.alias = alias;
+        this.statement = new StatementConfig();
+    }
     /**
      * @return the alias
      */
