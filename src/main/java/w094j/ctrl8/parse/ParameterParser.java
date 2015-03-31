@@ -117,7 +117,7 @@ public class ParameterParser {
                 + DEADLINED_TASK_TO_KEYWORD + ")(?:[^\\r\\n"
                 + escapableSymbolCharacterClass + "]|\\\\(?:"
                 + escapableSymbolSelection + ")|\\\\.)+\\b";
-        String implicitTitleRegex = "^(?:[^\\r\\n"
+        String implicitTitleRegex = "(?:^|\\s)(?:[^\\r\\n"
                 + escapableSymbolCharacterClass + "]|\\\\(?:"
                 + escapableSymbolSelection + ")|\\\\.)+\\b(?![^\\{]{0,}\\})";
         this.implicitTimedTaskPattern = Pattern.compile(implicitTimedTaskRegex);
@@ -212,7 +212,7 @@ public class ParameterParser {
         }
 
         // Parse Explicit Long First
-        parameterString = this.parse(parameterString, parameterList,
+        parameterString = this.parseExplicit(parameterString, parameterList,
                 this.explicitParameterPattern,
                 this.explicitParameterPayloadPattern);
         this.logger.debug("Parameters after parsing explicit long: String("
@@ -220,8 +220,8 @@ public class ParameterParser {
 
         // Parse Explicit Short Next if applicable
         if (this.config.isExplicitShortMode()) {
-            parameterString = this.parse(parameterString, parameterList,
-                    this.explicitShortParameterPattern,
+            parameterString = this.parseExplicit(parameterString,
+                    parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
             this.logger
                     .debug("Parameters after parsing explicit short: String("
@@ -249,23 +249,30 @@ public class ParameterParser {
      * @param parameterPayloadPattern
      * @return
      */
-    private String parse(String parameterString, List<Parameter> parameterList,
-            Pattern parameterPattern, Pattern parameterPayloadPattern) {
+    private String parseExplicit(String parameterString,
+            List<Parameter> parameterList, Pattern parameterPattern,
+            Pattern parameterPayloadPattern) {
 
         Matcher parameterMatcher = parameterPattern.matcher(parameterString);
 
         while (parameterMatcher.find()) {
+
+            // Get the matching group and trim away whitespace in-front if it
+            // exist
             String eaParameter = parameterMatcher.group().trim();
             Character eaParameterSymbol = eaParameter.charAt(0);
 
             // Matches the payload of the parameter
             Matcher explicitParameterPayloadMatcher = parameterPayloadPattern
                     .matcher(eaParameter);
+
+            // There will always be 2 groups: the symbol and its payload.
             if (explicitParameterPayloadMatcher.find()
                     && (explicitParameterPayloadMatcher.groupCount() == 1)) {
 
                 String eaParameterPayload = explicitParameterPayloadMatcher
                         .group();
+
                 // unescape all the characters inside the payload
                 for (Character eaParameterInMap : this.parameterLookup.keySet()) {
                     eaParameterPayload = eaParameterPayload.replaceAll("\\\\"
@@ -277,7 +284,7 @@ public class ParameterParser {
                         this.parameterLookup.get(eaParameterSymbol),
                         eaParameterPayload));
             } else {
-                throw new RuntimeException("Payload should contain ");
+                throw new RuntimeException("Payload should exist");
             }
 
         }
@@ -296,7 +303,7 @@ public class ParameterParser {
                 .getAllMatches(implicitTimedTaskMatcher);
         switch (implicitTimedTaskMatches.size()) {
             case 0 :
-                // nothing to do, may be correct behaviour
+                // nothing to do, may be correct behavior
                 break;
             case 1 :
                 // one match
@@ -323,17 +330,13 @@ public class ParameterParser {
                         "Can only have one from ... to ... construct");
         }
 
-        if (implicitTimedTaskMatcher.find()) {
-
-        }
-
         Matcher implicitDeadlinedTaskMatcher = this.implicitDeadlinedTaskPattern
                 .matcher(parameterString);
         List<String> implicitDeadlinedTaskMatches = this
                 .getAllMatches(implicitDeadlinedTaskMatcher);
         switch (implicitDeadlinedTaskMatches.size()) {
             case 0 :
-                // nothing to do, may be correct behaviour
+                // nothing to do, may be correct behavior
                 break;
             case 1 :
                 // one match
