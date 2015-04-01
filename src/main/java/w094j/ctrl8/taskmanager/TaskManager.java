@@ -3,10 +3,12 @@ package w094j.ctrl8.taskmanager;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -72,7 +74,7 @@ public class TaskManager implements ITaskManager {
     private boolean continueExecution = true;
 
     // History
-    private History history = new History();
+    private History history;
 
     private HashMap<String, Task> iniTaskMap;
 
@@ -84,7 +86,7 @@ public class TaskManager implements ITaskManager {
      */
     public TaskManager() {
         this.display = new CLIDisplay(); // Use CLIDisplay
-        this.aliasData = new AliasData();
+        this.aliasData= new AliasData();
         try {
             this.database = new Database();
         } catch (Exception e) {
@@ -93,6 +95,7 @@ public class TaskManager implements ITaskManager {
             this.display.updateUI(res);
         }
         this.buildTaskMap();
+        this.initHistory();
     }
 
     /**
@@ -150,18 +153,19 @@ public class TaskManager implements ITaskManager {
      */
     /**
      * Constructor for terminal with a config object
+     * @param config 
      *
-     * @param config
      *            Configuration information specifying how Terminal/Display is
      *            to be setup
      */
     public TaskManager(TaskManagerConfig config) {
         assertNotNull(config); // Should not be a null object
-
+        System.out.println("in constructor");
         this.display = CLIDisplay.getInstance();
         this.aliasData = config.getAlias().getAliasData();
         /*
-         * TODO replace with proper configuration
+         * TODO replace with proper
+         * configuration
          */
         try {
             this.database = new Database();
@@ -171,6 +175,7 @@ public class TaskManager implements ITaskManager {
             this.display.updateUI(res);
         }
         this.buildTaskMap();
+        this.initHistory();
     }
 
     /**
@@ -267,8 +272,10 @@ public class TaskManager implements ITaskManager {
             throw new CommandExecuteException(e.getMessage());
         }
 
-        // update history
-        this.updateHistory(statement);
+        //update history
+        this.history.addTask(task.getTitle());
+        logger.debug("after adding task list: "+ this.history.getTaskList().size());
+        this.updateHistory(task.getTitle(),statement);
 
         // Informs user that his add statement is successful
         Response res = new Response();
@@ -309,7 +316,7 @@ public class TaskManager implements ITaskManager {
         Response res = new Response();
         res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
         this.display.updateUI(res);
-        this.updateHistory(statement);
+//        this.updateHistory(statement);
 
     }
 
@@ -330,7 +337,7 @@ public class TaskManager implements ITaskManager {
         res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
         res.alias = deleted;
         this.display.updateUI(res);
-        this.updateHistory(statement);
+//        this.updateHistory(statement);
     }
 
     /**
@@ -346,29 +353,28 @@ public class TaskManager implements ITaskManager {
             throws CommandExecuteException {
         try {
 
-            logger.debug("boolean of contain key "
-                    + this.taskMap.containsKey(taskID));
-
+            logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
+            
             /* Check if key exists in taskmap */
             if (this.isTaskExist(taskID)) {
                 this.taskMap.remove(taskID);
 
                 // Update the database
-// this.database.deleteTask(removedTask);
+//                this.database.deleteTask(removedTask);
                 logger.debug("task removed successfully");
 
             } else {
                 logger.debug("In delete cant find");
-                logger.debug("in delete " + this.taskMap.size());
+                logger.debug("in delete "+ this.taskMap.size());
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_BAD_TASKID);
             }
         } catch (Exception e) {
             throw new CommandExecuteException(e.getMessage());
         }
-        // update history
-        this.updateHistory(statement);
-
+        //update history
+        this.updateHistory(taskID,statement);
+    
     }
 
     /**
@@ -417,7 +423,7 @@ public class TaskManager implements ITaskManager {
             res.reply = task.getTitle() + NormalMessage.DONE_TASK_SUCCESSFUL;
             this.display.updateUI(res);
             // update history
-            this.updateHistory(statement);
+            this.updateHistory(query,statement);
         }
     }
 
@@ -474,6 +480,19 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
 
     }
+    
+
+    private void initHistory() {
+        this.history = new History();
+        Set<String> set = this.taskMap.keySet();
+        for (String key : set) {
+            this.history.addTask(key);
+        }
+        logger.debug("tasklist:" + this.history.getTaskList().size());
+        logger.debug("task action list"+this.history.getTaskActionList().size());
+        
+        
+    }
 
     /**
      * undo the action with index in history
@@ -483,15 +502,56 @@ public class TaskManager implements ITaskManager {
      */
     public void historyUndo(int index) throws CommandExecuteException {
         logger.debug(this.iniTaskMap.size() + " in History undo");
-        this.taskMap = new HashMap<String, Task>(this.iniTaskMap);
-        History tempHistory = new History(this.history);
-        this.history.deleteAllHistory();
-        for (int i = 0; i < (index - 1); i++) {
-            Statement statement = tempHistory.getHistory(i);
+        index= index-1;
+        if(index >= this.history.getHistoryList().size()  || index < 0){
+            throw new CommandExecuteException(NormalMessage.HISTORY_INDEX_OUT_OF_BOUND);
+        }
+        else{
+        int taskIndex = this.history.getTaskIndex().get(index);
+        Statement statementToBeUndo = this.history.getHistory(index);
+        ArrayList<Statement> specificTaskHistory = this.history.getTaskActionList().get(taskIndex);
+        int statementIndex = specificTaskHistory.indexOf(statementToBeUndo);
+        String query = this.history.getTaskList().get(taskIndex);
+        Task task = this.iniTaskMap.get(query);
+        if(this.taskMap.get(query) != null ){
+            if(task!=null){
+                this.taskMap.replace(query,task);
+            }
+            else{
+                this.taskMap.remove(query);
+            }
+        }
+        else{
+            if(task!= null){
+                this.taskMap.put(query,task);
+            }
+        }
+        
+        for (int i = 0; i < statementIndex; i++) {
+            Statement statement = specificTaskHistory.get(i);
             statement.execute(this);
         }
-
+        
+        for(int i = statementIndex;i<specificTaskHistory.size();){
+            specificTaskHistory.remove(i);
+        }
+        
+        
+        for(int j=index;j<this.history.getHistoryList().size();){
+            if(taskIndex == this.history.getTaskIndex().get(j)){
+                this.history.getHistoryList().remove(j);
+                this.history.getTaskIndex().remove(j);
+            }
+            else{
+                j++;
+            }
+        }
+         
+        }
+        logger.debug("end of undo: " + this.history.getTaskIndex().size() + index);
+        
     }
+
 
     /**
      * Part of CRUD: Update. Modifies the specified Task with new incomplete
@@ -504,10 +564,7 @@ public class TaskManager implements ITaskManager {
     @Override
     public void modify(String query, Task incompleteTask, Statement statement)
             throws CommandExecuteException {
-        // BUG: Now the string will contain a white space as first character
-// if(query.charAt(0) == ' '){
-// query = query.replaceFirst("^ *", "");
-// }
+
         // check if the task exists
         if (this.isTaskExist(query)) {
             logger.debug("Modify: the task exist");
@@ -531,8 +588,8 @@ public class TaskManager implements ITaskManager {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
-            // update history
-            this.updateHistory(statement);
+            //update history
+            this.updateHistory(query,statement);
 
             // Informs user that his add statement is successful
             Response res = new Response();
@@ -916,12 +973,12 @@ public class TaskManager implements ITaskManager {
     }
 
     /**
-     * update the history of actions
-     *
-     * @param statement
+     * update the history of actions 
+     * @param statement query
      */
-    private void updateHistory(Statement statement) {
-        this.history.addHistory(statement);
+    private void updateHistory(String query, Statement statement){
+        this.history.addHistory(query, statement);
+        
     }
 
     /**

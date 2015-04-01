@@ -2,6 +2,7 @@ package w094j.ctrl8.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -291,11 +292,10 @@ public class GoogleCalStorage extends Storage {
     private void getClientSecrets() {
         try {
             logger.info("Getting client secrets...");
-// TODO COMMENTED OUT BY ERIC because CalendarSample does not exist
-// this.clientSecrets = GoogleClientSecrets.load(
-// jsonFactory,
-// new InputStreamReader(CalendarSample.class
-// .getResourceAsStream(this.CLIENT_SECRETS_FILE)));
+            this.clientSecrets = GoogleClientSecrets.load(
+                    jsonFactory,
+                    new InputStreamReader(GoogleCalStorage.class
+                            .getResourceAsStream(this.CLIENT_SECRETS_FILE)));
         } catch (Exception e) {
             logger.debug(this.CLIENT_SECRETS_FILE
                     + ERROR_MESSAGE_FILE_NOT_FOUND);

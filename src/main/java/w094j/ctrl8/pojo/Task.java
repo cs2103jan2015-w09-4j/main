@@ -15,7 +15,7 @@ import w094j.ctrl8.statement.Statement;
 //@author A0110787A
 //@author A0112521B
 
-public class Task implements Comparable<Task>{
+public class Task implements Comparable<Task> {
 
     /**
      * Enumerates the current list of task types.
@@ -40,22 +40,22 @@ public class Task implements Comparable<Task>{
         TIMED
     }
 
+    private static final int CATEGORY = 5;
+
     /* Global parameters for all tasks */
     private static final int DEFAULT_PRIORITY = 0;
-  
+    private static final int DESCRIPTION = 6;
+    private static final int ENDDATE = 4;
     /* Global parameters for isSet boolean array */
     private static final int IS_COMPLETE = 0;
-    private static final int TITLE = 1;
-    private static final int LOCATION = 2;
-    private static final int STARTDATE = 3;
-    private static final int ENDDATE = 4;
-    private static final int CATEGORY = 5;
-    private static final int DESCRIPTION = 6;
-    private static final int REMINDER = 7;
-    private static final int PRIORITY = 8;
-    private static final int STATUS = 9;
     private static final int ISSET_SIZE = 10;
- 
+    private static final int LOCATION = 2;
+    private static final int PRIORITY = 8;
+    private static final int REMINDER = 7;
+    private static final int STARTDATE = 3;
+    private static final int STATUS = 9;
+    private static final int TITLE = 1;
+
     /* Variables */
     private String category;
     private String description;
@@ -79,6 +79,11 @@ public class Task implements Comparable<Task>{
         this.priority = DEFAULT_PRIORITY;
     }
 
+    @Override
+    public int compareTo(final Task task) {
+        return this.title.compareTo(task.getTitle());
+    }
+
     /**
      * @param task
      * @return true if the tasks are the same
@@ -87,15 +92,15 @@ public class Task implements Comparable<Task>{
         return this.title.equals(task.getTitle())
                 && (((this.location == null) && (task.location == null)) || this.location
                         .equals(task.location))
-                        && (((this.startDate == null) && (task.startDate == null)) || (this.startDate == task.startDate))
-                        && (((this.endDate == null) && (task.endDate == null)) || (this.endDate == task.endDate))
-                        && (((this.category == null) && (task.category == null)) || this.category
-                                .equals(task.category))
-                                && (((this.description == null) && (task.description == null)) || this.description
-                                        .equals(task.description))
-                                        && (((this.reminder == null) && (task.reminder == null)) || (this.reminder == task.reminder))
-                                        && (this.priority == task.priority)
-                                        && (this.isDone == task.isDone);
+                && (((this.startDate == null) && (task.startDate == null)) || (this.startDate == task.startDate))
+                && (((this.endDate == null) && (task.endDate == null)) || (this.endDate == task.endDate))
+                && (((this.category == null) && (task.category == null)) || this.category
+                        .equals(task.category))
+                && (((this.description == null) && (task.description == null)) || this.description
+                        .equals(task.description))
+                && (((this.reminder == null) && (task.reminder == null)) || (this.reminder == task.reminder))
+                && (this.priority == task.priority)
+                && (this.isDone == task.isDone);
     }
 
     /**
@@ -272,10 +277,10 @@ public class Task implements Comparable<Task>{
     }
 
     /**
-     * Change incomplete task to complete task
-     * this.task should have a title
+     * Change incomplete task to complete task this.task should have a title
      *
      * @return true if it is changed to a complete task successfully
+     * @throws Exception
      */
     public boolean toCompleteTask() {
 
@@ -290,6 +295,16 @@ public class Task implements Comparable<Task>{
 
         if (this.isSet[ENDDATE] && (this.endDate == null)) {
             this.isSet[ENDDATE] = false;
+        }
+
+        if (this.isSet[STARTDATE] && this.isSet[ENDDATE]) {
+            if (this.startDate.after(this.endDate)) {
+                this.isSet[STARTDATE] = false;
+                this.isSet[ENDDATE] = false;
+                this.startDate = null;
+                this.endDate = null;
+            }
+
         }
 
         if (this.isSet[CATEGORY] && this.category.equals("")) {
@@ -314,8 +329,8 @@ public class Task implements Comparable<Task>{
     }
 
     /**
-     * Updates the current task and changes it to a complete task.
-     * this.task should not be an incomplete task.
+     * Updates the current task and changes it to a complete task. this.task
+     * should not be an incomplete task.
      *
      * @param incompleteTask
      * @return true if it updates successfully
@@ -415,12 +430,5 @@ public class Task implements Comparable<Task>{
         this.isSet[IS_COMPLETE] = true;
         return true;
     }
-    
-    @Override
-    public int compareTo(final Task task) {
-        return this.title.compareTo(task.getTitle());
-    }
-    
-    
-    
+
 }
