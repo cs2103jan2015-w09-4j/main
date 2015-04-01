@@ -67,6 +67,13 @@ public class AliasData {
         return this.aliasMap.entrySet();
     }
 
+    public boolean isEmpty() {
+        if (this.aliasMap == null) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param aliasMap
      *            the aliasMap to set
@@ -88,16 +95,22 @@ public class AliasData {
         assert (alias != null);
         String value = this.aliasMap.get(alias);
         if (value == null) {
-            throw new DataException("No corresponding value for Alias(" + alias
-                    + ").");
+            int length = alias.length();
+            String subAlias = alias;
+            while (length > 0) {
+                subAlias = subAlias.substring(0, length);
+                value = this.aliasMap.get(subAlias);
+                if (value != null) {
+                    return value + alias.substring(length, alias.length());
+                }
+                length--;
+            }
+            if (length == 0) {
+                throw new DataException(
+                        "No corresponding value for any sub-Alias of Alias("
+                                + alias + ").");
+            }
         }
         return value;
-    }
-    
-    public boolean isEmpty(){
-        if(this.aliasMap == null){
-            return true;
-        }
-        return false;
     }
 }

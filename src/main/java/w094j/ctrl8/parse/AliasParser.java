@@ -21,7 +21,7 @@ public class AliasParser {
     /**
      * Regex to match all Alias, the delimiter is filled at runtime.
      */
-    private static final String ALIAS_REGEX_FORMAT = "(?<!\\\\)%1$s[\\w]+";
+    private static final String ALIAS_REGEX_FORMAT = "(?<!\\\\)%1$s[^\\s]+";
     private static Logger logger = LoggerFactory.getLogger(AliasParser.class);
 
     private Character aliasCharacter;
@@ -46,9 +46,9 @@ public class AliasParser {
             logger.debug("Alias Regex(" + sb.toString() + ").");
             sb.setLength(0);
             formatter
-            .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
-                    .quote(Character.toString(aliasConfig
-                            .getAliasCharacter())));
+                    .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
+                            .quote(Character.toString(aliasConfig
+                                    .getAliasCharacter())));
             logger.debug("Escaped alias Regex(" + sb.toString() + ").");
             this.aliasEscapedRegex = sb.toString();
         }
