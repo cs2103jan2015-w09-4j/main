@@ -80,6 +80,13 @@ public class History {
     }
     
     /** add a statement history into the history list
+     * @param history
+     */
+    public void addHistory(Statement history){
+        this.ActionList.add(history);
+    }
+    
+    /** add a statement history into the history list
      * @param query 
      * @param history
      */
