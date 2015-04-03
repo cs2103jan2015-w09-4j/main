@@ -34,8 +34,16 @@ public class ParameterParser {
 
     private static final String DEADLINED_TASK_TO_KEYWORD = " due ";
     private static Character ESCAPE_CHARACTER = '\\';
+    private static final String EXPLICIT_PARAMETER_PAYLOAD_REGEX_FORMAT = "(?<=(?:%1$s)%2$s).{0,}(?=%3$s)";
+    private static final String EXPLICIT_PARAMETER_REGEX_FORMAT = "(?:^|\\s)(?:%1$s)%2$s(?:(?!\\s(?:%3$s)%4$s).)*%5$s";
+    private static final String EXPLICIT_PARAMETER_SHORT_PAYLOAD_REGEX_FORMAT = "(?<=(?:%1$s)).{1,}";
+    private static final String EXPLICIT_PARAMETER_SHORT_REGEX_FORMAT = "(?:^|\\s)(?:%1$s)(?:(?!\\s(?:%2$s))[^\\s])*";
+    private static final String IMPLICIT_DEADLINED_TASK_REGEX_FORMAT = "(?<!\\{[^\\}])(?:%1$s)(?:(?!\\s(?:%2$s)).)*\\b(?![^\\{]{0,}\\})";
+    private static final String IMPLICIT_TIMED_TASK_REGEX_FORMAT = "(?<!\\{[^\\}])(?:%2$s)(?:(?!\\s(?:%1$s)).)*(?:%3$s)(?:(?!\\s(?:%1$s)).)*\\b(?![^\\{]{0,}\\})";
+    private static final String IMPLICIT_TITLE_REGEX_FORMAT = "(?:^|\\s)(?:[^\\r\\n%1$s]|\\\\(?:%2$s)|\\\\.)+\\b(?![^\\{]{0,}\\})";
     private static final String TIMED_TASK_FROM_KEYWORD = " from ";
     private static final String TIMED_TASK_TO_KEYWORD = " to ";
+
     private ParameterConfig config;
 
     private String endDelimiterQuoted;
@@ -97,29 +105,23 @@ public class ParameterParser {
             delim = "|";
         }
 
-        String regexExplicit = "(?:^|\\s)(?:" + symbolSelection + ")"
-                + this.startDelimiterQuoted + "(?:[^\\r\\n"
-                + escapableSymbolCharacterClass + "]|\\\\(?:"
-                + escapableSymbolSelection + ")|\\\\.){0,}"
-                + this.endDelimiterQuoted;
-        String regexExplicitShort = "(?:^|\\s)(?:" + symbolSelection
-                + ")(?:[^\\s\\r\\n" + escapableSymbolCharacterClass
-                + "]|\\\\(?:" + escapableSymbolSelection + ")|\\\\.){1,}";
+        String regexExplicit = String.format(EXPLICIT_PARAMETER_REGEX_FORMAT,
+                symbolSelection, this.startDelimiterQuoted, symbolSelection,
+                this.startDelimiterQuoted, this.endDelimiterQuoted);
 
-        String implicitTimedTaskRegex = "(?<!\\{[^\\}])(?:"
-                + TIMED_TASK_FROM_KEYWORD + ")(?:[^\\r\\n"
-                + escapableSymbolCharacterClass + "]|\\\\(?:"
-                + escapableSymbolSelection + ")|\\\\.)+(?:"
-                + TIMED_TASK_TO_KEYWORD + ")(?:[^\\r\\n"
-                + escapableSymbolCharacterClass + "]|\\\\(?:"
-                + escapableSymbolSelection + ")|\\\\.)+\\b(?![^\\{]{0,}\\})";
-        String implicitDeadlinedTaskRegex = "(?<!\\{[^\\}])(?:"
-                + DEADLINED_TASK_TO_KEYWORD + ")(?:[^\\r\\n"
-                + escapableSymbolCharacterClass + "]|\\\\(?:"
-                + escapableSymbolSelection + ")|\\\\.)+\\b";
-        String implicitTitleRegex = "(?:^|\\s)(?:[^\\r\\n"
-                + escapableSymbolCharacterClass + "]|\\\\(?:"
-                + escapableSymbolSelection + ")|\\\\.)+\\b(?![^\\{]{0,}\\})";
+        String regexExplicitShort = String.format(
+                EXPLICIT_PARAMETER_SHORT_REGEX_FORMAT, symbolSelection,
+                symbolSelection);
+
+        String implicitTimedTaskRegex = String.format(
+                IMPLICIT_TIMED_TASK_REGEX_FORMAT, symbolSelection,
+                TIMED_TASK_FROM_KEYWORD, TIMED_TASK_TO_KEYWORD);
+        String implicitDeadlinedTaskRegex = String.format(
+                IMPLICIT_DEADLINED_TASK_REGEX_FORMAT,
+                DEADLINED_TASK_TO_KEYWORD, symbolSelection);
+        String implicitTitleRegex = String.format(IMPLICIT_TITLE_REGEX_FORMAT,
+                escapableSymbolCharacterClass, escapableSymbolSelection);
+
         this.implicitTimedTaskPattern = Pattern.compile(implicitTimedTaskRegex);
         this.implicitDeadlinedTaskPattern = Pattern
                 .compile(implicitDeadlinedTaskRegex);
@@ -133,11 +135,12 @@ public class ParameterParser {
         this.explicitShortParameterPattern = Pattern
                 .compile(regexExplicitShort);
 
-        String explicitParameterPayloadRegex = "(?<=(^" + symbolSelection + ")"
-                + this.startDelimiterQuoted + ").{0,}(?="
-                + this.endDelimiterQuoted + "$)";
-        String explicitShortParameterPayloadRegex = "(?<=(^" + symbolSelection
-                + ")).{1,}$";
+        String explicitParameterPayloadRegex = String.format(
+                EXPLICIT_PARAMETER_PAYLOAD_REGEX_FORMAT, symbolSelection,
+                this.startDelimiterQuoted, this.endDelimiterQuoted);
+
+        String explicitShortParameterPayloadRegex = String.format(
+                EXPLICIT_PARAMETER_SHORT_PAYLOAD_REGEX_FORMAT, symbolSelection);
 
         this.explicitParameterPayloadPattern = Pattern
                 .compile(explicitParameterPayloadRegex);
@@ -220,6 +223,7 @@ public class ParameterParser {
 
         // Parse Explicit Short Next if applicable
         if (this.config.isExplicitShortMode()) {
+            System.out.println(parameterString);
             parameterString = this.parseExplicit(parameterString,
                     parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
@@ -268,7 +272,7 @@ public class ParameterParser {
 
             // There will always be 2 groups: the symbol and its payload.
             if (explicitParameterPayloadMatcher.find()
-                    && (explicitParameterPayloadMatcher.groupCount() == 1)) {
+                    && (explicitParameterPayloadMatcher.groupCount() == 0)) {
 
                 String eaParameterPayload = explicitParameterPayloadMatcher
                         .group();
@@ -360,28 +364,26 @@ public class ParameterParser {
 
         Matcher implicitTitleMatcher = this.implicitTitlePattern
                 .matcher(parameterString);
-        List<String> implicitTitleMatches = this
-                .getAllMatches(implicitTitleMatcher);
 
-        switch (implicitTitleMatches.size()) {
-            case 0 : // ignore as there is no problem with not having it
-                break;
-            case 1 :
-                // one match
-                String titleParameterMatch = implicitTitleMatches.get(0);
+        if (implicitTitleMatcher.find()) {
+            int startIndex = implicitTitleMatcher.start();
+            int endIndex = implicitTitleMatcher.end();
+            while (implicitTitleMatcher.find()) {
+                endIndex = implicitTitleMatcher.end();
+            }
 
-                // remove from keyword
-                titleParameterMatch = titleParameterMatch.trim();
+            // one match
+            String titleParameterMatch = parameterString.substring(startIndex,
+                    endIndex);
 
-                parameterList.add(new TitleParameter(titleParameterMatch));
+            // remove from keyword
+            titleParameterMatch = titleParameterMatch.trim();
 
-                // replaces the parsed item to be removed
-                parameterString = implicitTitleMatcher.replaceAll("");
-                break;
-            default :
-                // all others are illegal
-                throw new ParseException(
-                        "Can only have one title, your command may be broken elsewhere.");
+            parameterList.add(new TitleParameter(titleParameterMatch));
+
+            // replaces the parsed item to be removed
+            parameterString = implicitTitleMatcher.replaceAll("");
+
         }
 
         this.logger.debug("After Implicit Parsing: Parameters(" + parameterList
