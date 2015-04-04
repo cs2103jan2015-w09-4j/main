@@ -1,9 +1,9 @@
-package w094j.ctrl8.database.config;
+package w094j.ctrl8.database;
 
 /**
  * Interface for Config.
  */
-public interface IConfig {
+public interface IStorableElement {
 
     /**
      * Checks if the entries in the config is valid.

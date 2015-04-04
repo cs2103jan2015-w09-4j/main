@@ -1,6 +1,8 @@
 package w094j.ctrl8.database.config;
 
-public class CLIDisplayConfig implements IConfig{
+import w094j.ctrl8.database.IStorableElement;
+
+public class CLIDisplayConfig implements IStorableElement{
 
     @Override
     public boolean isValid() {

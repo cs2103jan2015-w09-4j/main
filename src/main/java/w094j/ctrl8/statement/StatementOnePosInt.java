@@ -9,6 +9,8 @@ import java.security.InvalidParameterException;
  */
 public abstract class StatementOnePosInt extends Statement {
 
+    private int positiveInteger;
+
     /**
      * Creates a Statement with parameter. If the parameter is not a positive
      * integer, fail immediately.
@@ -20,20 +22,35 @@ public abstract class StatementOnePosInt extends Statement {
      */
     protected StatementOnePosInt(CommandType command, String statementString) {
         super(command, statementString);
-        int index;
 
         try {
-            index = Integer.parseInt(this.getStatementArgumentsOnly());
+            this.positiveInteger = Integer.parseInt(this
+                    .getStatementArgumentsOnly());
         } catch (Exception e) {
             throw new InvalidParameterException(command
                     + " takes in 1 positive integer parameter only.");
         }
 
-        if (index < 1) {
+        if (this.positiveInteger < 1) {
             throw new InvalidParameterException(command
                     + " takes in 1 positive integer parameter only.");
         }
 
+    }
+
+    /**
+     * @return the positiveInteger
+     */
+    public int getPositiveInteger() {
+        return this.positiveInteger;
+    }
+
+    /**
+     * @param positiveInteger
+     *            the positiveInteger to set
+     */
+    public void setPositiveInteger(int positiveInteger) {
+        this.positiveInteger = positiveInteger;
     }
 
 }

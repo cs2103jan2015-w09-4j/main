@@ -12,7 +12,7 @@ import w094j.ctrl8.statement.Statement;
  * 
  * This class is for the action's history in an ArrayList
  */
-public class History {
+public class HistoryData {
     // The list to show user according to order
     private ArrayList<Statement> ActionList;
     // Store the task's index in taskList according to actionList
@@ -22,11 +22,11 @@ public class History {
     // The statement list of each task
     private ArrayList<ArrayList<Statement>> taskActionList;
     
-    private static Logger logger = LoggerFactory.getLogger(History.class);
+    private static Logger logger = LoggerFactory.getLogger(HistoryData.class);
     /**
      * Constructor for History Object
      */
-    public History(){
+    public HistoryData(){
         this.ActionList = new ArrayList<Statement>();
         this.taskList = new ArrayList<String>();
         this.taskActionList = new ArrayList<ArrayList<Statement>>();
@@ -36,7 +36,7 @@ public class History {
     /**
      * @param history
      */
-    public History(History history) {
+    public HistoryData(HistoryData history) {
 
         this.ActionList = new ArrayList<Statement>();
         this.taskIndex = new ArrayList<Integer>();

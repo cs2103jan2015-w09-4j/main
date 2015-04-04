@@ -3,12 +3,8 @@ package w094j.ctrl8.taskmanager;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -30,16 +26,15 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.Database;
+import w094j.ctrl8.database.IDatabase;
 import w094j.ctrl8.database.config.TaskManagerConfig;
-import w094j.ctrl8.display.CLIDisplay;
-import w094j.ctrl8.display.IDisplay;
+import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.NormalMessage;
-import w094j.ctrl8.pojo.Config;
-import w094j.ctrl8.pojo.History;
+import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.CommandType;
@@ -60,92 +55,18 @@ import com.google.gson.Gson;
 public class TaskManager implements ITaskManager {
 
     private static TaskManager instance;
+
     // Static constants
     private static Logger logger = LoggerFactory.getLogger(TaskManager.class);
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
-    // Storage object (External)
-    Database database;
-
-    // Interface supporting interaction with user
-    IDisplay display;
-
     private AliasData aliasData;
     private boolean continueExecution = true;
-
-    // History
-    private History history;
-
-    private HashMap<String, Task> iniTaskMap;
-
-    // Storage object (Internal)
-    private HashMap<String, Task> taskMap;
-
-    /**
-     * Default Constructor for a terminal with no specifications
-     */
-    public TaskManager() {
-        this.display = new CLIDisplay(); // Use CLIDisplay
-        this.aliasData= new AliasData();
-        try {
-            this.database = new Database();
-        } catch (Exception e) {
-            Response res = new Response();
-            res.reply = e.getMessage();
-            this.display.updateUI(res);
-        }
-        this.buildTaskMap();
-        this.initHistory();
-    }
-
-    /**
-     * @deprecated switch to Terminal(Config)
-     *
-     *             <pre>
-     * Constructor for terminal with a Config object and Display object
-     * </pre>
-     * @param conf
-     * @param display
-     * @param aliasData
-     */
-    @Deprecated
-    public TaskManager(Config conf, IDisplay display, AliasData aliasData) {
-        assertNotNull(conf); // Should not be a null object
-        assertNotNull(display); // Should not be a null object
-
-        this.aliasData = aliasData;
-
-        this.display = new CLIDisplay();
-        try {
-            this.database = new Database();
-        } catch (Exception e) {
-            Response res = new Response();
-            res.reply = e.getMessage();
-            this.display.updateUI(res);
-        }
-        this.buildTaskMap();
-    }
-
-    /**
-     * Constructor for a terminal with a display provided
-     *
-     * @param window
-     *            Display object specifying how/where messages should be
-     *            displayed
-     */
-    public TaskManager(IDisplay window) {
-        assertNotNull(window); // Should not be a null object
-
-        this.display = window;
-        try {
-            this.database = new Database();
-        } catch (Exception e) {
-            Response res = new Response();
-            res.reply = e.getMessage();
-            this.display.updateUI(res);
-        }
-        this.buildTaskMap();
-    }
+    // Storage object (External)
+    private IDatabase database;
+    // Interface supporting interaction with user
+    private Display display;
+    private TaskData taskData;
 
     /*
      * TODO This function is currently a stub. Until Config object has completed
@@ -153,29 +74,28 @@ public class TaskManager implements ITaskManager {
      */
     /**
      * Constructor for terminal with a config object
-     * @param config 
      *
+     * @param config
      *            Configuration information specifying how Terminal/Display is
      *            to be setup
      */
-    public TaskManager(TaskManagerConfig config) {
+    public TaskManager(TaskManagerConfig config, AliasData aliasData,
+            TaskData taskData) {
         assertNotNull(config); // Should not be a null object
         System.out.println("in constructor");
-        this.display = CLIDisplay.getInstance();
-        this.aliasData = config.getAlias().getAliasData();
+        this.display = Display.getInstance();
+        this.aliasData = aliasData;
         /*
-         * TODO replace with proper
-         * configuration
+         * TODO replace with proper configuration
          */
         try {
-            this.database = new Database();
+            this.database = Database.getInstance();
         } catch (Exception e) {
             Response res = new Response();
             res.reply = e.getMessage();
             this.display.updateUI(res);
         }
-        this.buildTaskMap();
-        this.initHistory();
+        this.taskData = taskData;
     }
 
     /**
@@ -185,21 +105,24 @@ public class TaskManager implements ITaskManager {
      */
     public static TaskManager getInstance() {
         if (instance == null) {
-            instance = initInstance(new TaskManagerConfig());
+            instance = initInstance(new TaskManagerConfig(), new AliasData(),
+                    new TaskData());
         }
         return instance;
     }
 
     /**
-     * Create a instance with taskManager config and return it if the instance
-     * is not created
+     * Creates a Task Manager
      *
-     * @param taskManagerConfig
-     * @return
+     * @return return the Task manager.
      */
-    public static TaskManager getInstance(TaskManagerConfig taskManagerConfig) {
-        if (instance == null) {
-            instance = initInstance(taskManagerConfig);
+    public static TaskManager initInstance(TaskManagerConfig config,
+            AliasData aliasData, TaskData taskData) {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            instance = new TaskManager(config, aliasData, taskData);
         }
         return instance;
     }
@@ -219,28 +142,6 @@ public class TaskManager implements ITaskManager {
         w.addDocument(doc);
     }
 
-    /**
-     * Creates a Task Manager
-     *
-     * @return return the Task manager.
-     */
-    private static TaskManager initInstance(TaskManagerConfig config) {
-        if (instance != null) {
-            throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
-        } else {
-            instance = new TaskManager(config);
-        }
-        return instance;
-    }
-
-    /**
-     * Part of CRUD: Create. Throws [CommandExecuteException] Refer to Issue #47
-     *
-     * @param task
-     *            The Task to add to the database, it should be properly
-     *            constructed otherwise Database would run into issues
-     */
     @Override
     public void add(Task task, Statement statement)
             throws CommandExecuteException {
@@ -257,37 +158,28 @@ public class TaskManager implements ITaskManager {
 
         try {
             // Update Taskmap
-            this.updateTaskMap(task);
+            this.taskData.updateTaskMap(task, statement);
 
         } catch (Exception e) {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
         }
+
         try {
-            // Add to database
-            this.database.saveTask(task);
-
+            this.database.saveToStorage();
         } catch (Exception e) {
-            // Whatever Exception database throws, throw forward
-            throw new CommandExecuteException(e.getMessage());
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
-        //update history
-        this.history.addTask(task.getTitle());
-        logger.debug("after adding task list: "+ this.history.getTaskList().size());
-        this.updateHistory(task.getTitle(),statement);
 
         // Informs user that his add statement is successful
         Response res = new Response();
         res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
         this.display.updateUI(res);
 
-        logger.debug("Number of Tasks:" + this.taskMap.values().size());
     }
 
-    /**
-     * view all aliases
-     */
+    @Override
     public void alias() {
         Response res = new Response();
         logger.debug("in alias taskmanager");
@@ -301,13 +193,6 @@ public class TaskManager implements ITaskManager {
 
     }
 
-    /**
-     * TODO Test implementation
-     *
-     * @param alias
-     * @param value
-     * @throws CommandExecuteException
-     */
     @Override
     public void aliasAdd(String alias, String value, Statement statement)
             throws CommandExecuteException {
@@ -316,17 +201,11 @@ public class TaskManager implements ITaskManager {
         Response res = new Response();
         res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
         this.display.updateUI(res);
-//        this.updateHistory(statement);
+// this.updateHistory(statement);
 
     }
 
-    /**
-     * delete a alias
-     *
-     * @param query
-     * @param statement
-     * @throws DataException
-     */
+    @Override
     public void aliasDelete(String query, Statement statement)
             throws DataException {
         String value = this.aliasData.toValue(query);
@@ -337,44 +216,37 @@ public class TaskManager implements ITaskManager {
         res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
         res.alias = deleted;
         this.display.updateUI(res);
-//        this.updateHistory(statement);
+// this.updateHistory(statement);
     }
 
-    /**
-     * Part of CRUD: Delete. Throws [CommandExecuteException]. Refer to Issue
-     * #48 Takes in taskID as a String and tests whether it exists on the
-     * taskMap. If it does then delete it from the taskMap as well as the
-     * Database
-     *
-     * @param taskID
-     */
     @Override
     public void delete(String taskID, Statement statement)
             throws CommandExecuteException {
         try {
 
-            logger.debug("boolean of contain key "+this.taskMap.containsKey(taskID));
-            
+            logger.debug("boolean of contain key "
+                    + this.taskData.containsKey(taskID));
+
             /* Check if key exists in taskmap */
-            if (this.isTaskExist(taskID)) {
-                this.taskMap.remove(taskID);
+            if (this.taskData.isTaskExist(taskID)) {
+                this.taskData.remove(taskID);
 
                 // Update the database
-//                this.database.deleteTask(removedTask);
+// this.database.deleteTask(removedTask);
                 logger.debug("task removed successfully");
 
             } else {
                 logger.debug("In delete cant find");
-                logger.debug("in delete "+ this.taskMap.size());
+                logger.debug("in delete " + this.taskData.numOfTasks());
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_BAD_TASKID);
             }
         } catch (Exception e) {
             throw new CommandExecuteException(e.getMessage());
         }
-        //update history
-        this.updateHistory(taskID,statement);
-    
+        // update history
+        this.taskData.updateHistory(taskID, statement);
+
     }
 
     /**
@@ -387,33 +259,25 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
     }
 
-    /**
-     * Set the task's status to done
-     *
-     * @param query
-     * @param statement
-     * @throws CommandExecuteException
-     */
+    @Override
     public void done(String query, Statement statement)
             throws CommandExecuteException {
-        if (this.isTaskExist(query)) {
+        if (this.taskData.isTaskExist(query)) {
 
-            Task task = this.taskMap.get(query);
+            Task task = this.taskData.get(query);
             if (task.getStatus() == true) {
                 logger.debug("The task is already done");
             }
             try {
-                // Add to database
-                this.database.deleteTask(task);
-                task.setStatus(true);
-                this.database.saveTask(task);
+                this.database.saveToStorage();
             } catch (Exception e) {
-                throw new CommandExecuteException(e.getMessage());
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
 
             try {
                 // Update the TaskMap
-                this.updateTaskMap(query, task);
+                this.taskData.updateTaskMap(query, task, statement);
             } catch (Exception e) {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
@@ -422,15 +286,10 @@ public class TaskManager implements ITaskManager {
             Response res = new Response();
             res.reply = task.getTitle() + NormalMessage.DONE_TASK_SUCCESSFUL;
             this.display.updateUI(res);
-            // update history
-            this.updateHistory(query,statement);
+
         }
     }
 
-    /*
-     * Function is called when an exit statement is executed. Performs a cleanup
-     * before terminating the terminal See Issue #74 on github
-     */
     @Override
     public void exit() {
         Response res = new Response();
@@ -454,9 +313,6 @@ public class TaskManager implements ITaskManager {
         return this.continueExecution;
     }
 
-    /**
-     * Displays the list of supported syntax. See Issue #80
-     */
     @Override
     public void help(CommandType command) {
         String helpMessage = this.outputHelpMessage(command);
@@ -465,14 +321,10 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
     }
 
-    /**
-     * remove the specified history with index
-     *
-     * @param index
-     */
+    @Override
     public void historyClear(int index) {
-        Statement statmentRemoved = this.history.deleteHistory(index);
-        History temp = new History();
+        Statement statmentRemoved = this.taskData.deleteHistory(index);
+        HistoryData temp = new HistoryData();
         temp.addHistory(statmentRemoved);
         Response res = new Response();
         res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
@@ -480,78 +332,11 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
 
     }
-    
 
-    private void initHistory() {
-        this.history = new History();
-        Set<String> set = this.taskMap.keySet();
-        for (String key : set) {
-            this.history.addTask(key);
-        }
-        logger.debug("tasklist:" + this.history.getTaskList().size());
-        logger.debug("task action list"+this.history.getTaskActionList().size());
-        
-        
-    }
-
-    /**
-     * undo the action with index in history
-     *
-     * @param index
-     * @throws CommandExecuteException
-     */
+    @Override
     public void historyUndo(int index) throws CommandExecuteException {
-        logger.debug(this.iniTaskMap.size() + " in History undo");
-        index= index-1;
-        if(index >= this.history.getHistoryList().size()  || index < 0){
-            throw new CommandExecuteException(NormalMessage.HISTORY_INDEX_OUT_OF_BOUND);
-        }
-        else{
-        int taskIndex = this.history.getTaskIndex().get(index);
-        Statement statementToBeUndo = this.history.getHistory(index);
-        ArrayList<Statement> specificTaskHistory = this.history.getTaskActionList().get(taskIndex);
-        int statementIndex = specificTaskHistory.indexOf(statementToBeUndo);
-        String query = this.history.getTaskList().get(taskIndex);
-        Task task = this.iniTaskMap.get(query);
-        if(this.taskMap.get(query) != null ){
-            if(task!=null){
-                this.taskMap.replace(query,task);
-            }
-            else{
-                this.taskMap.remove(query);
-            }
-        }
-        else{
-            if(task!= null){
-                this.taskMap.put(query,task);
-            }
-        }
-        
-        for (int i = 0; i < statementIndex; i++) {
-            Statement statement = specificTaskHistory.get(i);
-            statement.execute(this);
-        }
-        
-        for(int i = statementIndex;i<specificTaskHistory.size();){
-            specificTaskHistory.remove(i);
-        }
-        
-        
-        for(int j=index;j<this.history.getHistoryList().size();){
-            if(taskIndex == this.history.getTaskIndex().get(j)){
-                this.history.getHistoryList().remove(j);
-                this.history.getTaskIndex().remove(j);
-            }
-            else{
-                j++;
-            }
-        }
-         
-        }
-        logger.debug("end of undo: " + this.history.getTaskIndex().size() + index);
-        
+        this.taskData.undoHistory(index, this);
     }
-
 
     /**
      * Part of CRUD: Update. Modifies the specified Task with new incomplete
@@ -566,9 +351,9 @@ public class TaskManager implements ITaskManager {
             throws CommandExecuteException {
 
         // check if the task exists
-        if (this.isTaskExist(query)) {
+        if (this.taskData.isTaskExist(query)) {
             logger.debug("Modify: the task exist");
-            Task task = this.taskMap.get(query);
+            Task task = this.taskData.get(query);
 
             try {
                 // Add to database
@@ -582,14 +367,12 @@ public class TaskManager implements ITaskManager {
             }
             try {
                 // Update the TaskMap
-                this.updateTaskMap(query, task);
+                this.taskData.updateTaskMap(query, task, statement);
                 logger.debug("update task");
             } catch (Exception e) {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
             }
-            //update history
-            this.updateHistory(query,statement);
 
             // Informs user that his add statement is successful
             Response res = new Response();
@@ -602,14 +385,13 @@ public class TaskManager implements ITaskManager {
 
     }
 
-    /**
-     * Instructs database explicitly to save tasks to external file
-     */
     @Override
     public void pushData() {
-        this.database.save();
+        // TODO Auto-generated method stub
+
     }
 
+    @Override
     public void search(String query, Task task) {
         try {
             // 0. Specify the analyzer for tokenizing text.
@@ -622,7 +404,7 @@ public class TaskManager implements ITaskManager {
             IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
             IndexWriter w = new IndexWriter(index, config);
-            for (Task t : this.taskMap.values()) {
+            for (Task t : this.taskData.values()) {
                 addDoc(w, t.getTitle(), t.getDescription());
             }
             w.close();
@@ -655,7 +437,7 @@ public class TaskManager implements ITaskManager {
                         int docId = hits[i].doc;
 
                         Document d = searcher.doc(docId);
-                        Task t = this.taskMap.get(d.get("title"));
+                        Task t = this.taskData.get(d.get("title"));
 
                         taskList[i] = t;
                         logger.debug("Task#" + i + "="
@@ -685,13 +467,9 @@ public class TaskManager implements ITaskManager {
         }
     }
 
-    /**
-     * Part of CRUD: Display. View all the task and their information in table
-     * format display
-     */
     @Override
     public void view() throws CommandExecuteException {
-        if (this.taskMap.size() <= TASK_MAP_MINIMUM_SIZE) {
+        if (this.taskData.numOfTasks() <= TASK_MAP_MINIMUM_SIZE) {
             /*
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
@@ -699,15 +477,15 @@ public class TaskManager implements ITaskManager {
             Response res = new Response();
             res.reply = NormalMessage.NO_TASK_FOUND;
             this.display.updateUI(res);
-            logger.debug("no task found" + this.taskMap.size());
+            logger.debug("no task found" + this.taskData.numOfTasks());
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         } else {
             try {
-                Task[] taskList = new Task[this.taskMap.size()];
-                logger.debug("Number of Tasks:" + this.taskMap.values().size());
+                Task[] taskList = new Task[this.taskData.numOfTasks()];
+                logger.debug("Number of Tasks:" + this.taskData.values().size());
                 int i = 0;
-                for (Map.Entry<String, Task> taskEntry : this.taskMap
+                for (Map.Entry<String, Task> taskEntry : this.taskData
                         .entrySet()) {
                     // String key = taskEntry.getKey();
                     Task task = taskEntry.getValue();
@@ -728,14 +506,9 @@ public class TaskManager implements ITaskManager {
         }
     }
 
-    /**
-     * View all the history
-     *
-     * @throws CommandExecuteException
-     */
     @Override
     public void viewHistory() throws CommandExecuteException {
-        if (this.history.getHistoryList().size() == 0) {
+        if (this.taskData.getHistory().getHistoryList().size() == 0) {
             /*
              * history is empty
              */
@@ -749,7 +522,7 @@ public class TaskManager implements ITaskManager {
             try {
 
                 Response res = new Response();
-                res.history = this.history;
+                res.history = this.taskData.getHistory();
                 this.display.updateUI(res);
 
             } catch (Exception e) {
@@ -760,63 +533,12 @@ public class TaskManager implements ITaskManager {
     }
 
     /**
-     * Initializes the taskMap based on what the datastore currently contains
-     */
-    private void buildTaskMap() {
-        assert (this.database != null);
-        /*
-         * The database should already be instantiated
-         */
-
-        List<Task> allTasks = this.database.getTaskList();
-
-        /* Initialize the taskMap with all the tasks that datastore provides */
-        this.taskMap = new HashMap<String, Task>();
-
-        for (Task task : allTasks) {
-            assert (task != null);
-            /*
-             * All task objects in allTasks should not be null
-             */
-            assert (!this.taskMap.containsKey(task.getTitle()));
-            /*
-             * The taskmap should not already contain a task with the same key
-             * Assert fail implies database has problems
-             */
-
-            this.taskMap.put(task.getTitle(), task);
-        }
-        this.iniTaskMap = new HashMap<String, Task>(this.taskMap);
-        logger.debug(this.iniTaskMap.size() + "");
-    }
-
-    /**
      * TODO: Any remainder operations left to do after 'exit' command is invoked
      * goes here. This includes dumping information into an external text file.
      * Or (maybe) editing an external config file
      */
     private void cleanUp() {
         this.pushData();
-    }
-
-    /**
-     * This is a function to check is a task exist in the task map
-     *
-     * @param query
-     * @return boolean that true shows the task exist in the task map
-     */
-    private boolean isTaskExist(String query) {
-        return this.taskMap.containsKey(query);
-    }
-
-    /**
-     * This is a function to check is a task exist in the task map
-     *
-     * @param task
-     * @return boolean that true shows the task exist in the task map
-     */
-    private boolean isTaskExist(Task task) {
-        return this.taskMap.containsKey(task.getTitle());
     }
 
     /**
@@ -878,8 +600,8 @@ public class TaskManager implements ITaskManager {
     }
 
     /**
-     * This method is used to print the table with border. (modified from
-     * printTable)
+     * TODO WHY IS THIS HERE? This method is used to print the table with
+     * border. (modified from printTable)
      */
     // @author A0112521B
     private String printTableWithBorder(int startIndex, int endIndex,
@@ -970,67 +692,6 @@ public class TaskManager implements ITaskManager {
         sb.append(borderKnot);
 
         return sb.toString();
-    }
-
-    /**
-     * update the history of actions 
-     * @param statement query
-     */
-    private void updateHistory(String query, Statement statement){
-        this.history.addHistory(query, statement);
-        
-    }
-
-    /**
-     * Adds a task to the taskMap as well as removing an older entry. To be used
-     * together with modify() command. When taskTitle is modified, its key in
-     * the hashmap also changes.
-     *
-     * @param oldKey
-     * @param task
-     */
-    private void updateTaskMap(String oldKey, Task task) {
-        // Check for null params
-        assert (oldKey != null);
-        assert (task != null);
-        // Task should not be incomplete (not a Task delta)
-        assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
-        // The old key specified should exist
-        assert (this.taskMap.containsKey(oldKey));
-
-        this.taskMap.remove(oldKey);
-        if (this.taskMap.containsKey(task.getTitle())) {
-            this.taskMap.replace(task.getTitle(), task);
-            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
-                    + " with " + new Gson().toJson(task));
-        } else {
-            logger.debug("TaskMap: Add new entry with key " + task.getTitle()
-                    + " with " + new Gson().toJson(task));
-        }
-    }
-
-    /**
-     * Adds a task to the taskMap using taskTitle as the key. If key already
-     * exists, it overwrites the entry.
-     *
-     * @param task
-     */
-    private void updateTaskMap(Task task) {
-        // Check for null params
-        assert (task != null);
-        // Task should not be incomplete (not a Task delta)
-        assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
-
-        if (this.taskMap.containsKey(task.getTitle())) {
-            this.taskMap.replace(task.getTitle(), task);
-            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
-                    + " with " + new Gson().toJson(task));
-        } else {
-            this.taskMap.put(task.getTitle(), task);
-            logger.debug("TaskMap: adding new entry with key "
-                    + task.getTitle() + " with " + new Gson().toJson(task));
-        }
-
     }
 
 }

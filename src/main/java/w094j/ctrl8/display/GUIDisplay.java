@@ -21,7 +21,7 @@ import w094j.ctrl8.pojo.Task;
  * display for its output in the same window
  */
 
-public class GUIDisplay implements IDisplay {
+public class GUIDisplay extends Display {
     private GUICore guiCore;
     private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
 
@@ -32,7 +32,7 @@ public class GUIDisplay implements IDisplay {
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
-            .debug("Invalid or null config received! Reverting to defaults.");
+                    .debug("Invalid or null config received! Reverting to defaults.");
             this.guiCore = new GUICore(new GUIDisplayConfig());
         } else {
             this.guiCore = new GUICore(config);
@@ -62,7 +62,7 @@ public class GUIDisplay implements IDisplay {
 
         if (allNull) {
             this.logger
-            .debug("Respose object does not contain any useful information");
+                    .debug("Respose object does not contain any useful information");
         }
     }
 

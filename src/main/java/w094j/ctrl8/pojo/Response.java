@@ -23,7 +23,7 @@ public class Response {
      */
     public String reply;
     public Task[] taskList;
-    public History history;
+    public HistoryData history;
     public AliasData alias;
 
     /**

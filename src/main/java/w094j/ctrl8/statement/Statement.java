@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
-import w094j.ctrl8.taskmanager.TaskManager;
+import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0065517A
 /**
@@ -16,8 +16,6 @@ import w094j.ctrl8.taskmanager.TaskManager;
  */
 public abstract class Statement {
 
-    private static CommandParser commandParser = Parser.getInstance()
-            .getStatementParser().getCommandParser();
     private static Logger logger = LoggerFactory.getLogger(Statement.class);
 
     // command of the statement
@@ -32,8 +30,12 @@ public abstract class Statement {
      */
     protected Statement(CommandType command, String statementString) {
         this.command = command;
+        CommandParser commandParser = Parser.getInstance().getStatementParser()
+                .getCommandParser();
         this.statementArgumentsOnly = commandParser.removeCommandKeyword(
                 statementString).trim();
+        logger.debug("Statement initialized with Command(" + this.command
+                + ") and arguments " + this.statementArgumentsOnly);
     }
 
     /**
@@ -45,7 +47,7 @@ public abstract class Statement {
      * @throws CommandExecuteException
      *             when the execution of the command has problems.
      */
-    public abstract void execute(TaskManager taskManager)
+    public abstract void execute(ITaskManager taskManager)
             throws CommandExecuteException;
 
     /**
@@ -77,4 +79,5 @@ public abstract class Statement {
     public void setStatementArgumentsOnly(String statementArgumentsOnly) {
         this.statementArgumentsOnly = statementArgumentsOnly;
     }
+
 }

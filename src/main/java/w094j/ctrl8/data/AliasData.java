@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import w094j.ctrl8.database.IStorableElement;
 import w094j.ctrl8.exception.DataException;
 
 /**
  */
-public class AliasData {
+public class AliasData implements IStorableElement {
 
     private Map<String, String> aliasMap;
 
@@ -72,6 +73,20 @@ public class AliasData {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isValid() {
+        // checks the validity of the data structure
+        // Ensures that the mapping does not contain any null keys or values.
+        // check for a key that is null, that is illegal
+        if (this.aliasMap.containsKey(null)) {
+            return false;
+        }
+        if (this.aliasMap.containsValue(null)) {
+            return false;
+        }
+        return true;
     }
 
     /**

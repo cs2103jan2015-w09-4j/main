@@ -1,52 +1,51 @@
 package w094j.ctrl8.database.config;
 
+import w094j.ctrl8.database.IStorableElement;
+
 //@ A0112092W
 
 /**
-* The config of the task manager 
-* It is currently a stub
-*
-*/
-public class TaskManagerConfig implements IConfig{
-    
-    
-    private AliasConfig alias;
+ * The config of the task manager It is currently a stub
+ */
+public class TaskManagerConfig implements IStorableElement {
+
     private DisplayConfig display;
-    
+    private ParserConfig parser;
+
     /**
-     * Default constructor for task manager
+     * @return the display
      */
-    public TaskManagerConfig(){
-        this.alias = new AliasConfig();
-    }
-    
-    /**
-     * constructor for task manager who takes in a alias config
-     * @param aliasConfig
-     */
-    public TaskManagerConfig(AliasConfig aliasConfig,DisplayConfig displayConfig){
-        this.alias = aliasConfig;
-        this.display = displayConfig;
-    }
-    
-    /**
-     * @return the alias
-     */
-    public AliasConfig getAlias(){
-        return this.alias;
+    public DisplayConfig getDisplay() {
+        return this.display;
     }
 
     /**
-     * @param aliasConfig
+     * @return the parser
      */
-    public void setAlias(AliasConfig aliasConfig){
-        this.alias = aliasConfig;
+    public ParserConfig getParser() {
+        return this.parser;
     }
+
     @Override
     public boolean isValid() {
-        return true;
+        // TODO Auto-generated method stub
+        return false;
     }
 
+    /**
+     * @param display
+     *            the display to set
+     */
+    public void setDisplay(DisplayConfig display) {
+        this.display = display;
+    }
 
+    /**
+     * @param parser
+     *            the parser to set
+     */
+    public void setParser(ParserConfig parser) {
+        this.parser = parser;
+    }
 
 }

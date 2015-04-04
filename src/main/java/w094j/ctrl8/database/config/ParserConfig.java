@@ -3,11 +3,12 @@ package w094j.ctrl8.database.config;
 import java.util.EnumSet;
 import java.util.regex.Pattern;
 
+import w094j.ctrl8.database.IStorableElement;
 import w094j.ctrl8.statement.parameter.ParameterType;
 
 /**
  */
-public class ParserConfig implements IConfig {
+public class ParserConfig implements IStorableElement {
 
     /**
      * Matches only the characters defined below; basically characters that are
@@ -46,10 +47,6 @@ public class ParserConfig implements IConfig {
         this.statement = new StatementConfig();
     }
 
-    public ParserConfig(AliasConfig alias) {
-        this.alias = alias;
-        this.statement = new StatementConfig();
-    }
     /**
      * @return the alias
      */
@@ -74,7 +71,7 @@ public class ParserConfig implements IConfig {
         }
         // make sure the alias and parameter symbols are unique
         return sb.toString().matches(UNIQUE_SYMBOLS_REGEX)
-        // then ensure that both the alias and statement configs are unique
+                // then ensure that both the alias and statement configs are unique
                 && this.alias.isValid() && this.statement.isValid();
     }
 

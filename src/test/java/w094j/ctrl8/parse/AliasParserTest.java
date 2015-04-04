@@ -89,10 +89,9 @@ public class AliasParserTest {
         AliasConfig config = new AliasConfig();
         AliasData data = new AliasData();
         data.setAliasMap(aliasMap);
-        config.setAliasData(data);
         config.setAliasCharacter('|');
 
-        parser = new AliasParser(config);
+        parser = new AliasParser(config, data);
     }
 
     // @formatter:on

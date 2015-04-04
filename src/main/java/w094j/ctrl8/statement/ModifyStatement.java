@@ -13,7 +13,7 @@ import w094j.ctrl8.parse.ParameterParser;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.statement.parameter.ParameterContainer;
-import w094j.ctrl8.taskmanager.TaskManager;
+import w094j.ctrl8.taskmanager.ITaskManager;
 
 import com.google.gson.Gson;
 
@@ -30,8 +30,6 @@ public class ModifyStatement extends Statement {
 
     private static Logger logger = LoggerFactory
             .getLogger(ModifyStatement.class);
-    private static ParameterParser parameterParser = Parser.getInstance()
-            .getStatementParser().getParameterParser();
 
     private String query;
 
@@ -47,7 +45,8 @@ public class ModifyStatement extends Statement {
      */
     public ModifyStatement(String statementString) throws ParseException {
         super(CommandType.MODIFY, statementString);
-
+        ParameterParser parameterParser = Parser.getInstance()
+                .getStatementParser().getParameterParser();
         Matcher queryMatcher = Pattern.compile(",").matcher(
                 this.getStatementArgumentsOnly());
 
@@ -72,7 +71,8 @@ public class ModifyStatement extends Statement {
     }
 
     @Override
-    public void execute(TaskManager taskManager) throws CommandExecuteException {
+    public void execute(ITaskManager taskManager)
+            throws CommandExecuteException {
         // Statement to be added
         taskManager.modify(this.query, this.task, this);
 

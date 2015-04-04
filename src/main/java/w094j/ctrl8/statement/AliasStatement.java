@@ -3,7 +3,7 @@ package w094j.ctrl8.statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import w094j.ctrl8.taskmanager.TaskManager;
+import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0065517A
 /**
@@ -24,7 +24,7 @@ public class AliasStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(TaskManager taskManager) {
+    public void execute(ITaskManager taskManager) {
         // TODO Link to Terminal
         logger.debug("in alias");
         taskManager.alias();

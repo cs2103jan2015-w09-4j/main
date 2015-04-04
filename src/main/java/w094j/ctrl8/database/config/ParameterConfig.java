@@ -3,12 +3,13 @@ package w094j.ctrl8.database.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import w094j.ctrl8.database.IStorableElement;
 import w094j.ctrl8.statement.parameter.ParameterType;
 
 /**
  * Configuration for parameter.
  */
-public class ParameterConfig implements IConfig {
+public class ParameterConfig implements IStorableElement {
 
     static String ACCEPTABLE_SYMBOL_REGEX = ParserConfig.SYMBOL_REGEX;
 

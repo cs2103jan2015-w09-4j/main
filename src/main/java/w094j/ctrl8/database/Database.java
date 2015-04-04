@@ -6,11 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-import w094j.ctrl8.pojo.Config;
+import w094j.ctrl8.data.Data;
+import w094j.ctrl8.database.config.Config;
 import w094j.ctrl8.pojo.DBfile;
-import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.statement.Statement;
+import w094j.ctrl8.statement.StatementGsonAdaptor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,20 +22,16 @@ import com.google.gson.GsonBuilder;
  * statement history into an output file. TODO: Cater for Google integration
  */
 
-//@author A0112521B
+// @author A0112521B
 
 public class Database implements IDatabase {
 
     private static final String DEFAULT_FILE_NAME = "database.txt";
+    private static Database instance;
+
     private DBfile file;
     private Path filePath;
-
-    /**
-     * @throws IOException
-     */
-    public Database() throws IOException {
-        this("");
-    }
+    private Gson gson;
 
     /**
      * @param filePathString
@@ -44,7 +41,11 @@ public class Database implements IDatabase {
     public Database(String filePathString) throws IOException,
             NoSuchFileException {
 
-        if (filePathString.equals("")) {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
+        this.gson = builder.setPrettyPrinting().create();
+
+        if ((filePathString == null) || filePathString.equals("")) {
             filePathString = DEFAULT_FILE_NAME;
         }
 
@@ -83,48 +84,48 @@ public class Database implements IDatabase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     /**
-     * @param title
-     * @return true if taskTitle is in taskList
-     */
-    @Override
-    @Deprecated
-    public boolean containsTaskTitle(String title) {
-        for (Task i : this.file.getTaskList()) {
-            if (i.getTitle().equals(title)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Delete a task.
+     * Gets the current instance of the CLIDisplay.
      *
-     * @param task
+     * @return the current instance.
+     * @throws IOException
+     * @throws NoSuchFileException
      */
-    @Override
-    @Deprecated
-    public boolean deleteTask(Task task) {
-        for (int i = 0; i < this.file.getTaskList().size(); i++) {
-            if (this.file.getTaskList().get(i).equals(task)) {
-                this.file.getTaskList().remove(i);
-                this.save();
-                return true;
-            }
+    public static Database getInstance() throws NoSuchFileException,
+    IOException {
+        if (instance == null) {
+            instance = initInstance(null);
         }
-        return false;
+        return instance;
+    }
+
+    /**
+     * @param filePath
+     * @return
+     * @throws NoSuchFileException
+     * @throws IOException
+     */
+    public static Database initInstance(String filePath)
+            throws NoSuchFileException, IOException {
+
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            instance = new Database(filePath);
+        }
+        return instance;
+
     }
 
     @Override
     public void downloadFromStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.filePath);
-        Storage googleCalStorage = new GoogleCalStorage(this.file);
+        Storage diskStorage = new DiskStorage(this.file, this.filePath,
+                this.gson);
+        Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
         diskStorage.readData();
         googleCalStorage.readData();
     }
@@ -137,52 +138,10 @@ public class Database implements IDatabase {
         return this.file.getConfig();
     }
 
-    /**
-     * @return List of Tasks
-     */
     @Override
-    public List<Task> getTaskList() {
-        return this.file.getTaskList();
-    }
-
-    /**
-     * Save and write file.
-     */
-    @Override
-    @Deprecated
-    public void save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(this.file);
-        try {
-            Files.write(this.filePath, json.getBytes());
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
-
-    /**
-     * Save all the tasks.
-     *
-     * @param newTask
-     */
-    @Override
-    @Deprecated
-    public void saveTask(Task newTask) {
-        this.file.getTaskList().add(newTask);
-        this.save();
-    }
-
-    /**
-     * Save and write file.
-     * 
-     * @throws Exception
-     */
-    @Override
-    public void saveToStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.filePath);
-        Storage googleCalStorage = new GoogleCalStorage(this.file);
-        diskStorage.storeData();
-        googleCalStorage.storeData();
+    public Data getData() {
+        // TODO Auto-generated method stub
+        return this.file.getData();
     }
 
     // TODO: private DataStore pullFromGoogleCal(GoogleCal googleCalInfo);
@@ -194,15 +153,28 @@ public class Database implements IDatabase {
      * TODO: update return object with relevant parameters
      */
 
+    /**
+     * Save and write file.
+     *
+     * @throws Exception
+     */
+    @Override
+    public void saveToStorage() throws Exception {
+        Storage diskStorage = new DiskStorage(this.file, this.filePath,
+                this.gson);
+        Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
+        diskStorage.storeData();
+        googleCalStorage.storeData();
+    }
+
     @Override
     public void sync() {
 
     }
 
     private void readFile() throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = new String(Files.readAllBytes(this.filePath));
-        this.file = gson.fromJson(json, DBfile.class);
+        this.file = this.gson.fromJson(json, DBfile.class);
     }
 
     // TODO: I/O options for the datastore

@@ -34,8 +34,8 @@ public class AliasParser {
      *
      * @param aliasConfig
      */
-    public AliasParser(AliasConfig aliasConfig) {
-        this.aliasData = aliasConfig.getAliasData();
+    public AliasParser(AliasConfig aliasConfig, AliasData aliasData) {
+        this.aliasData = aliasData;
         this.aliasCharacter = aliasConfig.getAliasCharacter();
         StringBuilder sb = new StringBuilder();
         // Send all output to the Appendable object sb
@@ -46,9 +46,9 @@ public class AliasParser {
             logger.debug("Alias Regex(" + sb.toString() + ").");
             sb.setLength(0);
             formatter
-                    .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
-                            .quote(Character.toString(aliasConfig
-                                    .getAliasCharacter())));
+            .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
+                    .quote(Character.toString(aliasConfig
+                            .getAliasCharacter())));
             logger.debug("Escaped alias Regex(" + sb.toString() + ").");
             this.aliasEscapedRegex = sb.toString();
         }

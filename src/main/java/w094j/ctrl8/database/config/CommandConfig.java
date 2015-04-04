@@ -3,12 +3,13 @@ package w094j.ctrl8.database.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import w094j.ctrl8.database.IStorableElement;
 import w094j.ctrl8.statement.CommandType;
 
 /**
  * Configuration options for Command.
  */
-public class CommandConfig implements IConfig {
+public class CommandConfig implements IStorableElement {
 
     /**
      * Accept only Capital letters; at least 1 character, maximum 3.

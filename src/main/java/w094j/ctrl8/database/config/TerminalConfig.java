@@ -1,4 +1,6 @@
 package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
 //@ A0112092W
 
 /**
@@ -6,7 +8,7 @@ package w094j.ctrl8.database.config;
  * It is a stub currently
  *
  */
-public class TerminalConfig implements IConfig{
+public class TerminalConfig implements IStorableElement{
 
     @Override
     public boolean isValid() {

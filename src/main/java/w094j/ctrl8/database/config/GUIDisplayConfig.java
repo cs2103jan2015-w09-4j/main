@@ -1,11 +1,13 @@
 //@author A0110787A
 package w094j.ctrl8.database.config;
 
+import w094j.ctrl8.database.IStorableElement;
+
 /**
  * This is a wrapper class that contains all configuration objects relating to
  * the GUIDisplay component.
  */
-public class GUIDisplayConfig implements IConfig {
+public class GUIDisplayConfig implements IStorableElement {
     public String[] appArgs;
     public DisplayControllerConfig controllerConfig;
 

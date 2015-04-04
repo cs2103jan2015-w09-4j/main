@@ -1,6 +1,6 @@
 package w094j.ctrl8.statement;
 
-import w094j.ctrl8.taskmanager.TaskManager;
+import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0065517A
 /**
@@ -18,7 +18,7 @@ public class ExitStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(TaskManager taskManager) {
+    public void execute(ITaskManager taskManager) {
         taskManager.exit();
     }
 
