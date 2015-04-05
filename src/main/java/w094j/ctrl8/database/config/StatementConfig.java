@@ -1,9 +1,11 @@
 package w094j.ctrl8.database.config;
 
+import w094j.ctrl8.database.IStorableElement;
+
 /**
  *
  */
-public class StatementConfig implements IConfig {
+public class StatementConfig implements IStorableElement {
 
     private CommandConfig command;
     private ParameterConfig parameter;

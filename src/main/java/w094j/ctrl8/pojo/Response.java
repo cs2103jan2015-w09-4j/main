@@ -2,7 +2,7 @@
 package w094j.ctrl8.pojo;
 
 import w094j.ctrl8.data.AliasData;
-import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.parse.statement.CommandType;
 
 /**
  * Response object defines what a Display Interface expects to receive after a
@@ -23,7 +23,7 @@ public class Response {
      */
     public String reply;
     public Task[] taskList;
-    public History history;
+    public HistoryData history;
     public AliasData alias;
 
     /**

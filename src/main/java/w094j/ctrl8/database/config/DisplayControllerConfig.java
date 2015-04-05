@@ -1,7 +1,9 @@
 //@author A0110787A
 package w094j.ctrl8.database.config;
 
-public class DisplayControllerConfig implements IConfig {
+import w094j.ctrl8.database.IStorableElement;
+
+public class DisplayControllerConfig implements IStorableElement {
     public GUITextDisplayConfig textDisplayConfig;
     public GUITextInputConfig textInputConfig;
 

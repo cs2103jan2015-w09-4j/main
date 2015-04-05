@@ -38,7 +38,6 @@ import com.google.api.services.calendar.model.EventReminder;
 import com.google.api.services.tasks.TasksScopes;
 import com.google.api.services.tasks.model.TaskList;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 /**
  * Google Calendar Storage
@@ -70,16 +69,19 @@ public class GoogleCalStorage extends Storage {
     private DBfile dbFile;
     private final String EVENT_REMINDER_METHOD_EMAIL = "email";
     private final String EVENT_REMINDER_METHOD_POPUP = "popup";
+    private Gson gson;
     private TaskList taskList;
     private String userId = "user";
 
     /**
      * @param file
+     * @param gson
      * @throws Exception
      */
-    public GoogleCalStorage(DBfile file) throws Exception {
+    public GoogleCalStorage(DBfile file, Gson gson) throws Exception {
         super(file);
         this.dbFile = file;
+        this.gson = gson;
         this.initialize();
     }
 
@@ -128,7 +130,8 @@ public class GoogleCalStorage extends Storage {
 
     private void addAllEvents() throws IOException {
         logger.info("Adding all events...");
-        List<Task> events = this.dbFile.getTaskList();
+        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
+                .getTaskMap().values());
         for (Task i : events) {
             if (i.getTaskType() == TaskType.TIMED) {
                 this.addEvent(i);
@@ -139,7 +142,9 @@ public class GoogleCalStorage extends Storage {
 
     private void addAllTasks() throws IOException {
         logger.info("Adding all tasks...");
-        List<Task> tasks = this.dbFile.getTaskList();
+        List<Task> tasks = new ArrayList<Task>(this.dbFile.getData().getTask()
+                .getTaskMap().values());
+        ;
         for (Task i : tasks) {
             if (i.getTaskType() != TaskType.TIMED) {
                 this.addTask(i);
@@ -282,11 +287,10 @@ public class GoogleCalStorage extends Storage {
 
     private void getCalendarInfo() throws IOException {
         logger.info("Getting user's calendar info...");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = new String(
                 Files.readAllBytes(this.DATA_STORE_CALENDAR_INFO_FILE.toPath()));
         this.calendar = new Calendar();
-        this.calendar = gson.fromJson(json, Calendar.class);
+        this.calendar = this.gson.fromJson(json, Calendar.class);
     }
 
     private void getClientSecrets() {
@@ -307,10 +311,9 @@ public class GoogleCalStorage extends Storage {
 
     private void getTaskListInfo() throws IOException {
         logger.info("Getting user's tasklist info...");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = new String(
                 Files.readAllBytes(this.DATA_STORE_TASKLIST_INFO_FILE.toPath()));
-        this.taskList = gson.fromJson(json, TaskList.class);
+        this.taskList = this.gson.fromJson(json, TaskList.class);
     }
 
     private void initialize() throws Exception {
@@ -338,8 +341,7 @@ public class GoogleCalStorage extends Storage {
     private void saveCalendarInfo() {
         logger.info("Saving calendar info to "
                 + this.DATA_STORE_CALENDAR_INFO_FILE);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(this.calendar);
+        String json = this.gson.toJson(this.calendar);
         try {
             Files.write(this.DATA_STORE_CALENDAR_INFO_FILE.toPath(),
                     json.getBytes());
@@ -351,9 +353,8 @@ public class GoogleCalStorage extends Storage {
     private void saveTaskListInfo() {
         logger.info("Saving tasklist info to "
                 + this.DATA_STORE_TASKLIST_INFO_FILE);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         this.taskList.setUpdated(null);
-        String json = gson.toJson(this.taskList);
+        String json = this.gson.toJson(this.taskList);
         try {
             Files.write(this.DATA_STORE_TASKLIST_INFO_FILE.toPath(),
                     json.getBytes());

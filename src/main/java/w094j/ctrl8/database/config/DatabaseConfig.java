@@ -1,10 +1,12 @@
 package w094j.ctrl8.database.config;
 
+import w094j.ctrl8.database.IStorableElement;
+
 //@author A0112521B
 /**
  * Configuration file for Database.
  */
-public class DatabaseConfig implements IConfig {
+public class DatabaseConfig implements IStorableElement {
 
     public enum Frequency {
         DAILY, MONTHLY, NEVER, SESSION, WEEKLY, YEARLY

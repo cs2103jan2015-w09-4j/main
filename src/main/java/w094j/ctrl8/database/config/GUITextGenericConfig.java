@@ -1,6 +1,8 @@
 package w094j.ctrl8.database.config;
 
-public abstract class GUITextGenericConfig implements IConfig {
+import w094j.ctrl8.database.IStorableElement;
+
+public abstract class GUITextGenericConfig implements IStorableElement {
     public enum TextColour {
         Awesome("orange"), Black("black"), Default("black"), Invalid("");
 

@@ -5,126 +5,86 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
-import w094j.ctrl8.pojo.Config;
+import w094j.ctrl8.data.Data;
+import w094j.ctrl8.database.config.Config;
+import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.parse.statement.StatementGsonAdaptor;
 import w094j.ctrl8.pojo.DBfile;
-import w094j.ctrl8.pojo.Task;
 
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
  * Class encapsulates all information that is pulled and/or pushed from an
  * external file. Examples include interacting with a local file. Or dumping
- * statement history into an output file. TODO: Cater for Google integration
+ * statement history into an output file.
  */
 
-//@author A0112521B
+// @author A0112521B
 
 public class Database implements IDatabase {
 
-    private static final String DEFAULT_FILE_NAME = "database.txt";
+    private static final String DEFAULT_FILE_NAME = "Ctrl-8.txt";
+    private static final String FILE_FORMAT = ".txt";
+    private static Database instance;
+
     private DBfile file;
-    private Path filePath;
+    private Gson gson;
+    private Path path;
 
     /**
-     * @throws IOException
-     */
-    public Database() throws IOException {
-        this("");
-    }
-
-    /**
-     * @param filePathString
+     * @param pathString
      * @throws IOException
      * @throws NoSuchFileException
      */
-    public Database(String filePathString) throws IOException,
-            NoSuchFileException {
-
-        if (filePathString.equals("")) {
-            filePathString = DEFAULT_FILE_NAME;
-        }
-
-        File f = new File(filePathString);
-        this.file = new DBfile();
-
-        if (f.isFile()) {
-            this.filePath = Paths.get(filePathString);
-            this.readFile();
-        } else if (f.isDirectory()) {
-            this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
-            this.file = new DBfile();
-        } else if (filePathString.endsWith(".txt")) {
-            try {
-                this.filePath = Paths.get(filePathString);
-                if (filePathString.lastIndexOf(File.separator) != -1) {
-                    String directory = filePathString.substring(0,
-                            filePathString.lastIndexOf(File.separator));
-                    f = new File(directory);
-                    f.mkdirs();
-                }
-                this.file = new DBfile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                if (filePathString.substring(filePathString.length() - 1) != File.separator) {
-                    filePathString += File.separator;
-                    f = new File(filePathString);
-                }
-                f.mkdirs();
-                new File(filePathString + DEFAULT_FILE_NAME);
-                this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
-                this.file = new DBfile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
+    public Database(String pathString) throws IOException, NoSuchFileException {
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
+        this.gson = builder.setPrettyPrinting().create();
+        this.path = this.getOrCreatePath(pathString);
+        this.file = this.path.toFile().isFile() ? this.getFile() : new DBfile();
     }
 
     /**
-     * @param title
-     * @return true if taskTitle is in taskList
-     */
-    @Override
-    @Deprecated
-    public boolean containsTaskTitle(String title) {
-        for (Task i : this.file.getTaskList()) {
-            if (i.getTitle().equals(title)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Delete a task.
+     * Gets the current instance of the CLIDisplay.
      *
-     * @param task
+     * @return the current instance.
+     * @throws IOException
+     * @throws NoSuchFileException
      */
-    @Override
-    @Deprecated
-    public boolean deleteTask(Task task) {
-        for (int i = 0; i < this.file.getTaskList().size(); i++) {
-            if (this.file.getTaskList().get(i).equals(task)) {
-                this.file.getTaskList().remove(i);
-                this.save();
-                return true;
-            }
+    public static Database getInstance() throws NoSuchFileException,
+    IOException {
+        if (instance == null) {
+            instance = initInstance(null);
         }
-        return false;
+        return instance;
+    }
+
+    /**
+     * @param filePath
+     * @return
+     * @throws NoSuchFileException
+     * @throws IOException
+     */
+    public static Database initInstance(String filePath)
+            throws NoSuchFileException, IOException {
+
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            instance = new Database(filePath);
+        }
+        return instance;
+
     }
 
     @Override
     public void downloadFromStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.filePath);
-        Storage googleCalStorage = new GoogleCalStorage(this.file);
+        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
+        Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
         diskStorage.readData();
         googleCalStorage.readData();
     }
@@ -137,73 +97,52 @@ public class Database implements IDatabase {
         return this.file.getConfig();
     }
 
-    /**
-     * @return List of Tasks
-     */
     @Override
-    public List<Task> getTaskList() {
-        return this.file.getTaskList();
+    public Data getData() {
+        return this.file.getData();
     }
 
     /**
      * Save and write file.
-     */
-    @Override
-    @Deprecated
-    public void save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(this.file);
-        try {
-            Files.write(this.filePath, json.getBytes());
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-    }
-
-    /**
-     * Save all the tasks.
      *
-     * @param newTask
-     */
-    @Override
-    @Deprecated
-    public void saveTask(Task newTask) {
-        this.file.getTaskList().add(newTask);
-        this.save();
-    }
-
-    /**
-     * Save and write file.
-     * 
      * @throws Exception
      */
     @Override
     public void saveToStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.filePath);
-        Storage googleCalStorage = new GoogleCalStorage(this.file);
+        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
+        Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
         diskStorage.storeData();
         googleCalStorage.storeData();
     }
-
-    // TODO: private DataStore pullFromGoogleCal(GoogleCal googleCalInfo);
-    /*
-     * TODO: Find out how to interact with Google Calendar API. Determine how to
-     * map our variables to their fields and vice versa.
-     */
-    /*
-     * TODO: update return object with relevant parameters
-     */
 
     @Override
     public void sync() {
 
     }
 
-    private void readFile() throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = new String(Files.readAllBytes(this.filePath));
-        this.file = gson.fromJson(json, DBfile.class);
+    private DBfile getFile() throws IOException {
+        String json = new String(Files.readAllBytes(this.path));
+        return this.gson.fromJson(json, DBfile.class);
     }
 
-    // TODO: I/O options for the datastore
+    private Path getOrCreatePath(String directory) throws IOException {
+        if ((directory == null) || directory.equals("")) {
+            return new File(DEFAULT_FILE_NAME).toPath();
+        }
+
+        String filename = DEFAULT_FILE_NAME;
+        if (directory.endsWith(FILE_FORMAT)) {
+            if (!directory.contains(File.separator)) {
+                filename = directory;
+                directory = "";
+            } else {
+                filename = directory.substring(directory
+                        .lastIndexOf(File.separator));
+                directory = directory.substring(0,
+                        directory.lastIndexOf(File.separator));
+            }
+        }
+        new FileDataStoreFactory(new java.io.File(directory));
+        return new File(directory + filename).toPath();
+    }
 }

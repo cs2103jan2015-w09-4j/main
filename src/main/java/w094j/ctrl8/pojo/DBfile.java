@@ -1,39 +1,35 @@
 package w094j.ctrl8.pojo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.data.Data;
+import w094j.ctrl8.database.config.Config;
 
 //@author A0112521B
 
+/**
+ * TODO
+ */
 public class DBfile {
 
-    private List<AliasData> aliasDataList;
     private Config config;
-    private History history;
-    private List<Task> taskList;
+    private Data data;
 
+    /**
+     * TODO
+     */
     public DBfile() {
-        this.aliasDataList = new ArrayList<AliasData>();
         this.config = new Config();
-        this.history = new History();
-        this.taskList = new ArrayList<Task>();
-    }
-
-    public DBfile(List<AliasData> aliasDataList, Config config,
-            History history, List<Task> taskList) {
-        this.aliasDataList = aliasDataList;
-        this.config = config;
-        this.history = history;
-        this.taskList = taskList;
+        this.data = new Data();
     }
 
     /**
-     * @return the aliasDataList
+     * TODO
+     * 
+     * @param data
+     * @param config
      */
-    public List<AliasData> getAliasDataList() {
-        return this.aliasDataList;
+    public DBfile(Data data, Config config) {
+        this.config = config;
+        this.data = new Data();
     }
 
     /**
@@ -44,25 +40,10 @@ public class DBfile {
     }
 
     /**
-     * @return the history
+     * @return the data
      */
-    public History getHistory() {
-        return this.history;
-    }
-
-    /**
-     * @return the taskList
-     */
-    public List<Task> getTaskList() {
-        return this.taskList;
-    }
-
-    /**
-     * @param aliasDataList
-     *            the aliasDataList to set
-     */
-    public void setAliasDataList(List<AliasData> aliasDataList) {
-        this.aliasDataList = aliasDataList;
+    public Data getData() {
+        return this.data;
     }
 
     /**
@@ -74,19 +55,11 @@ public class DBfile {
     }
 
     /**
-     * @param history
-     *            the history to set
+     * @param data
+     *            the data to set
      */
-    public void setHistory(History history) {
-        this.history = history;
-    }
-
-    /**
-     * @param taskList
-     *            the taskList to set
-     */
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
+    public void setData(Data data) {
+        this.data = data;
     }
 
 }

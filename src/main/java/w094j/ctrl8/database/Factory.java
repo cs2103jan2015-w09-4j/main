@@ -1,11 +1,9 @@
 package w094j.ctrl8.database;
 
-import w094j.ctrl8.data.AliasData;
-import w094j.ctrl8.database.config.AliasConfig;
-import w094j.ctrl8.database.config.DisplayConfig;
-import w094j.ctrl8.database.config.ParserConfig;
-import w094j.ctrl8.database.config.TaskManagerConfig;
-import w094j.ctrl8.display.CLIDisplay;
+import java.io.IOException;
+
+import w094j.ctrl8.database.config.Config;
+import w094j.ctrl8.display.Display;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.taskmanager.TaskManager;
 import w094j.ctrl8.terminal.Terminal;
@@ -14,57 +12,22 @@ import w094j.ctrl8.terminal.Terminal;
 
 public class Factory {
 
-    public Factory() {
-        new AliasData();
-        AliasConfig aliasConfig = new AliasConfig();
-        DisplayConfig displayConfig = new DisplayConfig();
-        ParserConfig paserConfig = new ParserConfig(aliasConfig);
-        TaskManagerConfig taskManagerConfig = new TaskManagerConfig(
-                aliasConfig, displayConfig);
-        this.initDisplay();
-        this.initTaskManager(taskManagerConfig);
-        this.initParser(paserConfig);
-        this.initTerminal();
-    }
-
     /**
-     * @param args
+     * @param filePath
+     * @throws IOException
      */
-    public Factory(String[] args) {
-        new AliasData();
-        AliasConfig aliasConfig = new AliasConfig();
-        ParserConfig paserConfig = new ParserConfig(aliasConfig);
-        DisplayConfig displayConfig = new DisplayConfig();
-        TaskManagerConfig taskManagerConfig = new TaskManagerConfig(
-                aliasConfig, displayConfig);
-        this.initDisplay();
-        this.initTaskManager(taskManagerConfig);
-        this.initParser(paserConfig);
-        this.initTerminal();
-    }
+    public Factory(String filePath) throws IOException {
 
-    public Parser getParser() {
-        return Parser.getInstance();
-    }
+        Database db = Database.initInstance(filePath);
 
-    public Terminal getTerminal() {
-        return Terminal.getInstance();
-    }
+        Config config = db.getConfig();
 
-    public CLIDisplay initDisplay() {
-        return CLIDisplay.getInstance();
-    }
+        Parser.initInstance(config.getParser(), db.getData().getAlias());
+        Display.initInstance(config.getDisplay());
+        TaskManager.initInstance(config.getTaskManager(), db.getData()
+                .getAlias(), db.getData().getTask());
+        Terminal.initInstance(config.getTerminal());
 
-    public Parser initParser(ParserConfig paserConfig) {
-        return Parser.getInstance(paserConfig);
-    }
-
-    public TaskManager initTaskManager(TaskManagerConfig taskManagerConfig) {
-        return TaskManager.getInstance(taskManagerConfig);
-    }
-
-    public Terminal initTerminal() {
-        return Terminal.getInstance();
     }
 
 }

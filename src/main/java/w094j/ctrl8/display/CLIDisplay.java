@@ -15,16 +15,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.data.AliasData;
-import w094j.ctrl8.database.config.DisplayConfig;
+import w094j.ctrl8.database.config.CLIDisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
-import w094j.ctrl8.pojo.History;
+import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.Statement;
 
 /**
  * Class implements Display Interface as a simple CLI How to use: To get
@@ -33,7 +33,7 @@ import w094j.ctrl8.statement.Statement;
  */
 
 // @author A0112092W
-public class CLIDisplay implements IDisplay {
+public class CLIDisplay extends Display {
     private static CLIDisplay instance;
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private BufferedReader br;
@@ -46,36 +46,8 @@ public class CLIDisplay implements IDisplay {
     /**
      * Public constructor for a CLI Display
      */
-    public CLIDisplay() {
+    CLIDisplay(CLIDisplayConfig cliDisplayConfig) {
         this.br = new BufferedReader(new InputStreamReader(System.in));
-    }
-
-    /**
-     * Gets the current instance of the CLIDisplay.
-     *
-     * @return the current instance.
-     */
-    public static CLIDisplay getInstance() {
-        if (instance == null) {
-            instance = initInstance(new DisplayConfig());
-        }
-        return instance;
-    }
-
-    /**
-     * Creates a Task Manager
-     *
-     * @return return the display instance.
-     */
-    public static CLIDisplay initInstance(DisplayConfig displayConfig) {
-        if (instance != null) {
-            throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
-        } else {
-            //TO-DO add in config when config is done
-            instance = new CLIDisplay();
-        }
-        return instance;
     }
 
     /**
@@ -195,9 +167,11 @@ public class CLIDisplay implements IDisplay {
             } else {
                 table[i][5] = taskList[i - 1].getLocation();
             }
-
-            table[i][6] = String.valueOf(taskList[i - 1].getPriority());
-
+            if (taskList[i - 1].getPriority() == null) {
+                table[i][6] = "-";
+            } else {
+                table[i][6] = String.valueOf(taskList[i - 1].getPriority());
+            }
             if (taskList[i - 1].getReminder() == null) {
                 table[i][7] = "-";
             } else {
@@ -206,7 +180,7 @@ public class CLIDisplay implements IDisplay {
 
             table[i][8] = taskList[i - 1].getTaskType().toString();
 
-            if (taskList[i - 1].getStatus() == true) {
+            if (taskList[i - 1].getStatus()) {
                 table[i][9] = "Done";
             } else {
                 table[i][9] = "Not Done Yet";
@@ -231,7 +205,7 @@ public class CLIDisplay implements IDisplay {
         if (res.history != null) {
             this.outputHistory(res.history);
         }
-        if(res.alias != null){
+        if (res.alias != null) {
             this.outputAliases(res.alias);
         }
 
@@ -293,7 +267,22 @@ public class CLIDisplay implements IDisplay {
         return table;
     }
 
-    private void outputHistory(History history) {
+    private void outputAliases(AliasData alias) {
+        Map<String, String> aliases = alias.getAliasMap();
+        if (aliases.size() == 0) {
+            System.out.println(NormalMessage.ALIAS_MAP_EMPTY);
+        }
+        for (int i = 0; i < aliases.size();) {
+            for (String key : aliases.keySet()) {
+                String value = aliases.get(key);
+                System.out.print(i + 1 + ". Alias: " + key);
+                System.out.println(" String: " + value);
+                i++;
+            }
+        }
+    }
+
+    private void outputHistory(HistoryData history) {
         ArrayList<Statement> historyList = history.getHistoryList();
 
         for (int i = 0; i < historyList.size(); i++) {
@@ -302,22 +291,6 @@ public class CLIDisplay implements IDisplay {
             System.out.print(statement.getCommand().toString());
             System.out.print(" String:");
             System.out.println(statement.getStatementArgumentsOnly());
-        }
-    }
-
-    
-    private void outputAliases(AliasData alias){
-        Map<String,String> aliases = alias.getAliasMap();
-        if(aliases.size() == 0){
-            System.out.println(NormalMessage.ALIAS_MAP_EMPTY);
-        }
-        for(int i=0;i<aliases.size();){
-        for (String key : aliases.keySet()) {
-            String value = aliases.get(key);
-            System.out.print(i+1 + ". Alias: "+key);
-            System.out.println(" String: "+ value);
-            i++;
-          }
         }
     }
 

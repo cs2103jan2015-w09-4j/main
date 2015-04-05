@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.CommandConfig;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.parse.statement.CommandType;
 
 /**
  * Parses a statement string, recognizing the command type.

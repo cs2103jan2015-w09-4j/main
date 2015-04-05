@@ -1,8 +1,10 @@
 //@author A0110787A
 package w094j.ctrl8.database.config;
 
+import w094j.ctrl8.database.IStorableElement;
+
 public class GUITextDisplayConfig extends GUITextGenericConfig implements
-        IConfig {
+        IStorableElement {
 
     // Uses a different default
     GUITextDisplayConfig() {

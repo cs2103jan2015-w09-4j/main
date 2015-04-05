@@ -3,7 +3,9 @@ package w094j.ctrl8.pojo;
 import java.util.Date;
 import java.util.LinkedList;
 
-import w094j.ctrl8.statement.Statement;
+import org.bson.types.ObjectId;
+
+import w094j.ctrl8.parse.statement.Statement;
 
 /**
  * Class encapsulates a task object, which contains all the information required
@@ -40,67 +42,33 @@ public class Task implements Comparable<Task> {
         TIMED
     }
 
-    private static final int CATEGORY = 5;
-
-    /* Global parameters for all tasks */
-    private static final int DEFAULT_PRIORITY = 0;
-    private static final int DESCRIPTION = 6;
-    private static final int ENDDATE = 4;
-    /* Global parameters for isSet boolean array */
-    private static final int IS_COMPLETE = 0;
-    private static final int ISSET_SIZE = 10;
-    private static final int LOCATION = 2;
-    private static final int PRIORITY = 8;
-    private static final int REMINDER = 7;
-    private static final int STARTDATE = 3;
-    private static final int STATUS = 9;
-    private static final int TITLE = 1;
-
-    /* Variables */
+    private String id;
+    private String title;
     private String category;
     private String description;
-    private Date endDate;
-    private boolean isDone;
-    private boolean isSet[];
-    private String location;
-    private int priority;
-    private Date reminder;
     private Date startDate;
-    private LinkedList<Statement> statementHistory;
+    private Date endDate;
+    private String location;
+    private Integer priority;
+    private Date reminder;
     private TaskType taskType;
-    private String title;
+    private Boolean isDone;
+    private Date lastModifiedTime;
+    private Boolean isSynced;
+    private String googleId;
+    private String eTag;
+    private LinkedList<Statement> statementHistory;
 
     /**
      * default constructor
      */
     public Task() {
-        this.isSet = new boolean[ISSET_SIZE];
         this.taskType = TaskType.INCOMPLETE;
-        this.priority = DEFAULT_PRIORITY;
     }
 
     @Override
     public int compareTo(final Task task) {
         return this.title.compareTo(task.getTitle());
-    }
-
-    /**
-     * @param task
-     * @return true if the tasks are the same
-     */
-    public boolean equals(Task task) {
-        return this.title.equals(task.getTitle())
-                && (((this.location == null) && (task.location == null)) || this.location
-                        .equals(task.location))
-                && (((this.startDate == null) && (task.startDate == null)) || (this.startDate == task.startDate))
-                && (((this.endDate == null) && (task.endDate == null)) || (this.endDate == task.endDate))
-                && (((this.category == null) && (task.category == null)) || this.category
-                        .equals(task.category))
-                && (((this.description == null) && (task.description == null)) || this.description
-                        .equals(task.description))
-                && (((this.reminder == null) && (task.reminder == null)) || (this.reminder == task.reminder))
-                && (this.priority == task.priority)
-                && (this.isDone == task.isDone);
     }
 
     /**
@@ -127,6 +95,41 @@ public class Task implements Comparable<Task> {
     }
 
     /**
+     * @return eTag
+     */
+    public String getETag() {
+        return this.eTag;
+    }
+
+    /**
+     * @return googleId
+     */
+    public String getGoogleId() {
+        return this.googleId;
+    }
+
+    /**
+     * @return id
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * @return true is task is synced with Google
+     */
+    public Boolean getIsSynced() {
+        return this.isSynced;
+    }
+
+    /**
+     * @return lastModifiedTime
+     */
+    public Date getLastModifiedTime() {
+        return this.lastModifiedTime;
+    }
+
+    /**
      * @return location
      */
     public String getLocation() {
@@ -136,7 +139,7 @@ public class Task implements Comparable<Task> {
     /**
      * @return priority
      */
-    public int getPriority() {
+    public Integer getPriority() {
         return this.priority;
     }
 
@@ -166,7 +169,10 @@ public class Task implements Comparable<Task> {
     /**
      * @return status
      */
-    public boolean getStatus() {
+    public Boolean getStatus() {
+        if (this.isDone == null) {
+            return false;
+        }
         return this.isDone;
     }
 
@@ -174,9 +180,7 @@ public class Task implements Comparable<Task> {
      * @return task type
      */
     public TaskType getTaskType() {
-        if (this.isSet[IS_COMPLETE]) {
-            this.changeTaskType();
-        }
+        this.changeTaskType();
         return this.taskType;
     }
 
@@ -193,7 +197,7 @@ public class Task implements Comparable<Task> {
      */
     public void setCategory(String category) {
         this.category = category;
-        this.isSet[CATEGORY] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -202,7 +206,7 @@ public class Task implements Comparable<Task> {
      */
     public void setDescription(String description) {
         this.description = description;
-        this.isSet[DESCRIPTION] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -211,7 +215,26 @@ public class Task implements Comparable<Task> {
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-        this.isSet[ENDDATE] = true;
+        this.updateTimeAndSyncStatus();
+    }
+
+    /**
+     * Set eTag for Google Calendar and Google Task
+     *
+     * @param eTag
+     */
+    public void setETag(String eTag) {
+        this.eTag = eTag;
+        this.isSynced = true;
+    }
+
+    /**
+     * Set googleId
+     *
+     * @param googleId
+     */
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
     }
 
     /**
@@ -220,7 +243,7 @@ public class Task implements Comparable<Task> {
      */
     public void setLocation(String location) {
         this.location = location;
-        this.isSet[LOCATION] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -229,7 +252,7 @@ public class Task implements Comparable<Task> {
      */
     public void setPriority(int priority) {
         this.priority = priority;
-        this.isSet[PRIORITY] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -238,7 +261,7 @@ public class Task implements Comparable<Task> {
      */
     public void setReminder(Date reminder) {
         this.reminder = reminder;
-        this.isSet[REMINDER] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -247,7 +270,7 @@ public class Task implements Comparable<Task> {
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-        this.isSet[STARTDATE] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -256,6 +279,7 @@ public class Task implements Comparable<Task> {
      */
     public void setStatementHistory(LinkedList<Statement> statementHistory) {
         this.statementHistory = statementHistory;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -264,7 +288,7 @@ public class Task implements Comparable<Task> {
      */
     public void setStatus(boolean isDone) {
         this.isDone = isDone;
-        this.isSet[STATUS] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -273,59 +297,42 @@ public class Task implements Comparable<Task> {
      */
     public void setTitle(String title) {
         this.title = title;
-        this.isSet[TITLE] = true;
+        this.updateTimeAndSyncStatus();
     }
 
     /**
      * Change incomplete task to complete task this.task should have a title
-     *
-     * @return true if it is changed to a complete task successfully
-     * @throws Exception
      */
-    public boolean toCompleteTask() {
+    public void toCompleteTask() {
+        if (this.id == null) {
+            this.id = new ObjectId().toString();
+        }
 
-        if (this.isSet[LOCATION] && this.location.equals("")) {
+        if ((this.title != null) && this.title.equals("")) {
+            this.title = null;
+        }
+
+        if ((this.location != null) && this.location.equals("")) {
             this.location = null;
-            this.isSet[LOCATION] = false;
         }
 
-        if (this.isSet[STARTDATE] && (this.startDate == null)) {
-            this.isSet[STARTDATE] = false;
-        }
-
-        if (this.isSet[ENDDATE] && (this.endDate == null)) {
-            this.isSet[ENDDATE] = false;
-        }
-
-        if (this.isSet[STARTDATE] && this.isSet[ENDDATE]) {
+        if ((this.startDate != null) && (this.endDate != null)) {
             if (this.startDate.after(this.endDate)) {
-                this.isSet[STARTDATE] = false;
-                this.isSet[ENDDATE] = false;
                 this.startDate = null;
                 this.endDate = null;
             }
-
         }
 
-        if (this.isSet[CATEGORY] && this.category.equals("")) {
+        if ((this.category != null) && this.category.equals("")) {
             this.category = null;
-            this.isSet[CATEGORY] = false;
         }
 
-        if (this.isSet[DESCRIPTION] && this.description.equals("")) {
+        if ((this.description != null) && this.description.equals("")) {
             this.description = null;
-            this.isSet[DESCRIPTION] = false;
         }
 
-        if (this.isSet[REMINDER] && (this.reminder == null)) {
-            this.isSet[REMINDER] = false;
-        }
-
-        this.isSet[PRIORITY] = true;
-        this.isSet[STATUS] = true;
-
-        return this.changeTaskType();
-
+        this.changeTaskType();
+        this.updateTimeAndSyncStatus();
     }
 
     /**
@@ -338,70 +345,60 @@ public class Task implements Comparable<Task> {
     public boolean update(Task incompleteTask) {
         if (this.taskType != TaskType.INCOMPLETE) {
 
-            if (incompleteTask.isSet[TITLE] && !incompleteTask.title.equals("")) {
-                this.title = incompleteTask.title;
-            }
-
-            if (incompleteTask.isSet[LOCATION]) {
-                if (incompleteTask.location == "") {
-                    this.location = null;
-                    this.isSet[LOCATION] = false;
+            if (incompleteTask.title != null) {
+                if (incompleteTask.title == "") {
+                    this.title = null;
                 } else {
-                    this.location = incompleteTask.location;
-                    this.isSet[LOCATION] = true;
+                    this.title = incompleteTask.title;
                 }
             }
 
-            if (incompleteTask.isSet[STARTDATE]) {
-                this.isSet[STARTDATE] = (incompleteTask.startDate == null) ? false
-                        : true;
+            if (incompleteTask.location != null) {
+                if (incompleteTask.location == "") {
+                    this.location = null;
+                } else {
+                    this.location = incompleteTask.location;
+                }
+            }
+
+            if (incompleteTask.startDate != null) {
                 this.startDate = incompleteTask.startDate;
             }
 
-            if (incompleteTask.isSet[ENDDATE]) {
-                this.isSet[ENDDATE] = (incompleteTask.endDate == null) ? false
-                        : true;
+            if (incompleteTask.endDate != null) {
                 this.endDate = incompleteTask.endDate;
             }
 
-            if (incompleteTask.isSet[CATEGORY]) {
+            if (incompleteTask.category != null) {
                 if (incompleteTask.category == "") {
                     this.category = null;
-                    this.isSet[CATEGORY] = false;
                 } else {
                     this.category = incompleteTask.category;
-                    this.isSet[CATEGORY] = true;
                 }
             }
 
-            if (incompleteTask.isSet[DESCRIPTION]) {
+            if (incompleteTask.description != null) {
                 if (incompleteTask.description == "") {
                     this.description = null;
-                    this.isSet[DESCRIPTION] = false;
                 } else {
                     this.description = incompleteTask.description;
-                    this.isSet[DESCRIPTION] = true;
                 }
             }
 
-            if (incompleteTask.isSet[REMINDER]) {
-                this.isSet[REMINDER] = (incompleteTask.reminder == null) ? false
-                        : true;
+            if (incompleteTask.reminder != null) {
                 this.reminder = incompleteTask.reminder;
             }
 
-            if (incompleteTask.isSet[PRIORITY]) {
+            if (incompleteTask.priority != null) {
                 this.priority = incompleteTask.priority;
             }
-            this.isSet[PRIORITY] = true;
 
-            if (incompleteTask.isSet[STATUS]) {
+            if (incompleteTask.isDone != null) {
                 this.isDone = incompleteTask.isDone;
             }
-            this.isSet[STATUS] = true;
 
             this.changeTaskType();
-
+            this.updateTimeAndSyncStatus();
 //            this.statementHistory.addLast(incompleteTask.statementHistory
 //                    .getLast());
             return true;
@@ -413,22 +410,25 @@ public class Task implements Comparable<Task> {
     /**
      * Change Task Type (incomplete/deadline/floating/timed)
      */
-    private boolean changeTaskType() {
-        if (!this.isSet[TITLE] || (this.title == null) || this.title.equals("")) {
-            this.taskType = TaskType.INCOMPLETE;
-            this.isSet[IS_COMPLETE] = false;
-            return false;
-        } else if (!this.isSet[ENDDATE]) {
-            this.startDate = null;
-            this.isSet[STARTDATE] = false;
+    private void changeTaskType() {
+        if ((this.startDate == null) && (this.endDate == null)) {
             this.taskType = TaskType.FLOATING;
-        } else if (!this.isSet[STARTDATE] && this.isSet[ENDDATE]) {
+        } else if ((this.startDate == null) && (this.endDate != null)) {
+            this.taskType = TaskType.DEADLINE;
+        } else if ((this.startDate != null) && (this.endDate == null)) {
+            this.endDate = this.startDate;
+            this.startDate = null;
             this.taskType = TaskType.DEADLINE;
         } else {
             this.taskType = TaskType.TIMED;
         }
-        this.isSet[IS_COMPLETE] = true;
-        return true;
+    }
+
+    private void updateTimeAndSyncStatus() {
+        this.lastModifiedTime = new Date();
+        if (this.isSynced != null) {
+            this.isSynced = false;
+        }
     }
 
 }

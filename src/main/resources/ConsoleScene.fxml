@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="w094j.ctrl8.application.view.ConsoleSceneController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="w094j.ctrl8.display.gui.view.ConsoleSceneController">
    <bottom>
       <TextField id="textInput" fx:id="textInput" alignment="TOP_LEFT" maxHeight="40.0" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="500.0" onAction="#onEnter" pickOnBounds="false" prefHeight="40.0" BorderPane.alignment="CENTER" />
    </bottom>

@@ -15,17 +15,17 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.ParameterConfig;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.parameter.CategoryParameter;
-import w094j.ctrl8.statement.parameter.DeadlineParameter;
-import w094j.ctrl8.statement.parameter.DescriptionParameter;
-import w094j.ctrl8.statement.parameter.LocationParameter;
-import w094j.ctrl8.statement.parameter.Parameter;
-import w094j.ctrl8.statement.parameter.ParameterContainer;
-import w094j.ctrl8.statement.parameter.ParameterType;
-import w094j.ctrl8.statement.parameter.PriorityParameter;
-import w094j.ctrl8.statement.parameter.ReminderParameter;
-import w094j.ctrl8.statement.parameter.StartTimeParameter;
-import w094j.ctrl8.statement.parameter.TitleParameter;
+import w094j.ctrl8.parse.statement.parameter.CategoryParameter;
+import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
+import w094j.ctrl8.parse.statement.parameter.DescriptionParameter;
+import w094j.ctrl8.parse.statement.parameter.LocationParameter;
+import w094j.ctrl8.parse.statement.parameter.Parameter;
+import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
+import w094j.ctrl8.parse.statement.parameter.ParameterType;
+import w094j.ctrl8.parse.statement.parameter.PriorityParameter;
+import w094j.ctrl8.parse.statement.parameter.ReminderParameter;
+import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
+import w094j.ctrl8.parse.statement.parameter.TitleParameter;
 
 /**
  * Parameter Parser.

@@ -14,8 +14,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.database.config.ParameterConfig;
 import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.parameter.ParameterContainer;
 
 /**
  * Tests parsing of the priority parameter.
@@ -24,7 +24,7 @@ import w094j.ctrl8.statement.parameter.ParameterContainer;
 public class PriorityParameterTest {
 
     private static ParameterParser parser;
-    private int expectedPriority;
+    private Integer expectedPriority;
 
     private String input;
 
@@ -36,7 +36,7 @@ public class PriorityParameterTest {
      * @param expectedPriority
      *            Expected Priority.
      */
-    public PriorityParameterTest(String input, int expectedPriority) {
+    public PriorityParameterTest(String input, Integer expectedPriority) {
         this.input = input;
         this.expectedPriority = expectedPriority;
     }

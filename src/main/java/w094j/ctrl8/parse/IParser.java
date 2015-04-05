@@ -2,7 +2,7 @@ package w094j.ctrl8.parse;
 
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.Statement;
+import w094j.ctrl8.parse.statement.Statement;
 
 /**
  * The parser that exposes all the API in parser to the world.

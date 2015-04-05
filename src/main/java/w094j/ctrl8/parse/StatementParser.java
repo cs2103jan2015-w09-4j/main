@@ -7,22 +7,22 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.StatementConfig;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.AddStatement;
-import w094j.ctrl8.statement.AliasAddStatement;
-import w094j.ctrl8.statement.AliasDeleteStatement;
-import w094j.ctrl8.statement.AliasStatement;
-import w094j.ctrl8.statement.CommandType;
-import w094j.ctrl8.statement.DeleteStatement;
-import w094j.ctrl8.statement.DoneStatement;
-import w094j.ctrl8.statement.ExitStatement;
-import w094j.ctrl8.statement.HelpStatement;
-import w094j.ctrl8.statement.HistoryClearStatement;
-import w094j.ctrl8.statement.HistoryStatement;
-import w094j.ctrl8.statement.HistoryUndoStatement;
-import w094j.ctrl8.statement.ModifyStatement;
-import w094j.ctrl8.statement.SearchStatement;
-import w094j.ctrl8.statement.Statement;
-import w094j.ctrl8.statement.ViewStatement;
+import w094j.ctrl8.parse.statement.AddStatement;
+import w094j.ctrl8.parse.statement.AliasAddStatement;
+import w094j.ctrl8.parse.statement.AliasDeleteStatement;
+import w094j.ctrl8.parse.statement.AliasStatement;
+import w094j.ctrl8.parse.statement.CommandType;
+import w094j.ctrl8.parse.statement.DeleteStatement;
+import w094j.ctrl8.parse.statement.DoneStatement;
+import w094j.ctrl8.parse.statement.ExitStatement;
+import w094j.ctrl8.parse.statement.HelpStatement;
+import w094j.ctrl8.parse.statement.HistoryClearStatement;
+import w094j.ctrl8.parse.statement.HistoryStatement;
+import w094j.ctrl8.parse.statement.HistoryUndoStatement;
+import w094j.ctrl8.parse.statement.ModifyStatement;
+import w094j.ctrl8.parse.statement.SearchStatement;
+import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.parse.statement.ViewStatement;
 
 /**
  *

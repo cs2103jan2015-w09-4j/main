@@ -1,9 +1,10 @@
 package w094j.ctrl8.parse;
 
+import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.Statement;
+import w094j.ctrl8.parse.statement.Statement;
 
 /**
  * Parser that is exposed to the world.
@@ -19,34 +20,23 @@ public class Parser implements IParser {
      * Creates a parser with the config
      *
      * @param config
+     * @param aliasData
      */
-    public Parser(ParserConfig config) {
-        this.aliasParser = new AliasParser(config.getAlias());
+    public Parser(ParserConfig config, AliasData aliasData) {
+        this.aliasParser = new AliasParser(config.getAlias(), aliasData);
         this.statementParser = new StatementParser(config.getStatement());
     }
 
     /**
-     * Gets the current instance of the Parser.If there is no instance,
-     *  create the instance wiht a new ParserConfig
+     * Gets the current instance of the Parser.If there is no instance, create
+     * the instance wiht a new ParserConfig
      *
      * @return the current instance.
      */
     public static Parser getInstance() {
-        if(instance == null){
-            instance = initInstance(new ParserConfig());
-        }
-        return instance;
-    }
-    
-    /**
-     *  Gets the current instance of the Parser. If there is no instance,
-     *  create the instance wiht parserConfig
-     * @param paserConfig
-     * @return the current instance
-     */
-    public static Parser getInstance(ParserConfig paserConfig) {
-        if(instance == null){
-            instance = initInstance(paserConfig);
+        if (instance == null) {
+            System.out.println("GET");
+            instance = initInstance(new ParserConfig(), new AliasData());
         }
         return instance;
     }
@@ -55,14 +45,15 @@ public class Parser implements IParser {
      * Creates a parser with config, stores it for future use.
      *
      * @param config
+     * @param aliasData
      * @return return the configured parser.
      */
-    private static Parser initInstance(ParserConfig config) {
+    public static Parser initInstance(ParserConfig config, AliasData aliasData) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
         } else {
-            instance = new Parser(config);
+            instance = new Parser(config, aliasData);
         }
         return instance;
     }
@@ -87,7 +78,4 @@ public class Parser implements IParser {
         String inputWithoutAliases = this.aliasParser.replaceAllAlias(rawInput);
         return this.statementParser.parse(inputWithoutAliases);
     }
-
-
-
 }
