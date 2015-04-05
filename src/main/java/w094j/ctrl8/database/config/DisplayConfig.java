@@ -18,6 +18,7 @@ public class DisplayConfig implements IStorableElement {
     public DisplayConfig() {
         this.GUI = new GUIDisplayConfig();
         this.CLI = new CLIDisplayConfig();
+        this.isGUI = false;
     }
 
     /**
