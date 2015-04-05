@@ -167,9 +167,11 @@ public class CLIDisplay extends Display {
             } else {
                 table[i][5] = taskList[i - 1].getLocation();
             }
-
-            table[i][6] = String.valueOf(taskList[i - 1].getPriority());
-
+            if (taskList[i - 1].getPriority() == null) {
+                table[i][6] = "-";
+            } else {
+                table[i][6] = String.valueOf(taskList[i - 1].getPriority());
+            }
             if (taskList[i - 1].getReminder() == null) {
                 table[i][7] = "-";
             } else {
@@ -178,7 +180,7 @@ public class CLIDisplay extends Display {
 
             table[i][8] = taskList[i - 1].getTaskType().toString();
 
-            if (taskList[i - 1].getStatus() == true) {
+            if (taskList[i - 1].getStatus()) {
                 table[i][9] = "Done";
             } else {
                 table[i][9] = "Not Done Yet";
