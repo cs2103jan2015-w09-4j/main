@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import w094j.ctrl8.data.Data;
 import w094j.ctrl8.database.config.Config;
@@ -13,78 +12,39 @@ import w094j.ctrl8.pojo.DBfile;
 import w094j.ctrl8.statement.Statement;
 import w094j.ctrl8.statement.StatementGsonAdaptor;
 
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
  * Class encapsulates all information that is pulled and/or pushed from an
  * external file. Examples include interacting with a local file. Or dumping
- * statement history into an output file. TODO: Cater for Google integration
+ * statement history into an output file.
  */
 
 // @author A0112521B
 
 public class Database implements IDatabase {
 
-    private static final String DEFAULT_FILE_NAME = "database.txt";
+    private static final String DEFAULT_FILE_NAME = "Ctrl-8.txt";
+    private static final String FILE_FORMAT = ".txt";
     private static Database instance;
 
     private DBfile file;
-    private Path filePath;
     private Gson gson;
+    private Path path;
 
     /**
-     * @param filePathString
+     * @param pathString
      * @throws IOException
      * @throws NoSuchFileException
      */
-    public Database(String filePathString) throws IOException,
-            NoSuchFileException {
-
+    public Database(String pathString) throws IOException, NoSuchFileException {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
         this.gson = builder.setPrettyPrinting().create();
-
-        if ((filePathString == null) || filePathString.equals("")) {
-            filePathString = DEFAULT_FILE_NAME;
-        }
-
-        File f = new File(filePathString);
-        this.file = new DBfile();
-
-        if (f.isFile()) {
-            this.filePath = Paths.get(filePathString);
-            this.readFile();
-        } else if (f.isDirectory()) {
-            this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
-            this.file = new DBfile();
-        } else if (filePathString.endsWith(".txt")) {
-            try {
-                this.filePath = Paths.get(filePathString);
-                if (filePathString.lastIndexOf(File.separator) != -1) {
-                    String directory = filePathString.substring(0,
-                            filePathString.lastIndexOf(File.separator));
-                    f = new File(directory);
-                    f.mkdirs();
-                }
-                this.file = new DBfile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                if (filePathString.substring(filePathString.length() - 1) != File.separator) {
-                    filePathString += File.separator;
-                    f = new File(filePathString);
-                }
-                f.mkdirs();
-                new File(filePathString + DEFAULT_FILE_NAME);
-                this.filePath = Paths.get(filePathString + DEFAULT_FILE_NAME);
-                this.file = new DBfile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        this.path = this.getOrCreatePath(pathString);
+        this.file = this.path.toFile().isFile() ? this.getFile() : new DBfile();
     }
 
     /**
@@ -123,8 +83,7 @@ public class Database implements IDatabase {
 
     @Override
     public void downloadFromStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.filePath,
-                this.gson);
+        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
         Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
         diskStorage.readData();
         googleCalStorage.readData();
@@ -140,18 +99,8 @@ public class Database implements IDatabase {
 
     @Override
     public Data getData() {
-        // TODO Auto-generated method stub
         return this.file.getData();
     }
-
-    // TODO: private DataStore pullFromGoogleCal(GoogleCal googleCalInfo);
-    /*
-     * TODO: Find out how to interact with Google Calendar API. Determine how to
-     * map our variables to their fields and vice versa.
-     */
-    /*
-     * TODO: update return object with relevant parameters
-     */
 
     /**
      * Save and write file.
@@ -160,8 +109,7 @@ public class Database implements IDatabase {
      */
     @Override
     public void saveToStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.filePath,
-                this.gson);
+        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
         Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
         diskStorage.storeData();
         googleCalStorage.storeData();
@@ -172,10 +120,29 @@ public class Database implements IDatabase {
 
     }
 
-    private void readFile() throws IOException {
-        String json = new String(Files.readAllBytes(this.filePath));
-        this.file = this.gson.fromJson(json, DBfile.class);
+    private DBfile getFile() throws IOException {
+        String json = new String(Files.readAllBytes(this.path));
+        return this.gson.fromJson(json, DBfile.class);
     }
 
-    // TODO: I/O options for the datastore
+    private Path getOrCreatePath(String directory) throws IOException {
+        if ((directory == null) || directory.equals("")) {
+            return new File(DEFAULT_FILE_NAME).toPath();
+        }
+
+        String filename = DEFAULT_FILE_NAME;
+        if (directory.endsWith(FILE_FORMAT)) {
+            if (!directory.contains(File.separator)) {
+                filename = directory;
+                directory = "";
+            } else {
+                filename = directory.substring(directory
+                        .lastIndexOf(File.separator));
+                directory = directory.substring(0,
+                        directory.lastIndexOf(File.separator));
+            }
+        }
+        new FileDataStoreFactory(new java.io.File(directory));
+        return new File(directory + filename).toPath();
+    }
 }
