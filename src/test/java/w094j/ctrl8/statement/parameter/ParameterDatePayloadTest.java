@@ -11,6 +11,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
+import w094j.ctrl8.parse.statement.parameter.ReminderParameter;
+import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
+
 /**
  * Tests parsing of the Dates in the parameters deadline, starttime and
  * reminder.

@@ -6,11 +6,11 @@ import org.apache.commons.collections4.map.HashedMap;
 
 import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.AddStatement;
-import w094j.ctrl8.statement.ExitStatement;
-import w094j.ctrl8.statement.Statement;
-import w094j.ctrl8.statement.StatementGsonAdaptor;
-import w094j.ctrl8.statement.parameter.ParameterType;
+import w094j.ctrl8.parse.statement.AddStatement;
+import w094j.ctrl8.parse.statement.ExitStatement;
+import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.parse.statement.StatementGsonAdaptor;
+import w094j.ctrl8.parse.statement.parameter.ParameterType;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

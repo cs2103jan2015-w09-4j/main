@@ -4,7 +4,7 @@ import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.Statement;
+import w094j.ctrl8.parse.statement.Statement;
 
 /**
  * Parser that is exposed to the world.
@@ -49,7 +49,6 @@ public class Parser implements IParser {
      * @return return the configured parser.
      */
     public static Parser initInstance(ParserConfig config, AliasData aliasData) {
-        System.out.println("YO");
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize when it was initialized.");
@@ -75,7 +74,7 @@ public class Parser implements IParser {
 
     @Override
     public Statement parse(String rawInput) throws ParseException,
-    DataException {
+            DataException {
         String inputWithoutAliases = this.aliasParser.replaceAllAlias(rawInput);
         return this.statementParser.parse(inputWithoutAliases);
     }

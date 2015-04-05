@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.data.TaskData;
 import w094j.ctrl8.database.Database;
 import w094j.ctrl8.database.IDatabase;
 import w094j.ctrl8.database.config.TaskManagerConfig;
@@ -34,11 +35,11 @@ import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.NormalMessage;
+import w094j.ctrl8.parse.statement.CommandType;
+import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.CommandType;
-import w094j.ctrl8.statement.Statement;
 
 import com.google.gson.Gson;
 

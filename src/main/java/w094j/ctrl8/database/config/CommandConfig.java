@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import w094j.ctrl8.database.IStorableElement;
-import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.parse.statement.CommandType;
 
 /**
  * Configuration options for Command.

@@ -13,7 +13,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.database.config.CommandConfig;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.statement.CommandType;
+import w094j.ctrl8.parse.statement.CommandType;
 
 /**
  * Tests parsing of the basic variant of Commands

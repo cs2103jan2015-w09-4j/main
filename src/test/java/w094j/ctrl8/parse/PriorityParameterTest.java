@@ -14,8 +14,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.database.config.ParameterConfig;
 import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.parameter.ParameterContainer;
 
 /**
  * Tests parsing of the priority parameter.

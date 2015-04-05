@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 import org.bson.types.ObjectId;
 
-import w094j.ctrl8.statement.Statement;
+import w094j.ctrl8.parse.statement.Statement;
 
 /**
  * Class encapsulates a task object, which contains all the information required

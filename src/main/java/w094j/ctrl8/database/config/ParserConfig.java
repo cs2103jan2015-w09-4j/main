@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import java.util.regex.Pattern;
 
 import w094j.ctrl8.database.IStorableElement;
-import w094j.ctrl8.statement.parameter.ParameterType;
+import w094j.ctrl8.parse.statement.parameter.ParameterType;
 
 /**
  */

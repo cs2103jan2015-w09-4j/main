@@ -1,6 +1,5 @@
 package w094j.ctrl8.data;
 
-import w094j.ctrl8.taskmanager.TaskData;
 
 /**
  * TODO

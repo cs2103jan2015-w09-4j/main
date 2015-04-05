@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import w094j.ctrl8.statement.Statement;
+import w094j.ctrl8.parse.statement.Statement;
 
 //@author A0112092W
 /**

@@ -21,10 +21,10 @@ import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
+import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
-import w094j.ctrl8.statement.Statement;
 
 /**
  * Class implements Display Interface as a simple CLI How to use: To get

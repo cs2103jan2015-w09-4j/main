@@ -22,7 +22,7 @@ public class Factory {
 
         Config config = db.getConfig();
 
-        Parser.initInstance(config.getParser(), null);
+        Parser.initInstance(config.getParser(), db.getData().getAlias());
         Display.initInstance(config.getDisplay());
         TaskManager.initInstance(config.getTaskManager(), db.getData()
                 .getAlias(), db.getData().getTask());

@@ -8,9 +8,9 @@ import java.nio.file.Path;
 
 import w094j.ctrl8.data.Data;
 import w094j.ctrl8.database.config.Config;
+import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.parse.statement.StatementGsonAdaptor;
 import w094j.ctrl8.pojo.DBfile;
-import w094j.ctrl8.statement.Statement;
-import w094j.ctrl8.statement.StatementGsonAdaptor;
 
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.gson.Gson;

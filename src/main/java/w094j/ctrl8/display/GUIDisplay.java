@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import w094j.ctrl8.application.GUICore;
 import w094j.ctrl8.database.config.GUIDisplayConfig;
+import w094j.ctrl8.display.gui.GUICore;
 import w094j.ctrl8.exception.OutputExecuteException;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.OuputExecuteMessage;
