@@ -32,11 +32,12 @@ public class GUIDisplay extends Display {
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
-                    .debug("Invalid or null config received! Reverting to defaults.");
+            .debug("Invalid or null config received! Reverting to defaults.");
             this.guiCore = new GUICore(new GUIDisplayConfig());
         } else {
             this.guiCore = new GUICore(config);
         }
+        new Thread(this.guiCore).start();
     }
 
     @Override
@@ -48,7 +49,13 @@ public class GUIDisplay extends Display {
     public void updateUI(Response res) {
         boolean allNull = true; // Initial assumption
         if (res.reply != null) {
-            this.guiCore.consoleController.appendToDisplay(res.reply);
+            try {
+                Thread.sleep(3000); // 1000 milliseconds is one second.
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            System.out.println(this.guiCore.getConsoleController());
+            this.guiCore.getConsoleController().appendToDisplay(res.reply);
             allNull = false;
         }
         if (res.taskList != null) {
@@ -62,7 +69,7 @@ public class GUIDisplay extends Display {
 
         if (allNull) {
             this.logger
-                    .debug("Respose object does not contain any useful information");
+            .debug("Respose object does not contain any useful information");
         }
     }
 
@@ -221,7 +228,7 @@ public class GUIDisplay extends Display {
                 sb.append(String.format(formats[j], element[j]));
             }
         }
-        this.guiCore.consoleController.appendToDisplay(sb.toString());
+        this.guiCore.getConsoleController().appendToDisplay(sb.toString());
     }
 
 }

@@ -30,11 +30,13 @@ import w094j.ctrl8.message.NormalMessage;
  * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
  * </pre>
  */
-public class GUICore extends Application {
+public class GUICore extends Application implements Runnable {
 
     private static final String __newline = "\n";
+// TODO
+    private static ConsoleSceneController consoleController;
     private static Logger logger = LoggerFactory.getLogger(GUICore.class);
-    public ConsoleSceneController consoleController;
+    private GUIDisplayConfig config;
     private Stage primaryStage; // Default stage
     private BorderPane rootLayout; // Wrapper for internal components
 
@@ -47,8 +49,16 @@ public class GUICore extends Application {
     }
 
     public GUICore(GUIDisplayConfig config) {
-        launch(config.appArgs);
         // TODO this.consoleController.applyConfig(config.controllerConfig);
+        this.config = config;
+    }
+
+    /**
+     * @return the consoleController
+     */
+    public ConsoleSceneController getConsoleController() {
+        System.out.println(this + ":" + this.consoleController);
+        return this.consoleController;
     }
 
     /**
@@ -61,7 +71,7 @@ public class GUICore extends Application {
     }
 
     public InputStream getInputStream() {
-        return this.consoleController.getInputStream();
+        return this.getConsoleController().getInputStream();
     }
 
     /**
@@ -82,6 +92,19 @@ public class GUICore extends Application {
         this.getParameters().getRaw();
 
         logger.debug("GUICore initialised!");
+    }
+
+    @Override
+    public void run() {
+        launch(this.config.appArgs);
+    }
+
+    /**
+     * @param consoleController
+     *            the consoleController to set
+     */
+    public void setConsoleController(ConsoleSceneController consoleController) {
+        this.consoleController = consoleController;
     }
 
     @Override
@@ -140,8 +163,9 @@ public class GUICore extends Application {
             this.rootLayout.setCenter(consoleScene);
 
             // Give controller access
-            this.consoleController = loader.getController();
-            this.consoleController.setRoot(this);
+            this.setConsoleController(loader.getController());
+            this.getConsoleController().setRoot(this);
+            System.out.println(this.getConsoleController());
 
         } catch (IOException e) {
             e.printStackTrace();
