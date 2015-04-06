@@ -71,10 +71,10 @@ public class ModifyStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
-        taskManager.modify(this.query, this.task, this);
+        taskManager.modify(this.query, this.task, this, isUndo);
 
     }
 }

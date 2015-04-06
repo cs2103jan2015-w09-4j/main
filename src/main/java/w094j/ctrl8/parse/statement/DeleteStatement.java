@@ -23,10 +23,10 @@ public class DeleteStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
 
-        taskManager.delete(this.query, this);
+        taskManager.delete(this.query, this, isUndo);
     }
 
 }

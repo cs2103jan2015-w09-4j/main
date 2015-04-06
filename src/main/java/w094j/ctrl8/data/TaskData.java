@@ -35,6 +35,7 @@ public class TaskData {
         this.taskMap = new HashMap<>();
     }
 
+    
     public boolean containsKey(String taskID) {
         // TODO Auto-generated method stub
         return this.taskMap.containsKey(taskID);
@@ -143,7 +144,7 @@ public class TaskData {
 
             for (int i = 0; i < statementIndex; i++) {
                 Statement statement = specificTaskHistory.get(i);
-                statement.execute(taskmanager);
+                statement.execute(taskmanager, true);
             }
 
             for (int i = statementIndex; i < specificTaskHistory.size();) {
@@ -160,6 +161,7 @@ public class TaskData {
             }
 
         }
+        
         logger.debug("end of undo: " + this.history.getTaskIndex().size()
                 + index);
 
@@ -199,6 +201,7 @@ public class TaskData {
             logger.debug("TaskMap: Replace entry with key " + task.getTitle()
                     + " with " + new Gson().toJson(task));
         } else {
+            this.taskMap.put(task.getTitle(), task);
             logger.debug("TaskMap: Add new entry with key " + task.getTitle()
                     + " with " + new Gson().toJson(task));
         }

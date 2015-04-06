@@ -18,7 +18,7 @@ public class ExitStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager) {
+    public void execute(ITaskManager taskManager, boolean isUndo) {
         taskManager.exit();
     }
 

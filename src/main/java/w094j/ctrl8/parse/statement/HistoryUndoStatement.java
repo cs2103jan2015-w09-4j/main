@@ -22,7 +22,7 @@ public class HistoryUndoStatement extends StatementOnePosInt {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // TODO Link to Terminal
         // temporary index to be passed before search implemented.

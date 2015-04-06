@@ -22,11 +22,11 @@ public class DoneStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // TODO Link to Terminal
         // statement to be added
-        taskManager.done(this.query, this);
+        taskManager.done(this.query, this, isUndo);
 
     }
 

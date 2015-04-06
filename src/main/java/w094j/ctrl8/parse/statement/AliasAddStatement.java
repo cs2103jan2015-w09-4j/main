@@ -32,10 +32,10 @@ public class AliasAddStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
-        taskManager.aliasAdd(this.alias, this.phrase, this);
+        taskManager.aliasAdd(this.alias, this.phrase, this, isUndo);
 
     }
 
