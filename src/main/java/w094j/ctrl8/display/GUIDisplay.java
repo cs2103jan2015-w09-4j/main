@@ -24,20 +24,25 @@ import w094j.ctrl8.pojo.Task;
 public class GUIDisplay extends Display {
     private GUICore guiCore;
     private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
+    private Thread GUIThread;
 
     public GUIDisplay() {
-        this.guiCore = new GUICore(new GUIDisplayConfig());
+        this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
     }
 
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
             .debug("Invalid or null config received! Reverting to defaults.");
-            this.guiCore = new GUICore(new GUIDisplayConfig());
+            this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
         } else {
-            this.guiCore = new GUICore(config);
+            this.guiCore = new GUICore(config, Thread.currentThread());
         }
-        new Thread(this.guiCore).start();
+        this.GUIThread = new Thread(this.guiCore);
+        //Ensure that GUIThread is completely initialised before returning constructor
+        synchronized(this.GUIThread){
+            this.GUIThread.start();
+        }
     }
 
     @Override

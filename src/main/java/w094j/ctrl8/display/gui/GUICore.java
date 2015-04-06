@@ -39,6 +39,7 @@ public class GUICore extends Application implements Runnable {
     private GUIDisplayConfig config;
     private Stage primaryStage; // Default stage
     private BorderPane rootLayout; // Wrapper for internal components
+    private Thread main;
 
     public GUICore() {
         /*
@@ -48,9 +49,9 @@ public class GUICore extends Application implements Runnable {
          */
     }
 
-    public GUICore(GUIDisplayConfig config) {
-        // TODO this.consoleController.applyConfig(config.controllerConfig);
+    public GUICore(GUIDisplayConfig config, Thread main) {
         this.config = config;
+        this.main = main;
     }
 
     /**
@@ -115,6 +116,10 @@ public class GUICore extends Application implements Runnable {
         this.initRootLayout();
 
         this.showConsole();
+        
+        synchronized (this) {
+            this.notify();
+        }
     }
 
     /**
