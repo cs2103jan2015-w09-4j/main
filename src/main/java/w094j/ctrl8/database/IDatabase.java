@@ -6,7 +6,9 @@ import w094j.ctrl8.data.Data;
 import w094j.ctrl8.database.config.Config;
 
 //@author A0112521B
-
+/**
+ * Interface for Database
+ */
 public interface IDatabase {
 
     /**

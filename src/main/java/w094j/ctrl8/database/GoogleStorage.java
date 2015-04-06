@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -39,17 +41,16 @@ import com.google.api.services.tasks.TasksScopes;
 import com.google.api.services.tasks.model.TaskList;
 import com.google.gson.Gson;
 
+//@author A0112521B
 /**
- * Google Calendar Storage
+ * Google Storage
  */
-public class GoogleCalStorage extends Storage {
-    private static FileDataStoreFactory dataStoreFactory;
+public class GoogleStorage extends Storage {
     private static final String ERROR_MESSAGE_FILE_NOT_FOUND = " file not found";
+    private static FileDataStoreFactory fileDataStoreFactory;
     private static HttpTransport httpTransport;
     private static JsonFactory jsonFactory = new JacksonFactory();
-    private static Logger logger = LoggerFactory
-            .getLogger(GoogleCalStorage.class);
-    private Calendar calendar;
+    private static Logger logger = LoggerFactory.getLogger(GoogleStorage.class);
     private final String CLIENT_SECRETS_FILE = "/client_secrets.json";
     private com.google.api.services.calendar.Calendar clientCalendar;
     private GoogleClientSecrets clientSecrets;
@@ -67,10 +68,14 @@ public class GoogleCalStorage extends Storage {
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
                     + "/TaskListInfo");
     private DBfile dbFile;
-    private final String EVENT_REMINDER_METHOD_EMAIL = "email";
-    private final String EVENT_REMINDER_METHOD_POPUP = "popup";
+    private final String GOOGLE_EVENT_REMINDER_METHOD_EMAIL = "email";
+    private final String GOOGLE_EVENT_REMINDER_METHOD_POPUP = "popup";
+    private final String GOOGLE_TASK_COMPLETED = "completed";
+    private Calendar googleCalendar;
+    private TaskList googleTaskList;
     private Gson gson;
-    private TaskList taskList;
+    private List<String> tempTaskIdList;
+    private HashMap<String, Date> toBeDeleted; //googleid, last modified date
     private String userId = "user";
 
     /**
@@ -78,9 +83,10 @@ public class GoogleCalStorage extends Storage {
      * @param gson
      * @throws Exception
      */
-    public GoogleCalStorage(DBfile file, Gson gson) throws Exception {
+    public GoogleStorage(DBfile file, Gson gson) throws Exception {
         super(file);
         this.dbFile = file;
+        this.tempTaskIdList = this.getTaskIdList();
         this.gson = gson;
         this.initialize();
     }
@@ -93,12 +99,13 @@ public class GoogleCalStorage extends Storage {
         try {
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Calendar");
-            this.clientCalendar.calendars().delete(this.calendar.getId())
+            this.clientCalendar.calendars().delete(this.googleCalendar.getId())
                     .execute();
 
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Task List");
-            this.clientTask.tasklists().delete(this.taskList.getId()).execute();
+            this.clientTask.tasklists().delete(this.googleTaskList.getId())
+            .execute();
 
             this.deleteLocalGoogleInfo();
 
@@ -124,78 +131,97 @@ public class GoogleCalStorage extends Storage {
     }
 
     @Override
-    public void storeData() {
+    public void storeData() throws IOException {
+        // TODO: Change after the key is task ID instead of task title
+        List<Task> localTasklist = new ArrayList<Task>(this.dbFile.getData()
+                .getTask().getTaskMap().values());
 
-    }
+        if (this.tempTaskIdList.size() > localTasklist.size()) {
+            for (String taskId : this.tempTaskIdList) {
+                if (!localTasklist.contains(taskId)) {
+                    Task toBeDeletedTask = this.dbFile.getData().getTask()
+                            .getTaskMap().get(taskId);
+                    this.toBeDeleted.put(toBeDeletedTask.getGoogleId(),
+                            new Date());
+                    this.tempTaskIdList.remove(taskId);
+                }
+            }
 
-    private void addAllEvents() throws IOException {
-        logger.info("Adding all events...");
-        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
-                .getTaskMap().values());
-        for (Task i : events) {
-            if (i.getTaskType() == TaskType.TIMED) {
-                this.addEvent(i);
+        }
+
+        for (Task i : localTasklist) {
+            if ((i.getIsSynced() == null) || !i.getIsSynced()) {
+                if (i.getTaskType() == TaskType.TIMED) {
+                    this.addEvent(i);
+                } else {
+                    this.addTask(i);
+                }
             }
         }
-        logger.info("Added all events");
+
     }
 
-    private void addAllTasks() throws IOException {
-        logger.info("Adding all tasks...");
-        List<Task> tasks = new ArrayList<Task>(this.dbFile.getData().getTask()
-                .getTaskMap().values());
-        ;
-        for (Task i : tasks) {
-            if (i.getTaskType() != TaskType.TIMED) {
+    private void addAllEventsAndTasks() throws IOException {
+        logger.info("Adding all events and tasks...");
+        List<Task> localTasklist = new ArrayList<Task>(this.dbFile.getData()
+                .getTask().getTaskMap().values());
+        for (Task i : localTasklist) {
+            if (i.getTaskType() == TaskType.TIMED) {
+                this.addEvent(i);
+            } else {
                 this.addTask(i);
             }
         }
-        logger.info("Added all tasks");
+        logger.info("Added all events and tasks");
     }
 
-    private void addEvent(Task newEvent) throws IOException {
-        logger.info("Adding event: " + newEvent.getTitle());
-        Event event = new Event();
+    private void addEvent(Task localEvent) throws IOException {
+        logger.info("Adding event: " + localEvent.getTitle());
         DateTime dateTime;
 
-        // add title
-        event.setSummary(newEvent.getTitle());
+        Event googleEvent = new Event();
 
-        // add start date
-        dateTime = new DateTime(newEvent.getStartDate(), TimeZone.getDefault());
-        event.setStart(new EventDateTime().setDateTime(dateTime));
-
-        // add end date
-        dateTime = new DateTime(newEvent.getEndDate(), TimeZone.getDefault());
-        event.setEnd(new EventDateTime().setDateTime(dateTime));
-
-        // add category
-        if (newEvent.getCategory() != null) {
-            event.setKind(newEvent.getCategory());
+        // set google id
+        if (localEvent.getGoogleId() != null) {
+            googleEvent.setId(localEvent.getGoogleId());
         }
 
-        // add description
-        if (newEvent.getDescription() != null) {
-            event.setDescription(newEvent.getDescription());
+        // set title
+        googleEvent.setSummary(localEvent.getTitle());
+
+        // set start date
+        dateTime = new DateTime(localEvent.getStartDate(),
+                TimeZone.getDefault());
+        googleEvent.setStart(new EventDateTime().setDateTime(dateTime));
+
+        // set end date
+        dateTime = new DateTime(localEvent.getEndDate(), TimeZone.getDefault());
+        googleEvent.setEnd(new EventDateTime().setDateTime(dateTime));
+
+        // set description
+        if (localEvent.getDescription() != null) {
+            googleEvent.setDescription(localEvent.getDescription());
         }
 
-        // add location
-        if (newEvent.getLocation() != null) {
-            event.setLocation(newEvent.getLocation());
+        // set location
+        if (localEvent.getLocation() != null) {
+            googleEvent.setLocation(localEvent.getLocation());
         }
 
-        // add reminder
-        if (newEvent.getReminder() != null) {
+        // set reminder
+        if (localEvent.getReminder() != null) {
             EventReminder eventReminderEmail = new EventReminder();
-            eventReminderEmail.setMethod(this.EVENT_REMINDER_METHOD_EMAIL);
-            eventReminderEmail.setMinutes((int) (newEvent.getStartDate()
-                    .getTime() - newEvent.getReminder().getTime())
+            eventReminderEmail
+                    .setMethod(this.GOOGLE_EVENT_REMINDER_METHOD_EMAIL);
+            eventReminderEmail.setMinutes((int) (localEvent.getStartDate()
+                    .getTime() - localEvent.getReminder().getTime())
                     / (60 * 1000));
 
             EventReminder eventReminderPopUp = new EventReminder();
-            eventReminderPopUp.setMethod(this.EVENT_REMINDER_METHOD_POPUP);
-            eventReminderPopUp.setMinutes((int) (newEvent.getStartDate()
-                    .getTime() - newEvent.getReminder().getTime())
+            eventReminderPopUp
+                    .setMethod(this.GOOGLE_EVENT_REMINDER_METHOD_POPUP);
+            eventReminderPopUp.setMinutes((int) (localEvent.getStartDate()
+                    .getTime() - localEvent.getReminder().getTime())
                     / (60 * 1000));
 
             List<EventReminder> eventReminderList = new ArrayList<EventReminder>();
@@ -206,60 +232,73 @@ public class GoogleCalStorage extends Storage {
             reminders.setUseDefault(false);
             reminders.setOverrides(eventReminderList);
 
-            event.setReminders(reminders);
+            googleEvent.setReminders(reminders);
         }
 
         // insert event
-        this.clientCalendar.events().insert(this.calendar.getId(), event)
-                .execute();
+        Event updatedGoogleEvent = this.clientCalendar.events()
+                .insert(this.googleCalendar.getId(), googleEvent).execute();
+
+        // update local event
+        if (localEvent.getGoogleId() == null) {
+            localEvent.setGoogleId(updatedGoogleEvent.getId());
+        }
+        localEvent.setEtag(updatedGoogleEvent.getEtag());
     }
 
-    private void addTask(Task newTask) throws IOException {
-        logger.info("Adding task: " + newTask.getTitle());
-        com.google.api.services.tasks.model.Task task = new com.google.api.services.tasks.model.Task();
+    private void addTask(Task localTask) throws IOException {
+        logger.info("Adding task: " + localTask.getTitle());
+        com.google.api.services.tasks.model.Task googleTask = new com.google.api.services.tasks.model.Task();
 
-        // add title
-        task.setTitle(newTask.getTitle());
-
-        // add description/note
-        if (newTask.getDescription() != null) {
-            task.setNotes(newTask.getDescription());
+        // set google id
+        if (localTask.getGoogleId() != null) {
+            googleTask.setId(localTask.getGoogleId());
         }
 
-        // add end date/due date
-        if (newTask.getEndDate() != null) {
-            DateTime dateTime = new DateTime(newTask.getEndDate(),
+        // set title
+        googleTask.setTitle(localTask.getTitle());
+
+        // set status
+        if (localTask.getStatus()) {
+            googleTask.setStatus(this.GOOGLE_TASK_COMPLETED);
+        }
+        // set description/note
+        if (localTask.getDescription() != null) {
+            googleTask.setNotes(localTask.getDescription());
+        }
+
+        // set end date/due date
+        if (localTask.getEndDate() != null) {
+            DateTime dateTime = new DateTime(localTask.getEndDate(),
                     TimeZone.getDefault());
-            task.setDue(dateTime);
+            googleTask.setDue(dateTime);
         }
 
-        this.clientTask.tasks().insert(this.taskList.getId(), task).execute();
+        // upload local task
+        googleTask = this.clientTask.tasks()
+                .insert(this.googleTaskList.getId(), googleTask).execute();
+        localTask.setEtag(googleTask.getEtag());
     }
 
     private void createCalendar() throws IOException {
         logger.info("Adding a new calendar...");
         Calendar entry = new Calendar();
         entry.setSummary(NormalMessage.APP_NAME);
-        this.calendar = this.clientCalendar.calendars().insert(entry).execute();
+        this.googleCalendar = this.clientCalendar.calendars().insert(entry)
+                .execute();
 
     }
 
-    private void createOrGetCalendar() throws IOException {
-        if (this.DATA_STORE_CALENDAR_INFO_FILE.exists()) {
+    private void createOrGetCalendarAndTaskList() throws IOException {
+        if (this.DATA_STORE_CALENDAR_INFO_FILE.exists()
+                && this.DATA_STORE_TASKLIST_INFO_FILE.exists()) {
             this.getCalendarInfo();
-        } else {
-            this.createCalendar();
-            this.addAllEvents();
-            this.saveCalendarInfo();
-        }
-    }
-
-    private void createOrGetTaskList() throws IOException {
-        if (this.DATA_STORE_TASKLIST_INFO_FILE.exists()) {
             this.getTaskListInfo();
         } else {
+            this.createCalendar();
             this.createTaskList();
-            this.addAllTasks();
+            this.addAllEventsAndTasks();
+            this.saveCalendarInfo();
             this.saveTaskListInfo();
         }
     }
@@ -268,7 +307,8 @@ public class GoogleCalStorage extends Storage {
         logger.info("Adding a new task list...");
         TaskList entry = new TaskList();
         entry.setTitle(NormalMessage.APP_NAME);
-        this.taskList = this.clientTask.tasklists().insert(entry).execute();
+        this.googleTaskList = this.clientTask.tasklists().insert(entry)
+                .execute();
     }
 
     private void deleteFile(File file) {
@@ -289,8 +329,8 @@ public class GoogleCalStorage extends Storage {
         logger.info("Getting user's calendar info...");
         String json = new String(
                 Files.readAllBytes(this.DATA_STORE_CALENDAR_INFO_FILE.toPath()));
-        this.calendar = new Calendar();
-        this.calendar = this.gson.fromJson(json, Calendar.class);
+        this.googleCalendar = new Calendar();
+        this.googleCalendar = this.gson.fromJson(json, Calendar.class);
     }
 
     private void getClientSecrets() {
@@ -298,7 +338,7 @@ public class GoogleCalStorage extends Storage {
             logger.info("Getting client secrets...");
             this.clientSecrets = GoogleClientSecrets.load(
                     jsonFactory,
-                    new InputStreamReader(GoogleCalStorage.class
+                    new InputStreamReader(GoogleStorage.class
                             .getResourceAsStream(this.CLIENT_SECRETS_FILE)));
         } catch (Exception e) {
             logger.debug(this.CLIENT_SECRETS_FILE
@@ -309,11 +349,21 @@ public class GoogleCalStorage extends Storage {
         }
     }
 
+    private List<String> getTaskIdList() {
+        List<String> tempList = new ArrayList<String>();
+        List<Task> localTasklist = new ArrayList<Task>(this.dbFile.getData()
+                .getTask().getTaskMap().values());
+        for (Task i : localTasklist) {
+            tempList.add(i.getId());
+        }
+        return tempList;
+    }
+
     private void getTaskListInfo() throws IOException {
         logger.info("Getting user's tasklist info...");
         String json = new String(
                 Files.readAllBytes(this.DATA_STORE_TASKLIST_INFO_FILE.toPath()));
-        this.taskList = this.gson.fromJson(json, TaskList.class);
+        this.googleTaskList = this.gson.fromJson(json, TaskList.class);
     }
 
     private void initialize() throws Exception {
@@ -321,15 +371,13 @@ public class GoogleCalStorage extends Storage {
         this.initializeDataStoreFactory();
         this.getClientSecrets();
         this.setUpAuthorizationCodeFlow();
-        this.setUpGlobalCaleandarInstance();
-        this.setUpGlobalTaskInstance();
-        this.createOrGetCalendar();
-        this.createOrGetTaskList();
+        this.setUpGlobalInstance();
+        this.createOrGetCalendarAndTaskList();
     }
 
     private void initializeDataStoreFactory() throws IOException {
         logger.info("Initializing DataStoreFactory...");
-        dataStoreFactory = new FileDataStoreFactory(this.DATA_STORE_DIR);
+        fileDataStoreFactory = new FileDataStoreFactory(this.DATA_STORE_DIR);
     }
 
     private void initializeTransport() throws GeneralSecurityException,
@@ -341,7 +389,7 @@ public class GoogleCalStorage extends Storage {
     private void saveCalendarInfo() {
         logger.info("Saving calendar info to "
                 + this.DATA_STORE_CALENDAR_INFO_FILE);
-        String json = this.gson.toJson(this.calendar);
+        String json = this.gson.toJson(this.googleCalendar);
         try {
             Files.write(this.DATA_STORE_CALENDAR_INFO_FILE.toPath(),
                     json.getBytes());
@@ -353,8 +401,8 @@ public class GoogleCalStorage extends Storage {
     private void saveTaskListInfo() {
         logger.info("Saving tasklist info to "
                 + this.DATA_STORE_TASKLIST_INFO_FILE);
-        this.taskList.setUpdated(null);
-        String json = this.gson.toJson(this.taskList);
+        this.googleTaskList.setUpdated(null);
+        String json = this.gson.toJson(this.googleTaskList);
         try {
             Files.write(this.DATA_STORE_TASKLIST_INFO_FILE.toPath(),
                     json.getBytes());
@@ -370,24 +418,22 @@ public class GoogleCalStorage extends Storage {
                 httpTransport, jsonFactory, this.clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR + " "
                         + TasksScopes.TASKS)).setDataStoreFactory(
-                dataStoreFactory).build();
+                fileDataStoreFactory).build();
         this.credential = new AuthorizationCodeInstalledApp(flow,
                 new LocalServerReceiver()).authorize(this.userId);
     }
 
-    private void setUpGlobalCaleandarInstance() {
+    private void setUpGlobalInstance() {
         logger.info("Setting up global caleandar instance...");
         this.clientCalendar = new com.google.api.services.calendar.Calendar.Builder(
                 httpTransport, jsonFactory, this.credential)
         .setApplicationName(NormalMessage.APP_NAME).build();
 
-    }
-
-    private void setUpGlobalTaskInstance() {
         logger.info("Setting up global task instance...");
         this.clientTask = new com.google.api.services.tasks.Tasks.Builder(
                 httpTransport, jsonFactory, this.credential)
         .setApplicationName(NormalMessage.APP_NAME).build();
+
     }
 
 }

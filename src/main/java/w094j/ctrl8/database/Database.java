@@ -22,7 +22,7 @@ import com.google.gson.GsonBuilder;
  * statement history into an output file.
  */
 
-// @author A0112521B
+//@author A0112521B
 
 public class Database implements IDatabase {
 
@@ -55,7 +55,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public static Database getInstance() throws NoSuchFileException,
-    IOException {
+            IOException {
         if (instance == null) {
             instance = initInstance(null);
         }
@@ -84,7 +84,7 @@ public class Database implements IDatabase {
     @Override
     public void downloadFromStorage() throws Exception {
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
-        Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
+        Storage googleCalStorage = new GoogleStorage(this.file, this.gson);
         diskStorage.readData();
         googleCalStorage.readData();
     }
@@ -110,9 +110,9 @@ public class Database implements IDatabase {
     @Override
     public void saveToStorage() throws Exception {
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
-        Storage googleCalStorage = new GoogleCalStorage(this.file, this.gson);
+        Storage googleStorage = new GoogleStorage(this.file, this.gson);
         diskStorage.storeData();
-        googleCalStorage.storeData();
+        googleStorage.storeData();
     }
 
     @Override

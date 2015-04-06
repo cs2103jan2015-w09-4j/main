@@ -56,7 +56,7 @@ public class Task implements Comparable<Task> {
     private Date lastModifiedTime;
     private Boolean isSynced;
     private String googleId;
-    private String eTag;
+    private String etag;
     private LinkedList<Statement> statementHistory;
 
     /**
@@ -97,8 +97,8 @@ public class Task implements Comparable<Task> {
     /**
      * @return eTag
      */
-    public String getETag() {
-        return this.eTag;
+    public String getEtag() {
+        return this.etag;
     }
 
     /**
@@ -223,8 +223,8 @@ public class Task implements Comparable<Task> {
      *
      * @param eTag
      */
-    public void setETag(String eTag) {
-        this.eTag = eTag;
+    public void setEtag(String eTag) {
+        this.etag = eTag;
         this.isSynced = true;
     }
 
