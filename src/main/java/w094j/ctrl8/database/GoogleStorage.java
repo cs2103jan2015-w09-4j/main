@@ -42,13 +42,13 @@ import com.google.gson.Gson;
 /**
  * Google Calendar Storage
  */
-public class GoogleCalStorage extends Storage {
+public class GoogleStorage extends Storage {
     private static FileDataStoreFactory dataStoreFactory;
     private static final String ERROR_MESSAGE_FILE_NOT_FOUND = " file not found";
     private static HttpTransport httpTransport;
     private static JsonFactory jsonFactory = new JacksonFactory();
     private static Logger logger = LoggerFactory
-            .getLogger(GoogleCalStorage.class);
+            .getLogger(GoogleStorage.class);
     private Calendar calendar;
     private final String CLIENT_SECRETS_FILE = "/client_secrets.json";
     private com.google.api.services.calendar.Calendar clientCalendar;
@@ -78,7 +78,7 @@ public class GoogleCalStorage extends Storage {
      * @param gson
      * @throws Exception
      */
-    public GoogleCalStorage(DBfile file, Gson gson) throws Exception {
+    public GoogleStorage(DBfile file, Gson gson) throws Exception {
         super(file);
         this.dbFile = file;
         this.gson = gson;
@@ -298,7 +298,7 @@ public class GoogleCalStorage extends Storage {
             logger.info("Getting client secrets...");
             this.clientSecrets = GoogleClientSecrets.load(
                     jsonFactory,
-                    new InputStreamReader(GoogleCalStorage.class
+                    new InputStreamReader(GoogleStorage.class
                             .getResourceAsStream(this.CLIENT_SECRETS_FILE)));
         } catch (Exception e) {
             logger.debug(this.CLIENT_SECRETS_FILE
