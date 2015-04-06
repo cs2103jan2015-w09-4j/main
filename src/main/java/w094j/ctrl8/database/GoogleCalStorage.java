@@ -57,15 +57,15 @@ public class GoogleCalStorage extends Storage {
     private Credential credential;
     private final java.io.File DATA_STORE_CALENDAR_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/CalendarInfo");
+            + "/CalendarInfo");
     private final java.io.File DATA_STORE_CREDENTIAL_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/StoredCredential");
+            + "/StoredCredential");
     private final java.io.File DATA_STORE_DIR = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME);
     private final java.io.File DATA_STORE_TASKLIST_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/TaskListInfo");
+            + "/TaskListInfo");
     private DBfile dbFile;
     private final String EVENT_REMINDER_METHOD_EMAIL = "email";
     private final String EVENT_REMINDER_METHOD_POPUP = "popup";
@@ -94,7 +94,7 @@ public class GoogleCalStorage extends Storage {
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Calendar");
             this.clientCalendar.calendars().delete(this.calendar.getId())
-                    .execute();
+            .execute();
 
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Task List");
@@ -211,7 +211,7 @@ public class GoogleCalStorage extends Storage {
 
         // insert event
         this.clientCalendar.events().insert(this.calendar.getId(), event)
-                .execute();
+        .execute();
     }
 
     private void addTask(Task newTask) throws IOException {
@@ -333,7 +333,7 @@ public class GoogleCalStorage extends Storage {
     }
 
     private void initializeTransport() throws GeneralSecurityException,
-            IOException {
+    IOException {
         logger.info("Initializing Transport...");
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
@@ -370,7 +370,7 @@ public class GoogleCalStorage extends Storage {
                 httpTransport, jsonFactory, this.clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR + " "
                         + TasksScopes.TASKS)).setDataStoreFactory(
-                dataStoreFactory).build();
+                                dataStoreFactory).build();
         this.credential = new AuthorizationCodeInstalledApp(flow,
                 new LocalServerReceiver()).authorize(this.userId);
     }
@@ -379,7 +379,7 @@ public class GoogleCalStorage extends Storage {
         logger.info("Setting up global caleandar instance...");
         this.clientCalendar = new com.google.api.services.calendar.Calendar.Builder(
                 httpTransport, jsonFactory, this.credential)
-        .setApplicationName(NormalMessage.APP_NAME).build();
+                .setApplicationName(NormalMessage.APP_NAME).build();
 
     }
 
@@ -387,7 +387,7 @@ public class GoogleCalStorage extends Storage {
         logger.info("Setting up global task instance...");
         this.clientTask = new com.google.api.services.tasks.Tasks.Builder(
                 httpTransport, jsonFactory, this.credential)
-        .setApplicationName(NormalMessage.APP_NAME).build();
+                .setApplicationName(NormalMessage.APP_NAME).build();
     }
 
 }

@@ -83,7 +83,6 @@ public class TaskManager implements ITaskManager {
     public TaskManager(TaskManagerConfig config, AliasData aliasData,
             TaskData taskData) {
         assertNotNull(config); // Should not be a null object
-        System.out.println("in constructor");
         this.display = Display.getInstance();
         this.aliasData = aliasData;
         /*
