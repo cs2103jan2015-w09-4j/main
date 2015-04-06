@@ -13,6 +13,7 @@ import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.TaskManager;
@@ -71,8 +72,14 @@ public class Terminal {
         // Default: true
         boolean continueExecution = true;
         Response res = new Response();
+        
         String command = null;
+        
 
+        res.reply = NormalMessage.START_MESSAGE;
+        this.display.updateUI(res);
+        res.reply = NormalMessage.WELCOME_MESSAGE;
+        this.display.updateUI(res);
         while (continueExecution) {
             this.taskManager.displayNextCommandRequest();
             InputStream input = this.display.getInputStream();

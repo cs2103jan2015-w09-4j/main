@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.database.Factory;
 import w094j.ctrl8.message.CommandLineOptions;
 import w094j.ctrl8.message.ErrorMessage;
-import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
@@ -44,8 +43,6 @@ public class Start {
      */
     public static void main(String[] args) throws Exception {
 
-        logger.info(NormalMessage.START_MESSAGE);
-
         // add all existing Options
         optionList = CommandLineOptions.getOptionList();
 
@@ -53,8 +50,6 @@ public class Start {
         String filePath = parseArgs(args);
 
         factory = new Factory(filePath);
-
-        logger.info(NormalMessage.WELCOME_MESSAGE);
 
         Terminal terminal = Terminal.getInstance();
         terminal.start();
