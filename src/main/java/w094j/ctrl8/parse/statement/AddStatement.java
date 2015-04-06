@@ -37,10 +37,9 @@ public class AddStatement extends Statement {
      *
      * @param statementString
      *            the string to be added.
-     * @throws ParseException
-     *             if the parameters does not exist.
+     * @throws Exception
      */
-    public AddStatement(String statementString) throws ParseException {
+    public AddStatement(String statementString) throws Exception {
         super(CommandType.ADD, statementString);
         this.task = new Task();
         ParameterParser parameterParser = Parser.getInstance()

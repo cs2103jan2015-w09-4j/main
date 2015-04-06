@@ -302,14 +302,16 @@ public class Task implements Comparable<Task> {
 
     /**
      * Change incomplete task to complete task this.task should have a title
+     * 
+     * @throws Exception
      */
-    public void toCompleteTask() {
+    public void toCompleteTask() throws Exception {
         if (this.id == null) {
             this.id = new ObjectId().toString();
         }
 
-        if ((this.title != null) && this.title.equals("")) {
-            this.title = null;
+        if ((this.title == null) || this.title.equals("")) {
+            throw new Exception("No title");
         }
 
         if ((this.location != null) && this.location.equals("")) {
@@ -318,8 +320,7 @@ public class Task implements Comparable<Task> {
 
         if ((this.startDate != null) && (this.endDate != null)) {
             if (this.startDate.after(this.endDate)) {
-                this.startDate = null;
-                this.endDate = null;
+                throw new Exception("Start Date shouldn't be after End Date");
             }
         }
 
@@ -399,8 +400,7 @@ public class Task implements Comparable<Task> {
 
             this.changeTaskType();
             this.updateTimeAndSyncStatus();
-//            this.statementHistory.addLast(incompleteTask.statementHistory
-//                    .getLast());
+
             return true;
         } else {
             return false;

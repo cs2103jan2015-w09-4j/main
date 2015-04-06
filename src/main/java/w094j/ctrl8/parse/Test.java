@@ -5,7 +5,6 @@ import java.util.Map;
 import org.apache.commons.collections4.map.HashedMap;
 
 import w094j.ctrl8.database.config.ParserConfig;
-import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.statement.AddStatement;
 import w094j.ctrl8.parse.statement.ExitStatement;
 import w094j.ctrl8.parse.statement.Statement;
@@ -16,7 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Test {
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws Exception {
         Gson gson = new Gson();
         Map<ParameterType, String> test = new HashedMap<>();
         test.put(ParameterType.CATEGORY, "p");

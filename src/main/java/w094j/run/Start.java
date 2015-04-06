@@ -1,7 +1,5 @@
 package w094j.run;
 
-import java.io.IOException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -42,9 +40,9 @@ public class Start {
     /**
      * @param args
      *            TODO
-     * @throws IOException
+     * @throws Exception
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
         logger.info(NormalMessage.START_MESSAGE);
 
@@ -114,12 +112,12 @@ public class Start {
     private static void printHelp(Options optionList) {
         HelpFormatter formatter = new HelpFormatter();
         formatter
-                .printHelp(
-                        "Ctrl-8",
-                        "Welcome to Ctrl-8. Below are the options you can choose",
-                        optionList,
-                        "For more information please refer to https://github.com/cs2103jan2015-w09-4j/main",
-                        true);
+        .printHelp(
+                "Ctrl-8",
+                "Welcome to Ctrl-8. Below are the options you can choose",
+                optionList,
+                "For more information please refer to https://github.com/cs2103jan2015-w09-4j/main",
+                true);
     }
 
 }

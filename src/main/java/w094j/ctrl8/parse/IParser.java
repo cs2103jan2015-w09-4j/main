@@ -21,8 +21,9 @@ public interface IParser {
      *             when the input does not conform to some validation rules.
      * @throws DataException
      *             when the input causes some data operation to fail.
+     * @throws Exception
      */
     public Statement parse(String rawInput) throws ParseException,
-    DataException;
+            DataException, Exception;
 
 }

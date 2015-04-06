@@ -63,8 +63,10 @@ public class Terminal {
 
     /**
      * Take in the terminal object and run it to perform actual actions.
+     * 
+     * @throws Exception
      */
-    public void start() {
+    public void start() throws Exception {
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;

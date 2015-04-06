@@ -2,8 +2,6 @@ package w094j.ctrl8.parse;
 
 import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.ParserConfig;
-import w094j.ctrl8.exception.DataException;
-import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.statement.Statement;
 
 /**
@@ -73,8 +71,7 @@ public class Parser implements IParser {
     }
 
     @Override
-    public Statement parse(String rawInput) throws ParseException,
-            DataException {
+    public Statement parse(String rawInput) throws Exception {
         String inputWithoutAliases = this.aliasParser.replaceAllAlias(rawInput);
         return this.statementParser.parse(inputWithoutAliases);
     }

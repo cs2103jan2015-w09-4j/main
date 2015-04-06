@@ -1,12 +1,9 @@
 package w094j.ctrl8.parse;
 
-import java.security.InvalidParameterException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.StatementConfig;
-import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.statement.AddStatement;
 import w094j.ctrl8.parse.statement.AliasAddStatement;
 import w094j.ctrl8.parse.statement.AliasDeleteStatement;
@@ -75,10 +72,9 @@ public class StatementParser {
      * @param statementString
      *            statement that is devoid of aliases
      * @return an statement object
-     * @throws ParseException
-     *             if there is a problem with parsing of the statement.
+     * @throws Exception
      */
-    public Statement parse(String statementString) throws ParseException {
+    public Statement parse(String statementString) throws Exception {
 
         // Process Alias
 
