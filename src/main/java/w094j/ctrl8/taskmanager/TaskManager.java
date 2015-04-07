@@ -173,7 +173,7 @@ public class TaskManager implements ITaskManager {
         }
 
         // Informs user that his add statement is successful
-        if(isUndo == false){
+        if (isUndo == false) {
             Response res = new Response();
             res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
             this.display.updateUI(res);
@@ -195,10 +195,10 @@ public class TaskManager implements ITaskManager {
     }
 
     @Override
-    public void aliasAdd(String alias, String value, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
+    public void aliasAdd(String alias, String value, Statement statement,
+            boolean isUndo) throws CommandExecuteException {
         this.aliasData.addAlias(alias, value);
-        if(isUndo == false){
+        if (isUndo == false) {
             Response res = new Response();
             res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
             this.display.updateUI(res);
@@ -219,11 +219,11 @@ public class TaskManager implements ITaskManager {
         AliasData deleted = new AliasData();
         deleted.addAlias(query, value);
         this.aliasData.deleteAlias(query);
-        if(isUndo == false){
-        Response res = new Response();
-        res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
-        res.alias = deleted;
-        this.display.updateUI(res);
+        if (isUndo == false) {
+            Response res = new Response();
+            res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
+            res.alias = deleted;
+            this.display.updateUI(res);
         }
         try {
             this.database.saveToStorage();
@@ -265,7 +265,7 @@ public class TaskManager implements ITaskManager {
         }
         // update history
         this.taskData.updateHistory(taskID, statement);
-        if(isUndo == false){
+        if (isUndo == false) {
             Response res = new Response();
             res.reply = taskID + NormalMessage.DELETE_TASK_SUCCESSFUL;
             this.display.updateUI(res);
@@ -307,10 +307,11 @@ public class TaskManager implements ITaskManager {
                 e.printStackTrace();
             }
             // Informs user that his add statement is successful
-            if(isUndo == false){
-            Response res = new Response();
-            res.reply = task.getTitle() + NormalMessage.DONE_TASK_SUCCESSFUL;
-            this.display.updateUI(res);
+            if (isUndo == false) {
+                Response res = new Response();
+                res.reply = task.getTitle()
+                        + NormalMessage.DONE_TASK_SUCCESSFUL;
+                this.display.updateUI(res);
             }
         }
     }
@@ -372,8 +373,8 @@ public class TaskManager implements ITaskManager {
      * @param incompleteTask
      */
     @Override
-    public void modify(String query, Task incompleteTask, Statement statement,boolean isUndo)
-            throws CommandExecuteException {
+    public void modify(String query, Task incompleteTask, Statement statement,
+            boolean isUndo) throws CommandExecuteException {
 
         // check if the task exists
         if (this.taskData.isTaskExist(query)) {
@@ -382,10 +383,10 @@ public class TaskManager implements ITaskManager {
 
             try {
 
-                task.update(incompleteTask);                
+                task.update(incompleteTask);
                 logger.debug(new Gson().toJson(task));
             } catch (Exception e) {
-                logger.debug(e.getMessage(S));
+                logger.debug(e.getMessage());
                 throw new CommandExecuteException(e.getMessage());
             }
             try {
@@ -404,10 +405,11 @@ public class TaskManager implements ITaskManager {
             }
 
             // Informs user that his add statement is successful
-            if(isUndo == false){
-               Response res = new Response();
-               res.reply = task.getTitle() + NormalMessage.MODIFY_TASK_SUCCESSFUL;
-               this.display.updateUI(res);
+            if (isUndo == false) {
+                Response res = new Response();
+                res.reply = task.getTitle()
+                        + NormalMessage.MODIFY_TASK_SUCCESSFUL;
+                this.display.updateUI(res);
             }
         } else {
             throw new CommandExecuteException(
