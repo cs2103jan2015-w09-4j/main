@@ -204,6 +204,12 @@ public class TaskManager implements ITaskManager {
             this.display.updateUI(res);
 // this.updateHistory(statement);
         }
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -219,7 +225,12 @@ public class TaskManager implements ITaskManager {
         res.alias = deleted;
         this.display.updateUI(res);
         }
-// this.updateHistory(statement);
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -235,7 +246,12 @@ public class TaskManager implements ITaskManager {
                 this.taskData.remove(taskID);
 
                 // Update the database
-// this.database.deleteTask(removedTask);
+                try {
+                    this.database.saveToStorage();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 logger.debug("task removed successfully");
 
             } else {
@@ -276,19 +292,19 @@ public class TaskManager implements ITaskManager {
             if (task.getStatus() == true) {
                 logger.debug("The task is already done");
             }
-            try {
-                this.database.saveToStorage();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
+            task.setStatus(true);
             try {
                 // Update the TaskMap
                 this.taskData.updateTaskMap(query, task, statement);
             } catch (Exception e) {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+            }
+            try {
+                this.database.saveToStorage();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
             // Informs user that his add statement is successful
             if(isUndo == false){
@@ -365,19 +381,23 @@ public class TaskManager implements ITaskManager {
             Task task = this.taskData.get(query);
 
             try {
-                // Add to database
-// this.database.deleteTask(task);
-                task.update(incompleteTask);
-// this.database.saveTask(task);
+
+                task.update(incompleteTask);                
                 logger.debug(new Gson().toJson(task));
             } catch (Exception e) {
-                logger.debug(e.getMessage());
+                logger.debug(e.getMessage(S));
                 throw new CommandExecuteException(e.getMessage());
             }
             try {
                 // Update the TaskMap
                 this.taskData.updateTaskMap(query, task, statement);
                 logger.debug("update task");
+                try {
+                    this.database.saveToStorage();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
