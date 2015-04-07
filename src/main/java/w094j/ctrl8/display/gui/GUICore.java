@@ -25,7 +25,7 @@ import w094j.ctrl8.message.NormalMessage;
  * <pre>
  * E.g
  * new GUICore(new String[] {""});
- *
+ * 
  * Refer to
  * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
  * </pre>
@@ -37,9 +37,9 @@ public class GUICore extends Application implements Runnable {
     private static ConsoleSceneController consoleController;
     private static Logger logger = LoggerFactory.getLogger(GUICore.class);
     private GUIDisplayConfig config;
+    private Thread main;
     private Stage primaryStage; // Default stage
     private BorderPane rootLayout; // Wrapper for internal components
-    private Thread main;
 
     public GUICore() {
         /*
@@ -116,7 +116,7 @@ public class GUICore extends Application implements Runnable {
         this.initRootLayout();
 
         this.showConsole();
-        
+
         synchronized (this) {
             this.notify();
         }
@@ -136,13 +136,14 @@ public class GUICore extends Application implements Runnable {
             // Show the scene containing the root layout
             Scene rootLayoutScene = new Scene(this.rootLayout);
             this.primaryStage.setScene(rootLayoutScene);
-            this.primaryStage.setMinHeight(438); // trial and error numbers
-            this.primaryStage.setMinWidth(516); // trial and error numbers
+
             this.primaryStage.setResizable(true); /*
-             * Enable resizing the window
-             */
+                                                   * Enable resizing the window
+                                                   */
             this.primaryStage.show();
 
+            this.primaryStage.setMinHeight(this.primaryStage.getHeight());
+            this.primaryStage.setMinWidth(this.primaryStage.getWidth());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -162,7 +163,7 @@ public class GUICore extends Application implements Runnable {
 
             // TODO
             consoleScene
-            .setStyle("-fx-faint-focus-color: transparent;-fx-focus-color: transparent;");
+                    .setStyle("-fx-faint-focus-color: transparent;-fx-focus-color: transparent;");
 
             // Place console scene in center pane of the rootLayout
             this.rootLayout.setCenter(consoleScene);
