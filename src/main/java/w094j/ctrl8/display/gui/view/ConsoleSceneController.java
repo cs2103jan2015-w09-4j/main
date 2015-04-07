@@ -17,6 +17,7 @@ import w094j.ctrl8.database.config.DisplayControllerConfig;
 import w094j.ctrl8.database.config.GUITextDisplayConfig;
 import w094j.ctrl8.database.config.GUITextInputConfig;
 import w094j.ctrl8.display.gui.GUICore;
+import w094j.ctrl8.display.gui.model.FXTextFieldInputStream;
 import w094j.ctrl8.display.gui.model.InputStreamThread;
 
 public class ConsoleSceneController {
@@ -29,7 +30,7 @@ public class ConsoleSceneController {
 
     public byte[] input;
     private String displayBuffer; // Buffer for the display
-    private InputStreamThread isThread;
+    private FXTextFieldInputStream inputStream;
 
     private Logger logger = LoggerFactory
             .getLogger(ConsoleSceneController.class);
@@ -61,7 +62,7 @@ public class ConsoleSceneController {
     }
 
     public InputStream getInputStream() {
-        return this.isThread.getInputStream();
+        return this.inputStream;
     }
 
     /**
@@ -71,6 +72,7 @@ public class ConsoleSceneController {
      * instructions.
      */
     public void onEnter() {
+        /*
         synchronized (this.isThread) {
             this.isThread.run(); // Tells the thread to pick up the String
 
@@ -79,6 +81,7 @@ public class ConsoleSceneController {
         // Update displayed text
         this.textInput.setText(new String()); // Flushes the display
         this.textInput.appendText(""); // Activates listener
+        */
 
     }
 
@@ -149,7 +152,7 @@ public class ConsoleSceneController {
          * TextArea. A listener notifies the inputstream to unblock itself once
          * enter button is pressed
          */
-        this.isThread = new InputStreamThread(this.textInput, this);
+        this.inputStream = new FXTextFieldInputStream(textInput);
         this.logger.debug("InputStream Thread created, Init complete");
     }
 }
