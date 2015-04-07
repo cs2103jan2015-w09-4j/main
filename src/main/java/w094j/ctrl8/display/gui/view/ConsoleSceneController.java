@@ -18,7 +18,6 @@ import w094j.ctrl8.database.config.GUITextDisplayConfig;
 import w094j.ctrl8.database.config.GUITextInputConfig;
 import w094j.ctrl8.display.gui.GUICore;
 import w094j.ctrl8.display.gui.model.FXTextFieldInputStream;
-import w094j.ctrl8.display.gui.model.InputStreamThread;
 
 public class ConsoleSceneController {
     private static final String __newline = "\n";
@@ -63,26 +62,6 @@ public class ConsoleSceneController {
 
     public InputStream getInputStream() {
         return this.inputStream;
-    }
-
-    /**
-     * Called when the user presses the "Enter" key on his keyboard while the
-     * ConsoleScene is up. Reads the text the user has typed into the TextField
-     * textInput, as a String and passes it to the terminal for interpreting
-     * instructions.
-     */
-    public void onEnter() {
-        /*
-        synchronized (this.isThread) {
-            this.isThread.run(); // Tells the thread to pick up the String
-
-        }
-
-        // Update displayed text
-        this.textInput.setText(new String()); // Flushes the display
-        this.textInput.appendText(""); // Activates listener
-        */
-
     }
 
     /**
