@@ -24,10 +24,12 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Calendar;
@@ -45,10 +47,15 @@ import com.google.gson.Gson;
 public class GoogleStorage extends Storage {
     private static FileDataStoreFactory dataStoreFactory;
     private static final String ERROR_MESSAGE_FILE_NOT_FOUND = " file not found";
+    private static DataStore<String> eventDataStore;
+    private static final int FULL_SYNC_YEAR_FROM_NOW = -1;
+    private static final String GOOGLE_EVENT_CANCELLED = "cancelled";
+    private static final String GOOGLE_TASK_COMPLETED = "completed";
     private static HttpTransport httpTransport;
     private static JsonFactory jsonFactory = new JacksonFactory();
-    private static Logger logger = LoggerFactory
-            .getLogger(GoogleStorage.class);
+    private static Logger logger = LoggerFactory.getLogger(GoogleStorage.class);
+    private static final String SYNC_TOKEN_KEY = "syncToken";
+    private static DataStore<String> syncSettingsDataStore;
     private Calendar calendar;
     private final String CLIENT_SECRETS_FILE = "/client_secrets.json";
     private com.google.api.services.calendar.Calendar clientCalendar;
@@ -69,7 +76,11 @@ public class GoogleStorage extends Storage {
     private DBfile dbFile;
     private final String EVENT_REMINDER_METHOD_EMAIL = "email";
     private final String EVENT_REMINDER_METHOD_POPUP = "popup";
+    private final String EVENT_STORE = "EventStore";
+    private com.google.api.services.calendar.model.Events events;
     private Gson gson;
+    private com.google.api.services.calendar.Calendar.Events.List request;
+    private final String SYNC_SETTINGS = "SyncSettings";
     private TaskList taskList;
     private String userId = "user";
 
@@ -83,6 +94,7 @@ public class GoogleStorage extends Storage {
         this.dbFile = file;
         this.gson = gson;
         this.initialize();
+        this.sync();
     }
 
     /**
@@ -128,6 +140,19 @@ public class GoogleStorage extends Storage {
 
     }
 
+    /**
+     * Sync with Google Calendar and Google Task
+     *
+     * @throws IOException
+     */
+    public void sync() throws IOException {
+        eventDataStore = dataStoreFactory.getDataStore(this.EVENT_STORE);
+        syncSettingsDataStore = dataStoreFactory
+                .getDataStore(this.SYNC_SETTINGS);
+        this.addNewLocalEventsToGoogle();
+        this.syncCalendar();
+    }
+
     private void addAllEvents() throws IOException {
         logger.info("Adding all events...");
         List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
@@ -153,49 +178,45 @@ public class GoogleStorage extends Storage {
         logger.info("Added all tasks");
     }
 
-    private void addEvent(Task newEvent) throws IOException {
-        logger.info("Adding event: " + newEvent.getTitle());
-        Event event = new Event();
+    private void addEvent(Task localEvent) throws IOException {
+        logger.info("Adding event: " + localEvent.getTitle());
+        Event googleEvent = new Event();
         DateTime dateTime;
 
-        // add title
-        event.setSummary(newEvent.getTitle());
+        // set title
+        googleEvent.setSummary(localEvent.getTitle());
 
-        // add start date
-        dateTime = new DateTime(newEvent.getStartDate(), TimeZone.getDefault());
-        event.setStart(new EventDateTime().setDateTime(dateTime));
+        // set start date
+        dateTime = new DateTime(localEvent.getStartDate(),
+                TimeZone.getDefault());
+        googleEvent.setStart(new EventDateTime().setDateTime(dateTime));
 
-        // add end date
-        dateTime = new DateTime(newEvent.getEndDate(), TimeZone.getDefault());
-        event.setEnd(new EventDateTime().setDateTime(dateTime));
+        // set end date
+        dateTime = new DateTime(localEvent.getEndDate(), TimeZone.getDefault());
+        googleEvent.setEnd(new EventDateTime().setDateTime(dateTime));
 
-        // add category
-        if (newEvent.getCategory() != null) {
-            event.setKind(newEvent.getCategory());
+        // set description
+        if (localEvent.getDescription() != null) {
+            googleEvent.setDescription(localEvent.getDescription());
         }
 
-        // add description
-        if (newEvent.getDescription() != null) {
-            event.setDescription(newEvent.getDescription());
+        // set location
+        if (localEvent.getLocation() != null) {
+            googleEvent.setLocation(localEvent.getLocation());
         }
 
-        // add location
-        if (newEvent.getLocation() != null) {
-            event.setLocation(newEvent.getLocation());
-        }
-
-        // add reminder
-        if (newEvent.getReminder() != null) {
+        // set reminder
+        if (localEvent.getReminder() != null) {
             EventReminder eventReminderEmail = new EventReminder();
             eventReminderEmail.setMethod(this.EVENT_REMINDER_METHOD_EMAIL);
-            eventReminderEmail.setMinutes((int) (newEvent.getStartDate()
-                    .getTime() - newEvent.getReminder().getTime())
+            eventReminderEmail.setMinutes((int) (localEvent.getStartDate()
+                    .getTime() - localEvent.getReminder().getTime())
                     / (60 * 1000));
 
             EventReminder eventReminderPopUp = new EventReminder();
             eventReminderPopUp.setMethod(this.EVENT_REMINDER_METHOD_POPUP);
-            eventReminderPopUp.setMinutes((int) (newEvent.getStartDate()
-                    .getTime() - newEvent.getReminder().getTime())
+            eventReminderPopUp.setMinutes((int) (localEvent.getStartDate()
+                    .getTime() - localEvent.getReminder().getTime())
                     / (60 * 1000));
 
             List<EventReminder> eventReminderList = new ArrayList<EventReminder>();
@@ -206,34 +227,61 @@ public class GoogleStorage extends Storage {
             reminders.setUseDefault(false);
             reminders.setOverrides(eventReminderList);
 
-            event.setReminders(reminders);
+            googleEvent.setReminders(reminders);
         }
 
         // insert event
-        this.clientCalendar.events().insert(this.calendar.getId(), event)
-                .execute();
+        googleEvent = this.clientCalendar.events()
+                .insert(this.calendar.getId(), googleEvent).execute();
+
+        // set google id and etag
+        localEvent.setGoogleId(googleEvent.getId());
+        localEvent.setEtag(googleEvent.getEtag());
     }
 
-    private void addTask(Task newTask) throws IOException {
-        logger.info("Adding task: " + newTask.getTitle());
-        com.google.api.services.tasks.model.Task task = new com.google.api.services.tasks.model.Task();
-
-        // add title
-        task.setTitle(newTask.getTitle());
-
-        // add description/note
-        if (newTask.getDescription() != null) {
-            task.setNotes(newTask.getDescription());
+    private void addNewLocalEventsToGoogle() throws IOException {
+        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
+                .getTaskMap().values());
+        for (Task i : events) {
+            if ((i.getTaskType() == TaskType.TIMED)
+                    && (i.getGoogleId() == null)) {
+                this.addEvent(i);
+            }
         }
 
-        // add end date/due date
-        if (newTask.getEndDate() != null) {
-            DateTime dateTime = new DateTime(newTask.getEndDate(),
+    }
+
+    private void addTask(Task localTask) throws IOException {
+        logger.info("Adding task: " + localTask.getTitle());
+        com.google.api.services.tasks.model.Task googleTask = new com.google.api.services.tasks.model.Task();
+
+        // set title
+        googleTask.setTitle(localTask.getTitle());
+
+        // set status
+        if (localTask.getStatus()) {
+            googleTask.setStatus(GOOGLE_TASK_COMPLETED);
+        }
+
+        // set description/note
+        if (localTask.getDescription() != null) {
+            googleTask.setNotes(localTask.getDescription());
+        }
+
+        // set end date/due date
+        if (localTask.getEndDate() != null) {
+            DateTime dateTime = new DateTime(localTask.getEndDate(),
                     TimeZone.getDefault());
-            task.setDue(dateTime);
+            googleTask.setDue(dateTime);
         }
 
-        this.clientTask.tasks().insert(this.taskList.getId(), task).execute();
+        // insert task
+        googleTask = this.clientTask.tasks()
+                .insert(this.taskList.getId(), googleTask).execute();
+
+        // set google id and etag
+        localTask.setGoogleId(googleTask.getId());
+        localTask.setEtag(googleTask.getEtag());
     }
 
     private void createCalendar() throws IOException {
@@ -309,6 +357,13 @@ public class GoogleStorage extends Storage {
         }
     }
 
+    private java.util.Date getStartSyncDate() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(new java.util.Date());
+        cal.add(java.util.Calendar.YEAR, FULL_SYNC_YEAR_FROM_NOW);
+        return cal.getTime();
+    }
+
     private void getTaskListInfo() throws IOException {
         logger.info("Getting user's tasklist info...");
         String json = new String(
@@ -338,6 +393,18 @@ public class GoogleStorage extends Storage {
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
+    private void loadSyncToken() throws IOException {
+        logger.info("Loading Sync Token...");
+        String syncToken = syncSettingsDataStore.get(SYNC_TOKEN_KEY);
+
+        if (syncToken == null) {
+            this.request.setTimeMin(new DateTime(this.getStartSyncDate(),
+                    TimeZone.getDefault()));
+        } else {
+            this.request.setSyncToken(syncToken);
+        }
+    }
+
     private void saveCalendarInfo() {
         logger.info("Saving calendar info to "
                 + this.DATA_STORE_CALENDAR_INFO_FILE);
@@ -362,6 +429,12 @@ public class GoogleStorage extends Storage {
             e1.printStackTrace();
         }
 
+    }
+
+    private void setNextSyncToken() throws IOException {
+        logger.info("Setting next sync token...");
+        syncSettingsDataStore.set(SYNC_TOKEN_KEY,
+                this.events.getNextSyncToken());
     }
 
     private void setUpAuthorizationCodeFlow() throws IOException {
@@ -390,4 +463,62 @@ public class GoogleStorage extends Storage {
         .setApplicationName(NormalMessage.APP_NAME).build();
     }
 
+    private void syncAllEvents() throws IOException {
+        logger.info("Syncing all events...");
+        String pageToken = null;
+        this.events = null;
+        do {
+            this.request.setPageToken(pageToken);
+
+            try {
+                this.events = this.request.execute();
+            } catch (GoogleJsonResponseException e) {
+                if (e.getStatusCode() == 410) {
+                    logger.info("Invalid sync token, clearing event store and re-syncing...");
+                    syncSettingsDataStore.delete(SYNC_TOKEN_KEY);
+                    eventDataStore.clear();
+                    this.sync();
+                } else {
+                    throw e;
+                }
+            }
+
+            List<Event> items = this.events.getItems();
+            if (items.size() == 0) {
+                logger.info("No new events to sync.");
+            } else {
+                for (Event event : items) {
+                    this.syncEvent(event);
+                }
+            }
+
+            pageToken = this.events.getNextPageToken();
+        } while (pageToken != null);
+    }
+
+    private void syncCalendar() throws IOException {
+        logger.info("Syncing Google Calendar...");
+        this.request = this.clientCalendar.events().list(this.calendar.getId());
+        this.loadSyncToken();
+        this.syncAllEvents();
+        this.setNextSyncToken();
+    }
+
+    private void syncEvent(Event event) throws IOException {
+        // TODO: check last modified time and delete event/modify event/change to task
+        if (GOOGLE_EVENT_CANCELLED.equals(event.getStatus())
+                && eventDataStore.containsKey(event.getId())) {
+            eventDataStore.delete(event.getId());
+            logger.info("Deleting event: " + event.getSummary()
+                    + " Google ID: " + event.getId());
+        } else {
+            eventDataStore.set(event.getId(), event.toString());
+            logger.info("Syncing event: " + event.getSummary() + " Google ID: "
+                    + event.getId());
+        }
+    }
+
+    private void syncTaskList() {
+
+    }
 }
