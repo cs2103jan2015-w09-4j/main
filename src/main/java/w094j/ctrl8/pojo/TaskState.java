@@ -8,18 +8,13 @@ public class TaskState {
     private Task initTask;
     private Task finalTask;
     private ArrayList<Actions> actionsList;
-    
-    public TaskState(Task task){
-        this.initTask = null;
-        this.finalTask = task;
-        this.actionsList = new ArrayList<Actions>();
-    }
+    private Actions addAction;
     
     public TaskState(Task task, Statement statement) {
-        this.initTask = null;
+        this.initTask = task;
         this.finalTask = task;
         this.actionsList = new ArrayList<Actions>();
-        this.actionsList.add(new Actions(statement, task.getId()));
+        this.addAction = new Actions(statement, task.getId());
     }
 
     public Task getInitTask(){
