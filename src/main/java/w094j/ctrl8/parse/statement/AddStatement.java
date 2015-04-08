@@ -58,9 +58,9 @@ public class AddStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
-        taskManager.add(this.task, this);
+        taskManager.add(this.task, this, isUndo);
     }
 }

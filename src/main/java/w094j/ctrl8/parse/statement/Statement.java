@@ -47,7 +47,7 @@ public abstract class Statement {
      * @throws CommandExecuteException
      *             when the execution of the command has problems.
      */
-    public abstract void execute(ITaskManager taskManager)
+    public abstract void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException;
 
     /**

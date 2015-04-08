@@ -23,7 +23,7 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void add(Task task, Statement statement)
+    public void add(Task task, Statement statement,boolean isUndo)
             throws CommandExecuteException;
 
     /**
@@ -39,7 +39,7 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void aliasAdd(String alias, String value, Statement statement)
+    public void aliasAdd(String alias, String value, Statement statement,boolean isUndo)
             throws CommandExecuteException;
 
     /**
@@ -49,7 +49,7 @@ public interface ITaskManager {
      * @param statement
      * @throws DataException
      */
-    public void aliasDelete(String query, Statement statement)
+    public void aliasDelete(String query, Statement statement,boolean isUndo)
             throws DataException;
 
     /**
@@ -67,7 +67,7 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void delete(String taskID, Statement statement)
+    public void delete(String taskID, Statement statement, boolean isUndo)
             throws CommandExecuteException;
 
     /**
@@ -77,7 +77,7 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void done(String query, Statement statement)
+    public void done(String query, Statement statement, boolean isUndo)
             throws CommandExecuteException;
 
     /**
@@ -133,7 +133,7 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void modify(String query, Task incompleteTask, Statement statement)
+    public void modify(String query, Task incompleteTask, Statement statement, boolean isUndo)
             throws CommandExecuteException;
 
     /**

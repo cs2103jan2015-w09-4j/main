@@ -16,7 +16,7 @@ public class ViewStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         taskManager.view();
     }

@@ -95,7 +95,7 @@ public class Terminal {
 
             // Passes string to Statement.java to parse into a command
             try {
-                parser.parse(command).execute(this.taskManager);
+                parser.parse(command).execute(this.taskManager, false);
             } catch (InvalidParameterException e) {
                 res.reply = e.getMessage();
                 this.display.updateUI(res);

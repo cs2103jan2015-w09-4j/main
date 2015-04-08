@@ -28,7 +28,7 @@ public class SearchStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
         taskManager.search(this.query, this.task);

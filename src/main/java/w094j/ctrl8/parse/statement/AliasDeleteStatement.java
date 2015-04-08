@@ -24,11 +24,11 @@ public class AliasDeleteStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // TODO Link to Terminal
         try {
-            taskManager.aliasDelete(this.query, this);
+            taskManager.aliasDelete(this.query, this, isUndo);
         } catch (DataException e) {
             e.printStackTrace();
         }

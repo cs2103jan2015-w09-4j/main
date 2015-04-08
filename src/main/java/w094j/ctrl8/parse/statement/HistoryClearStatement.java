@@ -24,7 +24,7 @@ public class HistoryClearStatement extends StatementOnePosInt {
     }
 
     @Override
-    public void execute(ITaskManager taskManager)
+    public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         taskManager.historyClear(Integer.parseInt(this.query));
     }

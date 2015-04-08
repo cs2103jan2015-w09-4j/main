@@ -14,16 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FXTextFieldInputStream extends InputStream {
-    byte[] contents;
+    byte[] contents = new byte[0];
     int pointer = 0;
     private String delimiter = "\\A";
 
     private Logger logger = LoggerFactory
             .getLogger(FXTextFieldInputStream.class);
-    private Semaphore mutex;
 
     public FXTextFieldInputStream(final TextField text) {
-        this.mutex = new Semaphore(1);
 
         text.addEventHandler(KeyEvent.KEY_PRESSED,
                 new EventHandler<KeyEvent>() {
@@ -31,33 +29,29 @@ public class FXTextFieldInputStream extends InputStream {
                     @Override
                     public void handle(KeyEvent event) {
                         if (event.getCode() == KeyCode.ENTER) {
+                            if(FXTextFieldInputStream.this.pointer >=FXTextFieldInputStream.this.contents.length){
+                                FXTextFieldInputStream.this.pointer = 0;
+                                FXTextFieldInputStream.this.contents = text.getText().getBytes();
+                            } else {
+                                FXTextFieldInputStream.this.contents = (FXTextFieldInputStream.this.contents.toString()+text.getText()+delimiter)
+                                    .getBytes();
+                            }
 
                             // Replace with current buffer values
-                            contents = (text.getText().concat(delimiter))
-                                    .getBytes(); /*
+                             /*
                                                   * TODO replace with proper
                                                   * delimiter
                                                   */
-                            pointer = 0;
 
-                            logger.debug("Updated inputstream with: "
+                            logger.debug("Added to inputstream: "
                                     + text.getText());
 
                             // Flush the textarea
                             text.setText(new String());
                             text.appendText(""); // Updates all listeners
-
-                            mutex.release();
-
                         }
                     }
                 });
-
-        try {
-            this.mutex.acquire();
-        } catch (InterruptedException e) {
-            logger.info("InputStream blocked (initially)");
-        }
     };
 
     // Disables the default constructor
@@ -68,15 +62,11 @@ public class FXTextFieldInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         if (contents == null || pointer >= contents.length) {
-            try {
-                mutex.acquire();
-            } catch (InterruptedException e) {
-                logger.debug("Acquired mutex");
-            }
+            return -1;
         } else {
-            // Do not lock
+            return this.contents[pointer++];
         }
-        return this.contents[pointer++];
+        
     }
 
 }

@@ -24,7 +24,7 @@ public class AliasStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager) {
+    public void execute(ITaskManager taskManager, boolean isUndo) {
         // TODO Link to Terminal
         logger.debug("in alias");
         taskManager.alias();

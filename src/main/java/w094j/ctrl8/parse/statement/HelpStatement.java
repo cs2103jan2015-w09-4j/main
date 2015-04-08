@@ -34,7 +34,7 @@ public class HelpStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager) {
+    public void execute(ITaskManager taskManager, boolean isUndo) {
         taskManager.help(this.command);
     }
 
