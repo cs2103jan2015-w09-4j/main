@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
@@ -64,15 +65,15 @@ public class GoogleStorage extends Storage {
     private Credential credential;
     private final java.io.File DATA_STORE_CALENDAR_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/CalendarInfo");
+            + "/CalendarInfo");
     private final java.io.File DATA_STORE_CREDENTIAL_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/StoredCredential");
+            + "/StoredCredential");
     private final java.io.File DATA_STORE_DIR = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME);
     private final java.io.File DATA_STORE_TASKLIST_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/TaskListInfo");
+            + "/TaskListInfo");
     private DBfile dbFile;
     private final String EVENT_REMINDER_METHOD_EMAIL = "email";
     private final String EVENT_REMINDER_METHOD_POPUP = "popup";
@@ -106,7 +107,7 @@ public class GoogleStorage extends Storage {
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Calendar");
             this.clientCalendar.calendars().delete(this.calendar.getId())
-                    .execute();
+            .execute();
 
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Task List");
@@ -155,8 +156,8 @@ public class GoogleStorage extends Storage {
 
     private void addAllEvents() throws IOException {
         logger.info("Adding all events...");
-        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
-                .getTaskMap().values());
+        List<Task> events = Arrays.asList(this.dbFile.getData().getTask()
+                .getTaskList());
         for (Task i : events) {
             if (i.getTaskType() == TaskType.TIMED) {
                 this.addAndModifyEvent(i);
@@ -167,8 +168,8 @@ public class GoogleStorage extends Storage {
 
     private void addAllTasks() throws IOException {
         logger.info("Adding all tasks...");
-        List<Task> tasks = new ArrayList<Task>(this.dbFile.getData().getTask()
-                .getTaskMap().values());
+        List<Task> tasks = Arrays.asList(this.dbFile.getData().getTask()
+                .getTaskList());
         for (Task i : tasks) {
             if (i.getTaskType() != TaskType.TIMED) {
                 this.addAndModifyTask(i);
@@ -385,7 +386,7 @@ public class GoogleStorage extends Storage {
     }
 
     private void initializeTransport() throws GeneralSecurityException,
-            IOException {
+    IOException {
         logger.info("Initializing Transport...");
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
@@ -440,7 +441,7 @@ public class GoogleStorage extends Storage {
                 httpTransport, jsonFactory, this.clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR + " "
                         + TasksScopes.TASKS)).setDataStoreFactory(
-                dataStoreFactory).build();
+                                dataStoreFactory).build();
         this.credential = new AuthorizationCodeInstalledApp(flow,
                 new LocalServerReceiver()).authorize(this.userId);
     }
@@ -449,7 +450,7 @@ public class GoogleStorage extends Storage {
         logger.info("Setting up global caleandar instance...");
         this.clientCalendar = new com.google.api.services.calendar.Calendar.Builder(
                 httpTransport, jsonFactory, this.credential)
-        .setApplicationName(NormalMessage.APP_NAME).build();
+                .setApplicationName(NormalMessage.APP_NAME).build();
 
     }
 
@@ -457,7 +458,7 @@ public class GoogleStorage extends Storage {
         logger.info("Setting up global task instance...");
         this.clientTask = new com.google.api.services.tasks.Tasks.Builder(
                 httpTransport, jsonFactory, this.credential)
-        .setApplicationName(NormalMessage.APP_NAME).build();
+                .setApplicationName(NormalMessage.APP_NAME).build();
     }
 
     private void syncAllEvents() throws IOException {
@@ -520,8 +521,9 @@ public class GoogleStorage extends Storage {
     }
 
     private void uploadNewEventsAndTasksToGoogle() throws IOException {
-        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
-                .getTaskMap().values());
+        List<Task> events = Arrays.asList(this.dbFile.getData().getTask()
+                .getTaskList());
+
         for (Task i : events) {
             if (i.getTaskType() == TaskType.TIMED) {
                 if ((i.getIsSynced() == null) || !i.getIsSynced()) {
