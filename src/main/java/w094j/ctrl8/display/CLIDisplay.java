@@ -1,11 +1,6 @@
 package w094j.ctrl8.display;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.CLIDisplayConfig;
 import w094j.ctrl8.exception.OutputExecuteException;
-import w094j.ctrl8.message.ErrorMessage;
 import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
@@ -28,16 +22,13 @@ import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
 /**
- * Class implements Display Interface as a simple CLI How to use: To get
- * userinput as a String, call CLIDisplay.getUserInput() To display an output,
- * call CLIDisplay.outputMessage(message)
+ * Class implements Display Interface as a simple CLI
  */
 
 // @author A0112092W
 public class CLIDisplay extends Display {
     private static CLIDisplay instance;
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
-    private BufferedReader br;
     private InputStream inStream;
 
     // @author A0110787A
@@ -48,7 +39,6 @@ public class CLIDisplay extends Display {
      * Public constructor for a CLI Display
      */
     CLIDisplay(CLIDisplayConfig cliDisplayConfig) {
-        this.br = new BufferedReader(new InputStreamReader(System.in));
     }
 
     /**
@@ -90,10 +80,7 @@ public class CLIDisplay extends Display {
     // @author A0112092W
     @Override
     public InputStream getInputStream() {
-
-        this.inStream = new ByteArrayInputStream(this.getUserInput().getBytes(
-                StandardCharsets.UTF_8));
-        return this.inStream;
+        return System.in;
     }
 
     // @author A0110787A
@@ -215,34 +202,6 @@ public class CLIDisplay extends Display {
 
     }
 
-    private void outputActions(ArrayList<Actions> actions) {
-        if(actions.size() == 0){
-            System.out.println("No actions found");
-        }
-        for (int i = 0; i <actions.size(); i++) {
-            Statement statement = actions.get(i).getStatement();
-            System.out.print(i + 1 + ". Command:");
-            System.out.print(statement.getCommand().toString());
-            System.out.print(" String:");
-            System.out.println(statement.getStatementArgumentsOnly());
-        }
-        
-    }
-
-    // @author A0112092W
-    // temporary function to get user's input before input stream is properly
-// implemented.
-    private String getUserInput() {
-        String nextLine = null;
-        try {
-            nextLine = this.br.readLine();
-        } catch (IOException e) {
-            this.outputMessage(ErrorMessage.ERROR_READING_INPUT);
-            return null;
-        }
-        return nextLine;
-    }
-
     private String[][] initNullTaskTable(String[][] table, int taskNumber) {
         int i = taskNumber;
         table[i][0] = "-";
@@ -283,6 +242,20 @@ public class CLIDisplay extends Display {
         table[0][9] = "Status";
 
         return table;
+    }
+
+    private void outputActions(ArrayList<Actions> actions) {
+        if (actions.size() == 0) {
+            System.out.println("No actions found");
+        }
+        for (int i = 0; i < actions.size(); i++) {
+            Statement statement = actions.get(i).getStatement();
+            System.out.print(i + 1 + ". Command:");
+            System.out.print(statement.getCommand().toString());
+            System.out.print(" String:");
+            System.out.println(statement.getStatementArgumentsOnly());
+        }
+
     }
 
     private void outputAliases(AliasData alias) {
