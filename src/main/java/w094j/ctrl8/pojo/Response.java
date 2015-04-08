@@ -1,8 +1,9 @@
 //@author A0110787A
 package w094j.ctrl8.pojo;
 
+import java.util.ArrayList;
+
 import w094j.ctrl8.data.AliasData;
-import w094j.ctrl8.parse.statement.CommandType;
 
 /**
  * Response object defines what a Display Interface expects to receive after a
@@ -25,6 +26,7 @@ public class Response {
     public Task[] taskList;
     public HistoryData history;
     public AliasData alias;
+    public ArrayList<Actions> actions;
 
     /**
      * Default constructor. Initializes all properties to be NULL
@@ -34,5 +36,6 @@ public class Response {
         this.taskList = null;
         this.history = null;
         this.alias = null;
+        this.actions = null;
     }
 }

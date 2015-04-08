@@ -22,6 +22,7 @@ import w094j.ctrl8.message.MagicNumbersAndConstants;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.pojo.Actions;
 import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
@@ -208,7 +209,24 @@ public class CLIDisplay extends Display {
         if (res.alias != null) {
             this.outputAliases(res.alias);
         }
+        if (res.actions != null) {
+            this.outputActions(res.actions);
+        }
 
+    }
+
+    private void outputActions(ArrayList<Actions> actions) {
+        if(actions.size() == 0){
+            System.out.println("No actions found");
+        }
+        for (int i = 0; i <actions.size(); i++) {
+            Statement statement = actions.get(i).getStatement();
+            System.out.print(i + 1 + ". Command:");
+            System.out.print(statement.getCommand().toString());
+            System.out.print(" String:");
+            System.out.println(statement.getStatementArgumentsOnly());
+        }
+        
     }
 
     // @author A0112092W
