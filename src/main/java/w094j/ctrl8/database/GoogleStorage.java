@@ -149,7 +149,7 @@ public class GoogleStorage extends Storage {
         eventDataStore = dataStoreFactory.getDataStore(this.EVENT_STORE);
         syncSettingsDataStore = dataStoreFactory
                 .getDataStore(this.SYNC_SETTINGS);
-        this.addNewLocalEventsToGoogle();
+        this.uploadNewEventsAndTasksToGoogle();
         this.syncCalendar();
     }
 
@@ -159,7 +159,7 @@ public class GoogleStorage extends Storage {
                 .getTaskMap().values());
         for (Task i : events) {
             if (i.getTaskType() == TaskType.TIMED) {
-                this.addEvent(i);
+                this.addAndModifyEvent(i);
             }
         }
         logger.info("Added all events");
@@ -169,19 +169,24 @@ public class GoogleStorage extends Storage {
         logger.info("Adding all tasks...");
         List<Task> tasks = new ArrayList<Task>(this.dbFile.getData().getTask()
                 .getTaskMap().values());
-        ;
         for (Task i : tasks) {
             if (i.getTaskType() != TaskType.TIMED) {
-                this.addTask(i);
+                this.addAndModifyTask(i);
             }
         }
         logger.info("Added all tasks");
     }
 
-    private void addEvent(Task localEvent) throws IOException {
+    private void addAndModifyEvent(Task localEvent) throws IOException {
         logger.info("Adding event: " + localEvent.getTitle());
-        Event googleEvent = new Event();
+
         DateTime dateTime;
+        Event googleEvent = new Event();
+
+        // set id if it is not a new event
+        if (localEvent.getGoogleId() != null) {
+            googleEvent.setId(localEvent.getGoogleId());
+        }
 
         // set title
         googleEvent.setSummary(localEvent.getTitle());
@@ -239,21 +244,14 @@ public class GoogleStorage extends Storage {
         localEvent.setEtag(googleEvent.getEtag());
     }
 
-    private void addNewLocalEventsToGoogle() throws IOException {
-        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
-                .getTaskMap().values());
-        for (Task i : events) {
-            if ((i.getTaskType() == TaskType.TIMED)
-                    && (i.getGoogleId() == null)) {
-                this.addEvent(i);
-            }
-        }
-
-    }
-
-    private void addTask(Task localTask) throws IOException {
+    private void addAndModifyTask(Task localTask) throws IOException {
         logger.info("Adding task: " + localTask.getTitle());
         com.google.api.services.tasks.model.Task googleTask = new com.google.api.services.tasks.model.Task();
+
+        // set id if it is not a new event
+        if (localTask.getGoogleId() != null) {
+            googleTask.setId(localTask.getGoogleId());
+        }
 
         // set title
         googleTask.setTitle(localTask.getTitle());
@@ -289,7 +287,6 @@ public class GoogleStorage extends Storage {
         Calendar entry = new Calendar();
         entry.setSummary(NormalMessage.APP_NAME);
         this.calendar = this.clientCalendar.calendars().insert(entry).execute();
-
     }
 
     private void createOrGetCalendar() throws IOException {
@@ -520,5 +517,23 @@ public class GoogleStorage extends Storage {
 
     private void syncTaskList() {
 
+    }
+
+    private void uploadNewEventsAndTasksToGoogle() throws IOException {
+        List<Task> events = new ArrayList<Task>(this.dbFile.getData().getTask()
+                .getTaskMap().values());
+        for (Task i : events) {
+            if (i.getTaskType() == TaskType.TIMED) {
+                if ((i.getIsSynced() == null) || !i.getIsSynced()) {
+                    this.addAndModifyEvent(i);
+                }
+            } else {
+                if ((i.getIsSynced() == null) || !i.getIsSynced()) {
+                    this.addAndModifyTask(i);
+
+                }
+
+            }
+        }
     }
 }
