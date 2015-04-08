@@ -1,6 +1,5 @@
 package w094j.ctrl8.terminal;
 
-import java.io.InputStream;
 import java.security.InvalidParameterException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -64,52 +63,59 @@ public class Terminal {
 
     /**
      * Take in the terminal object and run it to perform actual actions.
-     * 
+     *
      * @throws Exception
      */
     public void start() throws Exception {
+
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+
+        }
+
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;
         Response res = new Response();
-        
+
         String command = null;
-        
 
         res.reply = NormalMessage.START_MESSAGE;
         this.display.updateUI(res);
         res.reply = NormalMessage.WELCOME_MESSAGE;
         this.display.updateUI(res);
-        while (continueExecution) {
-            this.taskManager.displayNextCommandRequest();
-            InputStream input = this.display.getInputStream();
+        try (Scanner scanner = new Scanner(this.display.getInputStream())) {
+            while (continueExecution) {
+                this.taskManager.displayNextCommandRequest();
+                this.display.getInputStream();
 
-            try {
-                command = new Scanner(input, "UTF-8").useDelimiter("\\A")
-                        .next();
-            } catch (NullPointerException e) {
-                logger.info(e.getMessage());
-            } catch (NoSuchElementException e) {
-                continue;
-            }
+                try {
+                    command = scanner.nextLine();
+                } catch (NullPointerException e) {
+                    logger.info(e.getMessage());
+                } catch (NoSuchElementException e) {
+                    continue;
+                }
 
-            // Passes string to Statement.java to parse into a command
-            try {
-                parser.parse(command).execute(this.taskManager, false);
-            } catch (InvalidParameterException e) {
-                res.reply = e.getMessage();
-                this.display.updateUI(res);
-            } catch (CommandExecuteException e) {
-                res.reply = e.getMessage();
-                this.display.updateUI(res);
-            } catch (ParseException e) {
-                res.reply = e.getMessage();
-                this.display.updateUI(res);
-            } catch (DataException e) {
-                res.reply = e.getMessage();
-                this.display.updateUI(res);
+                // Passes string to Statement.java to parse into a command
+                try {
+                    parser.parse(command).execute(this.taskManager, false);
+                } catch (InvalidParameterException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                } catch (CommandExecuteException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                } catch (ParseException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                } catch (DataException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                }
+                continueExecution = this.taskManager.getContinueExecution();
             }
-            continueExecution = this.taskManager.getContinueExecution();
         }
     }
 }
