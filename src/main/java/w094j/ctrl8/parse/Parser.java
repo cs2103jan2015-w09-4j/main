@@ -33,7 +33,6 @@ public class Parser implements IParser {
      */
     public static Parser getInstance() {
         if (instance == null) {
-            System.out.println("GET");
             instance = initInstance(new ParserConfig(), new AliasData());
         }
         return instance;

@@ -223,7 +223,6 @@ public class ParameterParser {
 
         // Parse Explicit Short Next if applicable
         if (this.config.isExplicitShortMode()) {
-            System.out.println(parameterString);
             parameterString = this.parseExplicit(parameterString,
                     parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
