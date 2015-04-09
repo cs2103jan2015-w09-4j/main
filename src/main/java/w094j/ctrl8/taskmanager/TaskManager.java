@@ -36,7 +36,6 @@ import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.parse.statement.CommandType;
 import w094j.ctrl8.parse.statement.Statement;
-import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
@@ -112,10 +111,10 @@ public class TaskManager implements ITaskManager {
 
     /**
      * Creates a Task Manager
-     * @param config 
-     * @param aliasData 
-     * @param taskData 
      *
+     * @param config
+     * @param aliasData
+     * @param taskData
      * @return return the Task manager.
      */
     public static TaskManager initInstance(TaskManagerConfig config,
@@ -128,7 +127,8 @@ public class TaskManager implements ITaskManager {
         }
         return instance;
     }
-    //@ author A0112092W
+
+    // @ author A0112092W
     private static void addDoc(IndexWriter w, String title, String description)
             throws IOException {
 
@@ -244,7 +244,7 @@ public class TaskManager implements ITaskManager {
 
             /* Check if key exists in taskmap */
             if (this.taskData.isTaskExist(taskID)) {
-                this.taskData.remove(taskID,statement);
+                this.taskData.remove(taskID, statement);
 
                 // Update the database
                 try {
@@ -309,7 +309,7 @@ public class TaskManager implements ITaskManager {
             // Informs user that his add statement is successful
             if (isUndo == false) {
                 Response res = new Response();
-                res.reply = task.getTitle() 
+                res.reply = task.getTitle()
                         + NormalMessage.DONE_TASK_SUCCESSFUL;
                 this.display.updateUI(res);
             }
@@ -349,13 +349,13 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public void historyClear(int index) {
-        Statement statmentRemoved = this.taskData.deleteHistory(index);
-        HistoryData temp = new HistoryData();
-        temp.addHistory(statmentRemoved);
-        Response res = new Response();
-        res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
-        res.history = temp;
-        this.display.updateUI(res);
+// Statement statmentRemoved = this.taskData.deleteHistory(index);
+// HistoryData temp = new HistoryData();
+// temp.addHistory(statmentRemoved);
+// Response res = new Response();
+// res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
+// res.history = temp;
+// this.display.updateUI(res);
 
     }
 
@@ -383,7 +383,7 @@ public class TaskManager implements ITaskManager {
 
             try {
 
-                task.update(incompleteTask);                
+                task.update(incompleteTask);
                 logger.debug(new Gson().toJson(task));
             } catch (Exception e) {
                 logger.debug(e.getMessage());
@@ -406,10 +406,10 @@ public class TaskManager implements ITaskManager {
 
             // Informs user that his add statement is successful
             if (isUndo == false) {
-               Response res = new Response();
-               res.reply = task.getTitle() 
-                       + NormalMessage.MODIFY_TASK_SUCCESSFUL;
-               this.display.updateUI(res);
+                Response res = new Response();
+                res.reply = task.getTitle()
+                        + NormalMessage.MODIFY_TASK_SUCCESSFUL;
+                this.display.updateUI(res);
             }
         } else {
             throw new CommandExecuteException(
