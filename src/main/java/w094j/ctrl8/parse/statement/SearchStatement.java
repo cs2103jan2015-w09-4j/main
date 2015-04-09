@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0065517A
@@ -16,7 +15,6 @@ public class SearchStatement extends StatementQuery {
     private static Logger logger = LoggerFactory
             .getLogger(SearchStatement.class);
     private String query;
-    private Task task;// TODO Implementation not complete
 
     /**
      * @param statementString
@@ -31,7 +29,7 @@ public class SearchStatement extends StatementQuery {
     public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
-        taskManager.search(this.query, this.task);
+        taskManager.search(this.query);
     }
 
 }

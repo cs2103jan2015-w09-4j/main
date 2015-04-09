@@ -150,7 +150,7 @@ public interface ITaskManager {
      * @param query
      * @param task
      */
-    public void search(String query, Task task);
+    public String[] search(String query);
 
     /**
      * <pre>

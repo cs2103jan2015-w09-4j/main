@@ -11,7 +11,7 @@ public class TaskState {
     private Actions addAction;
     
     public TaskState(Task task, Statement statement) {
-        this.initTask = task;
+        this.initTask = new Task(task);
         this.finalTask = task;
         this.actionsList = new ArrayList<Actions>();
         this.addAction = new Actions(statement, task.getId());
@@ -44,19 +44,27 @@ public class TaskState {
     public void addActions(Actions action){
         this.actionsList.add(action); 
     }
+    
+    public Actions getAddActions(){
+        return this.addAction;
+    }
 
-//    public void undoHistory(Actions action, ITaskManager taskManager) throws CommandExecuteException {
-//        this.finalTask = this.initTask;
-//        int i=0;
-//        for(;i<this.actionsList.size();i++){
-//           if(action.equals(actionsList.get(i))){
-//               break;
-//           }
-//           actionsList.get(i).getStatement().execute(taskManager, true);
-//       }
-//        for(int j=i;j<this.actionsList.size();j++)
-//        {
-//            this.actionsList.remove(j);
-//        }
-//    }
+    public boolean remove(Actions actionToBeDel) {
+        boolean isHistoryEmpty = false;
+        if (actionToBeDel.getID() == this.addAction.getID()){
+            this.addAction = null;
+        }
+        for(int i=0 ; i < this.actionsList.size(); i++){
+            if (actionToBeDel.getID() == this.actionsList.get(i).getID()){
+                this.actionsList.remove(i);
+                break;
+            }
+        }
+        
+        if(this.actionsList.isEmpty() && this.addAction == null && this.finalTask == null){
+            isHistoryEmpty = true;
+        }
+        
+        return isHistoryEmpty;
+    }
 }

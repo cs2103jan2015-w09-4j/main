@@ -2,16 +2,17 @@ package w094j.ctrl8.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.Actions;
 import w094j.ctrl8.pojo.Task;
@@ -27,37 +28,35 @@ public class TaskData {
     // Hash Map that stores every task and its history
     private HashMap<String, TaskState> taskStateMap;
     // Hash Map that stores the objectID of every task by their task name
-    private HashMap<String, String> taskMap;
+//    private HashMap<String, String> taskMap;
 
     public TaskData() {
-        this.taskMap = new HashMap<String, String>();
+//        this.taskMap = new HashMap<String, String>();
         this.taskStateMap = new HashMap<String, TaskState>();
     }
 
     
     public boolean containsKey(String taskID) {
         // TODO Auto-generated method stub
-        return this.taskMap.containsKey(taskID);
+        return this.taskStateMap.containsKey(taskID);
     }
 
 
-    public Set<Entry<String, String>> entrySet() {
-        return this.taskMap.entrySet();
+    public Set<Entry<String, TaskState>> entrySet() {
+        return this.taskStateMap.entrySet();
     }
 
-    public Task getTask(String query) {
-        
-        String id = this.taskMap.get(query);
-        return this.taskStateMap.get(id).getFinalTask();
+    public Task getTask(String taskId) {
+        return this.taskStateMap.get(taskId).getFinalTask();
     }
     
 
-    /**
-     * @return the taskMap
-     */
-    public HashMap<String, String> getTaskMap() {
-        return this.taskMap;
-    }
+//    /**
+//     * @return the taskMap
+//     */
+//    public HashMap<String, String> getTaskMap() {
+//        return this.taskMap;
+//    }
 
     /**
      * This is a function to check is a task exist in the task map
@@ -66,31 +65,39 @@ public class TaskData {
      * @return boolean that true shows the task exist in the task map
      */
     public boolean isTaskExist(String query) {
-        return this.taskMap.containsKey(query);
+        return this.taskStateMap.containsKey(query);
     }
 
     public int numOfTasks() {
-        return this.taskMap.size();
+        int size = 0;
+        for(TaskState t : this.taskStateMap.values()){
+            if(t.getFinalTask()!=null){
+                size++;
+            }
+        }
+        return size;
     }
 
     /**
      * @param query
      * @param statement
+     * @return 
      */
-    public void remove(String query, Statement statement) {
-        String id = this.taskMap.remove(query);
+    public Task remove(String id, Statement statement) {
+        Task task = this.taskStateMap.get(id).getFinalTask();
         this.taskStateMap.get(id).setFinalTask(null);
         this.taskStateMap.get(id).addActions(new Actions(statement, id));
+        return task;
     }
 
 
-    /**
-     * @param taskMap
-     *            the taskMap to set
-     */
-    public void setTaskMap(HashMap<String, String> taskMap) {
-        this.taskMap = taskMap;
-    }
+//    /**
+//     * @param taskMap
+//     *            the taskMap to set
+//     */
+//    public void setTaskMap(HashMap<String, String> taskMap) {
+//        this.taskMap = taskMap;
+//    }
     
     /**
      * @param taskStateMap
@@ -102,34 +109,41 @@ public class TaskData {
 
     /**
      * @param index
-     * @param taskmanager
+     * @param taskManager 
      * @throws CommandExecuteException
      */
     public void undoHistory(int index, ITaskManager taskManager)
             throws CommandExecuteException {
         ArrayList<Actions> actions = this.getActionsList();
+        if(index > actions.size()){
+            throw new CommandExecuteException(CommandExecutionMessage.INVALID_INDEX);
+        }
         Actions action = actions.get(index-1);
         String id = action.getTaskID();
-//        this.taskStateMap.get(id).undoHistory(action,taskManager);
-        
-//        this.taskStateMap.get(id).setFinalTask(this.taskStateMap.get(id).getInitTask());
-//        if(this.taskStateMap.get(id).getActions(0).equals(action)){
-//            this.taskStateMap.remove(id);
-//            this.taskMap.remove(id);
-//            return ;
-//        }
-        this.taskStateMap.get(id).setFinalTask(this.taskStateMap.get(id).getInitTask());
-        int i=0;
-        for(;i<this.taskStateMap.get(id).getActionList().size();i++){
-           if(action.equals(this.taskStateMap.get(id).getActionList().get(i))){
-               logger.debug("action same: " + action.equals(this.taskStateMap.get(id).getActionList().get(i)));
-               break;
+        ObjectId objId = action.getID();
+        logger.debug("task to be undo : " + this.taskStateMap.get(id).getInitTask().getTitle());
+        logger.debug(action.getStatement().getCommand().toString());
+        logger.debug(this.taskStateMap.get(id).getAddActions().getStatement().getCommand().toString());
+        if(objId.equals(this.taskStateMap.get(id).getAddActions().getID())){
+            logger.debug("actions is add, whole task deleted");
+            this.taskStateMap.remove(id);
+        }
+        else{
+            this.taskStateMap.get(id).setFinalTask(this.taskStateMap.get(id).getInitTask());
+            logger.debug(this.taskStateMap.get(id).getInitTask().getTitle());
+            logger.debug(this.taskStateMap.get(id).getFinalTask().getTitle());
+            int i=0;
+            for(;i<this.taskStateMap.get(id).getActionList().size();i++){
+               if(action.equals(this.taskStateMap.get(id).getActionList().get(i))){
+                   logger.debug("action same: " + action.equals(this.taskStateMap.get(id).getActionList().get(i)));
+                   break;
+               }
+               this.taskStateMap.get(id).getActionList().get(i).getStatement().execute(taskManager, true);
            }
-           this.taskStateMap.get(id).getActionList().get(i).getStatement().execute(taskManager, true);
-       }
-        for(int j=i;j<this.taskStateMap.get(id).getActionList().size();j++)
-        {
-            this.taskStateMap.get(id).getActionList().remove(j);
+            for(int j=i;j<this.taskStateMap.get(id).getActionList().size();j++)
+            {
+                this.taskStateMap.get(id).getActionList().remove(j);
+            }
         }
     }
 
@@ -137,24 +151,24 @@ public class TaskData {
      * Adds a task to the taskMap as well as removing an older entry. To be used
      * together with modify() command. When taskTitle is modified, its key in
      * the hashmap also changes.
+     * @param id 
      *
      * @param oldKey
      * @param task
+     * @param statement 
+     * @param isUndo 
      */
-    public void updateTaskMap(String oldKey, Task task, Statement statement, Boolean isUndo) {
+    public void updateTaskMap(String id, Task task, Statement statement, Boolean isUndo) {
         // Check for null params
-        assert (oldKey != null);
+        assert (id != null);
         assert (task != null);
         // Task should not be incomplete (not a Task delta)
         assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
-        // The old key specified should exist
-        assert (this.taskMap.containsKey(oldKey));
-
-        String id = this.taskMap.remove(oldKey);
-        this.taskMap.put(task.getTitle(), id);
+        
         if (this.taskStateMap.containsKey(id)) {
             if (!(isUndo)) {
                 this.taskStateMap.get(id).addActions(new Actions(statement,id));
+                logger.debug("isUndo = false");
             }
             this.taskStateMap.get(id).setFinalTask(task);
             logger.debug("TaskMap: Replace entry with key " + task.getTitle()
@@ -179,14 +193,12 @@ public class TaskData {
         assert (task != null);
         // Task should not be incomplete (not a Task delta)
         assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
-        if (this.taskMap.containsKey(task.getTitle())) {
-            String id = this.taskMap.get(task.getTitle());
-            this.taskStateMap.replace(id, new TaskState(task,statement));
-            this.taskStateMap.get(id).setFinalTask(task);
+        if (this.taskStateMap.containsKey(task.getId())) {
+            this.taskStateMap.replace(task.getId(), new TaskState(task,statement));
+            this.taskStateMap.get(task.getId()).setFinalTask(task);
             logger.debug("TaskMap: Replace entry with key " + task.getTitle()
                     + " with " + new Gson().toJson(task));
         } else {
-            this.taskMap.put(task.getTitle(), task.getId());
             this.taskStateMap.put(task.getId(), new TaskState(task,statement));
             this.taskStateMap.get(task.getId()).setFinalTask(task);
             logger.debug("TaskMap: adding new entry with key "
@@ -194,9 +206,9 @@ public class TaskData {
         }
     }
 
-    public Collection<TaskState> values() {
-        return this.taskStateMap.values();
-    }
+//    public Collection<TaskState> values() {
+//        return this.taskStateMap.values();
+//    }
 
     /**
      * This is a function to check is a task exist in the task map
@@ -205,17 +217,19 @@ public class TaskData {
      * @return boolean that true shows the task exist in the task map
      */
     private boolean isTaskExist(Task task) {
-        return this.taskMap.containsKey(task.getTitle());
+        return this.taskStateMap.containsKey(task.getTitle());
     }
 
 
     public Task[] getTaskList() {
-        Task[] taskList = new Task[this.taskMap.size()];
+        Task[] taskList = new Task[numOfTasks()];
         int i=0;
-        for(String t : this.taskMap.values()){
-            Task task = this.taskStateMap.get(t).getFinalTask();
-            taskList[i] = task;
-            i++;
+        for(TaskState t : this.taskStateMap.values()){
+            Task task = t.getFinalTask();
+            if (task != null){
+                taskList[i] = task;
+                i++;
+            }
         }
         Arrays.sort(taskList);
         return taskList;
@@ -228,10 +242,28 @@ public class TaskData {
             for(int i=0; i< t.getActionList().size();i++){
                 actions.add(t.getActions(i));
             }
+            actions.add(t.getAddActions());
         }
         logger.debug("actionslist size " +actions.size());
         Collections.sort(actions);
         return actions; 
     }
 
+
+    public  HashMap<String, TaskState> getTaskStateMap() {
+        return this.taskStateMap;
+    }
+
+
+    public Actions deleteHistory(int index) {
+        ArrayList<Actions> actions = this.getActionsList();
+        Actions actionToBeDel = actions.get(index-1);
+        
+        String id = actionToBeDel.getTaskID();
+        TaskState task = this.taskStateMap.get(id);
+        if(task.remove(actionToBeDel)){
+            this.taskStateMap.remove(id);
+        }
+        return actionToBeDel;
+    }
 }
