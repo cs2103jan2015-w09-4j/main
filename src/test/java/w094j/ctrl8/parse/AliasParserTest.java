@@ -35,7 +35,8 @@ public class AliasParserTest {
      * @param inputToReplace
      *            string to perform the replacement operation.
      * @param expectedReplaced
-     *            expected output after replacement.
+     *            expected output after replacement, null if a DataException is
+     *            expected.
      */
     public AliasParserTest(String inputToReplace, String expectedReplaced) {
         this.inputToReplace = inputToReplace;
@@ -52,24 +53,41 @@ public class AliasParserTest {
                 /**
                  * Normal tests
                  */
+                // Normal use case of Alias, where each alias is replaced with each. Only one alias is tested
+                {"add ={eat lunch with |eric}","add ={eat lunch with Han Liang Wee Eric}"},
+                // Normal use but 4 aliases are tested
                 {"add ={eat lunch with |eric, |rod, |C and |CH}","add ={eat lunch with Han Liang Wee Eric, Chue Le Sheng Rodson, Tze Cheng and Chen Hsin}"},
+                // Normal use case but with a short explicit symbol
                 {"|a ={|e |profHW} -|2","add ={email Prof. Hon Wai} -2pm"},
-                {"add ={eat\\|sleep}","add ={eat|sleep}"},
+                // Normal use of alias, with an escaped alias symbol
+                {"add ={eat\\|sleeps |sleeps}","add ={eat|sleeps Sleep at Home}"},
+                // Statement without alias, but has an escaped character
+                {"add ={s\\leep}","add ={s\\leep}"},
+                // Statement does not have any alias
+                {"add ={sleeps}","add ={sleeps}"},
                 /**
                  * Extreme tests
                  */
+                // Mix 2 alias side by side, ensure it can be properly parsed
                 {"add ={|C|CH}","add ={Tze ChengChen Hsin}"},
+                // Same as previous but reversed
                 {"add ={|CH|C}","add ={Chen HsinTze Cheng}"},
+                // The Alias Character here should not be picked up by the parser as it is not a valid alias
                 {"add ={eat | sleep}","add ={eat | sleep}"},
+                // Same as previous but with more characters
                 {"add ={eat || sleep}","add ={eat || sleep}"},
+                // Same as previous but having a valid alias in the middle
                 {"add ={eat ||e| sleep}","add ={eat |email| sleep}"},
+                // Alias that has a parameter character
+                {"add |#A", "add #abc"},
                 /**
                  * Errornous tests
                  */
-                {"add ={|sleep}",null},
-                {"add ={s\\leep}","add ={s\\leep}"}
+                // Alias that does not exist should throw an error
+                {"add ={|sleep}",null}
         });
     }
+    //@formatter:on
 
     /**
      * Initializes the lookup table with some values
@@ -85,6 +103,8 @@ public class AliasParserTest {
         aliasMap.put("e", "email");
         aliasMap.put("profHW", "Prof. Hon Wai");
         aliasMap.put("2", "2pm");
+        aliasMap.put("#A", "#abc");
+        aliasMap.put("sleeps", "Sleep at Home");
 
         AliasConfig config = new AliasConfig();
         AliasData data = new AliasData();
@@ -93,8 +113,6 @@ public class AliasParserTest {
 
         parser = new AliasParser(config, data);
     }
-
-    // @formatter:on
 
     /**
      * Tests the parsing of the command text
