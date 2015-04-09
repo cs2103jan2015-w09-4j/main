@@ -8,8 +8,6 @@
 
 	<properties>
 		<jdk.version>1.8</jdk.version>
-		<jodatime.version>2.5</jodatime.version>
-		<junit.version>4.11</junit.version>
 		<lucene.version>5.0.0</lucene.version>
 	</properties>
 
@@ -55,7 +53,6 @@
 							<mainClass>w094j.run.Start</mainClass>
 						</manifest>
 					</archive>
-
 				</configuration>
 				<executions>
 					<execution>
