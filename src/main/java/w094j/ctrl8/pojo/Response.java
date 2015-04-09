@@ -24,9 +24,9 @@ public class Response {
      */
     public String reply;
     public Task[] taskList;
-    public HistoryData history;
     public AliasData alias;
     public ArrayList<Actions> actions;
+    public String[] TaskIdList; 
 
     /**
      * Default constructor. Initializes all properties to be NULL
@@ -34,8 +34,8 @@ public class Response {
     public Response() {
         this.reply = null;
         this.taskList = null;
-        this.history = null;
         this.alias = null;
         this.actions = null;
+        this.TaskIdList = null;
     }
 }

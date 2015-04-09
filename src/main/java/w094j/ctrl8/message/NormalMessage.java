@@ -42,4 +42,6 @@ public class NormalMessage {
     public static final String ALIAS_DELETE_SUCCESSFUL = "The following alias is deleted successfully!";
     public static final String HISTORY_INDEX_OUT_OF_BOUND = "History index out of bound";
     public static final String UNDO_ACTION_SUCCESSFUL = "Action is undo successfully";
+    public static final String CHOOSE_FROM_LIST = "Please type in the index of task you want to choose to ";
+    public static final String MODIFIED = "modified.";
 }

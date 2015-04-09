@@ -11,4 +11,5 @@ public class CommandExecutionMessage {
     public static final String EXCEPTION_MISSING_TASK = "Database does not contain Task";
     public static final String EXCEPTION_NULL_TASK = "Task Object not initialised";
     public static final String EXCEPTION_UPDATE_TASK_MAP = "Update TaskMap Error";
+    public static final String INVALID_INDEX = "Invalid Index!";
 }

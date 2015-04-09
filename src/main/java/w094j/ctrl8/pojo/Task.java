@@ -66,6 +66,24 @@ public class Task implements Comparable<Task> {
         this.taskType = TaskType.INCOMPLETE;
     }
 
+    public Task(Task task) {
+        this.id = task.getId();
+        this.title = task.getTitle();
+        this.category = task.getCategory();
+        this.description = task.getDescription();
+        this.startDate = task.getStartDate();
+        this.endDate = task.getEndDate();
+        this.location = task.getLocation();
+        this.priority = task.getPriority();
+        this.reminder = task.getReminder();
+        this.taskType = task.getTaskType();
+        this.isDone = task.getStatus();
+        this.updateTimeAndSyncStatus();
+        this.googleId = task.getGoogleId();
+        this.etag = task.getEtag();
+        this.statementHistory = task.getStatementHistory();
+    }
+
     @Override
     public int compareTo(final Task task) {
         return this.title.compareTo(task.getTitle());
