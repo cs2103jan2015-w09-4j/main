@@ -12,12 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.ParameterConfig;
 import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.parse.ParameterParser;
 import w094j.ctrl8.parse.statement.parameter.CategoryParameter;
 import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
 import w094j.ctrl8.parse.statement.parameter.DescriptionParameter;
@@ -35,7 +32,6 @@ import w094j.ctrl8.parse.statement.parameter.TitleParameter;
  */
 @RunWith(value = Parameterized.class)
 public class ParameterTest {
-    private static Logger logger = LoggerFactory.getLogger(ParameterTest.class);
     private static ParameterParser parser;
     private ParameterContainer expectedParamContainer;
     private String input;
