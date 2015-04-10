@@ -1,3 +1,4 @@
+//@author A0065517A
 package w094j.ctrl8.parse.statement.parameter;
 
 import java.security.InvalidParameterException;
@@ -7,7 +8,6 @@ import java.util.List;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
-//@author A0065517A
 /**
  * Parameter with a Date payload.
  */
@@ -16,7 +16,7 @@ public abstract class ParameterDatePayload extends Parameter {
     private Date date;
 
     /**
-     * Intializes and parses the payload to be a date and time.
+     * Initializes and parses the payload to be a date and time.
      *
      * @param symbol
      *            symbol of the calling environment.
@@ -26,22 +26,25 @@ public abstract class ParameterDatePayload extends Parameter {
     public ParameterDatePayload(ParameterType symbol, String payload) {
         super(symbol, payload);
 
-        // Parses the date using the method specified on Natty.
-        // with references to sample code at http://natty.joestelmach.com/
-        List<DateGroup> groups = new Parser().parse(payload);
-        if (groups.size() != 1) {
-            throw new InvalidParameterException(
-                    "Each tag must have a date/time.");
-        }
-        DateGroup group = groups.get(0);
+        // if the payload is defined
+        if (!payload.isEmpty()) {
+            // Parses the date using the method specified on Natty.
+            // with references to sample code at http://natty.joestelmach.com/
+            List<DateGroup> groups = new Parser().parse(payload);
+            if (groups.size() != 1) {
+                throw new InvalidParameterException(
+                        "Each tag must have a date/time.");
+            }
+            DateGroup group = groups.get(0);
 
-        List<Date> dates = group.getDates();
-        if (dates.size() != 1) {
-            throw new InvalidParameterException(
-                    "Each tag must have a date/time.");
-        }
+            List<Date> dates = group.getDates();
+            if (dates.size() != 1) {
+                throw new InvalidParameterException(
+                        "Each tag must have a date/time.");
+            }
 
-        this.date = dates.get(0);
+            this.date = dates.get(0);
+        }
     }
 
     /**

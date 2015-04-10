@@ -1,16 +1,16 @@
+//@author A0065517A
 package w094j.ctrl8.parse.statement.parameter;
 
 import java.security.InvalidParameterException;
 
 import w094j.ctrl8.pojo.Task;
 
-//@author A0065517A
 /**
- * Priority must be a number between 0 and 10. Inclusive of both numbers.
+ * Priority must be a number between 0 and 10, including the limits.
  */
 public class PriorityParameter extends Parameter {
 
-    private int priority;
+    private Integer priority;
 
     /**
      * Creates a new Priority Parameter.
@@ -20,7 +20,6 @@ public class PriorityParameter extends Parameter {
      */
     public PriorityParameter(String payload) {
         super(ParameterType.PRIORITY, payload);
-        assert (payload != null);
         if (!payload.isEmpty()) {
             try {
                 this.priority = Integer.parseInt(payload);
@@ -33,8 +32,6 @@ public class PriorityParameter extends Parameter {
                 throw new InvalidParameterException(
                         "Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
             }
-        } else {
-            this.priority = 0;
         }
 
     }

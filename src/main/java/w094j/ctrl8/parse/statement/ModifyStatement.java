@@ -61,8 +61,7 @@ public class ModifyStatement extends Statement {
         this.task = new Task();
         ParameterContainer container = parameterParser.parse(this
                 .getStatementArgumentsOnly().substring(queryMatcher.end()));
-        // TODO no validation rules for the statement
-        container.addAll(null, this.task);
+        container.addAll(this.task);
 
         logger.debug("Valid modify Command, parsed \"" + statementString
                 + "\": query=\"" + this.query + "\" task="

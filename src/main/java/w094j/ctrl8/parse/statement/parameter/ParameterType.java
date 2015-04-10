@@ -1,6 +1,6 @@
+//@author A0065517A
 package w094j.ctrl8.parse.statement.parameter;
 
-//@author A0065517A
 /**
  * Enum to classify the different kinds of parameter symbols.
  */

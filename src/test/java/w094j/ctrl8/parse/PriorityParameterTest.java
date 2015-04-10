@@ -79,7 +79,7 @@ public class PriorityParameterTest {
         try {
             parameterContainer = parser.parse(this.input);
             Task task = new Task();
-            parameterContainer.addAll(null, task);
+            parameterContainer.addAll(task);
             assertEquals(this.expectedPriority, task.getPriority());
         } catch (ParseException e) {
             // TODO Auto-generated catch block

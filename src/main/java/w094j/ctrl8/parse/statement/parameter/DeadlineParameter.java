@@ -1,8 +1,8 @@
+//@author A0065517A
 package w094j.ctrl8.parse.statement.parameter;
 
 import w094j.ctrl8.pojo.Task;
 
-//@author A0065517A
 /**
  */
 public class DeadlineParameter extends ParameterDatePayload {

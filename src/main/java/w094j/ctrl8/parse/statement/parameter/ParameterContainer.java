@@ -1,50 +1,48 @@
+//@author A0065517A
 package w094j.ctrl8.parse.statement.parameter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.collections4.MultiMap;
-import org.apache.commons.collections4.map.MultiValueMap;
-
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.pojo.Task;
 
-//@author A0065517A
 /**
- * A Container that handles all the parameters. it will also validates the
- * allowable parameters based on some rules.
+ * A Container that will handle the all the different parameters, and is
+ * responsible to adding all these to a task. Moreover, it will also check that
+ * each parameter appears only once.
  */
 public class ParameterContainer {
 
-    private MultiMap<ParameterType, Parameter> parameterLookup;
+    private Map<ParameterType, Parameter> parameterLookup;
 
     /**
      * Initializes the list of parameters to this container.
      *
      * @param parameterList
+     *            the list to use to initialize the container.
+     * @throws ParseException
+     *             if some parameter has a duplicate.
      */
-    public ParameterContainer(List<Parameter> parameterList) {
-        this.parameterLookup = new MultiValueMap<ParameterType, Parameter>();
+    public ParameterContainer(List<Parameter> parameterList)
+            throws ParseException {
+        this.parameterLookup = new HashMap<ParameterType, Parameter>();
         for (Parameter eaParameter : parameterList) {
-            this.parameterLookup.put(eaParameter.getSymbol(), eaParameter);
+            if (this.parameterLookup.put(eaParameter.getSymbol(), eaParameter) != null) {
+                throw new ParseException("Parameters cannot be repeated.");
+            }
         }
     }
 
     /**
-     * Validates that the Parameters conform to the rules specified for the
-     * calling environment. Adding the parameters to the task if it is good.
+     * Adds all the parameters to the task specified.
      *
-     * @param rule
-     *            specifying the legal set of parameters for the calling
-     *            environment.
      * @param task
      *            task to add the parameters to.
      */
-    public void addAll(StatementRule rule, Task task) {
-
-        // TODO validation for rules missing
-
-        for (Object eaParameterObj : this.parameterLookup.values()) {
-            assert (eaParameterObj instanceof Parameter);
-            Parameter eaParameter = (Parameter) eaParameterObj;
+    public void addAll(Task task) {
+        for (Parameter eaParameter : this.parameterLookup.values()) {
             eaParameter.add(task);
         }
     }

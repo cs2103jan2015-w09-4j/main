@@ -23,14 +23,23 @@ public abstract class Parameter {
      * @param payload
      */
     public Parameter(ParameterType symbol, String payload) {
+        assert (symbol != null);
+        assert (payload != null);
         this.symbol = symbol;
-        this.payload = payload;
+
+        // Nullify the string if it is empty
+        if (payload.equals("")) {
+            this.payload = null;
+        } else {
+            this.payload = payload;
+        }
     }
 
     /**
      * Adds the current parameter to the task specified.
      *
      * @param task
+     *            to add the tasks.
      */
     public abstract void add(Task task);
 
@@ -38,8 +47,8 @@ public abstract class Parameter {
     public boolean equals(Object obj) {
         if (obj instanceof Parameter) {
             Parameter objParameter = (Parameter) obj;
-            if (objParameter.payload.equals(this.payload)
-                    && objParameter.symbol.equals(this.symbol)) {
+            if ((objParameter.symbol.equals(this.symbol) && (((this.payload == null) && (objParameter.payload == this.payload)) || objParameter.payload
+                    .equals(this.payload)))) {
                 return true;
             } else {
                 return false;

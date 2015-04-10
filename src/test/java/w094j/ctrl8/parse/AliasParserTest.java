@@ -18,7 +18,7 @@ import w094j.ctrl8.database.config.AliasConfig;
 import w094j.ctrl8.exception.DataException;
 
 /**
- * Test for Alias Parser
+ * Test for Alias Parser's parsing of the Alias.
  */
 @RunWith(value = Parameterized.class)
 public class AliasParserTest {

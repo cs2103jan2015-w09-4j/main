@@ -46,8 +46,7 @@ public class AddStatement extends Statement {
                 .getStatementParser().getParameterParser();
         ParameterContainer container = parameterParser.parse(this
                 .getStatementArgumentsOnly());
-        // TODO no validation rules for the statement
-        container.addAll(null, this.task);
+        container.addAll(this.task);
         this.task.toCompleteTask();
         if (this.task.getTaskType() == Task.TaskType.INCOMPLETE) {
             throw new ParseException(

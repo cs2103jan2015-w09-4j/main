@@ -10,11 +10,12 @@ import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0112521B
 public class AliasAddStatement extends Statement {
+
     private static Logger logger = LoggerFactory
             .getLogger(AliasAddStatement.class);
 
-    String alias;
-    String phrase;
+    private String alias;
+    private String phrase;
 
     public AliasAddStatement(String statementString) {
         super(CommandType.ALIAS_ADD, statementString);
