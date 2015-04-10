@@ -20,7 +20,7 @@ import w094j.ctrl8.pojo.TaskState;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 import com.google.gson.Gson;
-//@ author A0112092W
+//@author A0112092W
 public class TaskData {
 
     private static Logger logger = LoggerFactory.getLogger(TaskData.class);
@@ -121,30 +121,26 @@ public class TaskData {
         Actions action = actions.get(index-1);
         String id = action.getTaskID();
         ObjectId objId = action.getID();
-        logger.debug("task to be undo : " + this.taskStateMap.get(id).getInitTask().getTitle());
-        logger.debug(action.getStatement().getCommand().toString());
-        logger.debug(this.taskStateMap.get(id).getAddActions().getStatement().getCommand().toString());
-        if(objId.equals(this.taskStateMap.get(id).getAddActions().getID())){
-            logger.debug("actions is add, whole task deleted");
-            this.taskStateMap.remove(id);
+        ArrayList<Actions> taskActions = this.taskStateMap.get(id).getActionList();
+        this.taskStateMap.get(id).clearActionList();
+        this.taskStateMap.get(id).setFinalTask(this.taskStateMap.get(id).getInitTask());
+        if(this.taskStateMap.get(id).getInitTask()==null){
+            logger.debug("init task is null");
         }
-        else{
-            this.taskStateMap.get(id).setFinalTask(this.taskStateMap.get(id).getInitTask());
-            logger.debug(this.taskStateMap.get(id).getInitTask().getTitle());
-            logger.debug(this.taskStateMap.get(id).getFinalTask().getTitle());
-            int i=0;
-            for(;i<this.taskStateMap.get(id).getActionList().size();i++){
-               if(action.equals(this.taskStateMap.get(id).getActionList().get(i))){
-                   logger.debug("action same: " + action.equals(this.taskStateMap.get(id).getActionList().get(i)));
-                   break;
-               }
-               this.taskStateMap.get(id).getActionList().get(i).getStatement().execute(taskManager, true);
+        int i=0;
+        for(;i<taskActions.size();i++){
+           if(action.equals(taskActions.get(i))){
+               logger.debug("action same: " + action.equals(taskActions.get(i)));
+               break;
            }
-            for(int j=i;j<this.taskStateMap.get(id).getActionList().size();j++)
-            {
-                this.taskStateMap.get(id).getActionList().remove(j);
-            }
+           logger.debug("action name: " + taskActions.get(i).getStatement().getCommand() +" " +  taskActions.get(i).getStatement().getStatementArgumentsOnly());
+           Statement statement = taskActions.get(i).getStatement();
+           statement.execute(taskManager, true);
         }
+//        for(int j=i;j<taskActions.size();j++)
+//        {
+//          task.remove(j);
+//        }   
     }
 
     /**
@@ -152,8 +148,6 @@ public class TaskData {
      * together with modify() command. When taskTitle is modified, its key in
      * the hashmap also changes.
      * @param id 
-     *
-     * @param oldKey
      * @param task
      * @param statement 
      * @param isUndo 
@@ -187,8 +181,8 @@ public class TaskData {
      * @param task
      * @param statement 
      */
-    public void updateTaskMap(Task task, Statement statement) {
-
+    public void updateTaskMap(Task task, Statement statement, boolean isUndo) {
+        
         // Check for null params
         assert (task != null);
         // Task should not be incomplete (not a Task delta)
@@ -199,6 +193,7 @@ public class TaskData {
             logger.debug("TaskMap: Replace entry with key " + task.getTitle()
                     + " with " + new Gson().toJson(task));
         } else {
+            
             this.taskStateMap.put(task.getId(), new TaskState(task,statement));
             this.taskStateMap.get(task.getId()).setFinalTask(task);
             logger.debug("TaskMap: adding new entry with key "
@@ -242,7 +237,6 @@ public class TaskData {
             for(int i=0; i< t.getActionList().size();i++){
                 actions.add(t.getActions(i));
             }
-            actions.add(t.getAddActions());
         }
         logger.debug("actionslist size " +actions.size());
         Collections.sort(actions);

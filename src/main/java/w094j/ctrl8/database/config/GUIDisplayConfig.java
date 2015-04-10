@@ -8,18 +8,27 @@ import w094j.ctrl8.database.IStorableElement;
  * the GUIDisplay component.
  */
 public class GUIDisplayConfig implements IStorableElement {
-    public String[] appArgs;
-    public DisplayControllerConfig controllerConfig;
+    protected static String[] DEFAULT_ARGS = new String[] {""};
+    
+    protected String[] appArgs;
+    protected DisplayControllerConfig controllerConfig;
 
     // The one and only constructor. Produces a default configuration.
     public GUIDisplayConfig() {
         this.controllerConfig = new DisplayControllerConfig();
-        this.appArgs = new String[] { "" };
+    }
+    
+    public String[] getAppArgs(){
+        if(this.appArgs == null){
+            return DEFAULT_ARGS;
+        } else {
+            return this.appArgs;
+        }
     }
 
     @Override
     public boolean isValid() {
-        return (appArgs != null) && this.controllerConfig.isValid();
+        return (this.controllerConfig != null && this.controllerConfig.isValid());
     }
 
 }

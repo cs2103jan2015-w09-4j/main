@@ -190,9 +190,7 @@ public class CLIDisplay extends Display {
             }
 
         }
-        if (res.history != null) {
-            this.outputHistory(res.history);
-        }
+
         if (res.alias != null) {
             this.outputAliases(res.alias);
         }

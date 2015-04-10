@@ -97,7 +97,7 @@ public class GUICore extends Application implements Runnable {
 
     @Override
     public void run() {
-        launch(this.config.appArgs);
+        launch(this.config.getAppArgs());
     }
 
     /**
