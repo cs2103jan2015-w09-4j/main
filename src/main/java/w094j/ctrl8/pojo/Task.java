@@ -64,18 +64,18 @@ public class Task implements Comparable<Task> {
     public Task(Task task) {
         this.category = task.category;
         this.description = task.description;
-        this.endDate = (Date) task.endDate.clone();
+        this.endDate = task.endDate == null ? null : (Date) task.endDate.clone();
         this.etag = task.etag;
         this.googleId = task.googleId;
         // Cloned task will share same ID object
         this.id = task.id;
         this.isDone = task.isDone;
         this.isSynced = task.isSynced;
-        this.lastModifiedTime = (Date) task.lastModifiedTime.clone();
+        this.lastModifiedTime = task.lastModifiedTime == null ? null : (Date) task.lastModifiedTime.clone();
         this.location = task.location;
         this.priority = task.priority;
-        this.reminder = (Date) task.reminder.clone();
-        this.startDate = (Date) task.startDate.clone();
+        this.reminder = task.reminder == null ? null : (Date) task.reminder.clone();
+        this.startDate = task.startDate == null ? null : (Date) task.startDate.clone();
         this.taskType = task.taskType;
         this.title = task.title;
     }
