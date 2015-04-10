@@ -1,5 +1,6 @@
 package w094j.ctrl8.parse;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class ParameterParser {
     private static final String EXPLICIT_PARAMETER_SHORT_REGEX_FORMAT = "(?:^|\\s)(?:%1$s)(?:(?!\\s(?:%2$s))[^\\s]){1,}";
     private static final String IMPLICIT_DEADLINED_TASK_REGEX_FORMAT = "(?<!\\{[^\\}])(?:%1$s)(?:(?!\\s(?:%2$s)).)*\\b(?![^\\{]{0,}\\})";
     private static final String IMPLICIT_TIMED_TASK_REGEX_FORMAT = "(?<!\\{[^\\}])(?:%2$s)(?:(?!\\s(?:%1$s)).)*(?:%3$s)(?:(?!\\s(?:%1$s)).)*\\b(?![^\\{]{0,}\\})";
-    private static final String IMPLICIT_TITLE_REGEX_FORMAT = "(?:^|\\s)(?:[^\\r\\n%1$s]|\\\\(?:%2$s)|\\\\.)+\\b(?![^\\{]{0,}\\})";
+    private static final String IMPLICIT_TITLE_REGEX_FORMAT = "(?:^|\\s)(?:[^\\r\\n%1$s]|\\\\(?:%2$s)|\\\\.)+(?![^\\{]{0,}\\})";
     private static final String TIMED_TASK_FROM_KEYWORD = " from ";
     private static final String TIMED_TASK_TO_KEYWORD = " to ";
 
@@ -211,7 +212,8 @@ public class ParameterParser {
         // We parse Implicit first as implicit relies on the relative position
         // of the tags to determine which is the implicit parameters
         if (this.config.isImplicitMode()) {
-            this.parseImplicit(parameterString, parameterList);
+            parameterString = this
+                    .parseImplicit(parameterString, parameterList);
         }
 
         // Parse Explicit Long First
@@ -227,13 +229,17 @@ public class ParameterParser {
                     parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
             this.logger
-            .debug("Parameters after parsing explicit short: String("
-                    + parameterString + ")");
+                    .debug("Parameters after parsing explicit short: String("
+                            + parameterString + ")");
+        }
+
+        if (!parameterString.equals("")) {
+            throw new ParseException(parameterString
+                    + "Parameters contains illegal syntax.");
         }
 
         ParameterContainer parameterContainer = new ParameterContainer(
                 parameterList);
-
         return parameterContainer;
     }
 
@@ -302,35 +308,56 @@ public class ParameterParser {
 
         Matcher implicitTimedTaskMatcher = this.implicitTimedTaskPattern
                 .matcher(parameterString);
+        String currentImplicitTimedTaskMatch = null;
         List<String> implicitTimedTaskMatches = this
                 .getAllMatches(implicitTimedTaskMatcher);
-        switch (implicitTimedTaskMatches.size()) {
-            case 0 :
-                // nothing to do, may be correct behavior
-                break;
-            case 1 :
-                // one match
-                String timedTaskParameterMatch = implicitTimedTaskMatches
-                        .get(0);
+        for (String eaTimedTaskParameterMatch : implicitTimedTaskMatches) {
 
-                // remove from keyword
-                timedTaskParameterMatch = timedTaskParameterMatch.replaceAll(
-                        TIMED_TASK_FROM_KEYWORD, "");
-                String[] fromToArray = timedTaskParameterMatch
-                        .split(TIMED_TASK_TO_KEYWORD);
+            boolean isFromDateValid = true;
+            boolean isToDateValid = true;
+            StartTimeParameter eaStartTimeParameter = null;
+            DeadlineParameter eaDeadlineParameter = null;
 
-                parameterList.add(new StartTimeParameter(fromToArray[0]));
-                parameterList.add(new DeadlineParameter(fromToArray[1]));
+            // remove from keyword
+            String parameterWithoutFromKeyword = eaTimedTaskParameterMatch
+                    .replaceAll(TIMED_TASK_FROM_KEYWORD, "");
+            String[] fromToArray = parameterWithoutFromKeyword
+                    .split(TIMED_TASK_TO_KEYWORD);
 
-                // replaces the parsed item to be removed
-                parameterString = implicitTimedTaskMatcher.replaceAll("");
-                break;
-            default :
+            try {
+                eaStartTimeParameter = new StartTimeParameter(fromToArray[0]);
+            } catch (InvalidParameterException ipe) {
+                isFromDateValid = false;
+            }
+            try {
+                eaDeadlineParameter = new DeadlineParameter(fromToArray[1]);
+            } catch (InvalidParameterException ipe) {
+                isToDateValid = false;
+            }
 
-                // still has matches
-                // all others are illegal
+            if (isFromDateValid != isToDateValid) {
                 throw new ParseException(
-                        "Can only have one from ... to ... construct");
+                        "Both enties in the from ... to ... must be valid dates.");
+            } else {
+
+                if (isFromDateValid == true) {
+                    if (currentImplicitTimedTaskMatch == null) {
+                        // both true
+                        parameterList.add(eaStartTimeParameter);
+                        parameterList.add(eaDeadlineParameter);
+                        currentImplicitTimedTaskMatch = eaTimedTaskParameterMatch;
+                    } else {
+                        throw new ParseException(
+                                "Can only have one from ... to ... construct");
+                    }
+                }
+            }
+
+        }
+        if (currentImplicitTimedTaskMatch != null) {
+            // replaces the parsed item to be removed
+            parameterString = parameterString.replaceAll(
+                    currentImplicitTimedTaskMatch, "");
         }
 
         Matcher implicitDeadlinedTaskMatcher = this.implicitDeadlinedTaskPattern
@@ -344,7 +371,7 @@ public class ParameterParser {
             case 1 :
                 // one match
                 String deadlinedTaskParameterMatch = implicitDeadlinedTaskMatches
-                .get(0);
+                        .get(0);
 
                 // remove from keyword
                 deadlinedTaskParameterMatch = deadlinedTaskParameterMatch
@@ -389,5 +416,4 @@ public class ParameterParser {
                 + ")");
         return parameterString;
     }
-
 }
