@@ -1,3 +1,4 @@
+//@author A0112521B
 package w094j.ctrl8.database;
 
 import java.io.File;
@@ -75,18 +76,18 @@ public class GoogleStorage extends Storage {
     private Credential credential;
     private final java.io.File DATA_STORE_CALENDAR_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-            + "/CalendarInfo");
+                    + "/CalendarInfo");
     private final java.io.File DATA_STORE_CREDENTIAL_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-            + "/StoredCredential");
+                    + "/StoredCredential");
     private final java.io.File DATA_STORE_DIR = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME);
     private final java.io.File DATA_STORE_INETERNET_STATUS_LAST_SESSION = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-            + "/InternetStatusLastSession");
+                    + "/InternetStatusLastSession");
     private final java.io.File DATA_STORE_TASKLIST_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-            + "/TaskListInfo");
+                    + "/TaskListInfo");
     private DBfile dbFile;
     private final String EVENT_REMINDER_METHOD_EMAIL = "email";
     private final String EVENT_REMINDER_METHOD_POPUP = "popup";
@@ -122,12 +123,12 @@ public class GoogleStorage extends Storage {
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Calendar");
             this.clientCalendar.calendars().delete(this.googleCalendar.getId())
-            .execute();
+                    .execute();
 
             logger.info("Deleting Google " + NormalMessage.APP_NAME
                     + " Task List");
             this.clientTask.tasklists().delete(this.googleTaskList.getId())
-            .execute();
+                    .execute();
 
             this.deleteLocalGoogleInfo();
 
@@ -254,7 +255,7 @@ public class GoogleStorage extends Storage {
 
     private void addLocalTask(
             com.google.api.services.tasks.model.Task googleTask)
-            throws Exception {
+                    throws Exception {
         logger.info("Adding new task from Google: " + googleTask.getTitle()
                 + " " + googleTask.getNotes());
         Task localTask = new Task();
@@ -358,7 +359,7 @@ public class GoogleStorage extends Storage {
         dataStoreEvent.delete(googleId);
         try {
             this.clientCalendar.events()
-            .delete(this.googleCalendar.getId(), googleId).execute();
+                    .delete(this.googleCalendar.getId(), googleId).execute();
         } catch (IOException e) {
             logger.info("Fail to delete Google Event: " + googleId);
         }
@@ -370,7 +371,7 @@ public class GoogleStorage extends Storage {
         dataStoreTask.delete(googleId);
         try {
             this.clientTask.tasks()
-            .delete(this.googleTaskList.getId(), googleId).execute();
+                    .delete(this.googleTaskList.getId(), googleId).execute();
         } catch (IOException e) {
             logger.info("Fail to delete Google Task: " + googleId);
         }
@@ -387,7 +388,7 @@ public class GoogleStorage extends Storage {
                 dataStoreTask.delete(localTask.getGoogleId());
             }
             this.dbFile.getData().getTask().getTaskStateMap()
-            .get(localTask.getId()).setFinalTask(null);
+                    .get(localTask.getId()).setFinalTask(null);
         }
     }
 
@@ -490,7 +491,7 @@ public class GoogleStorage extends Storage {
     }
 
     private void initializeTransport() throws GeneralSecurityException,
-    IOException {
+            IOException {
         logger.info("Initializing Transport...");
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
@@ -510,7 +511,7 @@ public class GoogleStorage extends Storage {
     private boolean isValidGoogleEventId(String googleId) {
         try {
             this.clientCalendar.events()
-            .get(this.googleCalendar.getId(), googleId).execute();
+                    .get(this.googleCalendar.getId(), googleId).execute();
             logger.info("Valid Google Event ID: " + googleId);
             return true;
         } catch (IOException e) {
@@ -523,7 +524,7 @@ public class GoogleStorage extends Storage {
     private boolean isValidGoogleTaskId(String googleId) {
         try {
             this.clientTask.tasks().get(this.googleTaskList.getId(), googleId)
-            .execute();
+                    .execute();
             logger.info("Valid Google Task ID: " + googleId);
             return true;
         } catch (IOException e) {
@@ -728,12 +729,21 @@ public class GoogleStorage extends Storage {
         } else {
             localEvent.setTitle(NO_TITLE);
         }
-        localEvent.setDescription(googleEvent.getDescription());
-        localEvent.setStartDate(new Date(googleEvent.getStart().getDateTime()
-                .getValue()));
-        localEvent.setEndDate(new Date(googleEvent.getEnd().getDateTime()
-                .getValue()));
-        localEvent.setLocation(googleEvent.getLocation());
+
+        if (googleEvent.getDescription() != null) {
+            localEvent.setDescription(googleEvent.getDescription());
+        }
+        if (googleEvent.getStart() != null) {
+            localEvent.setStartDate(new Date(googleEvent.getStart()
+                    .getDateTime().getValue()));
+        }
+        if (googleEvent.getEnd() != null) {
+            localEvent.setEndDate(new Date(googleEvent.getEnd().getDateTime()
+                    .getValue()));
+        }
+        if (googleEvent.getLocation() != null) {
+            localEvent.setLocation(googleEvent.getLocation());
+        }
         if (googleEvent.getReminders().getOverrides() == null) {
             localEvent.setReminder(null);
         } else {
@@ -751,7 +761,7 @@ public class GoogleStorage extends Storage {
 
     private void setLocalTaskFields(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-                    throws Exception {
+            throws Exception {
         if ((googleTask.getTitle() == null) || googleTask.getTitle().equals("")) {
             localTask.setTitle(NO_TITLE);
         } else {
@@ -783,7 +793,7 @@ public class GoogleStorage extends Storage {
                 httpTransport, jsonFactory, this.clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR + " "
                         + TasksScopes.TASKS)).setDataStoreFactory(
-                                dataStoreFactory).build();
+                dataStoreFactory).build();
         this.credential = new AuthorizationCodeInstalledApp(flow,
                 new LocalServerReceiver()).authorize(this.userId);
     }
@@ -792,7 +802,7 @@ public class GoogleStorage extends Storage {
         logger.info("Setting up global caleandar instance...");
         this.clientCalendar = new com.google.api.services.calendar.Calendar.Builder(
                 httpTransport, jsonFactory, this.credential)
-                .setApplicationName(NormalMessage.APP_NAME).build();
+        .setApplicationName(NormalMessage.APP_NAME).build();
 
     }
 
@@ -800,7 +810,7 @@ public class GoogleStorage extends Storage {
         logger.info("Setting up global task instance...");
         this.clientTask = new com.google.api.services.tasks.Tasks.Builder(
                 httpTransport, jsonFactory, this.credential)
-                .setApplicationName(NormalMessage.APP_NAME).build();
+        .setApplicationName(NormalMessage.APP_NAME).build();
     }
 
     private void syncAllEvents() throws Exception {
@@ -901,7 +911,7 @@ public class GoogleStorage extends Storage {
 
     private void syncTask(Task localTask,
             com.google.api.services.tasks.model.Task googleTask)
-            throws Exception {
+                    throws Exception {
         logger.info("Updating task: " + localTask.getTitle());
 
         Date googleTaskLastModifiedTime = new Date(googleTask.getUpdated()
@@ -928,7 +938,7 @@ public class GoogleStorage extends Storage {
 
     private void updateGoogleTask(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-                    throws IOException {
+            throws IOException {
         this.setGoogleTaskFields(googleTask, localTask);
         googleTask = this.clientTask
                 .tasks()
@@ -944,7 +954,7 @@ public class GoogleStorage extends Storage {
 
     private void updateLocalTask(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-                    throws Exception {
+            throws Exception {
         this.setLocalTaskFields(googleTask, localTask);
     }
 
