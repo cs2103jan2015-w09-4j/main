@@ -55,7 +55,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public static Database getInstance() throws NoSuchFileException,
-            IOException {
+    IOException {
         if (instance == null) {
             instance = initInstance(null);
         }

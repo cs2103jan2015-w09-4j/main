@@ -25,8 +25,9 @@ public abstract class Storage {
 
     /**
      * Store Data to Disk and Google
-     * 
+     *
      * @throws IOException
+     * @throws Exception
      */
-    abstract public void storeData() throws IOException;
+    abstract public void storeData() throws IOException, Exception;
 }
