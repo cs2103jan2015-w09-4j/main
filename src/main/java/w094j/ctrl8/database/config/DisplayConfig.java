@@ -47,7 +47,11 @@ public class DisplayConfig implements IStorableElement {
 
     @Override
     public boolean isValid() {
-        return true;
+        if(isGUI()){
+            return (this.GUI!=null && this.GUI.isValid());
+        } else {
+            return (this.CLI!=null && this.CLI.isValid());
+        }
     }
 
     /**

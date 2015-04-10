@@ -4,12 +4,10 @@ package w094j.ctrl8.database.config;
 import w094j.ctrl8.database.IStorableElement;
 
 public class DisplayControllerConfig implements IStorableElement {
-    public GUITextDisplayConfig textDisplayConfig;
-    public GUITextInputConfig textInputConfig;
+    private GUITextDisplayConfig textDisplayConfig;
+    private GUITextInputConfig textInputConfig;
 
     public DisplayControllerConfig() {
-        this.textDisplayConfig = new GUITextDisplayConfig();
-        this.textInputConfig = new GUITextInputConfig();
     }
 
     public DisplayControllerConfig(GUITextDisplayConfig textDisplayConfig,
@@ -17,10 +15,35 @@ public class DisplayControllerConfig implements IStorableElement {
         this.textDisplayConfig = textDisplayConfig;
         this.textInputConfig = textInputConfig;
     }
+    
+    public GUITextDisplayConfig getGUITextDisplayConfig(){
+        if(this.textDisplayConfig==null){
+            return new GUITextDisplayConfig();
+        } else {
+            return this.textDisplayConfig;
+        }
+    }
+    
+    public GUITextInputConfig getGUITextInputConfig(){
+        if(this.textInputConfig==null){
+            return new GUITextInputConfig();
+        } else {
+            return this.textInputConfig;
+        }
+    }
+    
+    public void setGUITextDisplayConfig(GUITextDisplayConfig config){
+        this.textDisplayConfig  = config;
+    }
+    
+    public void setGUITextInputConfig(GUITextInputConfig config){
+        this.textInputConfig = config;
+    }
 
     @Override
     public boolean isValid() {
-        return true;
+        return (this.textDisplayConfig==null ? true : this.textDisplayConfig.isValid()) &&
+               (this.textInputConfig==null ? true : this.textInputConfig.isValid());
     }
 
 }
