@@ -13,9 +13,9 @@ import w094j.ctrl8.parse.statement.Statement;
  * level TODO: Additional support for custom priority
  */
 
-//@author A0065517A
-//@author A0110787A
-//@author A0112521B
+// @author A0065517A
+// @author A0110787A
+// @author A0112521B
 
 public class Task implements Comparable<Task> {
 
@@ -42,22 +42,22 @@ public class Task implements Comparable<Task> {
         TIMED
     }
 
-    private String id;
-    private String title;
     private String category;
     private String description;
-    private Date startDate;
     private Date endDate;
+    private String etag;
+    private String googleId;
+    private String id;
+    private Boolean isDone;
+    private Boolean isSynced;
+    private Date lastModifiedTime;
     private String location;
     private Integer priority;
     private Date reminder;
-    private TaskType taskType;
-    private Boolean isDone;
-    private Date lastModifiedTime;
-    private Boolean isSynced;
-    private String googleId;
-    private String etag;
+    private Date startDate;
     private LinkedList<Statement> statementHistory;
+    private TaskType taskType;
+    private String title;
 
     /**
      * default constructor
@@ -268,7 +268,7 @@ public class Task implements Comparable<Task> {
      * @param priority
      *            the priority to set
      */
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
         this.updateTimeAndSyncStatus();
     }
@@ -320,7 +320,7 @@ public class Task implements Comparable<Task> {
 
     /**
      * Change incomplete task to complete task this.task should have a title
-     * 
+     *
      * @throws Exception
      */
     public void toCompleteTask() throws Exception {
