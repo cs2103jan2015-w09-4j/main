@@ -1,11 +1,8 @@
 package w094j.ctrl8.pojo;
 
 import java.util.Date;
-import java.util.LinkedList;
 
 import org.bson.types.ObjectId;
-
-import w094j.ctrl8.parse.statement.Statement;
 
 /**
  * Class encapsulates a task object, which contains all the information required
@@ -13,7 +10,6 @@ import w094j.ctrl8.parse.statement.Statement;
  * level TODO: Additional support for custom priority
  */
 
-// @author A0065517A
 // @author A0110787A
 // @author A0112521B
 
@@ -55,7 +51,6 @@ public class Task implements Comparable<Task> {
     private Integer priority;
     private Date reminder;
     private Date startDate;
-    private LinkedList<Statement> statementHistory;
     private TaskType taskType;
     private String title;
 
@@ -67,21 +62,22 @@ public class Task implements Comparable<Task> {
     }
 
     public Task(Task task) {
-        this.id = task.getId();
-        this.title = task.getTitle();
-        this.category = task.getCategory();
-        this.description = task.getDescription();
-        this.startDate = task.getStartDate();
-        this.endDate = task.getEndDate();
-        this.location = task.getLocation();
-        this.priority = task.getPriority();
-        this.reminder = task.getReminder();
-        this.taskType = task.getTaskType();
-        this.isDone = task.getStatus();
-        this.updateTimeAndSyncStatus();
-        this.googleId = task.getGoogleId();
-        this.etag = task.getEtag();
-        this.statementHistory = task.getStatementHistory();
+        this.category = task.category;
+        this.description = task.description;
+        this.endDate = (Date) task.endDate.clone();
+        this.etag = task.etag;
+        this.googleId = task.googleId;
+        // Cloned task will share same ID object
+        this.id = task.id;
+        this.isDone = task.isDone;
+        this.isSynced = task.isSynced;
+        this.lastModifiedTime = (Date) task.lastModifiedTime.clone();
+        this.location = task.location;
+        this.priority = task.priority;
+        this.reminder = (Date) task.reminder.clone();
+        this.startDate = (Date) task.startDate.clone();
+        this.taskType = task.taskType;
+        this.title = task.title;
     }
 
     @Override
@@ -175,13 +171,6 @@ public class Task implements Comparable<Task> {
         // only Timed tasks have a start date
         assert (this.taskType == TaskType.TIMED);
         return this.startDate;
-    }
-
-    /**
-     * @return the statementHistory
-     */
-    public LinkedList<Statement> getStatementHistory() {
-        return this.statementHistory;
     }
 
     /**
@@ -288,15 +277,6 @@ public class Task implements Comparable<Task> {
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-        this.updateTimeAndSyncStatus();
-    }
-
-    /**
-     * @param statementHistory
-     *            the statementHistory to set
-     */
-    public void setStatementHistory(LinkedList<Statement> statementHistory) {
-        this.statementHistory = statementHistory;
         this.updateTimeAndSyncStatus();
     }
 

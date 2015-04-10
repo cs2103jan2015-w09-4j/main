@@ -60,6 +60,8 @@ public class AddStatement extends Statement {
     public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
-        taskManager.add(this.task, this, isUndo);
+        // a new Task is created so that the internal implementation is not
+// affected.
+        taskManager.add(new Task(this.task), this, isUndo);
     }
 }

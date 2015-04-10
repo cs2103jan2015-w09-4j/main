@@ -73,7 +73,7 @@ public class ModifyStatement extends Statement {
     public void execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
         // Statement to be added
-        taskManager.modify(this.query, this.task, this, isUndo);
+        taskManager.modify(this.query, new Task(this.task), this, isUndo);
 
     }
 }
