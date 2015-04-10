@@ -1,3 +1,4 @@
+//@author A0112521B
 package w094j.ctrl8.database;
 
 import java.io.IOException;
@@ -8,8 +9,9 @@ import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.taskmanager.TaskManager;
 import w094j.ctrl8.terminal.Terminal;
 
-//@author A0112521B
-
+/**
+ * Factory
+ */
 public class Factory {
 
     /**

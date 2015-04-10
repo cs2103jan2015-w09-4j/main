@@ -1,3 +1,4 @@
+//@author A0112521B
 package w094j.ctrl8.database;
 
 import java.io.IOException;
@@ -8,8 +9,6 @@ import w094j.ctrl8.pojo.DBfile;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-//@author A0112521B
 
 /**
  * Disk Storage
