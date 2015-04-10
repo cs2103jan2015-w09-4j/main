@@ -155,6 +155,8 @@ public class TaskManager implements ITaskManager {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_NULL_TASK);
         }
+        logger.debug("in add task: " + task.getTitle());
+        logger.debug("in add "+statement.getCommand()+ " " + statement.getStatementArgumentsOnly());
         // Make sure we are not adding an Incomplete task to database
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
             throw new CommandExecuteException(
@@ -163,7 +165,7 @@ public class TaskManager implements ITaskManager {
 
         try {
             // Update Taskmap
-            this.taskData.updateTaskMap(task, statement);
+            this.taskData.updateTaskMap(task, statement,isUndo);
 
         } catch (Exception e) {
             throw new CommandExecuteException(
@@ -243,6 +245,10 @@ public class TaskManager implements ITaskManager {
             Task task;
         try {
             String[] taskIdList = search(query);
+            if(taskIdList == null){
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            }
             /* Check if key exists in taskStateMap */
             if (taskIdList.length > 0) {
                 if(taskIdList.length == 1){
@@ -311,7 +317,10 @@ public class TaskManager implements ITaskManager {
             throws CommandExecuteException {
         
         String[] taskIdList = search(query);
-
+        if(taskIdList == null){
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        }
         /* Check if key exists in taskStateMap */
         if (taskIdList.length > 0) {
             int index;
@@ -428,7 +437,10 @@ public class TaskManager implements ITaskManager {
     public void modify(String query, Task incompleteTask, Statement statement,
             boolean isUndo) throws CommandExecuteException {
         String[] taskIdList = search(query);
-
+        if(taskIdList == null){
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        }
         /* Check if key exists in taskStateMap */
         if (taskIdList.length > 0) {
             int index;
