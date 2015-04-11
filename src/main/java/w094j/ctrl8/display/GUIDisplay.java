@@ -20,27 +20,30 @@ import w094j.ctrl8.pojo.Task;
  * Class implements Display Interface as a simple CLI with additional GUI
  * display for its output in the same window
  */
-
+@Deprecated
 public class GUIDisplay extends Display {
     private GUICore guiCore;
-    private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
     private Thread GUIThread;
+    private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
 
     public GUIDisplay() {
-        this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
+        this.guiCore = new GUICore(new GUIDisplayConfig(),
+                Thread.currentThread());
     }
 
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
-            .debug("Invalid or null config received! Reverting to defaults.");
-            this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
+                    .debug("Invalid or null config received! Reverting to defaults.");
+            this.guiCore = new GUICore(new GUIDisplayConfig(),
+                    Thread.currentThread());
         } else {
             this.guiCore = new GUICore(config, Thread.currentThread());
         }
         this.GUIThread = new Thread(this.guiCore);
-        //Ensure that GUIThread is completely initialised before returning constructor
-        synchronized(this.GUIThread){
+        // Ensure that GUIThread is completely initialised before returning
+// constructor
+        synchronized (this.GUIThread) {
             this.GUIThread.start();
         }
     }
@@ -74,7 +77,7 @@ public class GUIDisplay extends Display {
 
         if (allNull) {
             this.logger
-            .debug("Respose object does not contain any useful information");
+                    .debug("Respose object does not contain any useful information");
         }
     }
 
