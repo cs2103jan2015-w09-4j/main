@@ -17,6 +17,7 @@ import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.TaskManager;
 
+//@author A0112092W
 public class Terminal {
     private static Terminal instance;
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);

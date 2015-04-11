@@ -17,7 +17,6 @@ import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.message.OuputExecuteMessage;
 import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.Actions;
-import w094j.ctrl8.pojo.HistoryData;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
@@ -268,18 +267,6 @@ public class CLIDisplay extends Display {
                 System.out.println(" String: " + value);
                 i++;
             }
-        }
-    }
-
-    private void outputHistory(HistoryData history) {
-        ArrayList<Statement> historyList = history.getHistoryList();
-
-        for (int i = 0; i < historyList.size(); i++) {
-            Statement statement = historyList.get(i);
-            System.out.print(i + 1 + ". Command:");
-            System.out.print(statement.getCommand().toString());
-            System.out.print(" String:");
-            System.out.println(statement.getStatementArgumentsOnly());
         }
     }
 
