@@ -1,0 +1,1889 @@
+//@author: a0110787a
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\DisplayControllerConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
+
+public class DisplayControllerConfig implements IStorableElement {
+    private GUITextDisplayConfig textDisplayConfig;
+    private GUITextInputConfig textInputConfig;
+
+    public DisplayControllerConfig() {
+    }
+
+    public DisplayControllerConfig(GUITextDisplayConfig textDisplayConfig,
+            GUITextInputConfig textInputConfig) {
+        this.textDisplayConfig = textDisplayConfig;
+        this.textInputConfig = textInputConfig;
+    }
+    
+    public GUITextDisplayConfig getGUITextDisplayConfig(){
+        if(this.textDisplayConfig==null){
+            return new GUITextDisplayConfig();
+        } else {
+            return this.textDisplayConfig;
+        }
+    }
+    
+    public GUITextInputConfig getGUITextInputConfig(){
+        if(this.textInputConfig==null){
+            return new GUITextInputConfig();
+        } else {
+            return this.textInputConfig;
+        }
+    }
+    
+    public void setGUITextDisplayConfig(GUITextDisplayConfig config){
+        this.textDisplayConfig  = config;
+    }
+    
+    public void setGUITextInputConfig(GUITextInputConfig config){
+        this.textInputConfig = config;
+    }
+
+    @Override
+    public boolean isValid() {
+        return (this.textDisplayConfig==null ? true : this.textDisplayConfig.isValid()) &&
+               (this.textInputConfig==null ? true : this.textInputConfig.isValid());
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\DisplayControllerConfig.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUIDisplayConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
+
+/**
+ * This is a wrapper class that contains all configuration objects relating to
+ * the GUIDisplay component.
+ */
+public class GUIDisplayConfig implements IStorableElement {
+    protected static String[] DEFAULT_ARGS = new String[] {""};
+    
+    protected String[] appArgs;
+    protected DisplayControllerConfig controllerConfig;
+
+    // The one and only constructor. Produces a default configuration.
+    public GUIDisplayConfig() {
+        this.controllerConfig = new DisplayControllerConfig();
+    }
+    
+    public String[] getAppArgs(){
+        if(this.appArgs == null){
+            return DEFAULT_ARGS;
+        } else {
+            return this.appArgs;
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        return (this.controllerConfig != null && this.controllerConfig.isValid());
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUIDisplayConfig.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUITextDisplayConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
+
+public class GUITextDisplayConfig extends GUITextGenericConfig implements
+        IStorableElement {
+    //Uses a different set of default values
+    protected static final TextColour DEFAULT_TEXT_COLOUR = TextColour.Black;
+    protected static final int DEFAULT_TEXT_SIZE = 12;
+
+    GUITextDisplayConfig() {
+    }
+
+    GUITextDisplayConfig(TextColour textColour, int textSize) {
+        super(textColour, textSize);
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUITextDisplayConfig.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+    private String lastMessage;
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+    /*
+     * For testing purposes. Facilitates JUnit testing of individual modules
+     * using CLIDisplay
+     */
+    public String getLastMessage() {
+        return this.lastMessage;
+
+    }
+
+    public void outputMessage(String message) {
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+        /*
+         * For testing purposes. see getLastMessage()
+         */
+        this.lastMessage = message;
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\GUICore.java
+	 */
+
+package w094j.ctrl8.display.gui;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import w094j.ctrl8.database.config.GUIDisplayConfig;
+import w094j.ctrl8.display.gui.view.ConsoleSceneController;
+import w094j.ctrl8.display.gui.view.LocalResource;
+import w094j.ctrl8.message.NormalMessage;
+
+/**
+ * The application core of the GUI implementation. To create an application
+ * window, simply initialise the object using its constructors.
+ *
+ * <pre>
+ * E.g
+ * new GUICore(new String[] {""});
+ * 
+ * Refer to
+ * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
+ * </pre>
+ */
+public class GUICore extends Application implements Runnable {
+
+    private static final String __newline = "\n";
+// TODO
+    private static ConsoleSceneController consoleController;
+    private static Logger logger = LoggerFactory.getLogger(GUICore.class);
+    private GUIDisplayConfig config;
+    private Thread main;
+    private Stage primaryStage; // Default stage
+    private BorderPane rootLayout; // Wrapper for internal components
+
+    public GUICore() {
+        /*
+         * To be left empty. Because Application.launch invokes the default
+         * constructor, but we use the loaded constructor to initialise the
+         * application
+         */
+    }
+
+    public GUICore(GUIDisplayConfig config, Thread main) {
+        this.config = config;
+        this.main = main;
+    }
+
+    /**
+     * @return the consoleController
+     */
+    public ConsoleSceneController getConsoleController() {
+        System.out.println(this + ":" + this.consoleController);
+        return this.consoleController;
+    }
+
+    /**
+     * Generates initial text to display in TextArea textDisplay.
+     *
+     * @return String
+     */
+    public String getConsoleInitString() {
+        return NormalMessage.WELCOME_MESSAGE + __newline;
+    }
+
+    public InputStream getInputStream() {
+        return this.getConsoleController().getInputStream();
+    }
+
+    /**
+     * Returns the main stage. Main purpose is to allow child-scenes to be able
+     * to link back.
+     *
+     * @return
+     */
+    public Stage getPrimaryStage() {
+        return this.primaryStage;
+    }
+
+    @Override
+    public void init() throws Exception {
+        logger.debug("Initialising GUICore...");
+        super.init();
+
+        this.getParameters().getRaw();
+
+        logger.debug("GUICore initialised!");
+    }
+
+    @Override
+    public void run() {
+        launch(this.config.getAppArgs());
+    }
+
+    /**
+     * @param consoleController
+     *            the consoleController to set
+     */
+    public void setConsoleController(ConsoleSceneController consoleController) {
+        this.consoleController = consoleController;
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        this.primaryStage.setTitle(NormalMessage.APP_NAME);
+
+        this.initRootLayout();
+
+        this.showConsole();
+
+        synchronized (this) {
+            this.notify();
+        }
+    }
+
+    /**
+     * Initialises the rootlayout
+     */
+    private void initRootLayout() {
+        try {
+            // Load root layout from fxml file
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(GUICore.class
+                    .getResource(LocalResource.RootLayout));
+            this.rootLayout = (BorderPane) loader.load();
+
+            // Show the scene containing the root layout
+            Scene rootLayoutScene = new Scene(this.rootLayout);
+            this.primaryStage.setScene(rootLayoutScene);
+
+            this.primaryStage.setResizable(true); /*
+                                                   * Enable resizing the window
+                                                   */
+            this.primaryStage.show();
+
+            this.primaryStage.setMinHeight(this.primaryStage.getHeight());
+            this.primaryStage.setMinWidth(this.primaryStage.getWidth());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Shows the console inside the root layout
+     */
+    private void showConsole() {
+        try {
+            // Load console scene
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(GUICore.class
+                    .getResource(LocalResource.ConsoleScene));
+            BorderPane consoleScene = (BorderPane) loader.load();
+
+            // TODO
+            consoleScene
+                    .setStyle("-fx-faint-focus-color: transparent;-fx-focus-color: transparent;");
+
+            // Place console scene in center pane of the rootLayout
+            this.rootLayout.setCenter(consoleScene);
+
+            // Give controller access
+            this.setConsoleController(loader.getController());
+            this.getConsoleController().setRoot(this);
+            System.out.println(this.getConsoleController());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\GUICore.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\model\FXTextFieldInputStream.java
+	 */
+
+package w094j.ctrl8.display.gui.model;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import javafx.event.EventHandler;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class FXTextFieldInputStream extends InputStream {
+    byte[] contents;
+    int pointer = 0;
+    private String delimiter = "\r\n";
+
+    private Logger logger = LoggerFactory
+            .getLogger(FXTextFieldInputStream.class);
+
+    public FXTextFieldInputStream(final TextField text) {
+        this.contents = new byte[] {};
+        this.pointer = 1;
+        text.addEventHandler(KeyEvent.KEY_PRESSED,
+                new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    FXTextFieldInputStream.this.contents = (text
+                                    .getText() + "\n").getBytes();
+                    FXTextFieldInputStream.this.pointer = 0;
+                    text.setText("");
+                    synchronized (FXTextFieldInputStream.this) {
+
+                        FXTextFieldInputStream.this.notifyAll();
+
+                    }
+                }
+            }
+        });
+    };
+
+    // Disables the default constructor
+    @SuppressWarnings("unused")
+    private FXTextFieldInputStream() {
+    }
+
+    @Override
+    public int read() throws IOException {
+        if (this.pointer == this.contents.length) {
+            this.pointer++;
+            System.out.println("-1L");
+            return -1;
+        }
+        if (this.pointer > this.contents.length) {
+            synchronized (this) {
+                try {
+                    this.wait();
+                    System.out.println("Exit wait");
+                    this.pointer = 0;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    System.out.println("-1");
+                    return -1;
+                }
+            }
+        }
+// System.out.println("(" + this.contents[this.pointer] + ")");
+        return this.contents[this.pointer++];
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\model\FXTextFieldInputStream.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\ConsoleSceneController.java
+	 */
+
+package w094j.ctrl8.display.gui.view;
+
+import java.io.InputStream;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import w094j.ctrl8.database.config.DisplayControllerConfig;
+import w094j.ctrl8.database.config.GUITextDisplayConfig;
+import w094j.ctrl8.database.config.GUITextInputConfig;
+import w094j.ctrl8.display.gui.GUICore;
+import w094j.ctrl8.display.gui.model.FXTextFieldInputStream;
+
+public class ConsoleSceneController {
+    private static final String __newline = "\n";
+    private static final String CSS_FAINT_FOCUS_TRANSPARENT = "-fx-faint-focus-color: transparent;";
+    private static final String CSS_FOCUS_TRANSPARENT = "-fx-focus-color: transparent;";
+
+    private static final String CSS_FONT_SIZE = "-fx-font-size: %1$2s ;";
+    private static final String CSS_TEXT_FILL = "-fx-text-fill: %1$2s ;";
+
+    public byte[] input;
+    private String displayBuffer; // Buffer for the display
+    private FXTextFieldInputStream inputStream;
+
+    private Logger logger = LoggerFactory
+            .getLogger(ConsoleSceneController.class);
+    private GUICore root; // Pointer back to the root
+
+    @FXML
+    private TextArea textDisplay;
+    @FXML
+    private TextField textInput;
+
+    public ConsoleSceneController() {
+    }
+
+    /**
+     * Appends a string to the displayBuffer then updates the textDisplay
+     * 
+     * @param input
+     *            string to append
+     */
+    public void appendToDisplay(String input) {
+        this.displayBuffer += input + __newline;
+        this.textDisplay.appendText(input + __newline);
+    }
+
+    public void applyConfig(DisplayControllerConfig controllerConfig) {
+        applyToTextDisplay(controllerConfig.textDisplayConfig);
+        applyToTextInput(controllerConfig.textInputConfig);
+
+    }
+
+    public InputStream getInputStream() {
+        return this.inputStream;
+    }
+
+    /**
+     * Is called by the main application to give a reference back to itself.
+     * 
+     * @param GUICore
+     */
+    public void setRoot(GUICore root) {
+        this.root = root;
+
+        // Get the root to provide the initial text display
+        this.displayBuffer = this.root.getConsoleInitString();
+
+        // Update displayed text
+        this.textDisplay.setText(new String()); // Flushes the display
+        this.textDisplay.appendText(displayBuffer); // Activates listener
+    }
+
+    private void applyToTextDisplay(GUITextDisplayConfig textDisplayConfig) {
+        this.textDisplay.setStyle(String.format(CSS_FONT_SIZE,
+                textDisplayConfig.getTextSize()));
+        this.textDisplay.setStyle(String.format(CSS_TEXT_FILL,
+                textDisplayConfig.getTextColour()));
+
+    }
+
+    private void applyToTextInput(GUITextInputConfig textInputConfig) {
+        this.textInput.setStyle(String.format(CSS_FONT_SIZE,
+                textInputConfig.getTextSize()));
+        this.textInput.setStyle(String.format(CSS_TEXT_FILL,
+                textInputConfig.getTextColour()));
+
+    }
+
+    @FXML
+    private void initialize() {
+        // Initialise text display
+        this.textDisplay.setWrapText(false); // disable wrapping
+        this.textDisplay.setEditable(false); // Disables editing
+        this.textDisplay.setStyle(CSS_FOCUS_TRANSPARENT);
+        this.textDisplay.setStyle(CSS_FAINT_FOCUS_TRANSPARENT);
+
+        /*
+         * Add a listener that auto-scrolls the display to the bottom whenever
+         * there are new strings appended
+         */
+        this.textDisplay.textProperty().addListener(
+                new ChangeListener<Object>() {
+                    @Override
+                    public void changed(ObservableValue<?> observable,
+                            Object oldValue, Object newValue) {
+                        textDisplay.setScrollTop(Double.MAX_VALUE);
+                    }
+                });
+
+        // Initialise buffer to be empty string
+        this.displayBuffer = "";
+        this.textDisplay.appendText(this.displayBuffer);
+
+        // Initialise text input
+        this.textInput.setAlignment(Pos.TOP_LEFT); // Align top left
+        this.textInput.setStyle(CSS_FOCUS_TRANSPARENT);
+        this.textInput.setStyle(CSS_FAINT_FOCUS_TRANSPARENT);
+
+        /*
+         * Create an InputStream that specifically captures input from the
+         * TextArea. A listener notifies the inputstream to unblock itself once
+         * enter button is pressed
+         */
+        this.inputStream = new FXTextFieldInputStream(textInput);
+        this.logger.debug("InputStream Thread created, Init complete");
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\ConsoleSceneController.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\LocalResource.java
+	 */
+
+package w094j.ctrl8.display.gui.view;
+
+/**
+ * Class contains the list of filepaths (as String) to resources that the
+ * application uses.
+ */
+public class LocalResource {
+    public static final String ConsoleScene = "/ConsoleScene.fxml";
+    public static final String RootLayout = "/RootLayout.fxml";
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\LocalResource.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\GUIDisplay.java
+	 */
+
+package w094j.ctrl8.display;
+
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import w094j.ctrl8.database.config.GUIDisplayConfig;
+import w094j.ctrl8.display.gui.GUICore;
+import w094j.ctrl8.exception.OutputExecuteException;
+import w094j.ctrl8.message.MagicNumbersAndConstants;
+import w094j.ctrl8.message.OuputExecuteMessage;
+import w094j.ctrl8.pojo.Response;
+import w094j.ctrl8.pojo.Task;
+
+/**
+ * Class implements Display Interface as a simple CLI with additional GUI
+ * display for its output in the same window
+ */
+
+public class GUIDisplay extends Display {
+    private GUICore guiCore;
+    private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
+    private Thread GUIThread;
+
+    public GUIDisplay() {
+        this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
+    }
+
+    public GUIDisplay(GUIDisplayConfig config) {
+        if ((config == null) || !config.isValid()) {
+            this.logger
+            .debug("Invalid or null config received! Reverting to defaults.");
+            this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
+        } else {
+            this.guiCore = new GUICore(config, Thread.currentThread());
+        }
+        this.GUIThread = new Thread(this.guiCore);
+        //Ensure that GUIThread is completely initialised before returning constructor
+        synchronized(this.GUIThread){
+            this.GUIThread.start();
+        }
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return this.guiCore.getInputStream();
+    }
+
+    @Override
+    public void updateUI(Response res) {
+        boolean allNull = true; // Initial assumption
+        if (res.reply != null) {
+            try {
+                Thread.sleep(3000); // 1000 milliseconds is one second.
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+            System.out.println(this.guiCore.getConsoleController());
+            this.guiCore.getConsoleController().appendToDisplay(res.reply);
+            allNull = false;
+        }
+        if (res.taskList != null) {
+            try {
+                this.outputTask(res.taskList);
+            } catch (OutputExecuteException e) {
+                this.logger.debug(e.getMessage());
+            }
+            allNull = false;
+        }
+
+        if (allNull) {
+            this.logger
+            .debug("Respose object does not contain any useful information");
+        }
+    }
+
+    private String[][] initNullTaskTable(String[][] table, int taskNumber) {
+        int i = taskNumber;
+        table[i][0] = "-";
+
+        table[i][1] = "-";
+
+        table[i][2] = "-";
+
+        table[i][3] = "-";
+
+        table[i][4] = "-";
+
+        table[i][5] = "-";
+
+        table[i][6] = "-";
+
+        table[i][7] = "-";
+
+        table[i][8] = "-";
+
+        table[i][9] = "-";
+        return table;
+    }
+
+    /*
+     * Initialize the table with adding the first row for each of the task's
+     * properties.
+     */
+    private String[][] initTable(int taskNumber, int taskProperties) {
+        String[][] table = new String[taskNumber][taskProperties];
+        table[0][0] = "Title";
+        table[0][1] = "Category";
+        table[0][2] = "Description";
+        table[0][3] = "StartDate";
+        table[0][4] = "EndDate";
+        table[0][5] = "Location";
+        table[0][6] = "Priority";
+        table[0][7] = "Reminder";
+        table[0][8] = "TaskType";
+        table[0][9] = "Status";
+
+        return table;
+    }
+
+    /**
+     * This method is used to output the task for the user in certain format.
+     * Modified from CLIDisplay and contextualised for GUI
+     *
+     * @param taskList
+     * @throws OutputExecuteException
+     */
+    private void outputTask(Task[] taskList) throws OutputExecuteException {
+        String[][] table = this.initTable(taskList.length + 1,
+                MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
+        int iteration = taskList.length + 1;
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        table = this.initNullTaskTable(table, 1);
+
+        for (int i = 1; i < iteration; i++) {
+            // task should be not null
+            if (taskList[i - 1] == null) {
+                throw new OutputExecuteException(
+                        OuputExecuteMessage.EXCEPTION_NULL_TASK);
+            }
+
+            if (taskList[i - 1].getTitle() == null) {
+                table[i][0] = "-";
+            } else {
+                table[i][0] = taskList[i - 1].getTitle();
+            }
+
+            if (taskList[i - 1].getCategory() == null) {
+                table[i][1] = "-";
+            } else {
+                table[i][1] = taskList[i - 1].getCategory();
+            }
+            if (taskList[i - 1].getDescription() == null) {
+                table[i][2] = "-";
+            } else {
+                table[i][2] = taskList[i - 1].getDescription();
+            }
+            if (taskList[i - 1].getStartDate() == null) {
+                table[i][3] = "-";
+            } else {
+                table[i][3] = df.format(taskList[i - 1].getStartDate());
+            }
+            if (taskList[i - 1].getEndDate() == null) {
+                table[i][4] = "-";
+            } else {
+                table[i][4] = df.format(taskList[i - 1].getEndDate());
+            }
+            if (taskList[i - 1].getLocation() == null) {
+                table[i][5] = "-";
+            } else {
+                table[i][5] = taskList[i - 1].getLocation();
+            }
+
+            table[i][6] = String.valueOf(taskList[i - 1].getPriority());
+
+            if (taskList[i - 1].getReminder() == null) {
+                table[i][7] = "-";
+            } else {
+                table[i][7] = df.format(taskList[i - 1].getReminder());
+            }
+
+            table[i][8] = taskList[i - 1].getTaskType().toString();
+
+            if (taskList[i - 1].getStatus() == true) {
+                table[i][9] = "Done";
+            } else {
+                table[i][9] = "Not Done Yet";
+            }
+        }
+        this.printTable(table);
+    }
+
+    /**
+     * This method is used to print a table with format of following the format
+     * of right justified table x xxx yyy y zz zz
+     *
+     * <pre>
+     * Modified from CLIDisplay and contextualised for GUI
+     * </pre>
+     *
+     * @param table
+     */
+    private void printTable(String[][] table) {
+        // Find out what the maximum number of columns is in any row
+        int maxColumns = 0;
+        for (String[] element : table) {
+            maxColumns = Math.max(element.length, maxColumns);
+        }
+
+        // Find the maximum length of a string in each column
+        int[] lengths = new int[maxColumns];
+        for (String[] element : table) {
+            for (int j = 0; j < element.length; j++) {
+                lengths[j] = Math.max(element[j].length(), lengths[j]);
+            }
+        }
+
+        // Generate a format string for each column
+        String[] formats = new String[lengths.length];
+        for (int i = 0; i < lengths.length; i++) {
+            formats[i] = "%1$" + lengths[i] + "s"
+                    + ((i + 1) == lengths.length ? "\n" : " ");
+        }
+
+        // Print 'em out
+        StringBuilder sb = new StringBuilder();
+        for (String[] element : table) {
+            for (int j = 0; j < element.length; j++) {
+                sb.append(String.format(formats[j], element[j]));
+            }
+        }
+        this.guiCore.getConsoleController().appendToDisplay(sb.toString());
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\GUIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\CommandExecuteException.java
+	 */
+
+
+/*
+ * Exception class thrown for any errors encountered in execution when Statement object calls .execute()
+ */
+public class CommandExecuteException extends Exception {
+    // Parameterless constructor
+    public CommandExecuteException() {
+    }
+
+    // Constructor that accepts a String message
+    public CommandExecuteException(String message) {
+        super(message);
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\CommandExecuteException.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\TaskOverwriteException.java
+	 */
+
+
+/*
+ * Exception class thrown when an attempt to overwrite an existing task in a Database occurs
+ * This is to ensure that we do not accidentally overwrite a Task with a Task delta resulting in loss of information
+ */
+public class TaskOverwriteException extends Exception {
+    // Parameterless constructor
+    public TaskOverwriteException() {
+    }
+
+    // Constructor that accepts a String message
+    public TaskOverwriteException(String message) {
+        super(message);
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\TaskOverwriteException.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\CommandExecutionMessage.java
+	 */
+
+package w094j.ctrl8.message;
+
+/**
+ * Class contains all messages used by Command-related functions of
+ * Terminal.java
+ */
+public class CommandExecutionMessage {
+    public static final String EXCEPTION_BAD_TASKID = "TaskID does not exist in TaskMap";
+    public static final String EXCEPTION_IS_INCOMPLETE_TASK = "TaskType=INCOMPLETE";
+    public static final String EXCEPTION_MISSING_TASK = "Database does not contain Task";
+    public static final String EXCEPTION_NULL_TASK = "Task Object not initialised";
+    public static final String EXCEPTION_UPDATE_TASK_MAP = "Update TaskMap Error";
+    public static final String INVALID_INDEX = "Invalid Index!";
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\CommandExecutionMessage.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+	 */
+
+    public static final String HELP_ADD_COMMAND_SYNTAX = "add ={<title>}";
+    public static final String HELP_ALL = NormalMessage.HELP_HEADER
+            + NormalMessage.HELP_ADD_COMMAND_SYNTAX + "\n"
+            + NormalMessage.HELP_DELETE_COMMAND_SYNTAX + "\n"
+            + NormalMessage.HELP_MODIFY_COMMAND_SYNTAX + "\n"
+            + NormalMessage.HELP_VIEW_COMMAND_SYNTAX + "\n";
+    public static final String HELP_DELETE_COMMAND_SYNTAX = "delete <query>";
+    public static final String HELP_HEADER = "List of supported commands: \n";
+    public static final String HELP_MODIFY_COMMAND_SYNTAX = "modify <query> ={<title>}..";
+
+    public static final String HELP_VIEW_COMMAND_SYNTAX = "view";
+    public static final String MODIFY_TASK_SUCCESSFUL = " modified successfully!";
+    public static final String NO_FILEPATH_MESSAGE = "No filepath entered. Using default filepath.";
+    public static final String NO_TASK_FOUND = "No Tasks found.";
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Response.java
+	 */
+
+package w094j.ctrl8.pojo;
+
+import java.util.ArrayList;
+
+import w094j.ctrl8.data.AliasData;
+
+/**
+ * Response object defines what a Display Interface expects to receive after a
+ * user string processed internally for producing the appropriate feedback to
+ * the user. It can contain any of these properties:
+ *
+ * <pre>
+ * A String that contains useful feedback to the user
+ * A list of tasks that are to be displayed as a table to the user
+ * </pre>
+ *
+ * If a particular property is not part of a response, it should be defined as
+ * NULL
+ */
+public class Response {
+    /*
+     * The list of properties(variables) that a response MAY contain
+     */
+    public String reply;
+    public Task[] taskList;
+    public AliasData alias;
+    public ArrayList<Actions> actions;
+    public String[] TaskIdList; 
+
+    /**
+     * Default constructor. Initializes all properties to be NULL
+     */
+    public Response() {
+        this.reply = null;
+        this.taskList = null;
+        this.alias = null;
+        this.actions = null;
+        this.TaskIdList = null;
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Response.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Task.java
+	 */
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Task.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\ITaskManager.java
+	 */
+
+public interface ITaskManager {
+
+    /**
+     * <pre>
+     * Part of CRUD: Create
+     * </pre>
+     *
+     * Adds a task to data store. When poorly defined Task is used or execution
+     * mischap occurs, CommandExecuteException is thrown
+     *
+     * @param task
+     *            Task object. Expects a well defined Task, otherwise throws
+     *            CommandExecuteException
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void add(Task task, Statement statement,boolean isUndo)
+            throws CommandExecuteException;
+
+    /**
+     * View all aliases in the database.
+     */
+    public void alias();
+
+    /**
+     * adding of alias from user
+     *
+     * @param alias
+     * @param value
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void aliasAdd(String alias, String value, Statement statement,boolean isUndo)
+            throws CommandExecuteException;
+
+    /**
+     * delete a alias
+     *
+     * @param query
+     * @param statement
+     * @throws DataException
+     */
+    public void aliasDelete(String query, Statement statement,boolean isUndo)
+            throws DataException;
+
+    /**
+     * <pre>
+     * Part of CRUD: Delete
+     * </pre>
+     *
+     * Deletes a task in the data store given the taskID that the object
+     * contains. If the taskID does not currently exist in the data store, or
+     * any failure in storage operation occurs, CommandExecuteException is
+     * thrown.
+     *
+     * @param taskID
+     *            key that represents the task object
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void delete(String taskID, Statement statement, boolean isUndo)
+            throws CommandExecuteException;
+
+    /**
+     * Set the task's status to done
+     *
+     * @param query
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void done(String query, Statement statement, boolean isUndo)
+            throws CommandExecuteException;
+
+    /**
+     * Stops the Terminal from continuing its REPL loop. Function is called when
+     * an exit statement is executed. Performs a cleanup before terminating the
+     * terminal See Issue #74 on github
+     */
+    public void exit();
+
+    /**
+     * Generates information to assist the user in understanding the available
+     * syntax and displays it.
+     *
+     * @param command
+     */
+    public void help(CommandType command); // TODO add parameter to support help
+// for
+// specific
+// commands
+
+    /**
+     * remove the specified history with index
+     *
+     * @param index
+     */
+    public void historyClear(int parseInt);
+
+    /**
+     * undo the action with index in history
+     *
+     * @param index
+     * @throws CommandExecuteException
+     */
+    public void historyUndo(int parseInt) throws CommandExecuteException;
+
+    /**
+     * <pre>
+     * Part of CRUD: Update
+     * </pre>
+     *
+     * Modifies a task currently existing in the data store with new
+     * information, using a query. A matching task is found using the query,
+     * then the modify operation is performed. Existing fields are overwritten.
+     * Bad query, poorly formed task, or failure in modification operation will
+     * throw CommandExecuteException
+     *
+     * @param query
+     *            String that contains what the user wants to search the data
+     *            store with.
+     * @param incompleteTask
+     *            a Task that may not neccessarily have all its fields
+     *            completed. Is used as an overwrite.
+     * @param statement
+     * @throws CommandExecuteException
+     */
+    public void modify(String query, Task incompleteTask, Statement statement, boolean isUndo)
+            throws CommandExecuteException;
+
+    /**
+     * Instructs the data store to dump its information into an external file.
+     * This saves an instance of the list of Tasks that the Terminal has stored
+     * so that data can be recovered in the event of unexpected program
+     * termination.
+     */
+    public void pushData();
+
+    /**
+     * TODO
+     * 
+     * @param query
+     * @param task
+     */
+    public String[] search(String query);
+
+    /**
+     * <pre>
+     * Part of CRUD: Read
+     * </pre>
+     *
+     * Displays to the user, the list of Tasks that are in the data store. May
+     * be an incomplete list if there are too many tasks.
+     *
+     * @throws CommandExecuteException
+     */
+    public void view() throws CommandExecuteException;
+
+    /**
+     * view the history of actions
+     *
+     * @throws CommandExecuteException
+     */
+    public void viewHistory() throws CommandExecuteException;
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\ITaskManager.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
+	 */
+
+
+/**
+ * Class encapsulates an object that acts as a driver for the program. It
+ * accepts a config object and an object that implements the Display Interface
+ * as arguments. It may interact with one or more Datastore to manage its I/O
+ * operations. It parses user inputs and translates them into statements for
+ * command objects to perform needed operations (e.g ADD operation)
+ */
+
+public class TaskManager implements ITaskManager {
+
+    private static TaskManager instance;
+
+    // Static constants
+    private static Logger logger = LoggerFactory.getLogger(TaskManager.class);
+    private static final int TASK_MAP_MINIMUM_SIZE = 0;
+
+    private AliasData aliasData;
+    private boolean continueExecution = true;
+    // Storage object (External)
+    private IDatabase database;
+    // Interface supporting interaction with user
+    private Display display;
+    private TaskData taskData;
+
+    /*
+     * TODO This function is currently a stub. Until Config object has completed
+     * implementation
+     */
+    /**
+     * Constructor for terminal with a config object
+     *
+     * @param config
+     *            Configuration information specifying how Terminal/Display is
+     *            to be setup
+     * @param aliasData
+     * @param taskData
+     */
+    public TaskManager(TaskManagerConfig config, AliasData aliasData,
+            TaskData taskData) {
+        assertNotNull(config); // Should not be a null object
+        this.display = Display.getInstance();
+        this.aliasData = aliasData;
+        /*
+         * TODO replace with proper configuration
+         */
+        try {
+            this.database = Database.getInstance();
+        } catch (Exception e) {
+            Response res = new Response();
+            res.reply = e.getMessage();
+            this.display.updateUI(res);
+        }
+        this.taskData = taskData;
+    }
+
+    /**
+     * Gets the current instance of the TaskManager.
+     *
+     * @return the current instance.
+     */
+    public static TaskManager getInstance() {
+        if (instance == null) {
+            instance = initInstance(new TaskManagerConfig(), new AliasData(),
+                    new TaskData());
+        }
+        return instance;
+    }
+
+    /**
+     * Creates a Task Manager
+     * 
+     * @param config
+     * @param aliasData
+     * @param taskData
+     * @return return the Task manager.
+     */
+    public static TaskManager initInstance(TaskManagerConfig config,
+            AliasData aliasData, TaskData taskData) {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            instance = new TaskManager(config, aliasData, taskData);
+        }
+        return instance;
+    }
+
+    // @ author A0112092W
+    private static void addDoc(IndexWriter w, String title, String description,
+            String id) throws IOException {
+
+        // TODO
+        // not supposed to be here
+
+        Document doc = new Document();
+        doc.add(new TextField("title", title, Field.Store.YES));
+        doc.add(new TextField("id", id, Field.Store.YES));
+        // use a string field for isbn because we don't want it tokenized
+        doc.add(new TextField("description", description == null ? ""
+                : description, Field.Store.YES));
+        w.addDocument(doc);
+    }
+
+    @Override
+    public void add(Task task, Statement statement, boolean isUndo)
+            throws CommandExecuteException {
+        // Task object should not be null
+        if (task == null) {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_NULL_TASK);
+        }
+        logger.debug("in add task: " + task.getTitle());
+        logger.debug("in add " + statement.getCommand() + " "
+                + statement.getStatementArgumentsOnly());
+        // Make sure we are not adding an Incomplete task to database
+        if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK);
+        }
+
+        try {
+            // Update Taskmap
+            this.taskData.updateTaskMap(task, statement, isUndo);
+
+        } catch (Exception e) {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+        }
+
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        // Informs user that his add statement is successful
+        if (isUndo == false) {
+            Response res = new Response();
+            res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
+            this.display.updateUI(res);
+        }
+    }
+
+    @Override
+    public void alias() {
+        Response res = new Response();
+        logger.debug("in alias taskmanager");
+        if (this.aliasData.isEmpty()) {
+            res.reply = NormalMessage.ALIAS_MAP_EMPTY;
+        } else {
+            logger.info("alias is passed to response");
+            res.alias = this.aliasData;
+        }
+        this.display.updateUI(res);
+
+    }
+
+    @Override
+    public void aliasAdd(String alias, String value, Statement statement,
+            boolean isUndo) throws CommandExecuteException {
+        this.aliasData.addAlias(alias, value);
+        if (isUndo == false) {
+            Response res = new Response();
+            res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
+            this.display.updateUI(res);
+        }
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void aliasDelete(String query, Statement statement, boolean isUndo)
+            throws DataException {
+        String value = this.aliasData.toValue(query);
+        AliasData deleted = new AliasData();
+        deleted.addAlias(query, value);
+        this.aliasData.deleteAlias(query);
+        if (isUndo == false) {
+            Response res = new Response();
+            res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
+            res.alias = deleted;
+            this.display.updateUI(res);
+        }
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(String query, Statement statement, boolean isUndo)
+            throws CommandExecuteException {
+        Task task;
+        try {
+            String[] taskIdList = this.search(query);
+            if (taskIdList == null) {
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            }
+            /* Check if key exists in taskStateMap */
+            if (taskIdList.length > 0) {
+                if (taskIdList.length == 1) {
+                    task = this.taskData.remove(taskIdList[0], statement);
+                } else {
+                    int index = this.chooseIndex(taskIdList,
+                            NormalMessage.MODIFIED);
+                    task = this.taskData.remove(taskIdList[index], statement);
+                }
+                // Update the database
+                try {
+                    this.database.saveToStorage();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                logger.debug("task removed successfully");
+
+            } else {
+                logger.debug("In delete cant find");
+                logger.debug("in delete " + this.taskData.numOfTasks());
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_BAD_TASKID);
+            }
+        } catch (Exception e) {
+            throw new CommandExecuteException(e.getMessage());
+        }
+
+        if (isUndo == false) {
+            Response res = new Response();
+            res.reply = task.getTitle() + NormalMessage.DELETE_TASK_SUCCESSFUL;
+            this.display.updateUI(res);
+        }
+
+    }
+
+    /**
+     * Displays an output message requesting for the next user input. This may
+     * be empty if the UI does not require such.
+     */
+    public void displayNextCommandRequest() {
+        Response res = new Response();
+        res.reply = NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST;
+        this.display.updateUI(res);
+    }
+
+    @Override
+    public void done(String query, Statement statement, boolean isUndo)
+            throws CommandExecuteException {
+
+        String[] taskIdList = this.search(query);
+        if (taskIdList == null) {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        }
+        /* Check if key exists in taskStateMap */
+        if (taskIdList.length > 0) {
+            int index;
+            if (taskIdList.length == 1) {
+                index = 0;
+            } else {
+                index = this.chooseIndex(taskIdList, NormalMessage.MODIFIED);
+            }
+
+            Task task = this.taskData.getTask(taskIdList[index]);
+            if (task.getStatus() == true) {
+                logger.debug("The task is already done");
+            }
+            task.setStatus(true);
+
+            try {
+                // Update the TaskMap
+                this.taskData.updateTaskMap(taskIdList[index], task, statement,
+                        isUndo);
+            } catch (Exception e) {
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+            }
+            try {
+                this.database.saveToStorage();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            // Informs user that his add statement is successful
+            if (isUndo == false) {
+                Response res = new Response();
+                res.reply = task.getTitle()
+                        + NormalMessage.DONE_TASK_SUCCESSFUL;
+                this.display.updateUI(res);
+            }
+        } else {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        }
+    }
+
+    @Override
+    public void exit() {
+        Response res = new Response();
+        res.reply = NormalMessage.EXIT_COMMAND;
+        this.display.updateUI(res);
+
+        this.cleanUp();
+
+        // stop loop
+        this.continueExecution = false;
+    }
+
+    /**
+     * This method return the caller a boolean whether this terminal should
+     * continue to be executed.
+     *
+     * @return continueExecution
+     */
+    public boolean getContinueExecution() {
+
+        return this.continueExecution;
+    }
+
+    @Override
+    public void help(CommandType command) {
+        String helpMessage = this.outputHelpMessage(command);
+        Response res = new Response();
+        res.reply = helpMessage;
+        this.display.updateUI(res);
+    }
+
+    @Override
+    public void historyClear(int index) {
+        Actions actionsRemoved = this.taskData.deleteHistory(index);
+        ArrayList<Actions> temp = new ArrayList<Actions>();
+        temp.add(actionsRemoved);
+        Response res = new Response();
+        res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
+        res.actions = temp;
+        this.display.updateUI(res);
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void historyUndo(int index) throws CommandExecuteException {
+        this.taskData.undoHistory(index, this);
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Part of CRUD: Update. Modifies the specified Task with new incomplete
+     * Task that contains new information Throws [CommandExecutionException]
+     * Refer to Issue #50
+     *
+     * @param query
+     * @param incompleteTask
+     */
+    @Override
+    public void modify(String query, Task incompleteTask, Statement statement,
+            boolean isUndo) throws CommandExecuteException {
+        String[] taskIdList = this.search(query);
+        if (taskIdList == null) {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        }
+        /* Check if key exists in taskStateMap */
+        if (taskIdList.length > 0) {
+            int index;
+            if (taskIdList.length == 1) {
+                index = 0;
+            } else {
+                index = this.chooseIndex(taskIdList, NormalMessage.MODIFIED);
+            }
+
+            logger.debug("Modify: the task exist");
+            Task task = this.taskData.getTask(taskIdList[index]);
+
+            try {
+
+                task.update(incompleteTask);
+                logger.debug(new Gson().toJson(task));
+            } catch (Exception e) {
+                logger.debug(e.getMessage());
+                throw new CommandExecuteException(e.getMessage());
+            }
+            try {
+                // Update the TaskMap
+                this.taskData.updateTaskMap(taskIdList[index], task, statement,
+                        isUndo);
+                logger.debug("update task");
+                try {
+                    this.database.saveToStorage();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                throw new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+            }
+
+            // Informs user that his add statement is successful
+            if (isUndo == false) {
+                Response res = new Response();
+                res.reply = task.getTitle()
+                        + NormalMessage.MODIFY_TASK_SUCCESSFUL;
+                this.display.updateUI(res);
+            }
+        } else {
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        }
+
+    }
+
+    @Override
+    public void pushData() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public String[] search(String query) {
+        String[] taskIdList = null;
+        try {
+            // 0. Specify the analyzer for tokenizing text.
+            // The same analyzer should be used for indexing and searching
+            Analyzer analyzer = new SimpleAnalyzer();
+
+            // 1. create the index
+            Directory index = new RAMDirectory();
+
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+
+            IndexWriter w = new IndexWriter(index, config);
+            for (String key : this.taskData.getTaskStateMap().keySet()) {
+                Task t = this.taskData.getTask(key);
+                if (t != null) {
+                    addDoc(w, t.getTitle(), t.getDescription(), t.getId());
+                }
+            }
+            w.close();
+
+            // 2. query
+            if (query.length() < 0) {
+                throw new Exception("WHY No Query?!");
+            }
+
+            // the "title" arg specifies the default field to use
+            // when no field is explicitly specified in the query.
+            Query q = new QueryParser("title", analyzer).parse(query);
+
+            // 3. search
+            int hitsPerPage = 10;
+            IndexReader reader = DirectoryReader.open(index);
+            IndexSearcher searcher = new IndexSearcher(reader);
+            TopScoreDocCollector collector = TopScoreDocCollector
+                    .create(hitsPerPage);
+            searcher.search(q, collector);
+            ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
+            // 4. display results
+            if (hits.length > 0) {
+                try {
+                    taskIdList = new String[hits.length];
+
+                    logger.debug("Found:" + hits.length + " hits.");
+                    for (int i = 0; i < hits.length; ++i) {
+                        int docId = hits[i].doc;
+
+                        Document d = searcher.doc(docId);
+                        String t = d.get("id");
+
+                        taskIdList[i] = t;
+                        logger.debug("Task#" + i + "="
+                                + new Gson().toJson(taskIdList[i]));
+                    }
+
+                    Task[] tasks = new Task[taskIdList.length];
+                    for (int i = 0; i < tasks.length; i++) {
+                        tasks[i] = this.taskData.getTask(taskIdList[i]);
+                    }
+                    Arrays.sort(tasks);
+
+                    Response res = new Response();
+                    res.taskList = tasks;
+                    logger.debug(new Gson().toJson(res));
+                    this.display.updateUI(res);
+
+                } catch (Exception e) {
+                    throw new CommandExecuteException(e.getMessage());
+                }
+            } else {
+                logger.debug("No results.");
+            }
+
+            // reader can only be closed when there
+            // is no need to access the documents any more.
+            reader.close();
+        } catch (Exception e) {
+            // TODO
+            e.printStackTrace();
+        }
+        return taskIdList;
+    }
+
+    @Override
+    public void view() throws CommandExecuteException {
+        logger.debug("inside view");
+        if (this.taskData.numOfTasks() <= TASK_MAP_MINIMUM_SIZE) {
+            /*
+             * taskMap size is illegal, most likely cause is that the task map
+             * is empty
+             */
+            Response res = new Response();
+            res.reply = NormalMessage.NO_TASK_FOUND;
+            this.display.updateUI(res);
+            logger.debug("no task found" + this.taskData.numOfTasks());
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        } else {
+            try {
+                Task[] taskList = this.taskData.getTaskList();
+                logger.debug("Number of Tasks:" + this.taskData.numOfTasks());
+
+                Arrays.sort(taskList);
+
+                Response res = new Response();
+                res.taskList = taskList;
+                this.display.updateUI(res);
+
+            } catch (Exception e) {
+                throw new CommandExecuteException(e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void viewHistory() throws CommandExecuteException {
+        if (this.taskData.getActionsList().size() == 0) {
+            /*
+             * history is empty
+             */
+            Response res = new Response();
+            res.reply = NormalMessage.NO_HISTORY_FOUND;
+            this.display.updateUI(res);
+
+            throw new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+        } else {
+            try {
+
+                Response res = new Response();
+                res.actions = this.taskData.getActionsList();
+                this.display.updateUI(res);
+
+            } catch (Exception e) {
+                throw new CommandExecuteException(e.getMessage());
+            }
+        }
+
+    }
+
+    private int chooseIndex(String[] taskIdList, String command) {
+
+        Task[] tasks = new Task[taskIdList.length];
+        for (int i = 0; i < tasks.length; i++) {
+            tasks[i] = this.taskData.getTask(taskIdList[i]);
+        }
+        Arrays.sort(tasks);
+
+        Response res = new Response();
+        res.reply = NormalMessage.CHOOSE_FROM_LIST + command;
+        res.taskList = tasks;
+        logger.debug(new Gson().toJson(res));
+        this.display.updateUI(res);
+
+        return 0;
+    }
+
+    /**
+     * TODO: Any remainder operations left to do after 'exit' command is invoked
+     * goes here. This includes dumping information into an external text file.
+     * Or (maybe) editing an external config file
+     */
+    private void cleanUp() {
+        this.pushData();
+    }
+
+    /**
+     * @param command
+     */
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\display\GUIDisplayTest.java
+	 */
+
+package w094j.ctrl8.display;
+
+/**
+ * XXX This class is NOT intended to be commited/pushed to the Github
+ * repository. If accidentally done so. Please help to delete! Quick way of
+ * running only the GUIDisplay component for unit testing purposes.
+ */
+public class GUIDisplayTest {
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\display\GUIDisplayTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+	 */
+
+                /**
+                 * Errornous tests
+                 */
+                { null, null },
+                { "", null },
+                { "some really long text", null }, // multiple words
+                { "add-alias", null }, // lazy pattern detection
+                { ".add", null }, // not 100% match
+                { "clearhistory", null }, // detect whether symbols are caught
+                { "saerch", null }, // typo
+                /**
+                 * Extreme tests
+                 */
+                { "add               ", CommandType.ADD }, // buffers
+
+        });
+    }
+
+    /**
+     * Initializes the command parser.
+     */
+    @BeforeClass
+    public static void initParser() {
+        CommandConfig config = new CommandConfig();
+        parser = new CommandParser(config);
+    }
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+
+
+
+
+

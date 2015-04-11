@@ -1,0 +1,1085 @@
+//@author: a0112092w
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\data\TaskData.java
+	 */
+
+public class TaskData {
+
+    private static Logger logger = LoggerFactory.getLogger(TaskData.class);
+    
+    // Hash Map that stores every task and its history
+    private HashMap<String, TaskState> taskStateMap;
+    // Hash Map that stores the objectID of every task by their task name
+//    private HashMap<String, String> taskMap;
+
+    public TaskData() {
+//        this.taskMap = new HashMap<String, String>();
+        this.taskStateMap = new HashMap<String, TaskState>();
+    }
+
+    
+    public boolean containsKey(String taskID) {
+        // TODO Auto-generated method stub
+        return this.taskStateMap.containsKey(taskID);
+    }
+
+
+    public Set<Entry<String, TaskState>> entrySet() {
+        return this.taskStateMap.entrySet();
+    }
+
+    public Task getTask(String taskId) {
+        return this.taskStateMap.get(taskId).getFinalTask();
+    }
+    
+
+//    /**
+//     * @return the taskMap
+//     */
+//    public HashMap<String, String> getTaskMap() {
+//        return this.taskMap;
+//    }
+
+    /**
+     * This is a function to check is a task exist in the task map
+     *
+     * @param query
+     * @return boolean that true shows the task exist in the task map
+     */
+    public boolean isTaskExist(String query) {
+        return this.taskStateMap.containsKey(query);
+    }
+
+    public int numOfTasks() {
+        int size = 0;
+        for(TaskState t : this.taskStateMap.values()){
+            if(t.getFinalTask()!=null){
+                size++;
+            }
+        }
+        return size;
+    }
+
+    /**
+     * @param query
+     * @param statement
+     * @return 
+     */
+    public Task remove(String id, Statement statement) {
+        Task task = this.taskStateMap.get(id).getFinalTask();
+        this.taskStateMap.get(id).setFinalTask(null);
+        this.taskStateMap.get(id).addActions(new Actions(statement, id));
+        return task;
+    }
+
+
+//    /**
+//     * @param taskMap
+//     *            the taskMap to set
+//     */
+//    public void setTaskMap(HashMap<String, String> taskMap) {
+//        this.taskMap = taskMap;
+//    }
+    
+    /**
+     * @param taskStateMap
+     */
+    public void setTaskStateMap(HashMap<String, TaskState> taskStateMap){
+        this.taskStateMap  = taskStateMap;
+    }
+    
+
+    /**
+     * @param index
+     * @param taskManager 
+     * @throws CommandExecuteException
+     */
+    public void undoHistory(int index, ITaskManager taskManager)
+            throws CommandExecuteException {
+        ArrayList<Actions> actions = this.getActionsList();
+        if(index > actions.size()){
+            throw new CommandExecuteException(CommandExecutionMessage.INVALID_INDEX);
+        }
+        Actions action = actions.get(index-1);
+        String id = action.getTaskID();
+        ObjectId objId = action.getID();
+        ArrayList<Actions> taskActions = this.taskStateMap.get(id).getActionList();
+        this.taskStateMap.get(id).clearActionList();
+        this.taskStateMap.get(id).setFinalTask(this.taskStateMap.get(id).getInitTask());
+        if(this.taskStateMap.get(id).getInitTask()==null){
+            logger.debug("init task is null");
+        }
+        int i=0;
+        for(;i<taskActions.size();i++){
+           if(action.equals(taskActions.get(i))){
+               logger.debug("action same: " + action.equals(taskActions.get(i)));
+               break;
+           }
+           logger.debug("action name: " + taskActions.get(i).getStatement().getCommand() +" " +  taskActions.get(i).getStatement().getStatementArgumentsOnly());
+           Statement statement = taskActions.get(i).getStatement();
+           statement.execute(taskManager, true);
+        }
+//        for(int j=i;j<taskActions.size();j++)
+//        {
+//          task.remove(j);
+//        }   
+    }
+
+    /**
+     * Adds a task to the taskMap as well as removing an older entry. To be used
+     * together with modify() command. When taskTitle is modified, its key in
+     * the hashmap also changes.
+     * @param id 
+     * @param task
+     * @param statement 
+     * @param isUndo 
+     */
+    public void updateTaskMap(String id, Task task, Statement statement, Boolean isUndo) {
+        // Check for null params
+        assert (id != null);
+        assert (task != null);
+        // Task should not be incomplete (not a Task delta)
+        assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
+        
+        if (this.taskStateMap.containsKey(id)) {
+            if (!(isUndo)) {
+                this.taskStateMap.get(id).addActions(new Actions(statement,id));
+                logger.debug("isUndo = false");
+            }
+            this.taskStateMap.get(id).setFinalTask(task);
+            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
+        } else {
+            this.taskStateMap.put(task.getId(), new TaskState(task,statement));
+            logger.debug("TaskMap: Add new entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
+        }
+    }
+
+    /**
+     * Adds a task to the taskMap using taskTitle as the key. If key already
+     * exists, it overwrites the entry.
+     *
+     * @param task
+     * @param statement 
+     */
+    public void updateTaskMap(Task task, Statement statement, boolean isUndo) {
+        
+        // Check for null params
+        assert (task != null);
+        // Task should not be incomplete (not a Task delta)
+        assert (task.getTaskType() != Task.TaskType.INCOMPLETE);
+        if (this.taskStateMap.containsKey(task.getId())) {
+            this.taskStateMap.replace(task.getId(), new TaskState(task,statement));
+            this.taskStateMap.get(task.getId()).setFinalTask(task);
+            logger.debug("TaskMap: Replace entry with key " + task.getTitle()
+                    + " with " + new Gson().toJson(task));
+        } else {
+            
+            this.taskStateMap.put(task.getId(), new TaskState(task,statement));
+            this.taskStateMap.get(task.getId()).setFinalTask(task);
+            logger.debug("TaskMap: adding new entry with key "
+                    + task.getTitle() + " with " + new Gson().toJson(task));
+        }
+    }
+
+//    public Collection<TaskState> values() {
+//        return this.taskStateMap.values();
+//    }
+
+    /**
+     * This is a function to check is a task exist in the task map
+     *
+     * @param task
+     * @return boolean that true shows the task exist in the task map
+     */
+    private boolean isTaskExist(Task task) {
+        return this.taskStateMap.containsKey(task.getTitle());
+    }
+
+
+    public Task[] getTaskList() {
+        Task[] taskList = new Task[numOfTasks()];
+        int i=0;
+        for(TaskState t : this.taskStateMap.values()){
+            Task task = t.getFinalTask();
+            if (task != null){
+                taskList[i] = task;
+                i++;
+            }
+        }
+        Arrays.sort(taskList);
+        return taskList;
+    }
+
+
+    public ArrayList<Actions> getActionsList() {
+        ArrayList<Actions> actions = new ArrayList<Actions>();
+        for(TaskState t : this.taskStateMap.values()){
+            for(int i=0; i< t.getActionList().size();i++){
+                actions.add(t.getActions(i));
+            }
+        }
+        logger.debug("actionslist size " +actions.size());
+        Collections.sort(actions);
+        return actions; 
+    }
+
+
+    public  HashMap<String, TaskState> getTaskStateMap() {
+        return this.taskStateMap;
+    }
+
+
+    public Actions deleteHistory(int index) {
+        ArrayList<Actions> actions = this.getActionsList();
+        Actions actionToBeDel = actions.get(index-1);
+        
+        String id = actionToBeDel.getTaskID();
+        TaskState task = this.taskStateMap.get(id);
+        if(task.remove(actionToBeDel)){
+            this.taskStateMap.remove(id);
+        }
+        return actionToBeDel;
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\data\TaskData.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+public class CLIDisplay extends Display {
+    private static CLIDisplay instance;
+    private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
+    private InputStream inStream;
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+    /**
+     * Public constructor for a CLI Display
+     */
+    CLIDisplay(CLIDisplayConfig cliDisplayConfig) {
+    }
+
+    /**
+     * This method is used to print a table with format of following the format
+     * of right justified table x xxx yyy y zz zz
+     *
+     * @param table
+     */
+    private static void printTable(String[][] table) {
+        // Find out what the maximum number of columns is in any row
+        int maxColumns = 0;
+        for (String[] element : table) {
+            maxColumns = Math.max(element.length, maxColumns);
+        }
+
+        // Find the maximum length of a string in each column
+        int[] lengths = new int[maxColumns];
+        for (String[] element : table) {
+            for (int j = 0; j < element.length; j++) {
+                lengths[j] = Math.max(element[j].length(), lengths[j]);
+            }
+        }
+
+        // Generate a format string for each column
+        String[] formats = new String[lengths.length];
+        for (int i = 0; i < lengths.length; i++) {
+            formats[i] = "%1$" + lengths[i] + "s"
+                    + ((i + 1) == lengths.length ? "\n" : " ");
+        }
+
+        // Print 'em out
+        for (String[] element : table) {
+            for (int j = 0; j < element.length; j++) {
+                System.out.printf(formats[j], element[j]);
+            }
+        }
+    }
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+    @Override
+    public InputStream getInputStream() {
+        return System.in;
+    }
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 */
+
+        System.out.println(message);
+    }
+
+    /**
+     * This method is used to output the task for the user in certain format.
+     *
+     * @param taskList
+     * @throws OutputExecuteException
+     */
+    public void outputTask(Task[] taskList) throws OutputExecuteException {
+        String[][] table = this.initTable(taskList.length + 1,
+                MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
+        int iteration = taskList.length + 1;
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        table = this.initNullTaskTable(table, 1);
+
+        for (int i = 1; i < iteration; i++) {
+            // task should be not null
+            if (taskList[i - 1] == null) {
+                throw new OutputExecuteException(
+                        OuputExecuteMessage.EXCEPTION_NULL_TASK);
+            }
+
+            if (taskList[i - 1].getTitle() == null) {
+                table[i][0] = "-";
+            } else {
+                table[i][0] = taskList[i - 1].getTitle();
+            }
+
+            if (taskList[i - 1].getCategory() == null) {
+                table[i][1] = "-";
+            } else {
+                table[i][1] = taskList[i - 1].getCategory();
+            }
+            if (taskList[i - 1].getDescription() == null) {
+                table[i][2] = "-";
+            } else {
+                table[i][2] = taskList[i - 1].getDescription();
+            }
+            if (taskList[i - 1].getStartDate() == null) {
+                table[i][3] = "-";
+            } else {
+                table[i][3] = df.format(taskList[i - 1].getStartDate());
+            }
+            if (taskList[i - 1].getEndDate() == null) {
+                table[i][4] = "-";
+            } else {
+                table[i][4] = df.format(taskList[i - 1].getEndDate());
+            }
+            if (taskList[i - 1].getLocation() == null) {
+                table[i][5] = "-";
+            } else {
+                table[i][5] = taskList[i - 1].getLocation();
+            }
+            if (taskList[i - 1].getPriority() == null) {
+                table[i][6] = "-";
+            } else {
+                table[i][6] = String.valueOf(taskList[i - 1].getPriority());
+            }
+            if (taskList[i - 1].getReminder() == null) {
+                table[i][7] = "-";
+            } else {
+                table[i][7] = df.format(taskList[i - 1].getReminder());
+            }
+
+            table[i][8] = taskList[i - 1].getTaskType().toString();
+
+            if (taskList[i - 1].getStatus()) {
+                table[i][9] = "Done";
+            } else {
+                table[i][9] = "Not Done Yet";
+            }
+        }
+        printTable(table);
+    }
+
+    @Override
+    public void updateUI(Response res) {
+        if (res.reply != null) {
+            this.outputMessage(res.reply);
+        }
+        if (res.taskList != null) {
+            try {
+                this.outputTask(res.taskList);
+            } catch (OutputExecuteException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if (res.alias != null) {
+            this.outputAliases(res.alias);
+        }
+        if (res.actions != null) {
+            this.outputActions(res.actions);
+        }
+
+    }
+
+    private String[][] initNullTaskTable(String[][] table, int taskNumber) {
+        int i = taskNumber;
+        table[i][0] = "-";
+
+        table[i][1] = "-";
+
+        table[i][2] = "-";
+
+        table[i][3] = "-";
+
+        table[i][4] = "-";
+
+        table[i][5] = "-";
+
+        table[i][6] = "-";
+
+        table[i][7] = "-";
+
+        table[i][8] = "-";
+
+        table[i][9] = "-";
+        return table;
+    }
+
+    // initialize the table with adding the first row for each of the task's
+// properties
+    private String[][] initTable(int taskNumber, int taskProperties) {
+        String[][] table = new String[taskNumber][taskProperties];
+        table[0][0] = "Title";
+        table[0][1] = "Category";
+        table[0][2] = "Description";
+        table[0][3] = "StartDate";
+        table[0][4] = "EndDate";
+        table[0][5] = "Location";
+        table[0][6] = "Priority";
+        table[0][7] = "Reminder";
+        table[0][8] = "TaskType";
+        table[0][9] = "Status";
+
+        return table;
+    }
+
+    private void outputActions(ArrayList<Actions> actions) {
+        if (actions.size() == 0) {
+            System.out.println("No actions found");
+        }
+        for (int i = 0; i < actions.size(); i++) {
+            Statement statement = actions.get(i).getStatement();
+            System.out.print(i + 1 + ". Command:");
+            System.out.print(statement.getCommand().toString());
+            System.out.print(" String:");
+            System.out.println(statement.getStatementArgumentsOnly());
+        }
+
+    }
+
+    private void outputAliases(AliasData alias) {
+        Map<String, String> aliases = alias.getAliasMap();
+        if (aliases.size() == 0) {
+            System.out.println(NormalMessage.ALIAS_MAP_EMPTY);
+        }
+        for (int i = 0; i < aliases.size();) {
+            for (String key : aliases.keySet()) {
+                String value = aliases.get(key);
+                System.out.print(i + 1 + ". Alias: " + key);
+                System.out.println(" String: " + value);
+                i++;
+            }
+        }
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\MissingTaskException.java
+	 */
+
+
+/*
+ * Exception class thrown when a task is not found on the taskMap
+ * This is to ensure that we do not accidentally modify other task or add a  new task to the taskMap 
+ */
+public class MissingTaskException extends Exception {
+    // Parameterless constructor
+
+    public MissingTaskException() {
+    }
+
+    // Constructor that accepts a String message
+    public MissingTaskException(String message) {
+        super(message);
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\MissingTaskException.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\ErrorMessage.java
+	 */
+
+    public static final String TASK_KEY_ALREADY_EXISTS = "Error: Task key already exists!";
+    public static final String TASK_KEY_DOES_NOT_EXIST = "Error: Task key does not exist!";
+
+}
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\ErrorMessage.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\MagicNumbersAndConstants.java
+	 */
+
+ */
+public class MagicNumbersAndConstants {
+    // number of task's properties such as title, description etc.
+    public static int NUMBER_TASK_PROPERTIES = 10;
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\MagicNumbersAndConstants.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+	 */
+
+/**
+ * Class encapsulates all information that is pulled and/or pushed from an
+ * external file. Examples include interacting with a local file. Or dumping
+ * statement history into an output file. TODO: Cater for Google integration
+ */
+
+public class NormalMessage {
+    public static final String ADD_TASK_SUCCESSFUL = " added successfully!";
+    public static final String APP_NAME = "Ctrl-8";
+    public static final String DELETE_TASK_SUCCESSFUL = " deleted successfully!";
+    public static final String DELETED_TASK_HISTORY = "History of Deleted Task: ";
+    public static final String DISPLAY_NEXT_COMMAND_REQUEST = "Next command: ";
+    public static final String EXIT_COMMAND = "Thank you for using " + APP_NAME;
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+	 */
+
+    public static final String START_MESSAGE = "Starting Ctrl-8...";
+    public static final String WELCOME_MESSAGE = "Welcome for using Ctrl-8!";
+    public static final String DONE_TASK_SUCCESSFUL = " is done!";
+    public static final String NO_HISTORY_FOUND = "No History Found";
+    public static final String HISTORY_CLEAR_SUCCESSFUL = "The following action history is deleted successfully!";
+    public static final String ALIAS_MAP_EMPTY = "There is no alias.";
+    public static final String ADD_ALIAS_SUCCESSFUL = " is successfully alias to ";
+    public static final String ALIAS_DELETE_SUCCESSFUL = "The following alias is deleted successfully!";
+    public static final String HISTORY_INDEX_OUT_OF_BOUND = "History index out of bound";
+    public static final String UNDO_ACTION_SUCCESSFUL = "Action is undo successfully";
+    public static final String CHOOSE_FROM_LIST = "Please type in the index of task you want to choose to ";
+    public static final String MODIFIED = "modified.";
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Actions.java
+	 */
+
+/**
+ * This class is the wrapper for the statement that executed and the task that related to it.
+ *
+ */
+public class Actions implements Comparable<Actions> {
+    private Statement statement;
+    private ObjectId id;
+    private String taskID;
+    
+    /**
+     * @param statement
+     * @param taskID
+     */
+    public Actions(Statement statement, String taskID){
+        this.statement = statement;
+        this.id = new ObjectId();
+        this.taskID = taskID;
+    }
+    
+    public Actions(Actions action){
+        this.statement = action.getStatement();
+        this.id = action.getID();
+        this.taskID = action.getTaskID();
+    }
+    
+    public ObjectId getID(){
+        return this.id;
+    }
+    
+    public String getTaskID(){
+        return this.taskID;
+    }
+    
+    public Statement getStatement(){
+        return this.statement;
+    }
+    
+    @Override
+    public int compareTo(final Actions action) {
+        return this.id.compareTo(action.getID());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Actions.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\TaskState.java
+	 */
+
+public class TaskState {
+    private Task initTask;
+    private Task finalTask;
+    private ArrayList<Actions> actionsList;
+    
+    public TaskState(Task task, Statement statement) {
+        this.initTask = null;
+        this.finalTask = task;
+        this.actionsList = new ArrayList<Actions>();
+        if(statement != null){
+            this.actionsList.add(new Actions(statement, task.getId()));
+        }
+    }
+
+    public Task getInitTask(){
+        return this.initTask;
+    }
+    
+    public Task getFinalTask(){
+        return this.finalTask;
+    }
+    
+    public ArrayList<Actions> getActionList(){
+        return this.actionsList;
+    }
+    
+    public void setFinalTask(Task task){
+        this.finalTask = task;
+    }
+    
+    public void setInitTask(Task task){
+        this.initTask = task;
+    }
+    
+    public Actions getActions(int index){
+        return this.actionsList.get(index);
+    }
+    
+    public void addActions(Actions action){
+        this.actionsList.add(action); 
+    }
+
+    public boolean remove(Actions actionToBeDel) {
+        boolean isHistoryEmpty = false;
+
+        for(int i=0 ; i < this.actionsList.size(); i++){
+            if (actionToBeDel.getID() == this.actionsList.get(i).getID()){
+                this.actionsList.remove(i);
+                break;
+            }
+        }
+        
+        if(this.actionsList.isEmpty() && this.finalTask == null){
+            isHistoryEmpty = true;
+        }
+        
+        return isHistoryEmpty;
+    }
+
+    public void clearActionList() {
+
+        this.actionsList = new ArrayList<Actions>();
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\TaskState.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\terminal\Terminal.java
+	 */
+
+public class Terminal {
+    private static Terminal instance;
+    private static Logger logger = LoggerFactory.getLogger(Terminal.class);
+    private static Parser parser;
+    private Display display;
+    private TaskManager taskManager;
+
+    private Terminal(TerminalConfig terminalConfig) {
+        assert (terminalConfig.isValid());
+        this.taskManager = TaskManager.getInstance();
+        this.display = Display.getInstance();
+        parser = Parser.getInstance();
+    }
+
+    /**
+     * Gets the current instance of the Terminal.
+     *
+     * @return the current instance.
+     */
+    public static Terminal getInstance() {
+        if (instance == null) {
+            instance = initInstance(new TerminalConfig());
+        }
+
+        return instance;
+    }
+
+    /**
+     * Creates a Task Manager
+     *
+     * @return return the Task manager.
+     */
+    public static Terminal initInstance(TerminalConfig config) {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            // TO-DO put in config when config is done
+            instance = new Terminal(config);
+            logger.debug("terminal is initialized");
+        }
+        return instance;
+    }
+
+    /**
+     * Take in the terminal object and run it to perform actual actions.
+     *
+     * @throws Exception
+     */
+    public void start() throws Exception {
+
+        try {
+            Thread.sleep(3000);
+        } catch (Exception e) {
+
+        }
+
+        // Flag that determines whether terminal continues to run or not
+        // Default: true
+        boolean continueExecution = true;
+        Response res = new Response();
+
+        String command = null;
+
+        res.reply = NormalMessage.START_MESSAGE;
+        this.display.updateUI(res);
+        res.reply = NormalMessage.WELCOME_MESSAGE;
+        this.display.updateUI(res);
+        try (Scanner scanner = new Scanner(this.display.getInputStream())) {
+            while (continueExecution) {
+                this.taskManager.displayNextCommandRequest();
+                this.display.getInputStream();
+
+                try {
+                    command = scanner.nextLine();
+                } catch (NullPointerException e) {
+                    logger.info(e.getMessage());
+                } catch (NoSuchElementException e) {
+                    continue;
+                }
+
+                // Passes string to Statement.java to parse into a command
+                try {
+                    parser.parse(command).execute(this.taskManager, false);
+                } catch (InvalidParameterException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                } catch (CommandExecuteException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                } catch (ParseException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                } catch (DataException e) {
+                    res.reply = e.getMessage();
+                    this.display.updateUI(res);
+                }
+                continueExecution = this.taskManager.getContinueExecution();
+            }
+        }
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\terminal\Terminal.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\run\Start.java
+	 */
+
+
+public class Start {
+
+    // create the command line parser
+    private static CommandLineParser commandLineParser = new GnuParser();
+
+    private static Factory factory;
+
+    /**
+     * Runs the Task Manager with the file path to extract the data from the
+     * file.
+     */
+
+    // create the logger
+    private static Logger logger = LoggerFactory.getLogger(Start.class);
+    // create the Options
+    private static Options optionList;
+    private static Terminal terminal;
+
+    /**
+     * @param args
+     *            TODO
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+
+        // add all existing Options
+        optionList = CommandLineOptions.getOptionList();
+
+        // The terminal that performs all the actions
+        String filePath = parseArgs(args);
+
+        factory = new Factory(filePath);
+
+        Terminal terminal = Terminal.getInstance();
+        terminal.start();
+    }
+
+    public static void printHelp() {
+        printHelp(optionList);
+    }
+
+    /**
+     * Parses the args of the program. Exit if necessary. When the help option
+     * is set, exit the program immediately. If the file option is not set,
+     * return the default.
+     *
+     * @param args
+     * @return Database object
+     */
+    private static String parseArgs(String[] args) {
+
+        try {
+
+            // parse the command line arguments
+            CommandLine line = commandLineParser.parse(optionList, args);
+
+            // validate that help has been set
+            // exit if -h is used
+            if (line.hasOption(CommandLineOptions.HELP.toString())) {
+                printHelp(optionList);
+                System.exit(1);
+                return null;
+            }
+
+            // validate that file's Path has been set
+            if (line.hasOption("filePath")) {
+                String filePath = line.getOptionValue("filePath");
+
+                // print the value of filePath
+                logger.info("Database file is at:" + filePath);
+
+                return filePath;
+            } else {
+                return null;
+            }
+
+        } catch (org.apache.commons.cli.ParseException e) {
+            logger.info(ErrorMessage.OPTION_NOT_FOUND);
+            printHelp(optionList);
+            System.exit(1);
+            return null;
+        }
+
+    }
+
+    // print the help message
+    private static void printHelp(Options optionList) {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter
+        .printHelp(
+                "Ctrl-8",
+                "Welcome to Ctrl-8. Below are the options you can choose",
+                optionList,
+                "For more information please refer to https://github.com/cs2103jan2015-w09-4j/main",
+                true);
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\run\Start.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ExplicitLongParameterTest.java
+	 */
+
+package w094j.ctrl8.parse;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.parameter.CategoryParameter;
+import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
+import w094j.ctrl8.parse.statement.parameter.DescriptionParameter;
+import w094j.ctrl8.parse.statement.parameter.LocationParameter;
+import w094j.ctrl8.parse.statement.parameter.Parameter;
+import w094j.ctrl8.parse.statement.parameter.PriorityParameter;
+import w094j.ctrl8.parse.statement.parameter.ReminderParameter;
+import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
+import w094j.ctrl8.parse.statement.parameter.TitleParameter;
+
+/**
+ * Tests parsing of the explicit long parameters to its String representation.
+ * Tests will not include test explicit short and implicit parameters.
+ */
+@RunWith(value = Parameterized.class)
+public class ExplicitLongParameterTest extends ParameterTest {
+
+    /**
+     * Creates a Explicit Parameter test.
+     *
+     * @param input
+     *            The parameter(s) to be parsed.
+     * @param expected
+     *            Expected Parsed result, if null exception is expected.
+     * @throws ParseException
+     *             when the expected parameter list has issues.
+     */
+    public ExplicitLongParameterTest(String input, List<Parameter> expected)
+            throws ParseException {
+        super(input, expected, false, false);
+    }
+
+    /**
+     * @return test data.
+     */
+    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
+    //@formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                // Test all the different tags
+                { "#{nus}", Arrays.asList(new Parameter[] {new CategoryParameter("nus")}) },
+                { "-{today 1pm}", Arrays.asList(new Parameter[] {new DeadlineParameter("today 1pm")}) },
+                { "+{Remember to talk about Crawler technologies.}", Arrays.asList(new Parameter[] {new DescriptionParameter("Remember to talk about Crawler technologies.")}) },
+                { "@{Prof. Martin Henz Office}", Arrays.asList(new Parameter[] {new LocationParameter("Prof. Martin Henz Office")}) },
+                { "%{10}", Arrays.asList(new Parameter[] {new PriorityParameter("10")}) },
+                { "!{today 12pm}", Arrays.asList(new Parameter[] {new ReminderParameter("today 12pm")}) },
+                { "~{today 3pm}", Arrays.asList(new Parameter[] {new StartTimeParameter("today 3pm")}) },
+                { "={UROP Meeting}", Arrays.asList(new Parameter[] {new TitleParameter("UROP Meeting")}) },
+                // Test the empty parameter
+                { "#{}", Arrays.asList(new Parameter[] {new CategoryParameter("")}) },
+                // Tags with escaped Parameter in the payload
+                { "={UROP \\=Meeting} #{nus}", Arrays.asList(new Parameter[] {new TitleParameter("UROP =Meeting"), new CategoryParameter("nus") }) },
+                // Empty String to empty list
+                { "", Arrays.asList(new Parameter[]{})},
+                /**
+                 * Extreme test cases
+                 */
+                //All tags in one time
+                {"={OP2 Meeting} -{tmr 3pm} +{Prepare for own slides} @{biz canteen} %{10} !{tmr 12pm} ~{tmr 2pm} #{cs2101}",
+                    Arrays.asList(new Parameter[] {new TitleParameter("OP2 Meeting"), new DeadlineParameter("tmr 3pm"),
+                            new DescriptionParameter("Prepare for own slides"),new LocationParameter("biz canteen"),new PriorityParameter("10"),
+                            new ReminderParameter("tmr 12pm"), new StartTimeParameter("tmr 2pm"), new CategoryParameter("cs2101") })
+                },
+                /**
+                 * Errorneous test cases
+                 */
+                //error parameter
+                {"==", null},
+                //wrong usage of brackets
+                {"=(meeting)", null},
+                //multiple usage of tags in 1 field
+                {"@#{friends}", null},
+                //random parameter
+                {".{today}", null},
+                //random parameter
+                {"*{tmr}", null},
+                // Multi-tags is an error
+                {"={Meeting1} ={Meeting2} ={Meeting3} ={Meeting4} ={Meeting5} ={Meeting6} ={Meeting7} ={Meeting8} ={Meeting9} ={Meeting10} ={Meeting11}",
+                    null
+                }
+
+        });
+    }
+    // @formatter:on
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ExplicitLongParameterTest.java
+
+
+
+
+
