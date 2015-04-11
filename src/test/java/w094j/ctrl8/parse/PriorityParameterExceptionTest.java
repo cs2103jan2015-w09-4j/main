@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import w094j.ctrl8.database.config.ParameterConfig;
-import w094j.ctrl8.parse.ParameterParser;
 
 /**
  * PriorityParameter Exception Test. Valid priority number(int) ranges from 0 to
@@ -66,6 +65,7 @@ public class PriorityParameterExceptionTest {
         } catch (InvalidParameterException e) {
             if (!e.toString()
                     .equals("java.security.InvalidParameterException: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10")) {
+                System.out.println(e.toString());
                 Assert.fail("should have printed: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
             }
         }

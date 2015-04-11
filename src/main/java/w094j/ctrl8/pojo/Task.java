@@ -45,6 +45,7 @@ public class Task implements Comparable<Task> {
     private String googleId;
     private String id;
     private Boolean isDone;
+
     private Boolean isSynced;
     private Date lastModifiedTime;
     private String location;
@@ -64,18 +65,22 @@ public class Task implements Comparable<Task> {
     public Task(Task task) {
         this.category = task.category;
         this.description = task.description;
-        this.endDate = task.endDate == null ? null : (Date) task.endDate.clone();
+        this.endDate = task.endDate == null ? null : (Date) task.endDate
+                .clone();
         this.etag = task.etag;
         this.googleId = task.googleId;
         // Cloned task will share same ID object
         this.id = task.id;
         this.isDone = task.isDone;
         this.isSynced = task.isSynced;
-        this.lastModifiedTime = task.lastModifiedTime == null ? null : (Date) task.lastModifiedTime.clone();
+        this.lastModifiedTime = task.lastModifiedTime == null ? null
+                : (Date) task.lastModifiedTime.clone();
         this.location = task.location;
         this.priority = task.priority;
-        this.reminder = task.reminder == null ? null : (Date) task.reminder.clone();
-        this.startDate = task.startDate == null ? null : (Date) task.startDate.clone();
+        this.reminder = task.reminder == null ? null : (Date) task.reminder
+                .clone();
+        this.startDate = task.startDate == null ? null : (Date) task.startDate
+                .clone();
         this.taskType = task.taskType;
         this.title = task.title;
     }
@@ -242,6 +247,14 @@ public class Task implements Comparable<Task> {
      */
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
+    }
+
+    /**
+     * @param id
+     *            the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**

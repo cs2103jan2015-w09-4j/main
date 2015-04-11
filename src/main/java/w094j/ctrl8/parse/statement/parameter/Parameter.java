@@ -1,5 +1,7 @@
 package w094j.ctrl8.parse.statement.parameter;
 
+import w094j.ctrl8.parse.ParameterParser;
+import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
 
 //@author A0065517A
@@ -31,8 +33,11 @@ public abstract class Parameter {
         if (payload.equals("")) {
             this.payload = null;
         } else {
-            this.payload = payload;
+            ParameterParser parameterParser = Parser.getInstance()
+                    .getStatementParser().getParameterParser();
+            this.payload = parameterParser.unescape(payload);
         }
+        System.out.println(this.payload);
     }
 
     /**

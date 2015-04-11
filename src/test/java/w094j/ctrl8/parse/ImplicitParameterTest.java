@@ -55,6 +55,10 @@ public class ImplicitParameterTest extends ParameterTest {
                 { " due 4pm", Arrays.asList(new Parameter[] {new DeadlineParameter("4pm")}) },
                 // A mix of Title, start and end time
                 { " nus from 2pm to 4pm", Arrays.asList(new Parameter[] {new TitleParameter("nus"), new StartTimeParameter("2pm"), new DeadlineParameter("4pm")}) },
+                { " \\#\\#\\#", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
+                { " \\###", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
+                { " \\##\\#", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
+                { " warnings to taks that clash (timing-wising)", Arrays.asList(new Parameter[] {new TitleParameter("warnings to taks that clash (timing-wising)")}) },
                 /**
                  * Extreme tests
                  */
@@ -66,7 +70,7 @@ public class ImplicitParameterTest extends ParameterTest {
                  * Errornous tests
                  */
                 // Implicit start and end time should not be added as there must be a space infront of the from
-                { "#{s}from 2pm to 4pm", null }
+                { " #{s}from 2pm to 4pm", null }
 
         });
     }

@@ -22,7 +22,7 @@ public class PriorityParameter extends Parameter {
         super(ParameterType.PRIORITY, payload);
         if (!payload.isEmpty()) {
             try {
-                this.priority = Integer.parseInt(payload);
+                this.priority = Integer.parseInt(this.getPayload());
             } catch (NumberFormatException nfe) {
                 throw new InvalidParameterException(
                         "Priority must be an integer.");

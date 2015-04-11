@@ -12,6 +12,9 @@ public class TitleParameter extends Parameter {
      */
     public TitleParameter(String payload) {
         super(ParameterType.TITLE, payload);
+        if (payload == null) {
+            throw new RuntimeException("s");
+        }
     }
 
     @Override
