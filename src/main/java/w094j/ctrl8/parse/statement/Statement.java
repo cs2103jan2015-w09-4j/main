@@ -32,8 +32,8 @@ public abstract class Statement {
         this.command = command;
         CommandParser commandParser = Parser.getInstance().getStatementParser()
                 .getCommandParser();
-        this.statementArgumentsOnly = commandParser.removeCommandKeyword(
-                statementString).trim();
+        this.statementArgumentsOnly = commandParser
+                .removeCommandKeyword(statementString);
         logger.debug("Statement initialized with Command(" + this.command
                 + ") and arguments " + this.statementArgumentsOnly);
     }

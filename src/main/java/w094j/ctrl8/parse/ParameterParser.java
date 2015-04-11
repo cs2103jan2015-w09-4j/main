@@ -229,8 +229,8 @@ public class ParameterParser {
                     parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
             this.logger
-                    .debug("Parameters after parsing explicit short: String("
-                            + parameterString + ")");
+            .debug("Parameters after parsing explicit short: String("
+                    + parameterString + ")");
         }
 
         if (!parameterString.equals("")) {
@@ -383,7 +383,7 @@ public class ParameterParser {
             case 1 :
                 // one match
                 String deadlinedTaskParameterMatch = implicitDeadlinedTaskMatches
-                .get(0);
+                        .get(0);
 
                 // remove from keyword
                 deadlinedTaskParameterMatch = deadlinedTaskParameterMatch
@@ -411,6 +411,7 @@ public class ParameterParser {
             if (firstStartIndex == -1) {
                 firstStartIndex = implicitTitleMatcher.start();
             }
+            System.out.println("MATCH");
         }
         if (firstStartIndex != -1) {
             String titleParameterMatch = parameterString.substring(
@@ -425,7 +426,7 @@ public class ParameterParser {
         }
 
         this.logger.debug("After Implicit Parsing: Parameters(" + parameterList
-                + ")");
+                + "), String:\"" + parameterString + "\"");
         return parameterString;
     }
 }
