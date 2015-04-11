@@ -1,0 +1,1910 @@
+//@author: a0065517a
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\ParseException.java
+	 */
+
+/**
+ * Parse Exception is thrown when there is a problem with Parsing.
+ */
+public class ParseException extends Exception {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * @param message
+     */
+    public ParseException(String message) {
+        super(message);
+    }
+
+    /**
+     * @param message
+     * @param throwable
+     */
+    public ParseException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\ParseException.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\AliasParser.java
+	 */
+
+/**
+ * Parser to replace all aliases with the actual value.
+ */
+public class AliasParser {
+
+    /**
+     * Regex to match all the escaped alias.
+     *
+     * <pre>
+     *  <code>%1$s</code> is the alias character.
+     * </pre>
+     */
+    private static final String ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT = "\\\\%1$s";
+    /**
+     * Regex to match all valid alias, with its alias character
+     *
+     * <pre>
+     *  <code>%1$s</code> is the alias character.
+     * </pre>
+     */
+    private static final String ALIAS_REGEX_FORMAT = "(?<!\\\\)%1$s[^\\s%1$s]+";
+    private static final Logger logger = LoggerFactory
+            .getLogger(AliasParser.class);
+
+    private Character aliasCharacter;
+    private AliasData aliasData;
+    private String aliasEscapedRegex;
+    private Pattern aliasPattern;
+
+    /**
+     * Creates an Alias Parser with the alias config and data.
+     *
+     * @param aliasConfig
+     *            configuration for the alias symbols.
+     * @param aliasData
+     *            data that has the pairings of <alias, value>.
+     */
+    public AliasParser(AliasConfig aliasConfig, AliasData aliasData) {
+
+        this.aliasData = aliasData;
+        this.aliasCharacter = aliasConfig.getAliasCharacter();
+
+        // Create a StringBuilder and send all output to sb
+        StringBuilder sb = new StringBuilder();
+
+        try (Formatter formatter = new Formatter(sb, Locale.getDefault())) {
+
+            // format the regex, entering the alias character into Regex
+            formatter.format(ALIAS_REGEX_FORMAT, Pattern.quote(Character
+                    .toString(aliasConfig.getAliasCharacter())));
+
+            // Create the pattern object to store the Regex
+            this.aliasPattern = Pattern.compile(sb.toString());
+            logger.debug("Alias Regex(" + sb.toString() + ").");
+
+            // reset the sb
+            sb.setLength(0);
+
+            // Format the escaped chracter Regex
+            formatter
+            .format(ALIAS_ESCAPED_CHARACTER_REGEX_FORMAT, Pattern
+                    .quote(Character.toString(aliasConfig
+                            .getAliasCharacter())));
+
+            logger.debug("Escaped alias Regex(" + sb.toString() + ").");
+
+            // Store only the regex, as we are going to use the function
+            // replaceAll
+            this.aliasEscapedRegex = sb.toString();
+        }
+    }
+
+    /**
+     * Checks if a given alias is valid. An alias is valid if and only if it
+     * does not contain the alias character.
+     *
+     * @param alias
+     * @return <code>true</code> if the alias is valid, <code>false</code>
+     *         otherwise.
+     */
+    public boolean isValidAlias(String alias) {
+        return !alias.contains(this.aliasCharacter.toString());
+    }
+
+    /**
+     * Replaces all aliases in inputToReplace to its aliases, also unescapes all
+     * escaped alias characters.
+     *
+     * @param inputToReplace
+     *            the input string to replace aliases.
+     * @return string with all aliases replaced with their actual text.
+     * @throws DataException
+     *             when the alias cannot be found in the lookup table.
+     */
+    public String replaceAllAlias(String inputToReplace) throws DataException {
+
+        // Matcher to match aliases with their symbols
+        Matcher aliasMatcher = this.aliasPattern.matcher(inputToReplace);
+
+        // String builder to re-construct the string
+        StringBuilder sb = new StringBuilder();
+        int previousMatchEnd = 0;
+        while (aliasMatcher.find()) {
+
+            String eaAlias = aliasMatcher.group();
+            sb.append(inputToReplace.substring(previousMatchEnd,
+                    aliasMatcher.start()));
+
+            // Alias's value, will throw exception if does not exist
+            String eaAliasReplaced = this.aliasData.toValue(eaAlias
+                    .substring(1));
+            logger.debug("Replace Alias(" + eaAlias + ") with \""
+                    + eaAliasReplaced + "\".");
+
+            previousMatchEnd = aliasMatcher.end();
+            sb.append(eaAliasReplaced);
+        }
+
+        // Replace all escaped alias characters with the alias character
+        sb.append(inputToReplace.substring(previousMatchEnd));
+        String replacedString = sb.toString().replaceAll(
+                this.aliasEscapedRegex, this.aliasCharacter.toString());
+        logger.info("\"" + inputToReplace + "\" was parsed to \""
+                + replacedString + "\"");
+        return replacedString;
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\AliasParser.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AddStatement.java
+	 */
+
+/**
+ * Class to encapsulate an add statement. Add statements must be matchable to
+ * the following regex: ^add\s[A-Za-z0-9]+$ .
+ */
+public class AddStatement extends Statement {
+
+    private static Logger logger = LoggerFactory.getLogger(AddStatement.class);
+    private Task task;
+
+    /**
+     * Initializes an add statement, ensures that the add statement is a valid
+     * statement, the task that is added must either be:
+     *
+     * <pre>
+     * 1. Floating Task
+     * 2. Deadline Task
+     * 3. Timed Task(Event)
+     * </pre>
+     *
+     * Each would also have the option to specify a recursion.
+     *
+     * @param statementString
+     *            the string to be added.
+     * @throws Exception
+     */
+    public AddStatement(String statementString) throws Exception {
+        super(CommandType.ADD, statementString);
+        this.task = new Task();
+        ParameterParser parameterParser = Parser.getInstance()
+                .getStatementParser().getParameterParser();
+        ParameterContainer container = parameterParser.parse(this
+                .getStatementArgumentsOnly());
+        container.addAll(this.task);
+        this.task.toCompleteTask();
+        if (this.task.getTaskType() == Task.TaskType.INCOMPLETE) {
+            throw new ParseException(
+                    "Task added must be a Complete tasks of the 3 types.");
+        }
+        logger.debug("Valid add Command, parsed \"" + statementString
+                + "\": task=" + new Gson().toJson(this.task));
+    }
+
+    @Override
+    public void execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException {
+        // Statement to be added
+        // a new Task is created so that the internal implementation is not
+// affected.
+        taskManager.add(new Task(this.task), this, isUndo);
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AddStatement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasStatement.java
+	 */
+
+/**
+ * Alias Statement has no parameters.
+ */
+public class AliasStatement extends StatementNoParams {
+
+    private static Logger logger = LoggerFactory
+            .getLogger(AliasStatement.class);
+
+    /**
+     * Creates a new alias statement.
+     *
+     * @param statementString
+     */
+    public AliasStatement(String statementString) {
+        super(CommandType.ALIAS, statementString);
+    }
+
+    @Override
+    public void execute(ITaskManager taskManager, boolean isUndo) {
+        // TODO Link to Terminal
+        logger.debug("in alias");
+        taskManager.alias();
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasStatement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\CommandType.java
+	 */
+
+/**
+ * Classifies the commands that can be passed in from the user. The list of
+ * command accepted are described in this enum:
+ *
+ * <pre>
+ * 1. add
+ * 2. alias
+ * 3. alias-add
+ * 4. alias-delete
+ * 5. delete
+ * 6. done
+ * 7. exit
+ * 8. help
+ * 9. history
+ * 10. history-clear
+ * 11. history-undo
+ * 12. modify
+ * 13. search
+ * 14. view
+ * </pre>
+ */
+public enum CommandType {
+
+    /**
+     * Adds a task to the task manager. It can add floating task, deadline task,
+     * timed task, recurring deadline task or recurring timed task.
+     */
+    ADD("add"),
+    /**
+     * List all the aliases in the database.
+     */
+    ALIAS("alias"),
+    /**
+     * Adds a new alias to the database.
+     */
+    ALIAS_ADD("alias-add"),
+    /**
+     * Deletes a alias from the database.
+     */
+    ALIAS_DELETE("alias-delete"),
+    /**
+     * Deletes a task and moves it to the tasks recycle bin.
+     */
+    DELETE("delete"),
+    /**
+     * Done command is run when the task is completed.
+     */
+    DONE("done"),
+    /**
+     * Exits the task manager.
+     */
+    EXIT("exit"),
+    /**
+     * Displays the command syntax and example.
+     */
+    HELP("help"),
+    /**
+     * Displays the current history of actions.
+     */
+    HISTORY("history"),
+    /**
+     * Clears one, a range or all history.
+     */
+    HISTORY_CLEAR("history-clear"),
+    /**
+     * Undo one history action.
+     */
+    HISTORY_UNDO("history-undo"),
+    /**
+     * Modifies the task specified, updating the details of the tasks.
+     */
+    MODIFY("modify"),
+    /**
+     * Search for a particular task in the task manager.
+     */
+    SEARCH("search"),
+    /**
+     * Lists the tasks in the task manager, giving the option to display in
+     * different formats.
+     */
+    VIEW("view");
+
+    private final String commandName;
+
+    private CommandType(String commandName) {
+        this.commandName = commandName;
+    }
+
+    @Override
+    public String toString() {
+        return this.commandName;
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\CommandType.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ExitStatement.java
+	 */
+
+/**
+ * Class to encapsulate an exit statement.
+ */
+public class ExitStatement extends StatementNoParams {
+
+    /**
+     * Creates a new exit Statement.
+     *
+     * @param statementString
+     */
+    public ExitStatement(String statementString) {
+        super(CommandType.EXIT, statementString);
+    }
+
+    @Override
+    public void execute(ITaskManager taskManager, boolean isUndo) {
+        taskManager.exit();
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ExitStatement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryStatement.java
+	 */
+
+/**
+ * History Statement has no parameters.
+ */
+public class HistoryStatement extends StatementNoParams {
+
+    private static Logger logger = LoggerFactory
+            .getLogger(HistoryStatement.class);
+
+    /**
+     * Creates a new history Statement.
+     *
+     * @param statementString
+     */
+    public HistoryStatement(String statementString) {
+        super(CommandType.HISTORY, statementString);
+    }
+
+    @Override
+    public void execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException {
+        taskManager.viewHistory();
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryStatement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ModifyStatement.java
+	 */
+
+/**
+ * Class to encapsulate a modify statement. Essentially a modify statement is an
+ * add statement with a query. The syntax must be in the form:
+ *
+ * <pre>
+ * \<modify\> \<query\> \<parameters\>
+ * </pre>
+ */
+public class ModifyStatement extends Statement {
+
+    private static Logger logger = LoggerFactory
+            .getLogger(ModifyStatement.class);
+
+    private String query;
+
+    private Task task;
+
+    /**
+     * Initializes a modify statement, parses the query first.
+     *
+     * @param statementString
+     * @throws ParseException
+     * @exception InvalidParameterException
+     *                if the parameters does not exist.
+     */
+    public ModifyStatement(String statementString) throws ParseException {
+        super(CommandType.MODIFY, statementString);
+        ParameterParser parameterParser = Parser.getInstance()
+                .getStatementParser().getParameterParser();
+        Matcher queryMatcher = Pattern.compile(",").matcher(
+                this.getStatementArgumentsOnly());
+
+        if (queryMatcher.find()) {
+            this.query = this.getStatementArgumentsOnly().substring(0,
+                    queryMatcher.start());
+        } else {
+            throw new ParseException(
+                    "Modify statement must contain query argument.");
+        }
+
+        this.task = new Task();
+        ParameterContainer container = parameterParser.parse(this
+                .getStatementArgumentsOnly().substring(queryMatcher.end()));
+        container.addAll(this.task);
+
+        logger.debug("Valid modify Command, parsed \"" + statementString
+                + "\": query=\"" + this.query + "\" task="
+                + new Gson().toJson(this.task));
+
+    }
+
+    @Override
+    public void execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException {
+        // Statement to be added
+        taskManager.modify(this.query, new Task(this.task), this, isUndo);
+
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ModifyStatement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\CategoryParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class CategoryParameter extends Parameter {
+
+    /**
+     * @param payload
+     */
+    public CategoryParameter(String payload) {
+        super(ParameterType.CATEGORY, payload);
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setCategory(this.getPayload());
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\CategoryParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DeadlineParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class DeadlineParameter extends ParameterDatePayload {
+
+    /**
+     * @param payload
+     */
+    public DeadlineParameter(String payload) {
+        super(ParameterType.DEADLINE, payload);
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setEndDate(this.getDate());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DeadlineParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DescriptionParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class DescriptionParameter extends Parameter {
+
+    /**
+     * @param payload
+     */
+    public DescriptionParameter(String payload) {
+        super(ParameterType.DESCRIPTION, payload);
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setDescription(this.getPayload());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DescriptionParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\LocationParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class LocationParameter extends Parameter {
+
+    /**
+     * @param payload
+     */
+    public LocationParameter(String payload) {
+        super(ParameterType.LOCATION, payload);
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setLocation(this.getPayload());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\LocationParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\Parameter.java
+	 */
+
+/**
+ * Represents a parameter, its symbol with its payload. This class presents no
+ * understanding of the payload.
+ */
+public abstract class Parameter {
+
+    private String payload;
+    private ParameterType symbol;
+
+    /**
+     * Creates a Parameter. The syntax accepted on the command line is
+     *
+     * <pre>
+     * \<symbol\>{\<payload\>}
+     * </pre>
+     *
+     * @param symbol
+     * @param payload
+     */
+    public Parameter(ParameterType symbol, String payload) {
+        assert (symbol != null);
+        assert (payload != null);
+        this.symbol = symbol;
+
+        // Nullify the string if it is empty
+        if (payload.equals("")) {
+            this.payload = null;
+        } else {
+            ParameterParser parameterParser = Parser.getInstance()
+                    .getStatementParser().getParameterParser();
+            this.payload = parameterParser.unescape(payload);
+        }
+        System.out.println(this.payload);
+    }
+
+    /**
+     * Adds the current parameter to the task specified.
+     *
+     * @param task
+     *            to add the tasks.
+     */
+    public abstract void add(Task task);
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Parameter) {
+            Parameter objParameter = (Parameter) obj;
+            if ((objParameter.symbol.equals(this.symbol) && (((this.payload == null) && (objParameter.payload == this.payload)) || objParameter.payload
+                    .equals(this.payload)))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return the payload
+     */
+    public String getPayload() {
+        return this.payload;
+    }
+
+    /**
+     * @return the symbol
+     */
+    public ParameterType getSymbol() {
+        return this.symbol;
+    }
+
+    /**
+     * @param payload
+     *            the payload to set
+     */
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    /**
+     * @param symbol
+     *            the symbol to set
+     */
+    public void setSymbol(ParameterType symbol) {
+        this.symbol = symbol;
+    }
+
+    @Override
+    public String toString() {
+        return this.symbol.toString() + "{" + this.payload + "}";
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\Parameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterContainer.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.pojo.Task;
+
+/**
+ * A Container that will handle the all the different parameters, and is
+ * responsible to adding all these to a task. Moreover, it will also check that
+ * each parameter appears only once.
+ */
+public class ParameterContainer {
+
+    private Map<ParameterType, Parameter> parameterLookup;
+
+    /**
+     * Initializes the list of parameters to this container.
+     *
+     * @param parameterList
+     *            the list to use to initialize the container.
+     * @throws ParseException
+     *             if some parameter has a duplicate.
+     */
+    public ParameterContainer(List<Parameter> parameterList)
+            throws ParseException {
+        this.parameterLookup = new HashMap<ParameterType, Parameter>();
+        for (Parameter eaParameter : parameterList) {
+            if (this.parameterLookup.put(eaParameter.getSymbol(), eaParameter) != null) {
+                throw new ParseException("Parameters cannot be repeated.");
+            }
+        }
+    }
+
+    /**
+     * Adds all the parameters to the task specified.
+     *
+     * @param task
+     *            task to add the parameters to.
+     */
+    public void addAll(Task task) {
+        for (Parameter eaParameter : this.parameterLookup.values()) {
+            eaParameter.add(task);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ParameterContainer) {
+            ParameterContainer paramContainerObj = (ParameterContainer) obj;
+            return (this.parameterLookup
+                    .equals(paramContainerObj.parameterLookup));
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return this.parameterLookup.toString();
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterContainer.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterDatePayload.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import java.security.InvalidParameterException;
+import java.util.Date;
+import java.util.List;
+
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
+
+/**
+ * Parameter with a Date payload.
+ */
+public abstract class ParameterDatePayload extends Parameter {
+
+    private Date date;
+
+    /**
+     * Initializes and parses the payload to be a date and time.
+     *
+     * @param symbol
+     *            symbol of the calling environment.
+     * @param payload
+     *            payload to be parsed into date and time.
+     */
+    public ParameterDatePayload(ParameterType symbol, String payload) {
+        super(symbol, payload);
+
+        // if the payload is defined
+        if (!payload.isEmpty()) {
+            // Parses the date using the method specified on Natty.
+            // with references to sample code at http://natty.joestelmach.com/
+            List<DateGroup> groups = new Parser().parse(payload);
+            if (groups.size() != 1) {
+                throw new InvalidParameterException(
+                        "Each tag must have a date/time.");
+            }
+            DateGroup group = groups.get(0);
+
+            List<Date> dates = group.getDates();
+            if (dates.size() != 1) {
+                throw new InvalidParameterException(
+                        "Each tag must have a date/time.");
+            }
+
+            this.date = dates.get(0);
+        }
+    }
+
+    /**
+     * @return the date
+     */
+    public Date getDate() {
+        return this.date;
+    }
+
+    /**
+     * @param date
+     *            the date to set
+     */
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterDatePayload.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterType.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+/**
+ * Enum to classify the different kinds of parameter symbols.
+ */
+public enum ParameterType {
+
+    /**
+     * Category of the task. Inspiration from twitter! #HASHTAG!
+     */
+    CATEGORY,
+    /**
+     * Deadline of the task, it can also mean the end time when used in
+     * conjunction with START_TIME. - looks like a knife going across your
+     * throat, if you do not complete by then... Then you will die!
+     */
+    DEADLINE,
+    /**
+     * Description of the task. Need more details? +, which means add, add more
+     * details!
+     */
+    DESCRIPTION,
+    /**
+     * Description of the task. @ is the at sign, which can conveniently replace
+     * the word 'at'. I am @ School.
+     */
+    LOCATION,
+    /**
+     * Priority of the task. % is the percent sign, which will tell you
+     * percentage importance.
+     */
+    PRIORITY,
+    /**
+     * Sets a Reminder for the task. ! is a symbol one would observe in an
+     * important email, reminding the user to reply or die.
+     */
+    REMINDER,
+    /**
+     * Start time of the task. Well, ~ seems cool to denote start time.
+     */
+    START_TIME,
+    /**
+     * Title of the task. = is used in equations, and on the right hand side you
+     * will have a nice evaluated answer, which 'sums' up the whole problem.
+     * Similarly, a title 'sums' up the whole task.
+     */
+    TITLE;
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterType.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\PriorityParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import java.security.InvalidParameterException;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ * Priority must be a number between 0 and 10, including the limits.
+ */
+public class PriorityParameter extends Parameter {
+
+    private Integer priority;
+
+    /**
+     * Creates a new Priority Parameter.
+     *
+     * @param payload
+     *            to be parsed to 0 to 10.
+     */
+    public PriorityParameter(String payload) {
+        super(ParameterType.PRIORITY, payload);
+        if (!payload.isEmpty()) {
+            try {
+                this.priority = Integer.parseInt(this.getPayload());
+            } catch (NumberFormatException nfe) {
+                throw new InvalidParameterException(
+                        "Priority must be an integer.");
+            }
+
+            if ((this.priority < 0) || (this.priority > 10)) {
+                throw new InvalidParameterException(
+                        "Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
+            }
+        }
+
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setPriority(this.priority);
+    }
+
+    /**
+     * @return the priority
+     */
+    public int getPriority() {
+        return this.priority;
+    }
+
+    /**
+     * @param priority
+     *            the priority to set
+     */
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\PriorityParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ReminderParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class ReminderParameter extends ParameterDatePayload {
+
+    /**
+     * @param payload
+     */
+    public ReminderParameter(String payload) {
+        super(ParameterType.REMINDER, payload);
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setReminder(this.getDate());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ReminderParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\StartTimeParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class StartTimeParameter extends ParameterDatePayload {
+
+    /**
+     * @param payload
+     */
+    public StartTimeParameter(String payload) {
+        super(ParameterType.START_TIME, payload);
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setStartDate(this.getDate());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\StartTimeParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\TitleParameter.java
+	 */
+
+package w094j.ctrl8.parse.statement.parameter;
+
+import w094j.ctrl8.pojo.Task;
+
+/**
+ */
+public class TitleParameter extends Parameter {
+
+    /**
+     * @param payload
+     */
+    public TitleParameter(String payload) {
+        super(ParameterType.TITLE, payload);
+        if (payload == null) {
+            throw new RuntimeException("s");
+        }
+    }
+
+    @Override
+    public void add(Task task) {
+        task.setTitle(this.getPayload());
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\TitleParameter.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\SearchStatement.java
+	 */
+
+/**
+ * Represents a Search Statement
+ */
+public class SearchStatement extends StatementQuery {
+
+    private static Logger logger = LoggerFactory
+            .getLogger(SearchStatement.class);
+    private String query;
+
+    /**
+     * @param statementString
+     */
+    public SearchStatement(String statementString) {
+        super(CommandType.SEARCH, statementString);
+        this.query = this.getStatementArgumentsOnly();
+        logger.debug("Valid search Command, query \"" + statementString + "\"");
+    }
+
+    @Override
+    public void execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException {
+        // Statement to be added
+        taskManager.search(this.query);
+    }
+
+}
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\SearchStatement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\Statement.java
+	 */
+
+/**
+ * Abstract Class to encapsulate a statement, which composes of its command and
+ * its parameter(s). The handling of the parameters is to be handled at its
+ * subclasses.
+ */
+public abstract class Statement {
+
+    private static Logger logger = LoggerFactory.getLogger(Statement.class);
+
+    // command of the statement
+    private CommandType command;
+    // without command, arguments only
+    private String statementArgumentsOnly;
+
+    /**
+     * Creates an Statement object with the Command and arguments
+     *
+     * @param command
+     */
+    protected Statement(CommandType command, String statementString) {
+        this.command = command;
+        CommandParser commandParser = Parser.getInstance().getStatementParser()
+                .getCommandParser();
+        this.statementArgumentsOnly = commandParser
+                .removeCommandKeyword(statementString);
+        logger.debug("Statement initialized with Command(" + this.command
+                + ") and arguments " + this.statementArgumentsOnly);
+    }
+
+    /**
+     * Executes the command in the specified terminal, performing the specific
+     * command related to the respective commands.
+     *
+     * @param taskManager
+     *            to execute the command in.
+     * @throws CommandExecuteException
+     *             when the execution of the command has problems.
+     */
+    public abstract void execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException;
+
+    /**
+     * @return the command
+     */
+    public CommandType getCommand() {
+        return this.command;
+    }
+
+    /**
+     * @return the statementArgumentsOnly
+     */
+    public String getStatementArgumentsOnly() {
+        return this.statementArgumentsOnly;
+    }
+
+    /**
+     * @param command
+     *            the command to set
+     */
+    public void setCommand(CommandType command) {
+        this.command = command;
+    }
+
+    /**
+     * @param statementArgumentsOnly
+     *            the statementArgumentsOnly to set
+     */
+    public void setStatementArgumentsOnly(String statementArgumentsOnly) {
+        this.statementArgumentsOnly = statementArgumentsOnly;
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\Statement.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementNoParams.java
+	 */
+
+/**
+ * Abstract Class to encapsulate a statement which has no parameters.
+ */
+public abstract class StatementNoParams extends Statement {
+
+    /**
+     * Creates a Statement without parameters, checks the statementString for
+     * any parameters. If there are parameters, fail immediately.
+     *
+     * @param command
+     *            Command type.
+     * @param statementString
+     *            The statement that the user entered into the terminal.
+     */
+    public StatementNoParams(CommandType command, String statementString) {
+        super(command, statementString);
+        if (!this.getStatementArgumentsOnly().isEmpty()) {
+            throw new InvalidParameterException(command
+                    + " does not take in any parameters.");
+        }
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementNoParams.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+	 */
+
+package w094j.ctrl8.parse;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.database.config.CommandConfig;
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.CommandType;
+
+/**
+ * Tests parsing of the basic variant of Commands
+ */
+@RunWith(value = Parameterized.class)
+public class CommandParserTest {
+
+    private static CommandParser parser;
+    private CommandType expected;
+    private String input;
+
+    /**
+     * Creates a Command Test with the input and expected Command enum.
+     *
+     * @param input
+     *            string to be parsed.
+     * @param expected
+     *            Command enum to be expected, null will mean that
+     *            ParseException is expected.
+     */
+    public CommandParserTest(String input, CommandType expected) {
+        this.input = input;
+        this.expected = expected;
+    }
+
+    /**
+     * @return test data.
+     */
+    @Parameters(name = "{index}: Parse \"{0}\" to enum({1})")
+    // @formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                // Includes all the supported commands as of v0.2
+                { "add", CommandType.ADD },
+                { "alias", CommandType.ALIAS },
+                { "alias-add", CommandType.ALIAS_ADD },
+                { "alias-delete", CommandType.ALIAS_DELETE },
+                { "delete", CommandType.DELETE },
+                { "done", CommandType.DONE },
+                { "exit", CommandType.EXIT },
+                { "help", CommandType.HELP },
+                { "history", CommandType.HISTORY },
+                { "history-clear", CommandType.HISTORY_CLEAR },
+                { "history-undo", CommandType.HISTORY_UNDO },
+                { "modify", CommandType.MODIFY },
+                { "search", CommandType.SEARCH },
+                { "view", CommandType.VIEW },
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+	 */
+
+    // @formatter:on
+
+    /**
+     * Tests the parsing of the command text
+     */
+    @Test
+    public void test() {
+        try {
+            assertEquals(this.expected, parser.parse(this.input));
+        } catch (ParseException pe) {
+            assertEquals(null, this.expected);
+        }
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ExplicitShortParameterTest.java
+	 */
+
+/**
+ * Tests parsing of the short explicit parameters to its String representation.
+ * This will not test implicit parameters, but will also test the
+ * inter-operability of long parameter parameters with the short parameters.
+ */
+@RunWith(value = Parameterized.class)
+public class ExplicitShortParameterTest extends ParameterTest {
+
+    /**
+     * Creates a Short Explicit Parameter test.
+     *
+     * @param input
+     *            The parameter(s) to be parsed.
+     * @param expected
+     *            Expected Parsed result, if null exception is expected.
+     * @throws ParseException
+     *             when the expected parameter list has issues.
+     */
+    public ExplicitShortParameterTest(String input, List<Parameter> expected)
+            throws ParseException {
+        super(input, expected, true, false);
+    }
+
+    /**
+     * @return test data.
+     */
+    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
+    //@formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                // Test a simple parameter
+                { "#nus", Arrays.asList(new Parameter[] {new CategoryParameter("nus")}) },
+                // Ensures that Explicit short will not pick up any string after it
+                { "-today +1pm", Arrays.asList(new Parameter[] {new DeadlineParameter("today"), new DescriptionParameter("1pm")}) },
+                // Test if Long Explicit parameters are still working
+                { "+{Remember to talk about Crawler technologies.}", Arrays.asList(new Parameter[] {new DescriptionParameter("Remember to talk about Crawler technologies.")}) },
+                // Test if Long Explicit parameters work with short explicit parameters
+                { "+{Remember to talk about Crawler technologies.} %10", Arrays.asList(new Parameter[] {new PriorityParameter("10"), new DescriptionParameter("Remember to talk about Crawler technologies.")}) },
+                /**
+                 * Extreme tests
+                 */
+                // An escaped = should be allowed in the parameter payload, and subsequently undelimited.
+                { "=a\\=a", Arrays.asList(new Parameter[] {new TitleParameter("a=a")}) },
+                // A character that is obviously not an parameter symbol should not be un-escaped
+                { "=a\\;a", Arrays.asList(new Parameter[] {new TitleParameter("a\\;a")}) },
+                // A valid parameter symbol should not be picked up when it does not fit the pattern of a parameter
+                { "=a=a", Arrays.asList(new Parameter[] {new TitleParameter("a=a")}) },
+                /**
+                 * Errornous tests
+                 */
+                // Ensures that a valid parameter symbol will not get picked up, if there are no parameters
+                { " = ", null },
+                // Ensures that a non-symbol is not picked up
+                { "<>", null },
+
+        });
+    }
+    // @formatter:on
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ExplicitShortParameterTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ImplicitParameterTest.java
+	 */
+
+package w094j.ctrl8.parse;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
+import w094j.ctrl8.parse.statement.parameter.Parameter;
+import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
+import w094j.ctrl8.parse.statement.parameter.TitleParameter;
+
+/**
+ * Tests parsing of the implicit parameters to its String representation. The
+ * tests will also test the inter-operability of long explicit parameters, short
+ * explicit parameters and implicit parameters.
+ */
+@RunWith(value = Parameterized.class)
+public class ImplicitParameterTest extends ParameterTest {
+
+    /**
+     * Creates a Explicit Parameter test.
+     *
+     * @param input
+     *            The parameter(s) to be parsed.
+     * @param expected
+     *            Expected Parsed result, if null exception is expected.
+     * @throws ParseException
+     *             when the expected parameter list has issues.
+     */
+    public ImplicitParameterTest(String input, List<Parameter> expected)
+            throws ParseException {
+        super(input, expected, true, true);
+    }
+
+    /**
+     * @return test data.
+     */
+    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
+    //@formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                // Implicit Title for a task
+                { " nus", Arrays.asList(new Parameter[] {new TitleParameter("nus")}) },
+                // Implicit from and to for a task
+                { " from 2pm to 4pm", Arrays.asList(new Parameter[] {new StartTimeParameter("2pm"), new DeadlineParameter("4pm")}) },
+                // Implicit end time for a task
+                { " due 4pm", Arrays.asList(new Parameter[] {new DeadlineParameter("4pm")}) },
+                // A mix of Title, start and end time
+                { " nus from 2pm to 4pm", Arrays.asList(new Parameter[] {new TitleParameter("nus"), new StartTimeParameter("2pm"), new DeadlineParameter("4pm")}) },
+                { " \\#\\#\\#", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
+                { " \\###", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
+                { " \\##\\#", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
+                { " warnings to taks that clash (timing-wising)", Arrays.asList(new Parameter[] {new TitleParameter("warnings to taks that clash (timing-wising)")}) },
+                /**
+                 * Extreme tests
+                 */
+                // Implicit Title containing a non-parameter symbol
+                { " <>", Arrays.asList(new Parameter[] {new TitleParameter("<>")}) },
+                // Implicit From and To that do not contain a valid date, should not parse as start and end date but as title
+                { " Take Bus from UTown to Clementi", Arrays.asList(new Parameter[] {new TitleParameter("Take Bus from UTown to Clementi")}) },
+                /**
+                 * Errornous tests
+                 */
+                // Implicit start and end time should not be added as there must be a space infront of the from
+                { " #{s}from 2pm to 4pm", null }
+
+        });
+    }
+    //@formatter:on
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ImplicitParameterTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ParameterTest.java
+	 */
+
+package w094j.ctrl8.parse;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.parameter.Parameter;
+import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
+
+/**
+ * Abstract class for test classes to extends this to test Long Explicit, Short
+ * Explicit and Implicit.
+ */
+public abstract class ParameterTest {
+
+    private ParameterContainer expectedParamContainer;
+    private String input;
+    private ParameterParser parser;
+
+    /**
+     * Creates a Parameter test.
+     *
+     * @param input
+     *            The String to be sent for parsing.
+     * @param expected
+     *            Expected Parameter list, if null the test will expect
+     *            Exception.
+     * @param isExplicitShortMode
+     *            Explicit short mode for the parser.
+     * @param isImplicitMode
+     *            Implicit mode for the parser.
+     * @throws ParseException
+     *             when the expected parameter list has issues.
+     */
+    public ParameterTest(String input, List<Parameter> expected,
+            boolean isExplicitShortMode, boolean isImplicitMode)
+            throws ParseException {
+        this.input = input;
+        if (expected != null) {
+            this.expectedParamContainer = new ParameterContainer(expected);
+        } else {
+            this.expectedParamContainer = null;
+        }
+        ParameterConfig config = new ParameterConfig();
+        config.setExplicitShortMode(isExplicitShortMode);
+        config.setImplicitMode(isImplicitMode);
+        this.parser = new ParameterParser(config);
+    }
+
+    /**
+     * Tests the expected parameter list against the parsed parameter list.
+     */
+    @Test
+    public void test() {
+
+        try {
+            assertEquals(this.expectedParamContainer,
+                    this.parser.parse(this.input));
+        } catch (ParseException e) {
+            if (this.expectedParamContainer != null) {
+                assertTrue(false);
+            } else {
+                assertTrue(true);
+            }
+        }
+
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ParameterTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\PriorityParameterTest.java
+	 */
+
+package w094j.ctrl8.parse;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import java.util.Arrays;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.exception.ParseException;
+import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
+import w094j.ctrl8.pojo.Task;
+
+/**
+ * Tests parsing of the priority parameter.
+ */
+@RunWith(value = Parameterized.class)
+public class PriorityParameterTest {
+
+    private static ParameterParser parser;
+    private Integer expectedPriority;
+
+    private String input;
+
+    /**
+     * Creates a Priority Parameter test.
+     *
+     * @param input
+     *            Priority parameter to parse.
+     * @param expectedPriority
+     *            Expected Priority.
+     */
+    public PriorityParameterTest(String input, Integer expectedPriority) {
+        this.input = input;
+        this.expectedPriority = expectedPriority;
+    }
+
+    /**
+     * @return test data.
+     */
+    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
+    //@formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                { "%{}", null }, { "%{0}", 0 }, { "%{1}", 1 },
+                { "%{2}", 2 }, { "%{3}", 3 }, { "%{4}", 4 },
+                { "%{5}", 5 }, { "%{6}", 6 }, { "%{7}", 7 },
+                { "%{8}", 8 }, { "%{9}", 9 }, { "%{10}", 10 }
+        });
+    }
+
+    /**
+     *
+     */
+    @BeforeClass
+    public static void initParser() {
+        ParameterConfig config = new ParameterConfig();
+        parser = new ParameterParser(config);
+    }
+
+    // @formatter:on
+
+    /**
+     * Tests the parsing of priority parameter.
+     */
+    @Test
+    public void test() {
+
+        ParameterContainer parameterContainer;
+        try {
+            parameterContainer = parser.parse(this.input);
+            Task task = new Task();
+            parameterContainer.addAll(task);
+            assertEquals(this.expectedPriority, task.getPriority());
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            assertFalse(true);
+        }
+
+    }
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\PriorityParameterTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\statement\parameter\ParameterDatePayloadTest.java
+	 */
+
+package w094j.ctrl8.statement.parameter;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.Date;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
+import w094j.ctrl8.parse.statement.parameter.ReminderParameter;
+import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
+
+/**
+ * Tests parsing of the Dates in the parameters deadline, starttime and
+ * reminder.
+ */
+@RunWith(value = Parameterized.class)
+public class ParameterDatePayloadTest {
+
+    private DeadlineParameter deadlineParameter;
+    private Date expectedDate;
+    private ReminderParameter reminderParameter;
+    private StartTimeParameter startTimeParameter;
+
+    /**
+     * Creates a test to test the 3 parameters as specified above.
+     *
+     * @param inputParameterPayload
+     *            Payload to parse for each parameter.
+     * @param expectedDate
+     */
+    public ParameterDatePayloadTest(String inputParameterPayload,
+            Date expectedDate) {
+        this.deadlineParameter = new DeadlineParameter(inputParameterPayload);
+        this.reminderParameter = new ReminderParameter(inputParameterPayload);
+        this.startTimeParameter = new StartTimeParameter(inputParameterPayload);
+        this.expectedDate = expectedDate;
+    }
+
+    /**
+     * @return test data.
+     */
+    @SuppressWarnings("deprecation")
+    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
+    //@formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                { "3 Aug 1992 00:00:00", new Date(92, 7, 3, 0, 0, 0) },
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\statement\parameter\ParameterDatePayloadTest.java
+
+
+
+
+
+	/**
+	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\taskmanager\TaskManagerSearchTest.java
+	 */
+
+package w094j.ctrl8.taskmanager;
+
+import static org.junit.Assert.assertArrayEquals;
+
+import java.util.Arrays;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
+import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.data.TaskData;
+import w094j.ctrl8.database.config.TaskManagerConfig;
+import w094j.ctrl8.pojo.Task;
+
+/**
+ * Tests the search functionality of the task mananger.
+ */
+@RunWith(value = Parameterized.class)
+public class TaskManagerSearchTest {
+
+    private static ITaskManager taskManager;
+
+    private String[] objectIdExpected;
+    private String searchQuery;
+
+    /**
+     * Creates a test case with the search query, and retrieve the array of
+     * objectIds expected
+     *
+     * @param searchQuery
+     * @param objectIdExpected
+     */
+    public TaskManagerSearchTest(String searchQuery, String[] objectIdExpected) {
+        this.searchQuery = searchQuery;
+        this.objectIdExpected = objectIdExpected;
+    }
+
+    /**
+     * @return test data.
+     */
+    @SuppressWarnings("deprecation")
+    @Parameters(name = "{index}: Search \"{0}\" to get objectIds({1})")
+    //@formatter:off
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                /**
+                 * Normal tests
+                 */
+                { "I am", new String[] {"0","1","2","3"} },
+                { "A", new String[] {"4"} },
+                { "a", new String[] {"4"} },
+                { "NUS", new String[] {"4"} }
+
+
+        });
+    }
+
+    // @formatter:on
+    @BeforeClass
+    public static void initialize() {
+        TaskManagerConfig config = new TaskManagerConfig();
+        AliasData aliasData = new AliasData();
+        TaskData taskData = new TaskData();
+        taskManager = new TaskManager(config, aliasData, taskData);
+
+        Task fatherTask = new Task();
+        fatherTask.setId("0");
+        fatherTask.setTitle("I am your father.");
+        fatherTask.setCategory("NUS");
+        taskData.updateTaskMap(fatherTask, null, false);
+
+        Task motherTask = new Task();
+        motherTask.setId("1");
+        motherTask.setTitle("I am your mother.");
+        motherTask.setCategory("NUS");
+        taskData.updateTaskMap(motherTask, null, false);
+
+        Task sisterTask = new Task();
+        sisterTask.setId("2");
+        sisterTask.setTitle("I am your sister.");
+        sisterTask.setCategory("FAM");
+        taskData.updateTaskMap(sisterTask, null, false);
+
+        Task brotherTask = new Task();
+        brotherTask.setId("3");
+        brotherTask.setTitle("I am your brother.");
+        brotherTask.setCategory("FAM");
+        brotherTask.setDescription("NUS");
+        taskData.updateTaskMap(brotherTask, null, false);
+
+        Task aTask = new Task();
+        aTask.setId("4");
+        aTask.setTitle("A NUS");
+        aTask.setCategory("FAM");
+        taskData.updateTaskMap(aTask, null, false);
+    }
+
+    /**
+     * Tests the parsing of priority parameter.
+     */
+    @Test
+    public void testDeadline() {
+
+        assertArrayEquals(this.taskManager.search(this.searchQuery),
+                this.objectIdExpected);
+    }
+
+}
+
+	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\taskmanager\TaskManagerSearchTest.java
+
+
+
+
+
