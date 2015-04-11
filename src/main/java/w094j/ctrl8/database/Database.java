@@ -22,7 +22,7 @@ import com.google.gson.GsonBuilder;
  * statement history into an output file.
  */
 
-// @author A0112521B
+//@author A0112521B
 
 public class Database implements IDatabase {
 
@@ -56,7 +56,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public static Database getInstance() throws NoSuchFileException,
-            IOException {
+    IOException {
         if (instance == null) {
             instance = initInstance(null);
         }
