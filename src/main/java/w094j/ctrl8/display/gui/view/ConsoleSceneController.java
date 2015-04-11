@@ -55,8 +55,8 @@ public class ConsoleSceneController {
     }
 
     public void applyConfig(DisplayControllerConfig controllerConfig) {
-        applyToTextDisplay(controllerConfig.textDisplayConfig);
-        applyToTextInput(controllerConfig.textInputConfig);
+        applyToTextDisplay(controllerConfig.getGUITextDisplayConfig());
+        applyToTextInput(controllerConfig.getGUITextInputConfig());
 
     }
 
