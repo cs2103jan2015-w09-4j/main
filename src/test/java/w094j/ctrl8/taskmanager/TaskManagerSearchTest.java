@@ -52,6 +52,8 @@ public class TaskManagerSearchTest {
                  */
                 { "I am", new String[] {"0","1","2","3"} },
                 { "A", new String[] {"4"} },
+                { "a", new String[] {"4"} },
+                { "NUS", new String[] {"4"} }
 
 
         });
@@ -87,11 +89,12 @@ public class TaskManagerSearchTest {
         brotherTask.setId("3");
         brotherTask.setTitle("I am your brother.");
         brotherTask.setCategory("FAM");
+        brotherTask.setDescription("NUS");
         taskData.updateTaskMap(brotherTask, null, false);
 
         Task aTask = new Task();
         aTask.setId("4");
-        aTask.setTitle("A");
+        aTask.setTitle("A NUS");
         aTask.setCategory("FAM");
         taskData.updateTaskMap(aTask, null, false);
     }
