@@ -42,8 +42,7 @@ public class Database implements IDatabase {
     public Database(String pathString) throws IOException, NoSuchFileException {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
-        this.gson = builder.excludeFieldsWithoutExposeAnnotation()
-                .setPrettyPrinting().create();
+        this.gson = builder.setPrettyPrinting().create();
         this.path = this.getOrCreatePath(pathString);
         this.file = this.path.toFile().isFile() ? this.getFile() : new DBfile();
     }
@@ -56,7 +55,7 @@ public class Database implements IDatabase {
      * @throws NoSuchFileException
      */
     public static Database getInstance() throws NoSuchFileException,
-    IOException {
+            IOException {
         if (instance == null) {
             instance = initInstance(null);
         }

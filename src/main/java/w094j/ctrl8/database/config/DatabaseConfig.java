@@ -1,48 +1,58 @@
+//@author A0112521B
 package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
-//@author A0112521B
 /**
  * Configuration file for Database.
  */
 public class DatabaseConfig implements IStorableElement {
+    private DiskStorageConfig diskStorage;
+    private GoogleStorageConfig googleStorage;
 
-    public enum Frequency {
-        DAILY, MONTHLY, NEVER, SESSION, WEEKLY, YEARLY
-    }
-
-    private static Frequency AUTO_CLEAR_HISTORY_FREQUENCY_DEFAULT = Frequency.SESSION;
-    private Frequency autoClearHistoryFrequency;
-
+    /**
+     * Creates a Database config with empty diskStorage and googleStorage
+     * configs.
+     */
     public DatabaseConfig() {
+        this.diskStorage = new DiskStorageConfig();
+        this.googleStorage = new GoogleStorageConfig();
     }
 
     /**
-     * Gets how frequent the history will be cleared
-     *
-     * @return Frequency
+     * @return the diskStorageConfig
      */
-    public Frequency getAutoClearHistoryFrequency() {
-        if (this.autoClearHistoryFrequency == null) {
-            return AUTO_CLEAR_HISTORY_FREQUENCY_DEFAULT;
-        } else {
-            return this.autoClearHistoryFrequency;
-        }
+    public DiskStorageConfig getDiskStorageConfig() {
+        return this.diskStorage;
+    }
+
+    /**
+     * @return the googleStorageConfig
+     */
+    public GoogleStorageConfig getGoogleStorageConfig() {
+        return this.googleStorage;
     }
 
     @Override
     public boolean isValid() {
-        return true;
+        return this.diskStorage.isValid()
+                && this.googleStorage.isValid();
     }
 
     /**
-     * Sets how frequent the history will be cleared
-     *
-     * @param frequency
+     * @param diskStorageConfig
+     *            the command to set
      */
-    public void setAutoClearHistoryFrequency(Frequency frequency) {
-        this.autoClearHistoryFrequency = frequency;
+    public void setDiskStorageConfig(DiskStorageConfig diskStorageConfig) {
+        this.diskStorage = diskStorageConfig;
+    }
+
+    /**
+     * @param googleStorageConfig
+     *            the googleStorageConfig to set
+     */
+    public void setGoogleStorageConfig(GoogleStorageConfig googleStorageConfig) {
+        this.googleStorage = googleStorageConfig;
     }
 
 }

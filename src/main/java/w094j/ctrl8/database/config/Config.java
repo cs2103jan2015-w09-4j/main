@@ -8,16 +8,25 @@ package w094j.ctrl8.database.config;
  */
 public class Config {
 
+    private DatabaseConfig database;
     private DisplayConfig display;
     private ParserConfig parser;
     private TaskManagerConfig taskManager;
     private TerminalConfig terminal;
 
     public Config() {
+        this.database = new DatabaseConfig();
         this.display = new DisplayConfig();
         this.parser = new ParserConfig();
         this.taskManager = new TaskManagerConfig();
         this.terminal = new TerminalConfig();
+    }
+
+    /**
+     * @return the database
+     */
+    public DatabaseConfig getDatabase() {
+        return this.database;
     }
 
     /**
@@ -46,6 +55,14 @@ public class Config {
      */
     public TerminalConfig getTerminal() {
         return this.terminal;
+    }
+
+    /**
+     * @param database
+     *            the database to set
+     */
+    public void setDatabase(DatabaseConfig database) {
+        this.database = database;
     }
 
     /**

@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import w094j.ctrl8.pojo.DBfile;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Disk Storage
@@ -31,8 +32,9 @@ public class DiskStorage extends Storage {
 
     @Override
     public void readData() throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = new String(Files.readAllBytes(this.filePath));
-        this.file = this.gson.fromJson(json, DBfile.class);
+        this.file = gson.fromJson(json, DBfile.class);
     }
 
     @Override
