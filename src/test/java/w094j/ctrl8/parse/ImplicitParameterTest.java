@@ -50,6 +50,8 @@ public class ImplicitParameterTest extends ParameterTest {
                  */
                 // Implicit Title for a task
                 { " nus", Arrays.asList(new Parameter[] {new TitleParameter("nus")}) },
+                // Implicit, one character Title for a task
+                { " a", Arrays.asList(new Parameter[] {new TitleParameter("a")}) },
                 // Implicit from and to for a task
                 { " from 2pm to 4pm", Arrays.asList(new Parameter[] {new StartTimeParameter("2pm"), new DeadlineParameter("4pm")}) },
                 // Implicit end time for a task

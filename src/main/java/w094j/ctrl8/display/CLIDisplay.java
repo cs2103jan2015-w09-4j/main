@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Formatter;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -26,8 +29,20 @@ import w094j.ctrl8.pojo.Task;
 
 // @author A0112092W
 public class CLIDisplay extends Display {
+
+    private static final String BETWEEN_SEPERATOR = " | ";
+
+    private static final String DEADLINED_TASK_NAME = "Tasks with Deadline";
+
+    private static final String END_SEPERATOR = " |";
+    private static final String FLOATING_TASK_NAME = "Tasks";
     private static CLIDisplay instance;
+    private static final char LINE_COMPONENT = '-';
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
+    private static final String START_SEPERATOR = "| ";
+    private static final String TIMED_TASK_NAME = "Events";
+    private static final char TITLE_LINE_COMPONENT = '=';
+    private CLIDisplayConfig cliDisplayConfig;
     private InputStream inStream;
 
     // @author A0110787A
@@ -38,15 +53,75 @@ public class CLIDisplay extends Display {
      * Public constructor for a CLI Display
      */
     CLIDisplay(CLIDisplayConfig cliDisplayConfig) {
+        this.cliDisplayConfig = cliDisplayConfig;
+    }
+
+    public static void main(String[] args) throws OutputExecuteException {
+        Task fatherTask = new Task();
+        fatherTask.setId("0");
+        fatherTask.setTitle("I am your father.");
+        fatherTask.setCategory("NUS");
+
+        Task motherTask = new Task();
+        motherTask.setId("1");
+        motherTask.setTitle("I am your mother.");
+        motherTask.setCategory("NUS");
+
+        Task sisterTask = new Task();
+        sisterTask.setId("2");
+        sisterTask.setTitle("I am your sister.");
+        sisterTask.setCategory("FAM");
+
+        Task brotherTask = new Task();
+        brotherTask.setId("3");
+        brotherTask.setTitle("I am your brother.");
+        brotherTask.setCategory("FAM");
+        brotherTask.setDescription("NUS");
+
+        Task aTask = new Task();
+        aTask.setId("4");
+        aTask.setTitle("A NUS");
+        aTask.setCategory("FAM");
+
+        CLIDisplay test = new CLIDisplay(new CLIDisplayConfig());
+        Task[] tasks = { fatherTask, motherTask, sisterTask, brotherTask, aTask };
+        test.outputTask("YO", tasks);
+
+    }
+
+    /**
+     * Returns n number of lineComponent.
+     *
+     * @param n
+     * @param lineComponent
+     */
+    private static String getDashes(int n, Character lineComponent) {
+        StringBuilder sb = new StringBuilder();
+        for (int x = 0; x < n; x++) {
+            sb.append(lineComponent);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Print n number of lineComponent
+     *
+     * @param n
+     * @param lineComponent
+     */
+    private static void printDashes(int n, Character lineComponent) {
+        System.out.println(getDashes(n, lineComponent));
     }
 
     /**
      * This method is used to print a table with format of following the format
      * of right justified table x xxx yyy y zz zz
      *
+     * @param title
      * @param table
      */
-    private static void printTable(String[][] table) {
+    private static void printTable(String title, String[][] table) {
+
         // Find out what the maximum number of columns is in any row
         int maxColumns = 0;
         for (String[] element : table) {
@@ -61,19 +136,48 @@ public class CLIDisplay extends Display {
             }
         }
 
+        // print the title bar
+        int boundaryOffset = (START_SEPERATOR.length() + END_SEPERATOR.length());
+        int sumLength = boundaryOffset - BETWEEN_SEPERATOR.length();
+        for (int eaLength : lengths) {
+            sumLength += eaLength + BETWEEN_SEPERATOR.length();
+        }
+        printDashes(sumLength, TITLE_LINE_COMPONENT);
+        int leftOffset = (((sumLength + title.length()) / 2) - START_SEPERATOR
+                .length());
+        int rightOffset = sumLength - leftOffset - END_SEPERATOR.length();
+        System.out.println(START_SEPERATOR
+                + String.format("%" + leftOffset + "s%" + rightOffset + "s",
+                        title, END_SEPERATOR));
+        printDashes(sumLength, TITLE_LINE_COMPONENT);
+
         // Generate a format string for each column
         String[] formats = new String[lengths.length];
         for (int i = 0; i < lengths.length; i++) {
-            formats[i] = "%1$" + lengths[i] + "s"
-                    + ((i + 1) == lengths.length ? "\n" : " ");
+            formats[i] = "%1$"
+                    + lengths[i]
+                    + "s"
+                    + ((i + 1) == lengths.length ? END_SEPERATOR + "\n"
+                            : BETWEEN_SEPERATOR);
         }
 
         // Print 'em out
-        for (String[] element : table) {
+        StringBuilder sb = new StringBuilder();
+        Formatter formatter = new Formatter(sb);
+
+        for (int x = 0; x < table.length; x++) {
+            String[] element = table[x];
+            sb.append(START_SEPERATOR);
             for (int j = 0; j < element.length; j++) {
-                System.out.printf(formats[j], element[j]);
+                formatter.format(formats[j], element[j]);
+            }
+            if (x == 0) {
+                sb.append(getDashes(sumLength, LINE_COMPONENT));
+                sb.append("\n");
             }
         }
+        System.out.print(sb.toString());
+        printDashes(sumLength, LINE_COMPONENT);
     }
 
     // @author A0112092W
@@ -106,15 +210,101 @@ public class CLIDisplay extends Display {
     /**
      * This method is used to output the task for the user in certain format.
      *
+     * @param title
      * @param taskList
      * @throws OutputExecuteException
      */
-    public void outputTask(Task[] taskList) throws OutputExecuteException {
-        String[][] table = this.initTable(taskList.length + 1,
-                MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
+    public void outputTask(String title, Task[] taskList)
+            throws OutputExecuteException {
+
+        System.out.println();
+
+        boolean[] isActiveColumn = new boolean[MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES];
+
+        for (int x = 0; x < MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES; x++) {
+
+            isActiveColumn[x] = false;
+
+            for (Task eaTask : taskList) {
+                switch (x) {
+                    case 0 :
+                        if (eaTask.getTitle() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 1 :
+                        if (eaTask.getCategory() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 2 :
+                        if (eaTask.getDescription() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 3 :
+                        if (eaTask.getStartDate() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 4 :
+                        if (eaTask.getEndDate() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 5 :
+                        if (eaTask.getLocation() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 6 :
+                        if (eaTask.getPriority() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 7 :
+                        if (eaTask.getReminder() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                    case 8 :
+                        if (eaTask.getStatus() != null) {
+                            isActiveColumn[x] = true;
+                            break;
+                        }
+                        break;
+                }
+            }
+
+        }
+
+        int activeColumnSize = 0;
+        for (boolean element : isActiveColumn) {
+            if (element) {
+                activeColumnSize++;
+            }
+        }
+
+        System.out.println(Arrays.toString(isActiveColumn));
+        System.out.println(activeColumnSize);
+
+        String[][] table = this.initTable(taskList.length + 1, isActiveColumn,
+                activeColumnSize);
+        for (String[] element : table) {
+            System.out.println(Arrays.toString(element));
+        }
         int iteration = taskList.length + 1;
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        table = this.initNullTaskTable(table, 1);
+        DateFormat df = new SimpleDateFormat(
+                this.cliDisplayConfig.getDateFormat());
+        table = this.initNullTaskTable(table, 1, activeColumnSize);
 
         for (int i = 1; i < iteration; i++) {
             // task should be not null
@@ -123,57 +313,85 @@ public class CLIDisplay extends Display {
                         OuputExecuteMessage.EXCEPTION_NULL_TASK);
             }
 
-            if (taskList[i - 1].getTitle() == null) {
-                table[i][0] = "-";
-            } else {
-                table[i][0] = taskList[i - 1].getTitle();
+            int index = 0;
+            for (int x = 0; x < isActiveColumn.length; x++) {
+                if (isActiveColumn[x]) {
+                    switch (x) {
+                        case 0 :
+                            if (taskList[i - 1].getTitle() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = taskList[i - 1].getTitle();
+                            }
+                            break;
+                        case 1 :
+                            if (taskList[i - 1].getCategory() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = taskList[i - 1].getCategory();
+                            }
+                            break;
+                        case 2 :
+                            if (taskList[i - 1].getDescription() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = taskList[i - 1]
+                                        .getDescription();
+                            }
+                            break;
+                        case 3 :
+                            if (taskList[i - 1].getStartDate() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = df.format(taskList[i - 1]
+                                        .getStartDate());
+                            }
+                            break;
+                        case 4 :
+                            if (taskList[i - 1].getEndDate() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = df.format(taskList[i - 1]
+                                        .getEndDate());
+                            }
+                            break;
+                        case 5 :
+                            if (taskList[i - 1].getLocation() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = taskList[i - 1].getLocation();
+                            }
+                            break;
+                        case 6 :
+                            if (taskList[i - 1].getPriority() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = String
+                                        .valueOf(taskList[i - 1].getPriority());
+                            }
+                            break;
+                        case 7 :
+                            if (taskList[i - 1].getReminder() == null) {
+                                table[i][index] = "-";
+                            } else {
+                                table[i][index] = df.format(taskList[i - 1]
+                                        .getReminder());
+                            }
+                            break;
+                        case 8 :
+                            if (taskList[i - 1].getStatus()) {
+                                table[i][index] = "Done";
+                            } else {
+                                table[i][index] = "Not Done Yet";
+                            }
+                            break;
+                    }
+                    index++;
+                }
             }
 
-            if (taskList[i - 1].getCategory() == null) {
-                table[i][1] = "-";
-            } else {
-                table[i][1] = taskList[i - 1].getCategory();
-            }
-            if (taskList[i - 1].getDescription() == null) {
-                table[i][2] = "-";
-            } else {
-                table[i][2] = taskList[i - 1].getDescription();
-            }
-            if (taskList[i - 1].getStartDate() == null) {
-                table[i][3] = "-";
-            } else {
-                table[i][3] = df.format(taskList[i - 1].getStartDate());
-            }
-            if (taskList[i - 1].getEndDate() == null) {
-                table[i][4] = "-";
-            } else {
-                table[i][4] = df.format(taskList[i - 1].getEndDate());
-            }
-            if (taskList[i - 1].getLocation() == null) {
-                table[i][5] = "-";
-            } else {
-                table[i][5] = taskList[i - 1].getLocation();
-            }
-            if (taskList[i - 1].getPriority() == null) {
-                table[i][6] = "-";
-            } else {
-                table[i][6] = String.valueOf(taskList[i - 1].getPriority());
-            }
-            if (taskList[i - 1].getReminder() == null) {
-                table[i][7] = "-";
-            } else {
-                table[i][7] = df.format(taskList[i - 1].getReminder());
-            }
-
-            table[i][8] = taskList[i - 1].getTaskType().toString();
-
-            if (taskList[i - 1].getStatus()) {
-                table[i][9] = "Done";
-            } else {
-                table[i][9] = "Not Done Yet";
-            }
         }
-        printTable(table);
+        printTable(title, table);
     }
 
     @Override
@@ -182,8 +400,44 @@ public class CLIDisplay extends Display {
             this.outputMessage(res.reply);
         }
         if (res.taskList != null) {
+
+            List<Task> floatingTasks = new ArrayList<>();
+            List<Task> timedTasks = new ArrayList<>();
+            List<Task> deadlinedTasks = new ArrayList<>();
+
+            for (Task eaTask : res.taskList) {
+                switch (eaTask.getTaskType()) {
+                    case DEADLINE :
+                        deadlinedTasks.add(eaTask);
+                        break;
+                    case FLOATING :
+                        floatingTasks.add(eaTask);
+                        break;
+                    case TIMED :
+                        timedTasks.add(eaTask);
+                        break;
+                    default :
+                        // Should never be an incomplete task
+                        assert (false);
+                        break;
+                }
+            }
+
             try {
-                this.outputTask(res.taskList);
+                if (floatingTasks.size() > 0) {
+                    this.outputTask(FLOATING_TASK_NAME, floatingTasks
+                            .toArray(new Task[floatingTasks.size()]));
+                    System.out.println();
+                }
+                if (deadlinedTasks.size() > 0) {
+                    this.outputTask(DEADLINED_TASK_NAME, deadlinedTasks
+                            .toArray(new Task[deadlinedTasks.size()]));
+                    System.out.println();
+                }
+                if (timedTasks.size() > 0) {
+                    this.outputTask(TIMED_TASK_NAME,
+                            timedTasks.toArray(new Task[timedTasks.size()]));
+                }
             } catch (OutputExecuteException e) {
                 e.printStackTrace();
             }
@@ -199,44 +453,65 @@ public class CLIDisplay extends Display {
 
     }
 
-    private String[][] initNullTaskTable(String[][] table, int taskNumber) {
+    private String[][] initNullTaskTable(String[][] table, int taskNumber,
+            int activeColumnSize) {
         int i = taskNumber;
-        table[i][0] = "-";
 
-        table[i][1] = "-";
+        for (int x = 0; x < activeColumnSize; x++) {
+            table[i][x] = "-";
+        }
 
-        table[i][2] = "-";
-
-        table[i][3] = "-";
-
-        table[i][4] = "-";
-
-        table[i][5] = "-";
-
-        table[i][6] = "-";
-
-        table[i][7] = "-";
-
-        table[i][8] = "-";
-
-        table[i][9] = "-";
         return table;
     }
 
     // initialize the table with adding the first row for each of the task's
 // properties
-    private String[][] initTable(int taskNumber, int taskProperties) {
-        String[][] table = new String[taskNumber][taskProperties];
-        table[0][0] = "Title";
-        table[0][1] = "Category";
-        table[0][2] = "Description";
-        table[0][3] = "StartDate";
-        table[0][4] = "EndDate";
-        table[0][5] = "Location";
-        table[0][6] = "Priority";
-        table[0][7] = "Reminder";
-        table[0][8] = "TaskType";
-        table[0][9] = "Status";
+    private String[][] initTable(int taskNumber, boolean[] isActiveColumn,
+            int activeColumnSize) {
+        String[][] table = new String[taskNumber][activeColumnSize];
+        int index = 0;
+        for (int x = 0; x < isActiveColumn.length; x++) {
+            if (isActiveColumn[x]) {
+                switch (x) {
+                    case 0 :
+                        table[0][index] = "Title";
+                        index++;
+                        break;
+                    case 1 :
+                        table[0][index] = "Category";
+                        index++;
+                        break;
+                    case 2 :
+                        table[0][index] = "Description";
+                        index++;
+                        break;
+                    case 3 :
+                        table[0][index] = "Start Date";
+                        index++;
+                        break;
+                    case 4 :
+                        table[0][index] = "End Date";
+                        index++;
+                        break;
+                    case 5 :
+                        table[0][index] = "Location";
+                        index++;
+                        break;
+                    case 6 :
+                        table[0][index] = "Priority";
+                        index++;
+                        break;
+                    case 7 :
+                        table[0][index] = "Reminder";
+                        index++;
+                        break;
+                    case 8 :
+                        table[0][index] = "Status";
+                        index++;
+                        break;
+                }
+            }
+        }
 
         return table;
     }
