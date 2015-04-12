@@ -759,7 +759,8 @@ public class GoogleStorage extends Storage {
             localEvent.setLocation(googleEvent.getLocation());
         }
 
-        if (googleEvent.getReminders().getUseDefault()) {
+        if (googleEvent.getReminders().getUseDefault()
+                || (googleEvent.getReminders().getOverrides() == null)) {
             localEvent.setReminder(null);
         } else {
             int minutesBeforeStartDate = googleEvent.getReminders()
