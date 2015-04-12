@@ -3,6 +3,7 @@ package w094j.ctrl8.taskmanager;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.InputStream;
 import java.util.Arrays;
 
 import org.junit.BeforeClass;
@@ -13,7 +14,11 @@ import org.junit.runners.Parameterized.Parameters;
 
 import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.data.TaskData;
+import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.database.config.TaskManagerConfig;
+import w094j.ctrl8.display.Display;
+import w094j.ctrl8.parse.Parser;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
 /**
@@ -62,10 +67,26 @@ public class TaskManagerSearchTest {
     // @formatter:on
     @BeforeClass
     public static void initialize() {
+        Parser.initInstance(new ParserConfig(), new AliasData());
+
         TaskManagerConfig config = new TaskManagerConfig();
         AliasData aliasData = new AliasData();
         TaskData taskData = new TaskData();
-        taskManager = new TaskManager(config, aliasData, taskData);
+        taskManager = new TaskManager(config, aliasData, taskData,
+                new Display() {
+
+            @Override
+            public InputStream getInputStream() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public void updateUI(Response res) {
+                // TODO Auto-generated method stub
+
+            }
+        }, null);
 
         Task fatherTask = new Task();
         fatherTask.setId("0");

@@ -23,7 +23,7 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void add(Task task, Statement statement,boolean isUndo)
+    public void add(Task task, Statement statement, boolean isUndo)
             throws CommandExecuteException;
 
     /**
@@ -39,8 +39,8 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void aliasAdd(String alias, String value, Statement statement,boolean isUndo)
-            throws CommandExecuteException;
+    public void aliasAdd(String alias, String value, Statement statement,
+            boolean isUndo) throws CommandExecuteException;
 
     /**
      * delete a alias
@@ -49,7 +49,7 @@ public interface ITaskManager {
      * @param statement
      * @throws DataException
      */
-    public void aliasDelete(String query, Statement statement,boolean isUndo)
+    public void aliasDelete(String query, Statement statement, boolean isUndo)
             throws DataException;
 
     /**
@@ -70,6 +70,8 @@ public interface ITaskManager {
     public void delete(String taskID, Statement statement, boolean isUndo)
             throws CommandExecuteException;
 
+    public void displayNextCommandRequest();
+
     /**
      * Set the task's status to done
      *
@@ -86,6 +88,8 @@ public interface ITaskManager {
      * terminal See Issue #74 on github
      */
     public void exit();
+
+    public boolean getContinueExecution();
 
     /**
      * Generates information to assist the user in understanding the available
@@ -133,8 +137,8 @@ public interface ITaskManager {
      * @param statement
      * @throws CommandExecuteException
      */
-    public void modify(String query, Task incompleteTask, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+    public void modify(String query, Task incompleteTask, Statement statement,
+            boolean isUndo) throws CommandExecuteException;
 
     /**
      * Instructs the data store to dump its information into an external file.
@@ -146,7 +150,7 @@ public interface ITaskManager {
 
     /**
      * TODO
-     * 
+     *
      * @param query
      * @param task
      */

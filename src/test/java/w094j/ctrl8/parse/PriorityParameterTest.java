@@ -12,7 +12,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
 import w094j.ctrl8.pojo.Task;
@@ -63,8 +64,8 @@ public class PriorityParameterTest {
      */
     @BeforeClass
     public static void initParser() {
-        ParameterConfig config = new ParameterConfig();
-        parser = new ParameterParser(config);
+        Parser.initInstance(new ParserConfig(), new AliasData());
+        parser = Parser.getInstance().getStatementParser().getParameterParser();
     }
 
     // @formatter:on

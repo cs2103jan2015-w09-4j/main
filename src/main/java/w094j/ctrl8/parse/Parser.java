@@ -33,7 +33,8 @@ public class Parser implements IParser {
      */
     public static Parser getInstance() {
         if (instance == null) {
-            instance = initInstance(new ParserConfig(), new AliasData());
+            throw new RuntimeException(
+                    "Parser must be initialized before retrieveing.");
         }
         return instance;
     }
@@ -48,7 +49,7 @@ public class Parser implements IParser {
     public static Parser initInstance(ParserConfig config, AliasData aliasData) {
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Parser as it was initialized before.");
         } else {
             instance = new Parser(config, aliasData);
         }

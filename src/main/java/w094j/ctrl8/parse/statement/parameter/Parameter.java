@@ -37,7 +37,6 @@ public abstract class Parameter {
                     .getStatementParser().getParameterParser();
             this.payload = parameterParser.unescape(payload);
         }
-        System.out.println(this.payload);
     }
 
     /**

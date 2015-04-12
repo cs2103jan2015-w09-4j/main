@@ -6,11 +6,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.database.config.ParserConfig;
+import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
 import w094j.ctrl8.parse.statement.parameter.ReminderParameter;
 import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
@@ -61,6 +65,11 @@ public class ParameterDatePayloadTest {
                 { "31 dec 1994 12:00", new Date(94, 11, 31, 12, 00, 0) }
 
         });
+    }
+
+    @BeforeClass
+    public static void initParser() {
+        Parser.initInstance(new ParserConfig(), new AliasData());
     }
 
     // @formatter:on

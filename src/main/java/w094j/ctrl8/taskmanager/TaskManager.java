@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.data.TaskData;
-import w094j.ctrl8.database.Database;
 import w094j.ctrl8.database.IDatabase;
 import w094j.ctrl8.database.config.TaskManagerConfig;
 import w094j.ctrl8.display.Display;
@@ -84,20 +83,11 @@ public class TaskManager implements ITaskManager {
      * @param taskData
      */
     public TaskManager(TaskManagerConfig config, AliasData aliasData,
-            TaskData taskData) {
+            TaskData taskData, Display display, IDatabase database) {
         assertNotNull(config); // Should not be a null object
-        this.display = Display.getInstance();
+        this.display = display;
         this.aliasData = aliasData;
-        /*
-         * TODO replace with proper configuration
-         */
-        try {
-            this.database = Database.getInstance();
-        } catch (Exception e) {
-            Response res = new Response();
-            res.reply = e.getMessage();
-            this.display.updateUI(res);
-        }
+        this.database = database;
         this.taskData = taskData;
     }
 
@@ -108,27 +98,29 @@ public class TaskManager implements ITaskManager {
      */
     public static TaskManager getInstance() {
         if (instance == null) {
-            instance = initInstance(new TaskManagerConfig(), new AliasData(),
-                    new TaskData());
+            throw new RuntimeException(
+                    "Task Mananger must be initialized before retrieveing.");
         }
         return instance;
     }
 
     /**
      * Creates a Task Manager
-     * 
+     *
      * @param config
      * @param aliasData
      * @param taskData
      * @return return the Task manager.
      */
     public static TaskManager initInstance(TaskManagerConfig config,
-            AliasData aliasData, TaskData taskData) {
+            AliasData aliasData, TaskData taskData, Display display,
+            IDatabase database) {
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Task Manager as it was initialized before.");
         } else {
-            instance = new TaskManager(config, aliasData, taskData);
+            instance = new TaskManager(config, aliasData, taskData, display,
+                    database);
         }
         return instance;
     }
@@ -292,6 +284,7 @@ public class TaskManager implements ITaskManager {
      * Displays an output message requesting for the next user input. This may
      * be empty if the UI does not require such.
      */
+    @Override
     public void displayNextCommandRequest() {
         Response res = new Response();
         res.reply = NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST;
@@ -367,6 +360,7 @@ public class TaskManager implements ITaskManager {
      *
      * @return continueExecution
      */
+    @Override
     public boolean getContinueExecution() {
 
         return this.continueExecution;

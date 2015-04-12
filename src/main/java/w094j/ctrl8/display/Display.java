@@ -21,7 +21,8 @@ public abstract class Display {
      */
     public static Display getInstance() {
         if (instance == null) {
-            instance = initInstance(new DisplayConfig());
+            throw new RuntimeException(
+                    "Display must be initialized before retrieveing.");
         }
         return instance;
     }
@@ -30,7 +31,7 @@ public abstract class Display {
 
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Display as it was initialized before.");
         } else {
             if (displayConfig.isGUI()) {
                 instance = new GUIDisplay(displayConfig.getGUI());

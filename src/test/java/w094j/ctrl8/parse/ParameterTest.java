@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.statement.parameter.Parameter;
 import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
@@ -40,7 +42,7 @@ public abstract class ParameterTest {
      */
     public ParameterTest(String input, List<Parameter> expected,
             boolean isExplicitShortMode, boolean isImplicitMode)
-            throws ParseException {
+                    throws ParseException {
         this.input = input;
         if (expected != null) {
             this.expectedParamContainer = new ParameterContainer(expected);
@@ -51,6 +53,14 @@ public abstract class ParameterTest {
         config.setExplicitShortMode(isExplicitShortMode);
         config.setImplicitMode(isImplicitMode);
         this.parser = new ParameterParser(config);
+    }
+
+    /**
+     * Class to run before the parameterized. This is to work around a JUnit
+     * problem that Parameters is run before BeforeClass.
+     */
+    public static void beforeClass() {
+        Parser.initInstance(new ParserConfig(), new AliasData());
     }
 
     /**

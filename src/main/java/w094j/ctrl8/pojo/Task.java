@@ -108,8 +108,6 @@ public class Task implements Comparable<Task> {
      * @return end date
      */
     public Date getEndDate() {
-        // Only timed and deadline tasks have an end date
-        assert ((this.taskType == TaskType.TIMED) || (this.taskType == TaskType.DEADLINE));
         return this.endDate;
     }
 
@@ -173,8 +171,6 @@ public class Task implements Comparable<Task> {
      * @return Date :the start Date of the task
      */
     public Date getStartDate() {
-        // only Timed tasks have a start date
-        assert (this.taskType == TaskType.TIMED);
         return this.startDate;
     }
 
