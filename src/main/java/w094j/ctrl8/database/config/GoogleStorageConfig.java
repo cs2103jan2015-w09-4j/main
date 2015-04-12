@@ -8,9 +8,9 @@ import w094j.ctrl8.database.IStorableElement;
  */
 public class GoogleStorageConfig implements IStorableElement {
 
-    private static Boolean AUTO_SYNC_DEFAULT = true;
+    private static Boolean AUTO_DOWNLOAD_AFTER_SAVE_DEFAULT = true;
     private static Boolean SYNC_WITH_GOOGLE_DEFAULT = true;
-    private Boolean autoSync;
+    private Boolean autoDownloadAfterSave;
     private Boolean syncWithGoogle;
 
     /**
@@ -20,13 +20,13 @@ public class GoogleStorageConfig implements IStorableElement {
     }
 
     /**
-     * @return autoSync
+     * @return autoDownloadAfterSave
      */
-    public Boolean getAutoSync() {
-        if (this.autoSync == null) {
-            return AUTO_SYNC_DEFAULT;
+    public Boolean getAutoDownloadAfterSave() {
+        if (this.autoDownloadAfterSave == null) {
+            return AUTO_DOWNLOAD_AFTER_SAVE_DEFAULT;
         } else {
-            return this.autoSync;
+            return this.autoDownloadAfterSave;
         }
     }
 
@@ -43,17 +43,17 @@ public class GoogleStorageConfig implements IStorableElement {
 
     @Override
     public boolean isValid() {
-        if (!this.syncWithGoogle && this.autoSync) {
+        if (!this.syncWithGoogle && this.autoDownloadAfterSave) {
             return false;
         }
         return true;
     }
 
     /**
-     * @param autoSync
+     * @param autoSyncAfterSave
      */
-    public void setAutoSync(Boolean autoSync) {
-        this.autoSync = autoSync;
+    public void setAutoSync(Boolean autoSyncAfterSave) {
+        this.autoDownloadAfterSave = autoSyncAfterSave;
     }
 
     /**
