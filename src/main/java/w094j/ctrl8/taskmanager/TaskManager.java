@@ -69,20 +69,26 @@ public class TaskManager implements ITaskManager {
     private Display display;
     private TaskData taskData;
 
-    /*
-     * TODO This function is currently a stub. Until Config object has completed
-     * implementation
+    /**
+     * Following Singleton pattern, All constructors are made private. Only way
+     * to get an instance is through getInstance() and initInstance()
      */
+    private TaskManager() {
+
+    }
+
     /**
      * Constructor for terminal with a config object
-     *
+     * 
      * @param config
      *            Configuration information specifying how Terminal/Display is
      *            to be setup
      * @param aliasData
      * @param taskData
+     * @param display
+     * @param database
      */
-    public TaskManager(TaskManagerConfig config, AliasData aliasData,
+    private TaskManager(TaskManagerConfig config, AliasData aliasData,
             TaskData taskData, Display display, IDatabase database) {
         assertNotNull(config); // Should not be a null object
         this.display = display;
@@ -125,10 +131,10 @@ public class TaskManager implements ITaskManager {
         return instance;
     }
 
-    //@author A0112092W
+    // @author A0112092W
     /**
-     * add all task's title, decription and id to produce the 
-     * material for lucene to search
+     * add all task's title, decription and id to produce the material for
+     * lucene to search
      * 
      * @param w
      * @param title
@@ -146,13 +152,11 @@ public class TaskManager implements ITaskManager {
                 : description, Field.Store.YES));
         w.addDocument(doc);
     }
-    
-    
+
     /**
-     * Basic CURD: create a Task
-     * Creates a task and add into the current database. 
-     * statement indicates the action that add this task
-     * isUndo indicates whether this add is under an undo function
+     * Basic CRUD: create a Task Creates a task and add into the current
+     * database. statement indicates the action that add this task isUndo
+     * indicates whether this add is under an undo function
      * 
      * @param task
      * @param statement
@@ -198,10 +202,8 @@ public class TaskManager implements ITaskManager {
         }
     }
 
-    
     /**
      * Display all aliases to user
-     * 
      */
     @Override
     public void alias() {
@@ -216,58 +218,57 @@ public class TaskManager implements ITaskManager {
         this.display.updateUI(res);
 
     }
-    
+
     /**
-     * Add an alias to current database with the alias string, alias value 
-     * 
+     * Add an alias to current database with the alias string, alias value
      */
     @Override
     public void aliasAdd(String alias, String value, Statement statement,
             boolean isUndo) throws CommandExecuteException {
-       
-        //add the alias to aliasData
+
+        // add the alias to aliasData
         this.aliasData.addAlias(alias, value);
-        
+
         // print add alias to user if this action is not undo
         if (isUndo == false) {
             Response res = new Response();
             res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
             this.display.updateUI(res);
         }
-        
-        //save to database
+
+        // save to database
         try {
             this.database.saveToStorage();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * Delete an alias from current database with the alias string query, alias value 
-     * 
+     * Delete an alias from current database with the alias string query, alias
+     * value
      */
     @Override
     public void aliasDelete(String query, Statement statement, boolean isUndo)
             throws DataException {
 
-        //creates an alias data to be display to user
+        // creates an alias data to be display to user
         String value = this.aliasData.toValue(query);
         AliasData deleted = new AliasData();
         deleted.addAlias(query, value);
-        
-        //delete the alias
+
+        // delete the alias
         this.aliasData.deleteAlias(query);
-        
-        //display to user
+
+        // display to user
         if (isUndo == false) {
             Response res = new Response();
             res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
             res.alias = deleted;
             this.display.updateUI(res);
         }
-        
-        //save to database
+
+        // save to database
         try {
             this.database.saveToStorage();
         } catch (Exception e) {
@@ -276,19 +277,18 @@ public class TaskManager implements ITaskManager {
     }
 
     /**
-     * Delete an task from current database with a string query 
+     * Delete an task from current database with a string query
      * 
      * @param query
      * @param statement
      * @param isUndo
-     * 
      */
     @Override
     public void delete(String query, Statement statement, boolean isUndo)
             throws CommandExecuteException {
         Task task;
         try {
-            //search the task with the string query
+            // search the task with the string query
             String[] taskIdList = this.search(query);
             if (taskIdList == null) {
                 throw new CommandExecuteException(
@@ -296,7 +296,7 @@ public class TaskManager implements ITaskManager {
             }
             /* Check if key exists in taskStateMap */
             if (taskIdList.length > 0) {
-                //only 1 result from searching
+                // only 1 result from searching
                 if (taskIdList.length == 1) {
                     task = this.taskData.remove(taskIdList[0], statement);
                 } else {
@@ -322,8 +322,8 @@ public class TaskManager implements ITaskManager {
         } catch (Exception e) {
             throw new CommandExecuteException(e.getMessage());
         }
-        
-        //if action is not undo, shows the user delete task succesful
+
+        // if action is not undo, shows the user delete task succesful
         if (isUndo == false) {
             Response res = new Response();
             res.reply = task.getTitle() + NormalMessage.DELETE_TASK_SUCCESSFUL;
@@ -353,7 +353,7 @@ public class TaskManager implements ITaskManager {
     @Override
     public void done(String query, Statement statement, boolean isUndo)
             throws CommandExecuteException {
-        
+
         // search the query by using lucene
         String[] taskIdList = this.search(query);
         if (taskIdList == null) {
@@ -363,7 +363,7 @@ public class TaskManager implements ITaskManager {
         /* Check if key exists in taskStateMap */
         if (taskIdList.length > 0) {
             int index;
-            //only one result
+            // only one result
             if (taskIdList.length == 1) {
                 index = 0;
             } else {
@@ -402,7 +402,7 @@ public class TaskManager implements ITaskManager {
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         }
     }
-    
+
     /**
      * Exit the program
      */
@@ -432,8 +432,8 @@ public class TaskManager implements ITaskManager {
 
     /**
      * Display the specified help to user
-     * @param command
      * 
+     * @param command
      */
     @Override
     public void help(CommandType command) {
@@ -442,27 +442,27 @@ public class TaskManager implements ITaskManager {
         res.reply = helpMessage;
         this.display.updateUI(res);
     }
-    
+
     /**
-     * clear a history from the current history list with an index
-     * and display it to user
-     * @param index
+     * clear a history from the current history list with an index and display
+     * it to user
      * 
+     * @param index
      */
     @Override
     public void historyClear(int index) {
-        //creates an actions that contains the deleted history
+        // creates an actions that contains the deleted history
         Actions actionsRemoved = this.taskData.deleteHistory(index);
         ArrayList<Actions> temp = new ArrayList<Actions>();
         temp.add(actionsRemoved);
-        
-        //display it to user
+
+        // display it to user
         Response res = new Response();
         res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
         res.actions = temp;
         this.display.updateUI(res);
-        
-        //update the databse
+
+        // update the databse
         try {
             this.database.saveToStorage();
         } catch (Exception e) {
@@ -471,18 +471,17 @@ public class TaskManager implements ITaskManager {
         }
 
     }
-    
-    
+
     /**
      * undo a history from current history list with an index
+     * 
      * @param index
-     *
      */
     @Override
     public void historyUndo(int index) throws CommandExecuteException {
-        //undo the history with index
+        // undo the history with index
         this.taskData.undoHistory(index, this);
-        //update the database
+        // update the database
         try {
             this.database.saveToStorage();
         } catch (Exception e) {
@@ -501,10 +500,10 @@ public class TaskManager implements ITaskManager {
     @Override
     public void modify(String query, Task incompleteTask, Statement statement,
             boolean isUndo) throws CommandExecuteException {
-        
-        //search the task with a query
+
+        // search the task with a query
         String[] taskIdList = this.search(query);
-        
+
         if (taskIdList == null) {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
@@ -519,11 +518,11 @@ public class TaskManager implements ITaskManager {
             }
 
             logger.debug("Modify: the task exist");
-            
-            //retrieve the task from current data
+
+            // retrieve the task from current data
             Task task = this.taskData.getTask(taskIdList[index]);
 
-            //modify the task 
+            // modify the task
             try {
                 task.update(incompleteTask);
                 logger.debug(new Gson().toJson(task));
@@ -566,14 +565,13 @@ public class TaskManager implements ITaskManager {
         // TODO Auto-generated method stub
 
     }
-    
-    
+
     /**
-     * Search all the task that are add into lucene with a query
-     * return an array of string that contains all the task's Id 
+     * Search all the task that are add into lucene with a query return an array
+     * of string that contains all the task's Id
      * 
      * @param search
-     * @return String[] 
+     * @return String[]
      */
     @Override
     public String[] search(String query) {
@@ -660,9 +658,8 @@ public class TaskManager implements ITaskManager {
         return taskIdList;
     }
 
-    /** 
-     * display all the tasks to user  
-     * 
+    /**
+     * display all the tasks to user
      */
     @Override
     public void view() throws CommandExecuteException {
@@ -680,11 +677,11 @@ public class TaskManager implements ITaskManager {
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         } else {
             try {
-                //get the task list from task data
+                // get the task list from task data
                 Task[] taskList = this.taskData.getTaskList();
                 logger.debug("Number of Tasks:" + this.taskData.numOfTasks());
 
-                //display the task to user
+                // display the task to user
                 Arrays.sort(taskList);
 
                 Response res = new Response();
@@ -696,7 +693,7 @@ public class TaskManager implements ITaskManager {
             }
         }
     }
-    
+
     /**
      * display all history to user according to the action's created time
      */
@@ -727,8 +724,8 @@ public class TaskManager implements ITaskManager {
     }
 
     /**
-     *  Let the user to choose which task the user wants from search result
-     *  current return 0 only
+     * Let the user to choose which task the user wants from search result
+     * current return 0 only
      * 
      * @param taskIdList
      * @param command

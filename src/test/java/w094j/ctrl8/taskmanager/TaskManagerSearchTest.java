@@ -49,17 +49,15 @@ public class TaskManagerSearchTest {
      */
     @SuppressWarnings("deprecation")
     @Parameters(name = "{index}: Search \"{0}\" to get objectIds({1})")
-    //@formatter:off
+    // @formatter:off
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                { "I am", new String[] {"0","1","2","3"} },
-                { "A", new String[] {"4"} },
-                { "a", new String[] {"4"} },
-                { "NUS", new String[] {"4"} }
-
+        /**
+         * Normal tests
+         */
+        { "I am", new String[] { "0", "1", "2", "3" } },
+                { "A", new String[] { "4" } }, { "a", new String[] { "4" } },
+                { "NUS", new String[] { "4" } }
 
         });
     }
@@ -72,9 +70,7 @@ public class TaskManagerSearchTest {
         TaskManagerConfig config = new TaskManagerConfig();
         AliasData aliasData = new AliasData();
         TaskData taskData = new TaskData();
-        taskManager = new TaskManager(config, aliasData, taskData,
-                new Display() {
-
+        TaskManager.initInstance(config, aliasData, taskData, new Display() {
             @Override
             public InputStream getInputStream() {
                 // TODO Auto-generated method stub
@@ -87,6 +83,7 @@ public class TaskManagerSearchTest {
 
             }
         }, null);
+        taskManager = TaskManager.getInstance();
 
         Task fatherTask = new Task();
         fatherTask.setId("0");
