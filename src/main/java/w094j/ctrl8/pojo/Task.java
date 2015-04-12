@@ -234,6 +234,7 @@ public class Task implements Comparable<Task> {
     public void setEtag(String eTag) {
         this.etag = eTag;
         this.isSynced = true;
+        this.lastModifiedTime = new Date();
     }
 
     /**
