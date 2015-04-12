@@ -12,10 +12,13 @@ import javafx.scene.input.KeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * InputStream that takes a JavaFX TextField object as input, and provides a
+ * means of reading it like a typical InputStream.
+ */
 public class FXTextFieldInputStream extends InputStream {
     byte[] contents;
     int pointer = 0;
-    private String delimiter = "\r\n";
 
     private Logger logger = LoggerFactory
             .getLogger(FXTextFieldInputStream.class);
@@ -26,21 +29,20 @@ public class FXTextFieldInputStream extends InputStream {
         text.addEventHandler(KeyEvent.KEY_PRESSED,
                 new EventHandler<KeyEvent>() {
 
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    FXTextFieldInputStream.this.contents = (text
+                    @Override
+                    public void handle(KeyEvent event) {
+                        if (event.getCode() == KeyCode.ENTER) {
+                            FXTextFieldInputStream.this.contents = (text
                                     .getText() + "\n").getBytes();
-                    FXTextFieldInputStream.this.pointer = 0;
-                    text.setText("");
-                    synchronized (FXTextFieldInputStream.this) {
+                            FXTextFieldInputStream.this.pointer = 0;
+                            text.setText("");
 
-                        FXTextFieldInputStream.this.notifyAll();
-
+                            synchronized (FXTextFieldInputStream.this) {
+                                FXTextFieldInputStream.this.notifyAll();
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
     };
 
     // Disables the default constructor
@@ -52,23 +54,19 @@ public class FXTextFieldInputStream extends InputStream {
     public int read() throws IOException {
         if (this.pointer == this.contents.length) {
             this.pointer++;
-            System.out.println("-1L");
             return -1;
         }
         if (this.pointer > this.contents.length) {
             synchronized (this) {
                 try {
                     this.wait();
-                    System.out.println("Exit wait");
                     this.pointer = 0;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    System.out.println("-1");
                     return -1;
                 }
             }
         }
-// System.out.println("(" + this.contents[this.pointer] + ")");
         return this.contents[this.pointer++];
     }
 

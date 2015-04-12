@@ -2,7 +2,7 @@ package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
-//@ A0112092W
+//@author A0112092W
 
 /**
  * The config of the task manager It is currently a stub

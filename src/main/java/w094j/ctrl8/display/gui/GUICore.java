@@ -20,12 +20,11 @@ import w094j.ctrl8.message.NormalMessage;
 
 /**
  * The application core of the GUI implementation. To create an application
- * window, simply initialise the object using its constructors.
+ * window, simply initialise the object using its constructor
+ * GUICore(<GUIDisplayConfig>,<Thread>). Do not used its default constructor as
+ * that is reserved for Application.launch.
  *
  * <pre>
- * E.g
- * new GUICore(new String[] {""});
- * 
  * Refer to
  * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
  * </pre>
@@ -58,7 +57,6 @@ public class GUICore extends Application implements Runnable {
      * @return the consoleController
      */
     public ConsoleSceneController getConsoleController() {
-        System.out.println(this + ":" + this.consoleController);
         return this.consoleController;
     }
 
@@ -161,7 +159,6 @@ public class GUICore extends Application implements Runnable {
                     .getResource(LocalResource.ConsoleScene));
             BorderPane consoleScene = (BorderPane) loader.load();
 
-            // TODO
             consoleScene
                     .setStyle("-fx-faint-focus-color: transparent;-fx-focus-color: transparent;");
 
@@ -171,7 +168,6 @@ public class GUICore extends Application implements Runnable {
             // Give controller access
             this.setConsoleController(loader.getController());
             this.getConsoleController().setRoot(this);
-            System.out.println(this.getConsoleController());
 
         } catch (IOException e) {
             e.printStackTrace();

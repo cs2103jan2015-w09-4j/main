@@ -19,11 +19,14 @@ import w094j.ctrl8.database.config.GUITextInputConfig;
 import w094j.ctrl8.display.gui.GUICore;
 import w094j.ctrl8.display.gui.model.FXTextFieldInputStream;
 
+/**
+ * Controller class for the JavaFX Application. Manages capturing input from
+ * Application window as well as updating its view.
+ */
 public class ConsoleSceneController {
     private static final String __newline = "\n";
     private static final String CSS_FAINT_FOCUS_TRANSPARENT = "-fx-faint-focus-color: transparent;";
     private static final String CSS_FOCUS_TRANSPARENT = "-fx-focus-color: transparent;";
-
     private static final String CSS_FONT_SIZE = "-fx-font-size: %1$2s ;";
     private static final String CSS_TEXT_FILL = "-fx-text-fill: %1$2s ;";
 
@@ -54,6 +57,12 @@ public class ConsoleSceneController {
         this.textDisplay.appendText(input + __newline);
     }
 
+    /**
+     * Applies a DisplayControllerConfig to modify certain settings. Refer to
+     * DisplayControllerConfig class for more details.
+     * 
+     * @param controllerConfig
+     */
     public void applyConfig(DisplayControllerConfig controllerConfig) {
         applyToTextDisplay(controllerConfig.getGUITextDisplayConfig());
         applyToTextInput(controllerConfig.getGUITextInputConfig());
@@ -132,6 +141,6 @@ public class ConsoleSceneController {
          * enter button is pressed
          */
         this.inputStream = new FXTextFieldInputStream(textInput);
-        this.logger.debug("InputStream Thread created, Init complete");
+        this.logger.info("InputStream Thread created, Init complete");
     }
 }

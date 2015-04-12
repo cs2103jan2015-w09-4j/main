@@ -17,8 +17,15 @@ import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
 /**
- * Class implements Display Interface as a simple CLI with additional GUI
- * display for its output in the same window
+ * Class implements Display using JavaFX framework which creates an application
+ * for the user to interact with. The application window runs on a seperate
+ * thread to prevent the main thread from freezing up due to the nature of
+ * JavaFX. Instead, thread notifications are used to notify the main thread (who
+ * holds GUIDisplay) when it is initialised and ready for interaction.
+ * 
+ * <pre>
+ * This implementation is incomplete and unstable.
+ * </pre>
  */
 @Deprecated
 public class GUIDisplay extends Display {
@@ -41,8 +48,10 @@ public class GUIDisplay extends Display {
             this.guiCore = new GUICore(config, Thread.currentThread());
         }
         this.GUIThread = new Thread(this.guiCore);
-        // Ensure that GUIThread is completely initialised before returning
-// constructor
+        /*
+         * Ensure that GUIThread is completely initialised before returning
+         * constructor
+         */
         synchronized (this.GUIThread) {
             this.GUIThread.start();
         }
@@ -53,6 +62,13 @@ public class GUIDisplay extends Display {
         return this.guiCore.getInputStream();
     }
 
+    /*
+     * XXX Buggy. Ideally the updateUI Function needs to notify the application
+     * thread to update the UI while providing a shareable version of response
+     * for the application thread to access. Current version does not work
+     * because the main thread is tampering with JavaFX objects which throws
+     * exceptions
+     */
     @Override
     public void updateUI(Response res) {
         boolean allNull = true; // Initial assumption
@@ -81,6 +97,7 @@ public class GUIDisplay extends Display {
         }
     }
 
+    // @author A0110787-reused
     private String[][] initNullTaskTable(String[][] table, int taskNumber) {
         int i = taskNumber;
         table[i][0] = "-";

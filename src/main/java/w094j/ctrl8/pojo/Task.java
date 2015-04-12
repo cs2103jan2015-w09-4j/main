@@ -10,7 +10,6 @@ import org.bson.types.ObjectId;
  * level TODO: Additional support for custom priority
  */
 
-// @author A0110787A
 // @author A0112521B
 
 public class Task implements Comparable<Task> {

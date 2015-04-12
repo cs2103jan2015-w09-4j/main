@@ -1,3 +1,4 @@
+//@author A0110787A
 package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
@@ -32,7 +33,7 @@ public abstract class GUITextGenericConfig implements IStorableElement {
     }
 
     public TextColour getTextColour() {
-        if(this.textColour==null){
+        if (this.textColour == null) {
             return DEFAULT_TEXT_COLOUR;
         } else {
             return this.textColour;
@@ -40,7 +41,7 @@ public abstract class GUITextGenericConfig implements IStorableElement {
     }
 
     public int getTextSize() {
-        if(this.textSize==null){
+        if (this.textSize == null) {
             return DEFAULT_TEXT_SIZE;
         } else {
             return this.textSize;
@@ -49,11 +50,11 @@ public abstract class GUITextGenericConfig implements IStorableElement {
 
     @Override
     public boolean isValid() {
-        return this.textSize>0;
+        return this.textSize > 0;
     }
 
     public void setTextColour(TextColour newColour) {
-            this.textColour = newColour;
+        this.textColour = newColour;
     }
 
     public void setTextSize(int textSize) {
