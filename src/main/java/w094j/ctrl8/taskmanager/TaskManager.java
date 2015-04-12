@@ -79,7 +79,7 @@ public class TaskManager implements ITaskManager {
 
     /**
      * Constructor for terminal with a config object
-     * 
+     *
      * @param config
      *            Configuration information specifying how Terminal/Display is
      *            to be setup
@@ -135,7 +135,7 @@ public class TaskManager implements ITaskManager {
     /**
      * add all task's title, decription and id to produce the material for
      * lucene to search
-     * 
+     *
      * @param w
      * @param title
      * @param description
@@ -157,7 +157,7 @@ public class TaskManager implements ITaskManager {
      * Basic CRUD: create a Task Creates a task and add into the current
      * database. statement indicates the action that add this task isUndo
      * indicates whether this add is under an undo function
-     * 
+     *
      * @param task
      * @param statement
      * @param isUndo
@@ -165,6 +165,7 @@ public class TaskManager implements ITaskManager {
     @Override
     public void add(Task task, Statement statement, boolean isUndo)
             throws CommandExecuteException {
+
         // Task object should not be null
         if (task == null) {
             throw new CommandExecuteException(
@@ -177,6 +178,18 @@ public class TaskManager implements ITaskManager {
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK);
+        }
+
+        boolean isOverlapWarning = false;
+        if ((task.getStartDate() != null) && (task.getEndDate() != null)
+                && (this.taskData.getTaskList().length > 0)) {
+
+            DateIntervalTree intervalTree = new DateIntervalTree(
+                    this.taskData.getTaskList());
+
+            if (intervalTree.isOverlap(task)) {
+                isOverlapWarning = true;
+            }
         }
 
         try {
@@ -197,7 +210,8 @@ public class TaskManager implements ITaskManager {
         // Informs user that his add statement is successful
         if (isUndo == false) {
             Response res = new Response();
-            res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
+            res.reply = (isOverlapWarning ? "Warning, there is a clash in timings.\n"
+                    : "") + task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
             this.display.updateUI(res);
         }
     }
@@ -278,7 +292,7 @@ public class TaskManager implements ITaskManager {
 
     /**
      * Delete an task from current database with a string query
-     * 
+     *
      * @param query
      * @param statement
      * @param isUndo
@@ -345,7 +359,7 @@ public class TaskManager implements ITaskManager {
 
     /**
      * Done a task by using a search query
-     * 
+     *
      * @param query
      * @param statement
      * @param isUndo
@@ -432,7 +446,7 @@ public class TaskManager implements ITaskManager {
 
     /**
      * Display the specified help to user
-     * 
+     *
      * @param command
      */
     @Override
@@ -446,7 +460,7 @@ public class TaskManager implements ITaskManager {
     /**
      * clear a history from the current history list with an index and display
      * it to user
-     * 
+     *
      * @param index
      */
     @Override
@@ -474,7 +488,7 @@ public class TaskManager implements ITaskManager {
 
     /**
      * undo a history from current history list with an index
-     * 
+     *
      * @param index
      */
     @Override
@@ -569,7 +583,7 @@ public class TaskManager implements ITaskManager {
     /**
      * Search all the task that are add into lucene with a query return an array
      * of string that contains all the task's Id
-     * 
+     *
      * @param search
      * @return String[]
      */
@@ -726,7 +740,7 @@ public class TaskManager implements ITaskManager {
     /**
      * Let the user to choose which task the user wants from search result
      * current return 0 only
-     * 
+     *
      * @param taskIdList
      * @param command
      * @return 0
