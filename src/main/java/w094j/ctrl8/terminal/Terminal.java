@@ -13,23 +13,25 @@ import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.message.NormalMessage;
-import w094j.ctrl8.parse.Parser;
+import w094j.ctrl8.parse.IParser;
 import w094j.ctrl8.pojo.Response;
-import w094j.ctrl8.taskmanager.TaskManager;
+import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0112092W
 public class Terminal {
     private static Terminal instance;
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);
-    private static Parser parser;
     private Display display;
-    private TaskManager taskManager;
+    private IParser parser;
+    private ITaskManager taskManager;
 
-    private Terminal(TerminalConfig terminalConfig) {
+    private Terminal(TerminalConfig terminalConfig, ITaskManager taskManager,
+            Display display, IParser parser) {
         assert (terminalConfig.isValid());
-        this.taskManager = TaskManager.getInstance();
-        this.display = Display.getInstance();
-        parser = Parser.getInstance();
+
+        this.taskManager = taskManager;
+        this.display = display;
+        this.parser = parser;
     }
 
     /**
@@ -39,7 +41,8 @@ public class Terminal {
      */
     public static Terminal getInstance() {
         if (instance == null) {
-            instance = initInstance(new TerminalConfig());
+            throw new RuntimeException(
+                    "Terminal must be initialized before retrieveing.");
         }
 
         return instance;
@@ -50,13 +53,14 @@ public class Terminal {
      *
      * @return return the Task manager.
      */
-    public static Terminal initInstance(TerminalConfig config) {
+    public static Terminal initInstance(TerminalConfig config,
+            ITaskManager taskManager, Display display, IParser parser) {
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Terminal as it was initialized before.");
         } else {
             // TO-DO put in config when config is done
-            instance = new Terminal(config);
+            instance = new Terminal(config, taskManager, display, parser);
             logger.debug("terminal is initialized");
         }
         return instance;
@@ -101,7 +105,7 @@ public class Terminal {
 
                 // Passes string to Statement.java to parse into a command
                 try {
-                    parser.parse(command).execute(this.taskManager, false);
+                    this.parser.parse(command).execute(this.taskManager, false);
                 } catch (InvalidParameterException e) {
                     res.reply = e.getMessage();
                     this.display.updateUI(res);

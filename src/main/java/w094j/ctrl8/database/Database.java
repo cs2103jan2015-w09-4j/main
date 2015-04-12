@@ -22,7 +22,7 @@ import com.google.gson.GsonBuilder;
  * statement history into an output file.
  */
 
-//@author A0112521B
+// @author A0112521B
 
 public class Database implements IDatabase {
 
@@ -54,10 +54,10 @@ public class Database implements IDatabase {
      * @throws IOException
      * @throws NoSuchFileException
      */
-    public static Database getInstance() throws NoSuchFileException,
-            IOException {
+    public static Database getInstance() {
         if (instance == null) {
-            instance = initInstance(null);
+            throw new RuntimeException(
+                    "Database must be initialized before retrieveing.");
         }
         return instance;
     }
@@ -73,7 +73,7 @@ public class Database implements IDatabase {
 
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Database as it was initialized before.");
         } else {
             instance = new Database(filePath);
         }

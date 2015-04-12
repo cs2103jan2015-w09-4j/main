@@ -4,17 +4,25 @@ package w094j.ctrl8.parse;
 import java.security.InvalidParameterException;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import w094j.ctrl8.database.config.ParameterConfig;
+import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.database.config.ParserConfig;
 
 /**
  * PriorityParameter Exception Test. Valid priority number(int) ranges from 0 to
  * 10 inclusive. Exception will be thrown if it is invalid.
  */
 public class PriorityParameterExceptionTest {
-    private ParameterConfig config = new ParameterConfig();
-    private ParameterParser parser = new ParameterParser(this.config);
+    private static ParameterParser parser;
+
+    @BeforeClass
+    public static void initParser() {
+        Parser.initInstance(new ParserConfig(), new AliasData());
+        parser = Parser.getInstance().getStatementParser().getParameterParser();
+
+    }
 
     /**
      * Test for error value: double
@@ -65,7 +73,6 @@ public class PriorityParameterExceptionTest {
         } catch (InvalidParameterException e) {
             if (!e.toString()
                     .equals("java.security.InvalidParameterException: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10")) {
-                System.out.println(e.toString());
                 Assert.fail("should have printed: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
             }
         }

@@ -16,7 +16,7 @@ import w094j.ctrl8.terminal.Terminal;
 /**
  * Class to start the Task Manager.
  */
-//@author A0112092W
+// @author A0112092W
 
 public class Start {
 
@@ -49,7 +49,7 @@ public class Start {
         // The terminal that performs all the actions
         String filePath = parseArgs(args);
 
-        factory = new Factory(filePath);
+        factory = Factory.initInstance(filePath);
 
         Terminal terminal = Terminal.getInstance();
         terminal.start();

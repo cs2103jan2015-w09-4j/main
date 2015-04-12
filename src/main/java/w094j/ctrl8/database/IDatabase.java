@@ -37,8 +37,10 @@ public interface IDatabase {
     void saveToStorage() throws Exception;
 
     /**
-     * Sync Data
+     * Sync with Google Calendar and Google Task
+     *
+     * @throws Exception
      */
-    void sync();
+    void sync() throws Exception;
 
 }

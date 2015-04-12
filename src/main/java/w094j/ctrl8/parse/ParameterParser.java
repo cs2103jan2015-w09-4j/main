@@ -411,7 +411,6 @@ public class ParameterParser {
             if (firstStartIndex == -1) {
                 firstStartIndex = implicitTitleMatcher.start();
             }
-            System.out.println("MATCH");
         }
         if (firstStartIndex != -1) {
             String titleParameterMatch = parameterString.substring(
@@ -420,8 +419,6 @@ public class ParameterParser {
                 parameterList.add(new TitleParameter(titleParameterMatch));
                 parameterString = parameterString.replaceAll(
                         this.implicitTitlePattern.pattern(), "");
-                System.out.println(IMPLICIT_TITLE_REGEX_FORMAT
-                        + "=====================" + parameterString);
             }
         }
 

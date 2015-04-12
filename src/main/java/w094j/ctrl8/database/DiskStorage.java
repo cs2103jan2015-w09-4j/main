@@ -22,6 +22,7 @@ public class DiskStorage extends Storage {
     /**
      * @param file
      * @param filePath
+     * @param gson
      */
     public DiskStorage(DBfile file, Path filePath, Gson gson) {
         super(file);
@@ -45,6 +46,10 @@ public class DiskStorage extends Storage {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+
+    @Override
+    public void sync() throws Exception {
     }
 
 }

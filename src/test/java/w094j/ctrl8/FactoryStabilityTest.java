@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,6 +30,21 @@ public class FactoryStabilityTest {
     private static String inputFileLoc = "src/test/resources/input.in";
     private Factory factory;
 
+    @AfterClass
+    public static void cleanupTest() {
+        try {
+
+            File file = new File(inputFileLoc);
+
+            if (!file.delete()) {
+                throw new Exception("Failed to clean up Inputfile.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Before
     // Delete the file in the testing directory if it exists to ensure
     // correctness of test initial conditions
@@ -42,7 +58,7 @@ public class FactoryStabilityTest {
     @Ignore
     public void testNullString() {
         try {
-            produceInputFile(inputFileLoc, "exit\n");
+            this.produceInputFile(inputFileLoc, "exit\n");
         } catch (Exception e) {
             assertTrue(e.getMessage(), false);
         }
@@ -55,7 +71,7 @@ public class FactoryStabilityTest {
         }
 
         try {
-            factory = new Factory(null);
+            this.factory = Factory.initInstance(null);
 
         } catch (IOException e) {
             assertTrue("Factory throws Exception", false);
@@ -71,7 +87,7 @@ public class FactoryStabilityTest {
     @Test
     public void testValidFilePathWithoutFile() {
         try {
-            produceInputFile(inputFileLoc, "exit\n");
+            this.produceInputFile(inputFileLoc, "exit\n");
         } catch (Exception e) {
             assertTrue(e.getMessage(), false);
         }
@@ -84,7 +100,7 @@ public class FactoryStabilityTest {
         }
 
         try {
-            factory = new Factory(fileLoc);
+            this.factory = Factory.initInstance(fileLoc);
 
         } catch (IOException e) {
             assertTrue("Factory throws Exception", false);

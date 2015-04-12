@@ -47,6 +47,7 @@ public class ExplicitLongParameterTest extends ParameterTest {
     @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
     //@formatter:off
     public static Iterable<Object[]> data() {
+        beforeClass();
         return Arrays.asList(new Object[][] {
                 /**
                  * Normal tests

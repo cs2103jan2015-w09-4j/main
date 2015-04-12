@@ -37,22 +37,23 @@ public class Task implements Comparable<Task> {
         TIMED
     }
 
+    //@formatter:off
+    private String id;
+    private String title;
     private String category;
     private String description;
+    private Date startDate;
     private Date endDate;
-    private String etag;
-    private String googleId;
-    private String id;
-    private Boolean isDone;
-
-    private Boolean isSynced;
-    private Date lastModifiedTime;
     private String location;
     private Integer priority;
     private Date reminder;
-    private Date startDate;
+    private Boolean isDone;
+    private String googleId;
+    private String etag;
+    private Boolean isSynced;
+    private Date lastModifiedTime;
     private TaskType taskType;
-    private String title;
+    //@formatter:on  
 
     /**
      * default constructor
@@ -107,8 +108,6 @@ public class Task implements Comparable<Task> {
      * @return end date
      */
     public Date getEndDate() {
-        // Only timed and deadline tasks have an end date
-        assert ((this.taskType == TaskType.TIMED) || (this.taskType == TaskType.DEADLINE));
         return this.endDate;
     }
 
@@ -172,8 +171,6 @@ public class Task implements Comparable<Task> {
      * @return Date :the start Date of the task
      */
     public Date getStartDate() {
-        // only Timed tasks have a start date
-        assert (this.taskType == TaskType.TIMED);
         return this.startDate;
     }
 
@@ -299,6 +296,14 @@ public class Task implements Comparable<Task> {
     public void setStatus(boolean isDone) {
         this.isDone = isDone;
         this.updateTimeAndSyncStatus();
+    }
+
+    /**
+     * @param isSynced
+     *            the isSynced to set
+     */
+    public void setSyncStatus(Boolean isSynced) {
+        this.isSynced = isSynced;
     }
 
     /**

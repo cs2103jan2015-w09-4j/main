@@ -19,8 +19,9 @@ public abstract class Storage {
      * Read Data from Disk and Google
      *
      * @throws IOException
+     * @throws Exception
      */
-    abstract public void readData() throws IOException;
+    abstract public void readData() throws IOException, Exception;
 
     /**
      * Store Data to Disk and Google
@@ -29,4 +30,11 @@ public abstract class Storage {
      * @throws Exception
      */
     abstract public void storeData() throws IOException, Exception;
+
+    /**
+     * Sync with Google
+     *
+     * @throws Exception
+     */
+    abstract public void sync() throws Exception;
 }
