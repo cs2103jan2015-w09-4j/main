@@ -109,10 +109,10 @@ public class Database implements IDatabase {
      */
     @Override
     public void saveToStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
         Storage googleStorage = new GoogleStorage(this.file, this.gson);
-        diskStorage.storeData();
         googleStorage.storeData();
+        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
+        diskStorage.storeData();
     }
 
     @Override
