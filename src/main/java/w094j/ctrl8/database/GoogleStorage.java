@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.GoogleStorageConfig;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.parse.statement.CommandType;
 import w094j.ctrl8.pojo.Actions;
@@ -123,9 +124,11 @@ public class GoogleStorage extends Storage {
     /**
      * @param file
      * @param gson
-     * @throws Exception
+     * @throws IOException
+     * @throws GeneralSecurityException
      */
-    public GoogleStorage(DBfile file, Gson gson) throws Exception {
+    public GoogleStorage(DBfile file, Gson gson)
+            throws GeneralSecurityException, IOException {
         super(file);
         this.dbFile = file;
         this.gson = gson;
@@ -134,14 +137,14 @@ public class GoogleStorage extends Storage {
     }
 
     @Override
-    public void readData() throws Exception {
+    public void readData() throws IOException, DataException {
         if (this.isSyncWithGoogle && this.isInternetReachable()) {
             this.getUnsyncedEventsAndTasksFromGoogle();
         }
     }
 
     @Override
-    public void storeData() throws Exception, IOException {
+    public void storeData() throws IOException, DataException {
         if (this.isSyncWithGoogle) {
             boolean isInternetReachableThisSession = this.isInternetReachable();
 
@@ -162,7 +165,7 @@ public class GoogleStorage extends Storage {
     }
 
     @Override
-    public void sync() throws Exception {
+    public void sync() throws IOException, DataException {
         if (this.isSyncWithGoogle && this.isInternetReachable()) {
             this.updateAllUnsyncedEventsAndTasksToGoogle();
             this.getUnsyncedEventsAndTasksFromGoogle();
@@ -205,7 +208,8 @@ public class GoogleStorage extends Storage {
         dataStoreTask.set(googleTask.getId(), localTask.getId().toString());
     }
 
-    private void addLocalEvent(Event googleEvent) throws Exception {
+    private void addLocalEvent(Event googleEvent) throws DataException,
+            IOException {
         logger.info("Adding new event from Google: " + googleEvent.getSummary());
         Task localEvent = new Task();
         localEvent.setGoogleId(googleEvent.getId());
@@ -217,7 +221,7 @@ public class GoogleStorage extends Storage {
 
     private void addLocalTask(
             com.google.api.services.tasks.model.Task googleTask)
-                    throws Exception {
+            throws IOException, DataException {
         logger.info("Adding new task from Google: " + googleTask.getTitle());
         Task localTask = new Task();
         localTask.setGoogleId(googleTask.getId());
@@ -456,7 +460,8 @@ public class GoogleStorage extends Storage {
                 dataStoreTask.keySet());
     }
 
-    private void getUnsyncedEventsAndTasksFromGoogle() throws Exception {
+    private void getUnsyncedEventsAndTasksFromGoogle() throws IOException,
+    DataException {
         this.syncGoogleCalendar();
         this.syncGoogleTaskList();
     }
@@ -572,7 +577,8 @@ public class GoogleStorage extends Storage {
         }
     }
 
-    private void modifyInGoogle(Task localTask) throws Exception {
+    private void modifyInGoogle(Task localTask) throws IOException,
+            DataException {
         if (localTask.getTaskType() == TaskType.TIMED) {
             if (dataStoreEvent.containsKey(localTask.getGoogleId())) {
                 // modify event
@@ -743,7 +749,7 @@ public class GoogleStorage extends Storage {
     }
 
     private void setLocalEventFields(Event googleEvent, Task localEvent)
-            throws Exception {
+            throws DataException {
 
         java.util.Calendar cal = java.util.Calendar.getInstance();
 
@@ -793,7 +799,7 @@ public class GoogleStorage extends Storage {
 
     private void setLocalTaskFields(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-            throws Exception {
+            throws DataException {
         if ((googleTask.getTitle() == null)
                 || googleTask.getTitle().equals(EMPTY_STRING)) {
             localTask.setTitle(NO_TITLE);
@@ -828,7 +834,7 @@ public class GoogleStorage extends Storage {
                 jsonFactory, this.clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR + " "
                         + TasksScopes.TASKS)).setDataStoreFactory(
-                                dataStoreFactory).build();
+                dataStoreFactory).build();
         this.credential = new AuthorizationCodeInstalledApp(flow,
                 new LocalServerReceiver()).authorize(this.userId);
 
@@ -838,7 +844,7 @@ public class GoogleStorage extends Storage {
         logger.info("Setting up global caleandar instance...");
         this.clientCalendar = new com.google.api.services.calendar.Calendar.Builder(
                 httpTransport, jsonFactory, this.credential)
-        .setApplicationName(NormalMessage.APP_NAME).build();
+                .setApplicationName(NormalMessage.APP_NAME).build();
 
     }
 
@@ -846,10 +852,10 @@ public class GoogleStorage extends Storage {
         logger.info("Setting up global task instance...");
         this.clientTask = new com.google.api.services.tasks.Tasks.Builder(
                 httpTransport, jsonFactory, this.credential)
-        .setApplicationName(NormalMessage.APP_NAME).build();
+                .setApplicationName(NormalMessage.APP_NAME).build();
     }
 
-    private void syncAllEvents() throws Exception {
+    private void syncAllEvents() throws IOException, DataException {
         logger.info("Syncing all events...");
         String pageToken = null;
         this.events = null;
@@ -882,7 +888,8 @@ public class GoogleStorage extends Storage {
         } while (pageToken != null);
     }
 
-    private void syncEvent(Task localEvent, Event googleEvent) throws Exception {
+    private void syncEvent(Task localEvent, Event googleEvent)
+            throws IOException, DataException {
         logger.info("Updating Google event: " + localEvent.getTitle());
 
         Date googleEventLastModifiedTime = new Date(googleEvent.getUpdated()
@@ -896,7 +903,8 @@ public class GoogleStorage extends Storage {
         }
     }
 
-    private void syncEventFromGoogle(Event googleEvent) throws Exception {
+    private void syncEventFromGoogle(Event googleEvent) throws IOException,
+            DataException {
         Task localEvent = this.getLocalEventByGoogleId(googleEvent.getId());
 
         if (GOOGLE_EVENT_STATUS_CANCELLED.equals(googleEvent.getStatus())) {
@@ -914,7 +922,7 @@ public class GoogleStorage extends Storage {
         }
     }
 
-    private void syncGoogleCalendar() throws Exception {
+    private void syncGoogleCalendar() throws IOException, DataException {
         logger.info("Syncing Google Calendar...");
         this.calendarRequest = this.clientCalendar.events().list(
                 this.googleCalendar.getId());
@@ -923,7 +931,7 @@ public class GoogleStorage extends Storage {
         this.setNextSyncToken();
     }
 
-    private void syncGoogleTaskList() throws Exception {
+    private void syncGoogleTaskList() throws IOException, DataException {
         logger.info("Syncing Google Task List...");
         Tasks tasks = this.clientTask.tasks().list(this.googleTaskList.getId())
                 .execute();
@@ -953,7 +961,7 @@ public class GoogleStorage extends Storage {
 
     private void syncTask(Task localTask,
             com.google.api.services.tasks.model.Task googleTask)
-                    throws Exception {
+            throws IOException, DataException {
 
         Date googleTaskLastModifiedTime = new Date(googleTask.getUpdated()
                 .getValue());
@@ -984,7 +992,8 @@ public class GoogleStorage extends Storage {
         }
     }
 
-    private void updateAllUnsyncedEventsAndTasksToGoogle() throws Exception {
+    private void updateAllUnsyncedEventsAndTasksToGoogle() throws IOException,
+    DataException {
         logger.info("Uploading unsynced Events and Tasks");
         List<Task> localTaskList = Arrays.asList(this.dbFile.getData()
                 .getTask().getTaskList());
@@ -1043,7 +1052,7 @@ public class GoogleStorage extends Storage {
     }
 
     private void updateLocalEvent(Event googleEvent, Task localEvent)
-            throws Exception {
+            throws DataException {
         logger.info("Updating local event: " + googleEvent.getSummary());
         this.setLocalEventFields(googleEvent, localEvent);
         this.toBeDeletedGoogleEventIdList.remove(googleEvent.getId());
@@ -1051,13 +1060,14 @@ public class GoogleStorage extends Storage {
 
     private void updateLocalTask(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-            throws Exception {
+            throws DataException {
         logger.info("Updating local task: " + googleTask.getTitle());
         this.setLocalTaskFields(googleTask, localTask);
         this.toBeDeletedGoogleTaskIdList.remove(googleTask.getId());
     }
 
-    private void updateOneUnsyncedEventOrTaskToGoogle() throws Exception {
+    private void updateOneUnsyncedEventOrTaskToGoogle() throws IOException,
+            DataException {
         ArrayList<Actions> actionList = this.dbFile.getData().getTask()
                 .getActionsList();
         Actions lastAction = actionList.get(actionList.size() - 1);

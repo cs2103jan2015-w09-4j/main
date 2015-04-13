@@ -49,7 +49,7 @@ public class DiskStorage extends Storage {
     }
 
     @Override
-    public void sync() throws Exception {
+    public void sync() {
     }
 
 }
