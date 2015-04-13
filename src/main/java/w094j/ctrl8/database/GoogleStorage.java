@@ -56,10 +56,10 @@ import com.google.gson.Gson;
  * Google Calendar Storage
  */
 public class GoogleStorage extends Storage {
-    private static DataStore<String> dataStoreEvent;
+    private static DataStore<ObjectId> dataStoreEvent;
     private static FileDataStoreFactory dataStoreFactory;
     private static DataStore<String> dataStoreSyncSettings;
-    private static DataStore<String> dataStoreTask;
+    private static DataStore<ObjectId> dataStoreTask;
     private static final String EMPTY_STRING = "";
     private static final String ERROR_MESSAGE_FILE_NOT_FOUND = " file not found";
     private static final int FULL_SYNC_YEAR_FROM_NOW = -1;
@@ -187,7 +187,7 @@ public class GoogleStorage extends Storage {
         localEvent.setGoogleId(googleEvent.getId());
         localEvent.setEtag(googleEvent.getEtag());
 
-        dataStoreEvent.set(googleEvent.getId(), localEvent.getId().toString());
+        dataStoreEvent.set(googleEvent.getId(), localEvent.getId());
     }
 
     private void addGoogleTask(Task localTask) throws IOException {
@@ -205,7 +205,7 @@ public class GoogleStorage extends Storage {
         localTask.setGoogleId(googleTask.getId());
         localTask.setEtag(googleTask.getEtag());
 
-        dataStoreTask.set(googleTask.getId(), localTask.getId().toString());
+        dataStoreTask.set(googleTask.getId(), localTask.getId());
     }
 
     private void addLocalEvent(Event googleEvent) throws DataException,
@@ -214,7 +214,7 @@ public class GoogleStorage extends Storage {
         Task localEvent = new Task();
         localEvent.setGoogleId(googleEvent.getId());
         this.setLocalEventFields(googleEvent, localEvent);
-        dataStoreEvent.set(googleEvent.getId(), localEvent.getId().toString());
+        dataStoreEvent.set(googleEvent.getId(), localEvent.getId());
 
         this.dbFile.getData().getTask().updateTaskMap(localEvent, null, false);
     }
@@ -226,7 +226,7 @@ public class GoogleStorage extends Storage {
         Task localTask = new Task();
         localTask.setGoogleId(googleTask.getId());
         this.setLocalTaskFields(googleTask, localTask);
-        dataStoreTask.set(googleTask.getId(), localTask.getId().toString());
+        dataStoreTask.set(googleTask.getId(), localTask.getId());
 
         this.dbFile.getData().getTask().updateTaskMap(localTask, null, false);
     }
@@ -416,7 +416,7 @@ public class GoogleStorage extends Storage {
         ObjectId taskId = null;
         try {
             if (dataStoreEvent.get(googleId) != null) {
-                taskId = new ObjectId(dataStoreEvent.get(googleId));
+                taskId = dataStoreEvent.get(googleId);
             }
         } catch (IOException e) {
             return null;
@@ -433,7 +433,7 @@ public class GoogleStorage extends Storage {
         ObjectId taskId = null;
         try {
             if (dataStoreEvent.get(googleId) != null) {
-                taskId = new ObjectId(dataStoreEvent.get(googleId));
+                taskId = dataStoreEvent.get(googleId);
             }
 
         } catch (IOException e) {
@@ -944,6 +944,7 @@ public class GoogleStorage extends Storage {
             for (com.google.api.services.tasks.model.Task googleTask : items) {
                 Task localTask = this
                         .getLocalTaskByGoogleId(googleTask.getId());
+
                 if ((localTask == null)) {
                     this.addLocalTask(googleTask);
                     this.toBeDeletedGoogleTaskIdList.remove(googleTask.getId());
