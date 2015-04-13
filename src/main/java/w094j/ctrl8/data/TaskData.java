@@ -276,7 +276,6 @@ public class TaskData {
             } else {
                 logger.debug("No results.");
             }
-
             // reader can only be closed when there
             // is no need to access the documents any more.
             reader.close();
@@ -286,7 +285,9 @@ public class TaskData {
             throw new DataException(
                     "There was an unexpected error, please report this to our techical team.");
         }
-        Arrays.sort(taskIdList);
+        if(taskIdList!=null){
+            Arrays.sort(taskIdList);
+        }
         return taskIdList;
     }
 
