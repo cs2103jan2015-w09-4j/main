@@ -3,47 +3,41 @@ package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+/**
+ * Configures the Display Controller.
+ */
 public class DisplayControllerConfig implements IStorableElement {
     private GUITextDisplayConfig textDisplayConfig;
     private GUITextInputConfig textInputConfig;
 
+    /**
+     * Initializes the DisplayController.
+     */
     public DisplayControllerConfig() {
+        this.textDisplayConfig = new GUITextDisplayConfig();
+        this.textInputConfig = new GUITextInputConfig();
     }
 
-    public DisplayControllerConfig(GUITextDisplayConfig textDisplayConfig,
-            GUITextInputConfig textInputConfig) {
-        this.textDisplayConfig = textDisplayConfig;
-        this.textInputConfig = textInputConfig;
+    /**
+     * @return
+     */
+    public GUITextDisplayConfig getGUITextDisplayConfig() {
+        return this.getGUITextDisplayConfig();
     }
-    
-    public GUITextDisplayConfig getGUITextDisplayConfig(){
-        if(this.textDisplayConfig==null){
-            return new GUITextDisplayConfig();
-        } else {
-            return this.textDisplayConfig;
-        }
-    }
-    
-    public GUITextInputConfig getGUITextInputConfig(){
-        if(this.textInputConfig==null){
-            return new GUITextInputConfig();
-        } else {
-            return this.textInputConfig;
-        }
-    }
-    
-    public void setGUITextDisplayConfig(GUITextDisplayConfig config){
-        this.textDisplayConfig  = config;
-    }
-    
-    public void setGUITextInputConfig(GUITextInputConfig config){
-        this.textInputConfig = config;
+
+    /**
+     * @return
+     */
+    public GUITextInputConfig getGUITextInputConfig() {
+        return this.getGUITextInputConfig();
     }
 
     @Override
     public boolean isValid() {
-        return (this.textDisplayConfig==null ? true : this.textDisplayConfig.isValid()) &&
-               (this.textInputConfig==null ? true : this.textInputConfig.isValid());
+        return (this.textDisplayConfig == null ? true : this.textDisplayConfig
+                .isValid())
+                && (this.textInputConfig == null ? true : this.textInputConfig
+                        .isValid());
     }
 
 }

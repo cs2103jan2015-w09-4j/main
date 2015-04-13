@@ -18,7 +18,7 @@ public class AliasDeleteStatement extends StatementQuery {
      */
     public AliasDeleteStatement(String statementString) {
         super(CommandType.ALIAS_DELETE, statementString);
-        this.query = this.getStatementArgumentsOnly();
+        this.query = this.getStatementArgumentsOnly().trim();
         logger.debug("Valid alias-delete Command, query \"" + statementString
                 + "\"");
     }

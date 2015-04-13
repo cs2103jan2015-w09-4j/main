@@ -295,6 +295,7 @@ public class GoogleStorage extends Storage {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void deleteFromGoogle() throws IOException {
         logger.info("Deleting Google Event/Task...");
         List<Task> localTaskList = Arrays.asList(this.dbFile.getData()
@@ -1068,31 +1069,32 @@ public class GoogleStorage extends Storage {
     }
 
     private void updateOneUnsyncedEventOrTaskToGoogle() throws IOException,
-    DataException {
+            DataException {
         ArrayList<Actions> actionList = this.dbFile.getData().getTask()
                 .getActionsList();
-        Actions lastAction = actionList.get(actionList.size() - 1);
-        CommandType command = lastAction.getStatement().getCommand();
-        ObjectId taskId = lastAction.getTaskID();
-        Task localTask = this.dbFile.getData().getTask().getTaskStateMap()
-                .get(taskId).getFinalTask();
+        if ((actionList.size() - 1) > 0) {
+            Actions lastAction = actionList.get(actionList.size() - 1);
+            CommandType command = lastAction.getStatement().getCommand();
+            ObjectId taskId = lastAction.getTaskID();
+            Task localTask = this.dbFile.getData().getTask().getTaskStateMap()
+                    .get(taskId).getFinalTask();
 
-        switch (command) {
-            case ADD :
-                this.addToGoogle(localTask);
-                break;
-            case DELETE :
-                this.deleteFromGoogle();
-                break;
-            case DONE :
-                this.markAsDoneInGoogle(localTask);
-                break;
-            case MODIFY :
-                this.modifyInGoogle(localTask);
-                break;
-            default :
-                break;
+            switch (command) {
+                case ADD :
+                    this.addToGoogle(localTask);
+                    break;
+                case DELETE :
+                    this.deleteFromGoogle();
+                    break;
+                case DONE :
+                    this.markAsDoneInGoogle(localTask);
+                    break;
+                case MODIFY :
+                    this.modifyInGoogle(localTask);
+                    break;
+                default :
+                    break;
+            }
         }
     }
-
 }

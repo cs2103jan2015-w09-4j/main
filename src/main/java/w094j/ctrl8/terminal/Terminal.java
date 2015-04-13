@@ -79,12 +79,6 @@ public class Terminal {
      */
     public void start() throws Exception {
 
-        try {
-            Thread.sleep(3000);
-        } catch (Exception e) {
-
-        }
-
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;
@@ -119,6 +113,10 @@ public class Terminal {
                 } catch (GeneralSecurityException | IOException irrecoverableException) {
                     continueExecution = false;
                     res.setException(irrecoverableException);
+                    this.display.updateUI(res);
+                } catch (Exception e) {
+                    continueExecution = false;
+                    res.setException(e);
                     this.display.updateUI(res);
                 }
 

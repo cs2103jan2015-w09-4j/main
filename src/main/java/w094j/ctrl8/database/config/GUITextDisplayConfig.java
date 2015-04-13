@@ -3,9 +3,12 @@ package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+/**
+ * Config for the GUI Text Display.
+ */
 public class GUITextDisplayConfig extends GUITextGenericConfig implements
-        IStorableElement {
-    //Uses a different set of default values
+IStorableElement {
+    // Uses a different set of default values
     protected static final TextColour DEFAULT_TEXT_COLOUR = TextColour.Black;
     protected static final int DEFAULT_TEXT_SIZE = 12;
 

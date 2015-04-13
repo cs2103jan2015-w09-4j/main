@@ -4,6 +4,10 @@ import java.text.SimpleDateFormat;
 
 import w094j.ctrl8.database.IStorableElement;
 
+//@author A0112092W
+/**
+ * Configurations for the Command Line Display component.
+ */
 public class CLIDisplayConfig implements IStorableElement {
 
     private static String APP_NAME_DEFAULT = "Ctrl-8";

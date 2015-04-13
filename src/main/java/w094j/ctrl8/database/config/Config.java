@@ -1,12 +1,13 @@
 package w094j.ctrl8.database.config;
 
+import w094j.ctrl8.database.IStorableElement;
+
+//@author A0112521B
 /**
  * Class encapsulates configuration options for program. This includes whether
  * program is running in CLI or GUI mode, where to read/dump data to/from etc.
- * TODO: support for google integration, possibly via an additional argument
- * parameter
  */
-public class Config {
+public class Config implements IStorableElement {
 
     private DatabaseConfig database;
     private DisplayConfig display;
@@ -14,6 +15,9 @@ public class Config {
     private TaskManagerConfig taskManager;
     private TerminalConfig terminal;
 
+    /**
+     *
+     */
     public Config() {
         this.database = new DatabaseConfig();
         this.display = new DisplayConfig();
@@ -55,6 +59,13 @@ public class Config {
      */
     public TerminalConfig getTerminal() {
         return this.terminal;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.database.isValid() && this.display.isValid()
+                && this.parser.isValid() && this.taskManager.isValid()
+                && this.terminal.isValid();
     }
 
     /**

@@ -3,6 +3,8 @@ package w094j.ctrl8.display;
 
 import java.io.InputStream;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import w094j.ctrl8.database.config.DisplayConfig;
 import w094j.ctrl8.pojo.Response;
 
@@ -30,10 +32,10 @@ public abstract class Display {
     }
 
     /**
-     * Initialises an instance of Display given a displayConfig
+     * Initializes an instance of Display given a displayConfig
      *
      * @param displayConfig
-     * @return
+     * @return display
      */
     public static Display initInstance(DisplayConfig displayConfig) {
 
@@ -42,7 +44,9 @@ public abstract class Display {
                     "Cannot initialize Display as it was initialized before.");
         } else {
             if (displayConfig.isGUI()) {
-                instance = new GUIDisplay(displayConfig.getGUI());
+// instance = new GUIDisplay(displayConfig.getGUI());
+                throw new NotImplementedException(
+                        "GUI is under test, disabled.");
             } else {
                 instance = new CLIDisplay(displayConfig.getCLI());
             }

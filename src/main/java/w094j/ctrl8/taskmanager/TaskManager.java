@@ -213,10 +213,11 @@ public class TaskManager implements ITaskManager {
      * @param statement
      * @param isUndo
      * @throws CommandExecuteException
+     * @throws DataException
      */
     @Override
     public Response delete(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
+            throws CommandExecuteException, DataException {
         Task task = null;
         Response res = new Response(statement.getCommand());
         // search the task with the string query
@@ -260,10 +261,11 @@ public class TaskManager implements ITaskManager {
      * @param statement
      * @param isUndo
      * @throws CommandExecuteException
+     * @throws DataException
      */
     @Override
     public Response done(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
+            throws CommandExecuteException, DataException {
 
         Response res = new Response(statement.getCommand());
 
@@ -377,10 +379,12 @@ public class TaskManager implements ITaskManager {
      * @param query
      * @param incompleteTask
      * @throws CommandExecuteException
+     * @throws DataException
      */
     @Override
     public Response modify(String query, Task incompleteTask,
-            Statement statement, boolean isUndo) throws CommandExecuteException {
+            Statement statement, boolean isUndo)
+                    throws CommandExecuteException, DataException {
         Response res = new Response(statement.getCommand());
         // search the task with a query
         Task[] taskIdList = this.taskData.search(query);
@@ -432,7 +436,8 @@ public class TaskManager implements ITaskManager {
     }
 
     @Override
-    public Response search(String query, Statement statement) {
+    public Response search(String query, Statement statement)
+            throws DataException {
         Response res = new Response(statement.getCommand());
         res.taskList = this.taskData.search(query);
         return res;

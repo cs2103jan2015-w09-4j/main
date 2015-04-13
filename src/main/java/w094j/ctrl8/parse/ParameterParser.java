@@ -201,7 +201,7 @@ public class ParameterParser {
      * @return the container that contains all the parameters parsed in this
      *         string.
      * @throws ParseException
-     *             TODO
+     *             when the parsing of parameters encountered a problem.
      */
     public ParameterContainer parse(String parameterString)
             throws ParseException {
@@ -229,8 +229,8 @@ public class ParameterParser {
                     parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
             this.logger
-                    .debug("Parameters after parsing explicit short: String("
-                            + parameterString + ")");
+            .debug("Parameters after parsing explicit short: String("
+                    + parameterString + ")");
         }
 
         if (!parameterString.equals("")) {
@@ -383,7 +383,7 @@ public class ParameterParser {
             case 1 :
                 // one match
                 String deadlinedTaskParameterMatch = implicitDeadlinedTaskMatches
-                .get(0);
+                        .get(0);
 
                 // remove from keyword
                 deadlinedTaskParameterMatch = deadlinedTaskParameterMatch

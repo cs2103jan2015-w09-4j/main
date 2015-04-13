@@ -8,6 +8,9 @@ import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0112521B
+/**
+ *
+ */
 public class AliasAddStatement extends Statement {
 
     private static Logger logger = LoggerFactory
@@ -16,13 +19,18 @@ public class AliasAddStatement extends Statement {
     private String alias;
     private String phrase;
 
+    /**
+     * @param statementString
+     * @throws ParseException
+     */
     public AliasAddStatement(String statementString) throws ParseException {
         super(CommandType.ALIAS_ADD, statementString);
         if (this.getStatementArgumentsOnly().trim().split("\\s+").length < 2) {
             throw new ParseException(
                     "AliasAdd statement must specify an alias and its phrase.");
         } else {
-            String arr[] = this.getStatementArgumentsOnly().split(" ", 2);
+            String arr[] = this.getStatementArgumentsOnly().trim()
+                    .split(" ", 2);
             this.alias = arr[0];
             this.phrase = arr[1];
             logger.debug("Valid alias-add Command, query \"" + statementString

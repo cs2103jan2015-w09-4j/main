@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +38,12 @@ public class CLIDisplay extends Display {
 
     private static final String END_SEPERATOR = " |";
     private static final String FLOATING_TASK_NAME = "Tasks";
-    private static CLIDisplay instance;
     private static final char LINE_COMPONENT = '-';
     private static Logger logger = LoggerFactory.getLogger(CLIDisplay.class);
     private static final String START_SEPERATOR = "| ";
     private static final String TIMED_TASK_NAME = "Events";
     private static final char TITLE_LINE_COMPONENT = '=';
     private CLIDisplayConfig config;
-    private InputStream inStream;
 
     // @author A0110787A
     private String lastMessage;
@@ -57,34 +54,6 @@ public class CLIDisplay extends Display {
      */
     CLIDisplay(CLIDisplayConfig cliDisplayConfig) {
         this.config = cliDisplayConfig;
-    }
-
-    public static void main(String[] args) throws OutputExecuteException {
-        Task fatherTask = new Task();
-        fatherTask.setTitle("I am your father.");
-        fatherTask.setCategory("NUS");
-
-        Task motherTask = new Task();
-        motherTask.setTitle("I am your mother.");
-        motherTask.setCategory("NUS");
-
-        Task sisterTask = new Task();
-        sisterTask.setTitle("I am your sister.");
-        sisterTask.setCategory("FAM");
-
-        Task brotherTask = new Task();
-        brotherTask.setTitle("I am your brother.");
-        brotherTask.setCategory("FAM");
-        brotherTask.setDescription("NUS");
-
-        Task aTask = new Task();
-        aTask.setTitle("A NUS");
-        aTask.setCategory("FAM");
-
-        CLIDisplay test = new CLIDisplay(new CLIDisplayConfig());
-        Task[] tasks = { fatherTask, motherTask, sisterTask, brotherTask, aTask };
-        test.outputTask("YO", tasks, TaskType.TIMED);
-
     }
 
     /**
@@ -161,21 +130,22 @@ public class CLIDisplay extends Display {
 
         // Print 'em out
         StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb);
+        try (Formatter formatter = new Formatter(sb)) {
 
-        for (int x = 0; x < table.length; x++) {
-            String[] element = table[x];
-            sb.append(START_SEPERATOR);
-            for (int j = 0; j < element.length; j++) {
-                formatter.format(formats[j], element[j]);
+            for (int x = 0; x < table.length; x++) {
+                String[] element = table[x];
+                sb.append(START_SEPERATOR);
+                for (int j = 0; j < element.length; j++) {
+                    formatter.format(formats[j], element[j]);
+                }
+                if (x == 0) {
+                    sb.append(getDashes(sumLength, LINE_COMPONENT));
+                    sb.append("\n");
+                }
             }
-            if (x == 0) {
-                sb.append(getDashes(sumLength, LINE_COMPONENT));
-                sb.append("\n");
-            }
+            System.out.print(sb.toString());
+            printDashes(sumLength, LINE_COMPONENT);
         }
-        System.out.print(sb.toString());
-        printDashes(sumLength, LINE_COMPONENT);
     }
 
     // @author A0112092W
@@ -185,9 +155,11 @@ public class CLIDisplay extends Display {
     }
 
     // @author A0110787A
-    /*
+    /**
      * For testing purposes. Facilitates JUnit testing of individual modules
      * using CLIDisplay
+     *
+     * @return lastMessage
      */
     public String getLastMessage() {
         return this.lastMessage;
@@ -196,15 +168,18 @@ public class CLIDisplay extends Display {
 
     @Override
     public void goodbye() {
-        // TODO Auto-generated method stub
+        // TODO Not Implemented Yet
 
     }
 
+    // @author A0110787A
+    /**
+     * For testing purposes. see getLastMessage()
+     *
+     * @param message
+     */
     public void outputMessage(String message) {
-        // @author A0110787A
-        /*
-         * For testing purposes. see getLastMessage()
-         */
+
         this.lastMessage = message;
 
         // @author A0112092W
@@ -216,6 +191,7 @@ public class CLIDisplay extends Display {
      *
      * @param title
      * @param taskList
+     * @param taskType
      * @throws OutputExecuteException
      */
     public void outputTask(String title, Task[] taskList, TaskType taskType)
@@ -297,14 +273,8 @@ public class CLIDisplay extends Display {
             }
         }
 
-        System.out.println(Arrays.toString(isActiveColumn));
-        System.out.println(activeColumnSize);
-
         String[][] table = this.initTable(taskList.length + 1, isActiveColumn,
                 activeColumnSize, taskType);
-        for (String[] element : table) {
-            System.out.println(Arrays.toString(element));
-        }
         int iteration = taskList.length + 1;
         DateFormat df = new SimpleDateFormat(this.config.getDateFormat());
         table = this.initNullTaskTable(table, 1, activeColumnSize);

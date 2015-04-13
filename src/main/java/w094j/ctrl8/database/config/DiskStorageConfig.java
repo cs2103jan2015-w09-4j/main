@@ -1,13 +1,17 @@
-//@author A0112521B
 package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+//@author A0112521B
 /**
  * Configuration file for DiskStorage.
  */
 public class DiskStorageConfig implements IStorableElement {
 
+    /**
+     * Frequency of the clearing of the history.
+     */
+    @SuppressWarnings("javadoc")
     public enum Frequency {
         DAILY, MONTHLY, SESSION, WEEKLY, YEARLY
     }

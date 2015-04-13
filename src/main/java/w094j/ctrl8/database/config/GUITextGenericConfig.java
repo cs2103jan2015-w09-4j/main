@@ -3,7 +3,14 @@ package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+/**
+ * Configs the GUI text Generic.
+ */
 public abstract class GUITextGenericConfig implements IStorableElement {
+    /**
+     * Text Color
+     */
+    @SuppressWarnings("javadoc")
     public enum TextColour {
         Awesome("orange"), Black("black"), Default("black"), Invalid("");
 
@@ -24,14 +31,24 @@ public abstract class GUITextGenericConfig implements IStorableElement {
     protected TextColour textColour;
     protected Integer textSize;
 
+    /**
+     *
+     */
     public GUITextGenericConfig() {
     }
 
+    /**
+     * @param textColour
+     * @param textSize
+     */
     public GUITextGenericConfig(TextColour textColour, int textSize) {
-        setTextSize(textSize);
-        setTextColour(textColour);
+        this.setTextSize(textSize);
+        this.setTextColour(textColour);
     }
 
+    /**
+     * @return textClour
+     */
     public TextColour getTextColour() {
         if (this.textColour == null) {
             return DEFAULT_TEXT_COLOUR;
@@ -40,6 +57,9 @@ public abstract class GUITextGenericConfig implements IStorableElement {
         }
     }
 
+    /**
+     * @return textSize
+     */
     public int getTextSize() {
         if (this.textSize == null) {
             return DEFAULT_TEXT_SIZE;
@@ -53,12 +73,18 @@ public abstract class GUITextGenericConfig implements IStorableElement {
         return this.textSize > 0;
     }
 
+    /**
+     * @param newColour
+     */
     public void setTextColour(TextColour newColour) {
         this.textColour = newColour;
     }
 
+    /**
+     * @param textSize
+     */
     public void setTextSize(int textSize) {
-        if (textSize > 32 || textSize < 5) {
+        if ((textSize > 32) || (textSize < 5)) {
             this.textSize = DEFAULT_TEXT_SIZE;
         } else {
             this.textSize = textSize;

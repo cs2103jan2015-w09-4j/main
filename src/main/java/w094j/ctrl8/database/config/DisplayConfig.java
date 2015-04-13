@@ -2,10 +2,9 @@ package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
-//A0112092W
-
+//@author A0112092W
 /**
- * The config of the display It is a stub currently
+ * The config of the display.
  */
 public class DisplayConfig implements IStorableElement {
 
@@ -15,6 +14,9 @@ public class DisplayConfig implements IStorableElement {
     private GUIDisplayConfig GUI;
     private Boolean isGUI;
 
+    /**
+     * Display Config
+     */
     public DisplayConfig() {
         this.GUI = new GUIDisplayConfig();
         this.CLI = new CLIDisplayConfig();
@@ -47,10 +49,10 @@ public class DisplayConfig implements IStorableElement {
 
     @Override
     public boolean isValid() {
-        if(isGUI()){
-            return (this.GUI!=null && this.GUI.isValid());
+        if (this.isGUI()) {
+            return ((this.GUI != null) && this.GUI.isValid());
         } else {
-            return (this.CLI!=null && this.CLI.isValid());
+            return ((this.CLI != null) && this.CLI.isValid());
         }
     }
 

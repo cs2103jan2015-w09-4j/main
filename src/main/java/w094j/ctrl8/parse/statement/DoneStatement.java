@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
@@ -18,13 +19,13 @@ public class DoneStatement extends StatementQuery {
      */
     public DoneStatement(String statementString) {
         super(CommandType.DONE, statementString);
-        this.query = this.getStatementArgumentsOnly();
+        this.query = this.getStatementArgumentsOnly().trim();
         logger.debug("Valid done Command, query \"" + statementString + "\"");
     }
 
     @Override
     public Response execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+            throws CommandExecuteException, DataException {
         // TODO Link to Terminal
         // statement to be added
         return taskManager.done(this.query, this, isUndo);

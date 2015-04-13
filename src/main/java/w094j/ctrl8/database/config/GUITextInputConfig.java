@@ -3,6 +3,9 @@ package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+/**
+ * GUI Text Input
+ */
 public class GUITextInputConfig extends GUITextGenericConfig implements
         IStorableElement {
     // Uses a different set of default values

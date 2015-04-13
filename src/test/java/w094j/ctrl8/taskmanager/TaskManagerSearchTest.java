@@ -15,6 +15,7 @@ import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.data.TaskData;
 import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.database.config.TaskManagerConfig;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Task;
 
@@ -98,11 +99,13 @@ public class TaskManagerSearchTest {
 
     /**
      * Tests the parsing of priority parameter.
+     *
+     * @throws DataException
      */
     @Test
-    public void testDeadline() {
+    public void testDeadline() throws DataException {
 
-        assertArrayEquals(this.taskData.search(this.searchQuery),
+        assertArrayEquals(taskData.search(this.searchQuery),
                 this.taskArrayExpected);
     }
 

@@ -17,6 +17,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -51,28 +52,23 @@ public class TaskData {
     // Hash Map that stores every task and its history
     private HashMap<ObjectId, TaskState> taskStateMap;
 
-    // Hash Map that stores the objectID of every task by their task name
-// private HashMap<String, String> taskMap;
-
     /**
      * Default constructor of TaskData
      */
     public TaskData() {
-// this.taskMap = new HashMap<String, String>();
         this.taskStateMap = new HashMap<ObjectId, TaskState>();
     }
 
     /**
-     * add all task's title, decription and id to produce the material for
-     * lucene to search
+     * add a task for Lucene to search.
      *
-     * @param w
+     * @param indexWriter
      * @param title
      * @param description
      * @param id
      */
-    private static void addDoc(IndexWriter w, String title, String description,
-            ObjectId id) throws IOException {
+    private static void addDoc(IndexWriter indexWriter, String title,
+            String description, ObjectId id) throws IOException {
 
         Document doc = new Document();
         doc.add(new TextField("title", title, Field.Store.YES));
@@ -80,14 +76,25 @@ public class TaskData {
         // use a string field for isbn because we don't want it tokenized
         doc.add(new TextField("description", description == null ? ""
                 : description, Field.Store.YES));
-        w.addDocument(doc);
+        indexWriter.addDocument(doc);
     }
 
+    /**
+     * Check if the taskId exist in the data structure.
+     *
+     * @param taskID
+     * @return true when the data structure contains the taskID.
+     */
     public boolean containsKey(String taskID) {
-        // TODO Auto-generated method stub
         return this.taskStateMap.containsKey(taskID);
     }
 
+    /**
+     * Deletes the History of index.
+     *
+     * @param index
+     * @return the list of actions.
+     */
     public Actions deleteHistory(int index) {
         ArrayList<Actions> actions = this.getActionsList();
         Actions actionToBeDel = actions.get(index - 1);
@@ -100,17 +107,20 @@ public class TaskData {
         return actionToBeDel;
     }
 
-// /**
-// * @return the taskMap
-// */
-// public HashMap<String, String> getTaskMap() {
-// return this.taskMap;
-// }
-
+    /**
+     * Returns the entry set.
+     *
+     * @return entrySet.
+     */
     public Set<Entry<ObjectId, TaskState>> entrySet() {
         return this.taskStateMap.entrySet();
     }
 
+    /**
+     * Actions List of all the Tasks in chronological order.
+     *
+     * @return the array of actions.
+     */
     public ArrayList<Actions> getActionsList() {
         ArrayList<Actions> actions = new ArrayList<Actions>();
         for (TaskState t : this.taskStateMap.values()) {
@@ -123,18 +133,21 @@ public class TaskData {
         return actions;
     }
 
+    /**
+     * Get a particular task.
+     *
+     * @param taskId
+     * @return task.
+     */
     public Task getTask(ObjectId taskId) {
         return this.taskStateMap.get(taskId).getFinalTask();
     }
 
-// /**
-// * @param taskMap
-// * the taskMap to set
-// */
-// public void setTaskMap(HashMap<String, String> taskMap) {
-// this.taskMap = taskMap;
-// }
-
+    /**
+     * Return the taskList.
+     *
+     * @return task List
+     */
     public Task[] getTaskList() {
         Task[] taskList = new Task[this.numOfTasks()];
         int i = 0;
@@ -149,6 +162,9 @@ public class TaskData {
         return taskList;
     }
 
+    /**
+     * @return TaskState Map
+     */
     public HashMap<ObjectId, TaskState> getTaskStateMap() {
         return this.taskStateMap;
     }
@@ -163,6 +179,9 @@ public class TaskData {
         return this.taskStateMap.containsKey(query);
     }
 
+    /**
+     * @return number of tasks in the the tasks data structure.
+     */
     public int numOfTasks() {
         int size = 0;
         for (TaskState t : this.taskStateMap.values()) {
@@ -173,14 +192,14 @@ public class TaskData {
         return size;
     }
 
-// public Collection<TaskState> values() {
-// return this.taskStateMap.values();
-// }
-
     /**
-     * @param query
+     * Removes a task from the data structure,
+     *
+     * @param id
+     *            to use to be removed.
      * @param statement
-     * @return
+     *            the statement that executed it.
+     * @return the removed task.
      */
     public Task remove(ObjectId id, Statement statement) {
         Task task = this.taskStateMap.get(id).getFinalTask();
@@ -191,12 +210,16 @@ public class TaskData {
 
     /**
      * Search all the task that are add into lucene with a query return an array
-     * of string that contains all the task's Id
+     * of string that contains all the task's Id. With reference from
+     * http://www.lucenetutorial.com/code/HelloLucene.java.
      *
-     * @param search
-     * @return String[]
+     * @param query
+     *            search query.
+     * @return the array of tasks.
+     * @throws DataException
+     *             when there is a problem with the query
      */
-    public Task[] search(String query) {
+    public Task[] search(String query) throws DataException {
         Task[] taskIdList = null;
         try {
             // 0. Specify the analyzer for tokenizing text.
@@ -219,7 +242,7 @@ public class TaskData {
 
             // 2. query
             if (query.length() < 0) {
-                throw new Exception("WHY No Query?!");
+                throw new DataException("Query must exist.");
             }
 
             // the "title" arg specifies the default field to use
@@ -237,23 +260,18 @@ public class TaskData {
 
             // 4. display results
             if (hits.length > 0) {
-                try {
-                    taskIdList = new Task[hits.length];
+                taskIdList = new Task[hits.length];
 
-                    logger.debug("Found:" + hits.length + " hits.");
-                    for (int i = 0; i < hits.length; ++i) {
-                        int docId = hits[i].doc;
+                logger.debug("Found:" + hits.length + " hits.");
+                for (int i = 0; i < hits.length; ++i) {
+                    int docId = hits[i].doc;
 
-                        Document d = searcher.doc(docId);
-                        ObjectId t = new ObjectId(d.get("id"));
+                    Document d = searcher.doc(docId);
+                    ObjectId t = new ObjectId(d.get("id"));
 
-                        taskIdList[i] = this.getTask(t);
-                        logger.debug("Task#" + i + "="
-                                + new Gson().toJson(taskIdList[i]));
-                    }
-
-                } catch (Exception e) {
-                    throw new CommandExecuteException(e.getMessage());
+                    taskIdList[i] = this.getTask(t);
+                    logger.debug("Task#" + i + "="
+                            + new Gson().toJson(taskIdList[i]));
                 }
             } else {
                 logger.debug("No results.");
@@ -262,9 +280,11 @@ public class TaskData {
             // reader can only be closed when there
             // is no need to access the documents any more.
             reader.close();
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
+        } catch (DataException e) {
+            throw e;
+        } catch (IOException | ParseException e) {
+            throw new DataException(
+                    "There was an unexpected error, please report this to our techical team.");
         }
         Arrays.sort(taskIdList);
         return taskIdList;
@@ -312,7 +332,7 @@ public class TaskData {
                     + taskActions.get(i).getStatement().getCommand()
                     + " "
                     + taskActions.get(i).getStatement()
-                            .getStatementArgumentsOnly());
+                    .getStatementArgumentsOnly());
             Statement statement = taskActions.get(i).getStatement();
             statement.execute(taskManager, true);
         }
@@ -343,7 +363,7 @@ public class TaskData {
         if (this.taskStateMap.containsKey(id)) {
             if (!(isUndo)) {
                 this.taskStateMap.get(id)
-                        .addActions(new Actions(statement, id));
+                .addActions(new Actions(statement, id));
                 logger.debug("isUndo = false");
             }
             this.taskStateMap.get(id).setFinalTask(task);
@@ -362,6 +382,8 @@ public class TaskData {
      *
      * @param task
      * @param statement
+     * @param isUndo
+     *            is this executing for a undo operation.
      */
     public void updateTaskMap(Task task, Statement statement, boolean isUndo) {
 
@@ -384,13 +406,4 @@ public class TaskData {
         }
     }
 
-    /**
-     * This is a function to check is a task exist in the task map
-     *
-     * @param task
-     * @return boolean that true shows the task exist in the task map
-     */
-    private boolean isTaskExist(Task task) {
-        return this.taskStateMap.containsKey(task.getTitle());
-    }
 }

@@ -75,10 +75,11 @@ public interface ITaskManager {
      *            key that represents the task object
      * @param statement
      * @throws CommandExecuteException
+     * @throws DataException
      *             @
      */
     public Response delete(String taskID, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+            throws CommandExecuteException, DataException;
 
     /**
      * Set the task's status to done
@@ -86,10 +87,11 @@ public interface ITaskManager {
      * @param query
      * @param statement
      * @throws CommandExecuteException
+     * @throws DataException
      *             @
      */
     public Response done(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+            throws CommandExecuteException, DataException;
 
     /**
      * Stops the Terminal from continuing its REPL loop. Function is called when
@@ -147,10 +149,12 @@ public interface ITaskManager {
      *            completed. Is used as an overwrite.
      * @param statement
      * @throws CommandExecuteException
+     * @throws DataException
      *             @
      */
     public Response modify(String query, Task incompleteTask,
-            Statement statement, boolean isUndo) throws CommandExecuteException;
+            Statement statement, boolean isUndo)
+                    throws CommandExecuteException, DataException;
 
     /**
      * Saves the Tasks in the task manager,
@@ -162,8 +166,10 @@ public interface ITaskManager {
      *
      * @param query
      * @param task
+     * @throws DataException
      */
-    public Response search(String query, Statement statement);
+    public Response search(String query, Statement statement)
+            throws DataException;
 
     /**
      * <pre>

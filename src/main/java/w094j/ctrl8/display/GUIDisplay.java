@@ -33,15 +33,21 @@ public class GUIDisplay extends Display {
     private Thread GUIThread;
     private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
 
+    /**
+     *
+     */
     public GUIDisplay() {
         this.guiCore = new GUICore(new GUIDisplayConfig(),
                 Thread.currentThread());
     }
 
+    /**
+     * @param config
+     */
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
-            .debug("Invalid or null config received! Reverting to defaults.");
+                    .debug("Invalid or null config received! Reverting to defaults.");
             this.guiCore = new GUICore(new GUIDisplayConfig(),
                     Thread.currentThread());
         } else {
@@ -64,13 +70,13 @@ public class GUIDisplay extends Display {
 
     @Override
     public void goodbye() {
-        // TODO Auto-generated method stub
+        // TODO Not Implemented Yet
 
     }
 
     @Override
     public <T> T promptUser(Prompt<T> prompt) {
-        // TODO Auto-generated method stub
+        // TODO Not Implemented Yet
         return null;
     }
 
@@ -105,7 +111,7 @@ public class GUIDisplay extends Display {
 
         if (allNull) {
             this.logger
-            .debug("Respose object does not contain any useful information");
+                    .debug("Respose object does not contain any useful information");
         }
     }
 
