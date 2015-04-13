@@ -140,6 +140,7 @@ public class TaskManager implements ITaskManager {
             res.reply = (isOverlapWarning ? "Warning, there is a clash in timings.\n"
                     : "")
                     + task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
+            res.taskList = this.taskData.getTaskList();
         }
         return res;
     }
@@ -298,6 +299,7 @@ public class TaskManager implements ITaskManager {
             if (isUndo == false) {
                 res.reply = task.getTitle()
                         + NormalMessage.DONE_TASK_SUCCESSFUL;
+                res.taskList = this.taskData.getTaskList();
             }
         } else {
             throw new CommandExecuteException(
@@ -422,11 +424,13 @@ public class TaskManager implements ITaskManager {
             if (isUndo == false) {
                 res.reply = task.getTitle()
                         + NormalMessage.MODIFY_TASK_SUCCESSFUL;
+                res.taskList = this.taskData.getTaskList();
             }
         } else {
             throw new CommandExecuteException(
                     CommandExecutionMessage.EXCEPTION_MISSING_TASK);
         }
+
         return res;
 
     }
