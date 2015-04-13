@@ -1,6 +1,10 @@
 package w094j.ctrl8.parse.statement;
 
+
 import java.security.InvalidParameterException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //@author A0112521B
 /**
@@ -10,7 +14,7 @@ import java.security.InvalidParameterException;
 public abstract class StatementOnePosInt extends Statement {
 
     private int positiveInteger;
-
+    private static Logger logger = LoggerFactory.getLogger(StatementOnePosInt.class);
     /**
      * Creates a Statement with parameter. If the parameter is not a positive
      * integer, fail immediately.
@@ -24,8 +28,11 @@ public abstract class StatementOnePosInt extends Statement {
         super(command, statementString);
 
         try {
+            logger.debug(this.getStatementArgumentsOnly()+ "int");
+            
             this.positiveInteger = Integer.parseInt(this
-                    .getStatementArgumentsOnly());
+                    .getStatementArgumentsOnly().trim());
+            
         } catch (Exception e) {
             throw new InvalidParameterException(command
                     + " takes in 1 positive integer parameter only.");
