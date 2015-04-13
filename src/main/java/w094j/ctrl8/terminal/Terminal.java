@@ -103,8 +103,8 @@ public class Terminal {
                 try {
                     Statement statement = this.parser.parse(command);
                     res = statement.execute(this.taskManager, false);
-                    this.display.updateUI(res);
                     this.db.saveToStorage();
+                    this.display.updateUI(res);
                     continueExecution = res.isContinueExecution();
                     continueExecution = true;
                 } catch (DataException | ParseException
