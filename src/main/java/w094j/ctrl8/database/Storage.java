@@ -3,6 +3,7 @@ package w094j.ctrl8.database;
 
 import java.io.IOException;
 
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.pojo.DBfile;
 
 /**
@@ -19,22 +20,23 @@ public abstract class Storage {
      * Read Data from Disk and Google
      *
      * @throws IOException
-     * @throws Exception
+     * @throws DataException
      */
-    abstract public void readData() throws IOException, Exception;
+    abstract public void readData() throws IOException, DataException;
 
     /**
      * Store Data to Disk and Google
      *
      * @throws IOException
-     * @throws Exception
+     * @throws DataException
      */
-    abstract public void storeData() throws IOException, Exception;
+    abstract public void storeData() throws IOException, DataException;
 
     /**
      * Sync with Google
-     *
-     * @throws Exception
+     * 
+     * @throws DataException
+     * @throws IOException
      */
-    abstract public void sync() throws Exception;
+    abstract public void sync() throws IOException, DataException;
 }

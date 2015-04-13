@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.bson.types.ObjectId;
 
+import w094j.ctrl8.exception.DataException;
+
 /**
  * Class encapsulates a task object, which contains all the information required
  * for a task. This includes the following: Task title, start/end date, priority
@@ -321,13 +323,13 @@ public class Task implements Comparable<Task> {
 
     /**
      * Change incomplete task to complete task this.task should have a title
-     *
-     * @throws Exception
+     * 
+     * @throws DataException
      */
-    public void toCompleteTask() throws Exception {
+    public void toCompleteTask() throws DataException {
 
         if ((this.title == null) || this.title.equals("")) {
-            throw new Exception("No title");
+            throw new DataException("No title");
         }
 
         if ((this.location != null) && this.location.equals("")) {
@@ -336,7 +338,8 @@ public class Task implements Comparable<Task> {
 
         if ((this.startDate != null) && (this.endDate != null)) {
             if (this.startDate.after(this.endDate)) {
-                throw new Exception("Start Date shouldn't be after End Date");
+                throw new DataException(
+                        "Start Date shouldn't be after End Date");
             }
         }
 

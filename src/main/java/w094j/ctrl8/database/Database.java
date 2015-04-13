@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 
 import org.bson.types.ObjectId;
 
 import w094j.ctrl8.data.Data;
 import w094j.ctrl8.database.config.Config;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.parse.statement.StatementGsonAdaptor;
 import w094j.ctrl8.pojo.DBfile;
@@ -54,8 +56,6 @@ public class Database implements IDatabase {
      * Gets the current instance of the CLIDisplay.
      *
      * @return the current instance.
-     * @throws IOException
-     * @throws NoSuchFileException
      */
     public static Database getInstance() {
         if (instance == null) {
@@ -67,7 +67,7 @@ public class Database implements IDatabase {
 
     /**
      * @param filePath
-     * @return
+     * @return instance
      * @throws NoSuchFileException
      * @throws IOException
      */
@@ -85,7 +85,8 @@ public class Database implements IDatabase {
     }
 
     @Override
-    public void downloadFromStorage() throws Exception {
+    public void downloadFromStorage() throws GeneralSecurityException,
+            IOException, DataException {
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
         Storage googleCalStorage = new GoogleStorage(this.file, this.gson);
         diskStorage.readData();
@@ -108,10 +109,13 @@ public class Database implements IDatabase {
     /**
      * Save and write file.
      *
-     * @throws Exception
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws DataException
      */
     @Override
-    public void saveToStorage() throws Exception {
+    public void saveToStorage() throws GeneralSecurityException, IOException,
+            DataException {
         Storage googleStorage = new GoogleStorage(this.file, this.gson);
         googleStorage.storeData();
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
