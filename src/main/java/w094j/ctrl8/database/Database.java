@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-import org.bson.types.ObjectId;
-
 import w094j.ctrl8.data.Data;
 import w094j.ctrl8.database.config.Config;
 import w094j.ctrl8.parse.statement.Statement;
@@ -44,7 +42,8 @@ public class Database implements IDatabase {
     public Database(String pathString) throws IOException, NoSuchFileException {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
-        builder.registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter());
+// builder.registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter());
+        builder.enableComplexMapKeySerialization();
         this.gson = builder.setPrettyPrinting().create();
         this.path = this.getOrCreatePath(pathString);
         this.file = this.path.toFile().isFile() ? this.getFile() : new DBfile();
