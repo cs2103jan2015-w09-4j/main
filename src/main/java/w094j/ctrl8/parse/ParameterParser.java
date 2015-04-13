@@ -41,7 +41,7 @@ public class ParameterParser {
     private static final String EXPLICIT_PARAMETER_SHORT_REGEX_FORMAT = "(?:^|\\s)(?:%1$s)(?:(?!\\s(?:%2$s))[^\\s]){1,}";
     private static final String IMPLICIT_DEADLINED_TASK_REGEX_FORMAT = "(?<!\\{[^\\}])(?:%1$s)(?:(?!\\s(?:%2$s)).)*(?![^\\{]{0,}\\})";
     private static final String IMPLICIT_TIMED_TASK_REGEX_FORMAT = "(?<!\\{[^\\}])(?:%2$s)(?:(?!\\s(?:%1$s)).)*(?:%3$s)(?:(?!\\s(?:%1$s)).)*(?![^\\{]{0,}\\})";
-    private static final String IMPLICIT_TITLE_REGEX_FORMAT = "(?:\\s)[^%1$s](?:(?!\\s(?:%2$s)).)+(?![^\\{]{0,}\\})";
+    private static final String IMPLICIT_TITLE_REGEX_FORMAT = "(?:\\s)[^%1$s](?:(?!\\s(?:%2$s)).)*(?![^\\{]{0,}\\})";
     private static final String TIMED_TASK_FROM_KEYWORD = " from ";
     private static final String TIMED_TASK_TO_KEYWORD = " to ";
 
@@ -229,8 +229,8 @@ public class ParameterParser {
                     parameterList, this.explicitShortParameterPattern,
                     this.explicitShortParameterPayloadPattern);
             this.logger
-            .debug("Parameters after parsing explicit short: String("
-                    + parameterString + ")");
+                    .debug("Parameters after parsing explicit short: String("
+                            + parameterString + ")");
         }
 
         if (!parameterString.equals("")) {
@@ -383,7 +383,7 @@ public class ParameterParser {
             case 1 :
                 // one match
                 String deadlinedTaskParameterMatch = implicitDeadlinedTaskMatches
-                        .get(0);
+                .get(0);
 
                 // remove from keyword
                 deadlinedTaskParameterMatch = deadlinedTaskParameterMatch
