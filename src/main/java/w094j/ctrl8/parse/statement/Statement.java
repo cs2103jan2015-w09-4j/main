@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.pojo.Response;
@@ -45,10 +46,12 @@ public abstract class Statement {
      *
      * @param taskManager
      *            to execute the command in.
+     * @throws DataException
      * @throws CommandExecuteException
      *             when the execution of the command has problems.
      */
-    public abstract Response execute(ITaskManager taskManager, boolean isUndo);
+    public abstract Response execute(ITaskManager taskManager, boolean isUndo)
+            throws DataException, CommandExecuteException;
 
     /**
      * @return the command

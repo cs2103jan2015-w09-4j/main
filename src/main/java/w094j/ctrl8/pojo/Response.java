@@ -31,6 +31,14 @@ public class Response {
     private CommandType commandRan;
     private Exception exception;
     private boolean isContinueExecution;
+    private boolean isError;
+
+    /**
+     * Initializes a response that signals that the Statement failed to execute.
+     */
+    public Response() {
+        this.isError = true;
+    }
 
     /**
      * Default constructor. Initializes all properties to be NULL

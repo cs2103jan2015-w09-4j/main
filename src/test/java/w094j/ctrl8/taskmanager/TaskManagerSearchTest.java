@@ -72,7 +72,7 @@ public class TaskManagerSearchTest {
 
         TaskManagerConfig config = new TaskManagerConfig();
         AliasData aliasData = new AliasData();
-        TaskManager.initInstance(config, aliasData, taskData, null);
+        TaskManager.initInstance(config, aliasData, taskData);
 
         fatherTask.setTitle("I am your father.");
         fatherTask.setCategory("NUS");

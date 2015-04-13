@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.Actions;
@@ -40,8 +41,8 @@ import com.google.gson.Gson;
 
 //@author A0112092W
 /**
- * This class contains all the task's data that are needed for task-related operation
- *
+ * This class contains all the task's data that are needed for task-related
+ * operation
  */
 public class TaskData {
 
@@ -280,9 +281,10 @@ public class TaskData {
      * @param index
      * @param taskManager
      * @throws CommandExecuteException
+     * @throws DataException
      */
     public void undoHistory(int index, ITaskManager taskManager)
-            throws CommandExecuteException {
+            throws CommandExecuteException, DataException {
         ArrayList<Actions> actions = this.getActionsList();
         if (index > actions.size()) {
             throw new CommandExecuteException(
@@ -310,7 +312,7 @@ public class TaskData {
                     + taskActions.get(i).getStatement().getCommand()
                     + " "
                     + taskActions.get(i).getStatement()
-                    .getStatementArgumentsOnly());
+                            .getStatementArgumentsOnly());
             Statement statement = taskActions.get(i).getStatement();
             statement.execute(taskManager, true);
         }
@@ -341,7 +343,7 @@ public class TaskData {
         if (this.taskStateMap.containsKey(id)) {
             if (!(isUndo)) {
                 this.taskStateMap.get(id)
-                .addActions(new Actions(statement, id));
+                        .addActions(new Actions(statement, id));
                 logger.debug("isUndo = false");
             }
             this.taskStateMap.get(id).setFinalTask(task);

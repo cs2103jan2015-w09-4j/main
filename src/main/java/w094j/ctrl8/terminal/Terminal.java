@@ -6,9 +6,14 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.database.Database;
 import w094j.ctrl8.database.config.TerminalConfig;
 import w094j.ctrl8.display.Display;
+import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.exception.DataException;
+import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.IParser;
+import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
@@ -16,17 +21,19 @@ import w094j.ctrl8.taskmanager.ITaskManager;
 public class Terminal {
     private static Terminal instance;
     private static Logger logger = LoggerFactory.getLogger(Terminal.class);
+    private Database db;
     private Display display;
     private IParser parser;
     private ITaskManager taskManager;
 
     private Terminal(TerminalConfig terminalConfig, ITaskManager taskManager,
-            Display display, IParser parser) {
+            Display display, IParser parser, Database db) {
         assert (terminalConfig.isValid());
 
         this.taskManager = taskManager;
         this.display = display;
         this.parser = parser;
+        this.db = db;
     }
 
     /**
@@ -46,16 +53,18 @@ public class Terminal {
     /**
      * Creates a Task Manager
      *
+     * @param db
      * @return return the Task manager.
      */
     public static Terminal initInstance(TerminalConfig config,
-            ITaskManager taskManager, Display display, IParser parser) {
+            ITaskManager taskManager, Display display, IParser parser,
+            Database db) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize Terminal as it was initialized before.");
         } else {
             // TO-DO put in config when config is done
-            instance = new Terminal(config, taskManager, display, parser);
+            instance = new Terminal(config, taskManager, display, parser, db);
             logger.debug("terminal is initialized");
         }
         return instance;
@@ -94,10 +103,19 @@ public class Terminal {
                 }
 
                 // Passes string to Statement.java to parse into a command
-                Response res = this.parser.parse(command).execute(
-                        this.taskManager, false);
+                Response res = new Response();
+                try {
+                    Statement statement = this.parser.parse(command);
+                    res = statement.execute(this.taskManager, false);
+                    this.display.updateUI(res);
+                    this.db.saveToStorage();
+                } catch (ParseException pe) {
 
-                this.display.updateUI(res);
+                } catch (DataException de) {
+
+                } catch (CommandExecuteException cee) {
+
+                }
 
                 continueExecution = res.isContinueExecution();
             }

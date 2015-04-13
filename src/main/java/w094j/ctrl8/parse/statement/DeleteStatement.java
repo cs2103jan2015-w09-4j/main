@@ -3,6 +3,7 @@ package w094j.ctrl8.parse.statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
@@ -23,7 +24,8 @@ public class DeleteStatement extends StatementQuery {
     }
 
     @Override
-    public Response execute(ITaskManager taskManager, boolean isUndo) {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException {
 
         return taskManager.delete(this.query, this, isUndo);
     }

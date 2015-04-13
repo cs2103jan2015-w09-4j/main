@@ -1,5 +1,6 @@
 package w094j.ctrl8.parse.statement;
 
+import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
@@ -16,7 +17,8 @@ public class ViewStatement extends StatementNoParams {
     }
 
     @Override
-    public Response execute(ITaskManager taskManager, boolean isUndo) {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException {
         return taskManager.view(this);
     }
 
