@@ -39,6 +39,10 @@ import w094j.ctrl8.taskmanager.ITaskManager;
 import com.google.gson.Gson;
 
 //@author A0112092W
+/**
+ * This class contains all the task's data that are needed for task-related operation
+ *
+ */
 public class TaskData {
 
     private static Logger logger = LoggerFactory.getLogger(TaskData.class);
@@ -49,6 +53,9 @@ public class TaskData {
     // Hash Map that stores the objectID of every task by their task name
 // private HashMap<String, String> taskMap;
 
+    /**
+     * Default constructor of TaskData
+     */
     public TaskData() {
 // this.taskMap = new HashMap<String, String>();
         this.taskStateMap = new HashMap<ObjectId, TaskState>();

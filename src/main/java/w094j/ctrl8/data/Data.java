@@ -2,7 +2,7 @@ package w094j.ctrl8.data;
 
 
 /**
- * TODO
+ * The Data class contains two types of data which is AliasData and TaskData
  */
 public class Data {
 
@@ -10,14 +10,14 @@ public class Data {
     private TaskData task;
 
     /**
-     * TODO
+     * Default constructor of Data
      */
     public Data() {
         this.task = new TaskData();
         this.alias = new AliasData();
     }
 
-    /**
+    /** 
      * @return the alias
      */
     public AliasData getAlias() {
@@ -39,7 +39,7 @@ public class Data {
         this.alias = alias;
     }
 
-    /**
+    /** 
      * @param task
      *            the task to set
      */

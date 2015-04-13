@@ -7,14 +7,14 @@ import java.util.Set;
 import w094j.ctrl8.database.IStorableElement;
 import w094j.ctrl8.exception.DataException;
 
-/**
+/** This class contains all data about alias that are needed in alias-related operation
  */
 public class AliasData implements IStorableElement {
 
     private Map<String, String> aliasMap;
 
     /**
-     *
+     * Default constructor of AliasData
      */
     public AliasData() {
         this.aliasMap = new HashMap<String, String>();
@@ -52,7 +52,7 @@ public class AliasData implements IStorableElement {
         }
     }
 
-    /**
+    /** Return the Alias Map
      * @return the aliasMap
      */
     public Map<String, String> getAliasMap() {
@@ -74,7 +74,10 @@ public class AliasData implements IStorableElement {
         }
         return false;
     }
-
+    
+    /** Check whether the data structure is valid
+     * return isValid
+     */
     @Override
     public boolean isValid() {
         // checks the validity of the data structure
@@ -89,7 +92,7 @@ public class AliasData implements IStorableElement {
         return true;
     }
 
-    /**
+    /** Set the alias map to aliasMap
      * @param aliasMap
      *            the aliasMap to set
      */

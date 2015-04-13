@@ -11,6 +11,8 @@ import w094j.ctrl8.terminal.Terminal;
 
 /**
  * Factory
+ * This class will initialize all instance of Database, Config, Parser, Display, TaskManager and Terminal.
+ * 
  */
 public class Factory {
 
@@ -35,7 +37,12 @@ public class Factory {
         Terminal.initInstance(config.getTerminal(), taskManager, display,
                 parser);
     }
+    
 
+    /** Return the instance of this Factory class
+     * @return instance
+     * @throws IOException
+     */
     public static Factory getInstance() throws IOException {
         if (instance == null) {
             throw new RuntimeException(
@@ -43,7 +50,13 @@ public class Factory {
         }
         return instance;
     }
-
+    /** Initialize the instance of Factory class and return the instance
+     *  
+     * @param filePath
+     * @return instance
+     * @throws IOException
+     */
+    
     public static Factory initInstance(String filePath) throws IOException {
         if (instance != null) {
             throw new RuntimeException(
