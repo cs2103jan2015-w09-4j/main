@@ -22,9 +22,13 @@ public class Factory {
      * @throws IOException
      */
     private Factory(String filePath) throws IOException {
-
-        Database db = Database.initInstance(filePath);
-
+        Database db = null;
+        try {
+            db = Database.initInstance(filePath);
+        } catch (Exception e) {
+            System.out
+            .println("Database corrupted, delete config file and retry.");
+        }
         Config config = db.getConfig();
 
         Parser parser = Parser.initInstance(config.getParser(), db.getData()

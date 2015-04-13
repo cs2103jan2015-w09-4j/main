@@ -44,7 +44,6 @@ public class Database implements IDatabase {
     public Database(String pathString) throws IOException, NoSuchFileException {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
-// builder.registerTypeAdapter(ObjectId.class, new ObjectIdTypeAdapter());
         builder.enableComplexMapKeySerialization();
         this.gson = builder.setPrettyPrinting().create();
         this.path = this.getOrCreatePath(pathString);
@@ -85,7 +84,7 @@ public class Database implements IDatabase {
 
     @Override
     public void downloadFromStorage() throws GeneralSecurityException,
-            IOException, DataException {
+    IOException, DataException {
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
         Storage googleCalStorage = new GoogleStorage(this.file, this.gson);
         diskStorage.readData();
@@ -114,7 +113,7 @@ public class Database implements IDatabase {
      */
     @Override
     public void saveToStorage() throws GeneralSecurityException, IOException,
-            DataException {
+    DataException {
         Storage googleStorage = new GoogleStorage(this.file, this.gson);
         googleStorage.storeData();
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
