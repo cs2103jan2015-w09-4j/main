@@ -8,8 +8,8 @@ import w094j.ctrl8.database.IStorableElement;
  */
 public class GoogleStorageConfig implements IStorableElement {
 
-    private static Boolean AUTO_DOWNLOAD_AFTER_SAVE_DEFAULT = true;
-    private static Boolean SYNC_WITH_GOOGLE_DEFAULT = true;
+    private static Boolean AUTO_DOWNLOAD_AFTER_SAVE_DEFAULT = false;
+    private static Boolean SYNC_WITH_GOOGLE_DEFAULT = false;
     private Boolean autoDownloadAfterSave;
     private Boolean syncWithGoogle;
 

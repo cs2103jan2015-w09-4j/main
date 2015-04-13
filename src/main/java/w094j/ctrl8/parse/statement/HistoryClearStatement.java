@@ -11,21 +11,21 @@ public class HistoryClearStatement extends StatementOnePosInt {
 
     private static Logger logger = LoggerFactory
             .getLogger(HistoryClearStatement.class);
-    private String query;
+    private int query;
 
     /**
      * @param statementString
      */
     public HistoryClearStatement(String statementString) {
         super(CommandType.HISTORY_CLEAR, statementString);
-        this.query = this.getStatementArgumentsOnly();
+        this.query = this.getPositiveInteger();
         logger.debug("Valid history-clear Command, query \"" + statementString
                 + "\"");
     }
 
     @Override
     public Response execute(ITaskManager taskManager, boolean isUndo) {
-        return taskManager.historyClear(Integer.parseInt(this.query), this);
+        return taskManager.historyClear(this.query, this);
     }
 
 }

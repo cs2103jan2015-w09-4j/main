@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -226,6 +227,15 @@ public class TaskData {
             // The same analyzer should be used for indexing and searching
             Analyzer analyzer = new SimpleAnalyzer();
 
+            Integer parsedInt = null;
+            try {
+                parsedInt = Integer.parseInt(query);
+            } catch (NumberFormatException npe) {
+            }
+            if (parsedInt != null) {
+                analyzer = new StandardAnalyzer();
+            }
+
             // 1. create the index
             Directory index = new RAMDirectory();
 
@@ -285,7 +295,7 @@ public class TaskData {
             throw new DataException(
                     "There was an unexpected error, please report this to our techical team.");
         }
-        if(taskIdList!=null){
+        if (taskIdList != null) {
             Arrays.sort(taskIdList);
         }
         return taskIdList;

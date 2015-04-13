@@ -318,7 +318,6 @@ public class TaskManager implements ITaskManager {
 
         // stop loop
         res.setContinueExecution(false);
-        System.exit(0);
 
         return res;
     }
@@ -344,13 +343,19 @@ public class TaskManager implements ITaskManager {
      */
     @Override
     public Response historyClear(int index, Statement statement) {
+
+        Response res = new Response(statement.getCommand());
+        if (this.taskData.getActionsList().size() <= index) {
+            res.reply = NormalMessage.HISTORY_INDEX_OUT_OF_BOUND;
+            return res;
+        }
+
         // creates an actions that contains the deleted history
         Actions actionsRemoved = this.taskData.deleteHistory(index);
         ArrayList<Actions> temp = new ArrayList<Actions>();
         temp.add(actionsRemoved);
 
         // display it to user
-        Response res = new Response(statement.getCommand());
         res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
         res.actions = temp;
 
@@ -388,7 +393,7 @@ public class TaskManager implements ITaskManager {
     @Override
     public Response modify(String query, Task incompleteTask,
             Statement statement, boolean isUndo)
-            throws CommandExecuteException, DataException {
+                    throws CommandExecuteException, DataException {
         Response res = new Response(statement.getCommand());
         // search the task with a query
         Task[] taskIdList = this.taskData.search(query);

@@ -104,22 +104,19 @@ public class Terminal {
                     Statement statement = this.parser.parse(command);
                     res = statement.execute(this.taskManager, false);
                     this.db.saveToStorage();
-                    this.display.updateUI(res);
                     continueExecution = res.isContinueExecution();
-                    continueExecution = true;
                 } catch (DataException | ParseException
                         | CommandExecuteException recoverableException) {
                     res.setException(recoverableException);
-                    this.display.updateUI(res);
                 } catch (GeneralSecurityException | IOException irrecoverableException) {
-                    continueExecution = true;
+                    continueExecution = false;
                     res.setException(irrecoverableException);
-                    this.display.updateUI(res);
                 } catch (Exception e) {
-                    continueExecution = true;
+                    continueExecution = false;
                     res.setException(e);
-                    this.display.updateUI(res);
                 }
+                this.display.updateUI(res);
+
             }
         }
     }
