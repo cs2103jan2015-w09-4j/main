@@ -106,20 +106,20 @@ public class Terminal {
                     this.display.updateUI(res);
                     this.db.saveToStorage();
                     continueExecution = res.isContinueExecution();
+                    continueExecution = true;
                 } catch (DataException | ParseException
                         | CommandExecuteException recoverableException) {
                     res.setException(recoverableException);
                     this.display.updateUI(res);
                 } catch (GeneralSecurityException | IOException irrecoverableException) {
-                    continueExecution = false;
+                    continueExecution = true;
                     res.setException(irrecoverableException);
                     this.display.updateUI(res);
                 } catch (Exception e) {
-                    continueExecution = false;
+                    continueExecution = true;
                     res.setException(e);
                     this.display.updateUI(res);
                 }
-
             }
         }
     }

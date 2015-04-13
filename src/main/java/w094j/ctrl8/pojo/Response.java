@@ -30,7 +30,7 @@ public class Response {
     public Task[] taskList;
     private CommandType commandRan;
     private Exception exception;
-    private boolean isContinueExecution;
+    private boolean isContinueExecution = true;
     private boolean isError;
 
     /**
@@ -38,6 +38,7 @@ public class Response {
      */
     public Response() {
         this.isError = true;
+        this.isContinueExecution = true;
     }
 
     /**

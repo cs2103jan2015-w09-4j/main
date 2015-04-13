@@ -316,6 +316,8 @@ public class TaskManager implements ITaskManager {
 
         // stop loop
         res.setContinueExecution(false);
+        System.exit(0);
+
         return res;
     }
 
@@ -384,7 +386,7 @@ public class TaskManager implements ITaskManager {
     @Override
     public Response modify(String query, Task incompleteTask,
             Statement statement, boolean isUndo)
-                    throws CommandExecuteException, DataException {
+            throws CommandExecuteException, DataException {
         Response res = new Response(statement.getCommand());
         // search the task with a query
         Task[] taskIdList = this.taskData.search(query);
