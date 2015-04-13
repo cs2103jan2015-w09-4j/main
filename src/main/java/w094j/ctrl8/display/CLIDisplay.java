@@ -515,7 +515,11 @@ public class CLIDisplay extends Display {
 
         return table;
     }
-
+    
+    /**
+     *  Output the actions to user in appropiate way
+     * @param actions
+     */
     private void outputActions(ArrayList<Actions> actions) {
         if (actions.size() == 0) {
             System.out.println("No actions found");
@@ -529,10 +533,15 @@ public class CLIDisplay extends Display {
         }
 
     }
-
+    
+    /**
+     *  Output the alias data to user in appropiate way
+     * @param alias
+     */
     private void outputAliases(AliasData alias) {
         Map<String, String> aliases = alias.getAliasMap();
-        if (aliases.size() == 0) {
+        if (aliases.size
+                () == 0) {
             System.out.println(NormalMessage.ALIAS_MAP_EMPTY);
         }
         for (int i = 0; i < aliases.size();) {
