@@ -1,5 +1,6 @@
 package w094j.ctrl8.parse.statement;
 
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0065517A
@@ -18,8 +19,8 @@ public class ExitStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo) {
-        taskManager.exit();
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
+        return taskManager.exit(this);
     }
 
 }

@@ -7,11 +7,11 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.ParameterParser;
 import w094j.ctrl8.parse.Parser;
 import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
@@ -70,10 +70,10 @@ public class ModifyStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
         // Statement to be added
-        taskManager.modify(this.query, new Task(this.task), this, isUndo);
+        return taskManager
+                .modify(this.query, new Task(this.task), this, isUndo);
 
     }
 }

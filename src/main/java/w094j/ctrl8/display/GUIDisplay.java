@@ -22,7 +22,7 @@ import w094j.ctrl8.pojo.Task;
  * thread to prevent the main thread from freezing up due to the nature of
  * JavaFX. Instead, thread notifications are used to notify the main thread (who
  * holds GUIDisplay) when it is initialised and ready for interaction.
- * 
+ *
  * <pre>
  * This implementation is incomplete and unstable.
  * </pre>
@@ -41,7 +41,7 @@ public class GUIDisplay extends Display {
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
-                    .debug("Invalid or null config received! Reverting to defaults.");
+            .debug("Invalid or null config received! Reverting to defaults.");
             this.guiCore = new GUICore(new GUIDisplayConfig(),
                     Thread.currentThread());
         } else {
@@ -60,6 +60,18 @@ public class GUIDisplay extends Display {
     @Override
     public InputStream getInputStream() {
         return this.guiCore.getInputStream();
+    }
+
+    @Override
+    public void goodbye() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public <T> T promptUser(Prompt<T> prompt) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /*
@@ -93,8 +105,14 @@ public class GUIDisplay extends Display {
 
         if (allNull) {
             this.logger
-                    .debug("Respose object does not contain any useful information");
+            .debug("Respose object does not contain any useful information");
         }
+    }
+
+    @Override
+    public void welcome() {
+        // TODO Auto-generated method stub
+
     }
 
     // @author A0110787-reused

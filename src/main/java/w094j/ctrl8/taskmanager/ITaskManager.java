@@ -1,9 +1,9 @@
 package w094j.ctrl8.taskmanager;
 
-import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.parse.statement.CommandType;
 import w094j.ctrl8.parse.statement.Statement;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
 //@author A0110787A
@@ -21,15 +21,14 @@ public interface ITaskManager {
      *            Task object. Expects a well defined Task, otherwise throws
      *            CommandExecuteException
      * @param statement
-     * @throws CommandExecuteException
+     *            @
      */
-    public void add(Task task, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+    public Response add(Task task, Statement statement, boolean isUndo);
 
     /**
      * View all aliases in the database.
      */
-    public void alias();
+    public Response alias(Statement statement);
 
     /**
      * adding of alias from user
@@ -37,10 +36,10 @@ public interface ITaskManager {
      * @param alias
      * @param value
      * @param statement
-     * @throws CommandExecuteException
+     *            @
      */
-    public void aliasAdd(String alias, String value, Statement statement,
-            boolean isUndo) throws CommandExecuteException;
+    public Response aliasAdd(String alias, String value, Statement statement,
+            boolean isUndo);
 
     /**
      * delete a alias
@@ -49,8 +48,8 @@ public interface ITaskManager {
      * @param statement
      * @throws DataException
      */
-    public void aliasDelete(String query, Statement statement, boolean isUndo)
-            throws DataException;
+    public Response aliasDelete(String query, Statement statement,
+            boolean isUndo);
 
     /**
      * <pre>
@@ -65,31 +64,25 @@ public interface ITaskManager {
      * @param taskID
      *            key that represents the task object
      * @param statement
-     * @throws CommandExecuteException
+     *            @
      */
-    public void delete(String taskID, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
-
-    public void displayNextCommandRequest();
+    public Response delete(String taskID, Statement statement, boolean isUndo);
 
     /**
      * Set the task's status to done
      *
      * @param query
      * @param statement
-     * @throws CommandExecuteException
+     *            @
      */
-    public void done(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+    public Response done(String query, Statement statement, boolean isUndo);
 
     /**
      * Stops the Terminal from continuing its REPL loop. Function is called when
      * an exit statement is executed. Performs a cleanup before terminating the
      * terminal See Issue #74 on github
      */
-    public void exit();
-
-    public boolean getContinueExecution();
+    public Response exit(Statement statement);
 
     /**
      * Generates information to assist the user in understanding the available
@@ -97,7 +90,8 @@ public interface ITaskManager {
      *
      * @param command
      */
-    public void help(CommandType command); // TODO add parameter to support help
+    public Response help(CommandType command, Statement statement); // TODO add
+// parameter to support help
 // for
 // specific
 // commands
@@ -107,15 +101,15 @@ public interface ITaskManager {
      *
      * @param index
      */
-    public void historyClear(int parseInt);
+    public Response historyClear(int parseInt, Statement statement);
 
     /**
      * undo the action with index in history
      *
      * @param index
-     * @throws CommandExecuteException
+     *            @
      */
-    public void historyUndo(int parseInt) throws CommandExecuteException;
+    public Response historyUndo(int parseInt, Statement statement);
 
     /**
      * <pre>
@@ -135,18 +129,10 @@ public interface ITaskManager {
      *            a Task that may not neccessarily have all its fields
      *            completed. Is used as an overwrite.
      * @param statement
-     * @throws CommandExecuteException
+     *            @
      */
-    public void modify(String query, Task incompleteTask, Statement statement,
-            boolean isUndo) throws CommandExecuteException;
-
-    /**
-     * Instructs the data store to dump its information into an external file.
-     * This saves an instance of the list of Tasks that the Terminal has stored
-     * so that data can be recovered in the event of unexpected program
-     * termination.
-     */
-    public void pushData();
+    public Response modify(String query, Task incompleteTask,
+            Statement statement, boolean isUndo);
 
     /**
      * TODO
@@ -154,7 +140,7 @@ public interface ITaskManager {
      * @param query
      * @param task
      */
-    public String[] search(String query);
+    public Response search(String query, Statement statement);
 
     /**
      * <pre>
@@ -163,16 +149,12 @@ public interface ITaskManager {
      *
      * Displays to the user, the list of Tasks that are in the data store. May
      * be an incomplete list if there are too many tasks.
-     *
-     * @throws CommandExecuteException
      */
-    public void view() throws CommandExecuteException;
+    public Response view(Statement statement);
 
     /**
      * view the history of actions
-     *
-     * @throws CommandExecuteException
      */
-    public void viewHistory() throws CommandExecuteException;
+    public Response viewHistory(Statement statement);
 
 }

@@ -31,7 +31,7 @@ public class Factory {
         Display display = Display.initInstance(config.getDisplay());
         TaskManager taskManager = TaskManager.initInstance(config
                 .getTaskManager(), db.getData().getAlias(), db.getData()
-                .getTask(), display, db);
+                .getTask(), db);
         Terminal.initInstance(config.getTerminal(), taskManager, display,
                 parser);
     }

@@ -1,6 +1,5 @@
 package w094j.ctrl8.terminal;
 
-import java.security.InvalidParameterException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -9,10 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import w094j.ctrl8.database.config.TerminalConfig;
 import w094j.ctrl8.display.Display;
-import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.DataException;
-import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.parse.IParser;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
@@ -82,17 +77,12 @@ public class Terminal {
         // Flag that determines whether terminal continues to run or not
         // Default: true
         boolean continueExecution = true;
-        Response res = new Response();
 
         String command = null;
 
-        res.reply = NormalMessage.START_MESSAGE;
-        this.display.updateUI(res);
-        res.reply = NormalMessage.WELCOME_MESSAGE;
-        this.display.updateUI(res);
+        this.display.welcome();
         try (Scanner scanner = new Scanner(this.display.getInputStream())) {
             while (continueExecution) {
-                this.taskManager.displayNextCommandRequest();
                 this.display.getInputStream();
 
                 try {
@@ -104,22 +94,12 @@ public class Terminal {
                 }
 
                 // Passes string to Statement.java to parse into a command
-                try {
-                    this.parser.parse(command).execute(this.taskManager, false);
-                } catch (InvalidParameterException e) {
-                    res.reply = e.getMessage();
-                    this.display.updateUI(res);
-                } catch (CommandExecuteException e) {
-                    res.reply = e.getMessage();
-                    this.display.updateUI(res);
-                } catch (ParseException e) {
-                    res.reply = e.getMessage();
-                    this.display.updateUI(res);
-                } catch (DataException e) {
-                    res.reply = e.getMessage();
-                    this.display.updateUI(res);
-                }
-                continueExecution = this.taskManager.getContinueExecution();
+                Response res = this.parser.parse(command).execute(
+                        this.taskManager, false);
+
+                this.display.updateUI(res);
+
+                continueExecution = res.isContinueExecution();
             }
         }
     }

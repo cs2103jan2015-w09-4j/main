@@ -31,7 +31,7 @@ public abstract class Display {
 
     /**
      * Initialises an instance of Display given a displayConfig
-     * 
+     *
      * @param displayConfig
      * @return
      */
@@ -60,13 +60,35 @@ public abstract class Display {
     public abstract InputStream getInputStream();
 
     /**
-     * Informs the UI to update itself with the response object provided. Refer
-     * to w094j.ctrl8.pojo.Response.java for more information.
-     * 
+     * Informs the UI to display a goodbye message to the user.
+     */
+    public abstract void goodbye();
+
+    /**
+     * Prompts the user for input and gets an response.
+     *
+     * @param <T>
+     *            Type of object to return from the user input.
+     * @param prompt
+     * @return The parsed result.
+     */
+    public abstract <T> T promptUser(Prompt<T> prompt);
+
+    /**
+     * Informs the UI to update itself with the response object provided after
+     * an executation of a statement. If no commands are detected, then it will
+     * just print the task table. Refer to w094j.ctrl8.pojo.Response.java for
+     * more information.
+     *
      * @param res
      *            The response POJO which lists all the variables that a
      *            response may contain.
      */
     public abstract void updateUI(Response res);
+
+    /**
+     * Informs the UI to display a welcome message to the user.
+     */
+    public abstract void welcome();
 
 }

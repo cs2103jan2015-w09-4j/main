@@ -22,6 +22,9 @@ import w094j.ctrl8.parse.statement.Statement;
 import w094j.ctrl8.pojo.Actions;
 import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
+import w094j.ctrl8.pojo.Task.TaskType;
+
+import com.google.gson.Gson;
 
 /**
  * Class implements Display Interface as a simple CLI
@@ -42,7 +45,7 @@ public class CLIDisplay extends Display {
     private static final String START_SEPERATOR = "| ";
     private static final String TIMED_TASK_NAME = "Events";
     private static final char TITLE_LINE_COMPONENT = '=';
-    private CLIDisplayConfig cliDisplayConfig;
+    private CLIDisplayConfig config;
     private InputStream inStream;
 
     // @author A0110787A
@@ -53,39 +56,34 @@ public class CLIDisplay extends Display {
      * Public constructor for a CLI Display
      */
     CLIDisplay(CLIDisplayConfig cliDisplayConfig) {
-        this.cliDisplayConfig = cliDisplayConfig;
+        this.config = cliDisplayConfig;
     }
 
     public static void main(String[] args) throws OutputExecuteException {
         Task fatherTask = new Task();
-        fatherTask.setId("0");
         fatherTask.setTitle("I am your father.");
         fatherTask.setCategory("NUS");
 
         Task motherTask = new Task();
-        motherTask.setId("1");
         motherTask.setTitle("I am your mother.");
         motherTask.setCategory("NUS");
 
         Task sisterTask = new Task();
-        sisterTask.setId("2");
         sisterTask.setTitle("I am your sister.");
         sisterTask.setCategory("FAM");
 
         Task brotherTask = new Task();
-        brotherTask.setId("3");
         brotherTask.setTitle("I am your brother.");
         brotherTask.setCategory("FAM");
         brotherTask.setDescription("NUS");
 
         Task aTask = new Task();
-        aTask.setId("4");
         aTask.setTitle("A NUS");
         aTask.setCategory("FAM");
 
         CLIDisplay test = new CLIDisplay(new CLIDisplayConfig());
         Task[] tasks = { fatherTask, motherTask, sisterTask, brotherTask, aTask };
-        test.outputTask("YO", tasks);
+        test.outputTask("YO", tasks, TaskType.TIMED);
 
     }
 
@@ -156,9 +154,9 @@ public class CLIDisplay extends Display {
         for (int i = 0; i < lengths.length; i++) {
             formats[i] = "%1$"
                     + lengths[i]
-                    + "s"
-                    + ((i + 1) == lengths.length ? END_SEPERATOR + "\n"
-                            : BETWEEN_SEPERATOR);
+                            + "s"
+                            + ((i + 1) == lengths.length ? END_SEPERATOR + "\n"
+                                    : BETWEEN_SEPERATOR);
         }
 
         // Print 'em out
@@ -196,6 +194,12 @@ public class CLIDisplay extends Display {
 
     }
 
+    @Override
+    public void goodbye() {
+        // TODO Auto-generated method stub
+
+    }
+
     public void outputMessage(String message) {
         // @author A0110787A
         /*
@@ -214,7 +218,7 @@ public class CLIDisplay extends Display {
      * @param taskList
      * @throws OutputExecuteException
      */
-    public void outputTask(String title, Task[] taskList)
+    public void outputTask(String title, Task[] taskList, TaskType taskType)
             throws OutputExecuteException {
 
         System.out.println();
@@ -297,13 +301,12 @@ public class CLIDisplay extends Display {
         System.out.println(activeColumnSize);
 
         String[][] table = this.initTable(taskList.length + 1, isActiveColumn,
-                activeColumnSize);
+                activeColumnSize, taskType);
         for (String[] element : table) {
             System.out.println(Arrays.toString(element));
         }
         int iteration = taskList.length + 1;
-        DateFormat df = new SimpleDateFormat(
-                this.cliDisplayConfig.getDateFormat());
+        DateFormat df = new SimpleDateFormat(this.config.getDateFormat());
         table = this.initNullTaskTable(table, 1, activeColumnSize);
 
         for (int i = 1; i < iteration; i++) {
@@ -380,9 +383,9 @@ public class CLIDisplay extends Display {
                             break;
                         case 8 :
                             if (taskList[i - 1].getStatus()) {
-                                table[i][index] = "Done";
+                                table[i][index] = "Yes";
                             } else {
-                                table[i][index] = "Not Done Yet";
+                                table[i][index] = "-";
                             }
                             break;
                     }
@@ -395,7 +398,16 @@ public class CLIDisplay extends Display {
     }
 
     @Override
+    public <T> T promptUser(Prompt<T> prompt) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public void updateUI(Response res) {
+
+        logger.debug("Updating Response(" + new Gson().toJson(res) + ")");
+
         if (res.reply != null) {
             this.outputMessage(res.reply);
         }
@@ -426,17 +438,20 @@ public class CLIDisplay extends Display {
             try {
                 if (floatingTasks.size() > 0) {
                     this.outputTask(FLOATING_TASK_NAME, floatingTasks
-                            .toArray(new Task[floatingTasks.size()]));
+                            .toArray(new Task[floatingTasks.size()]),
+                            TaskType.FLOATING);
                     System.out.println();
                 }
                 if (deadlinedTasks.size() > 0) {
                     this.outputTask(DEADLINED_TASK_NAME, deadlinedTasks
-                            .toArray(new Task[deadlinedTasks.size()]));
+                            .toArray(new Task[deadlinedTasks.size()]),
+                            TaskType.DEADLINE);
                     System.out.println();
                 }
                 if (timedTasks.size() > 0) {
                     this.outputTask(TIMED_TASK_NAME,
-                            timedTasks.toArray(new Task[timedTasks.size()]));
+                            timedTasks.toArray(new Task[timedTasks.size()]),
+                            TaskType.TIMED);
                 }
             } catch (OutputExecuteException e) {
                 e.printStackTrace();
@@ -451,6 +466,22 @@ public class CLIDisplay extends Display {
             this.outputActions(res.actions);
         }
 
+        if (res.getCommandRan() == null) {
+            System.out.println("ERROR");
+            throw new RuntimeException();
+        } else {
+            System.out.print(String.format(this.config.getPromptDefault(),
+                    this.config.getAppName()));
+        }
+
+    }
+
+    @Override
+    public void welcome() {
+        System.out.println(String.format(this.config.getWelcomeMessage(),
+                this.config.getAppName()));
+        System.out.print(String.format(this.config.getPromptDefault(),
+                this.config.getAppName()));
     }
 
     private String[][] initNullTaskTable(String[][] table, int taskNumber,
@@ -467,7 +498,7 @@ public class CLIDisplay extends Display {
     // initialize the table with adding the first row for each of the task's
 // properties
     private String[][] initTable(int taskNumber, boolean[] isActiveColumn,
-            int activeColumnSize) {
+            int activeColumnSize, TaskType taskType) {
         String[][] table = new String[taskNumber][activeColumnSize];
         int index = 0;
         for (int x = 0; x < isActiveColumn.length; x++) {
@@ -486,11 +517,15 @@ public class CLIDisplay extends Display {
                         index++;
                         break;
                     case 3 :
-                        table[0][index] = "Start Date";
+                        table[0][index] = "From";
                         index++;
                         break;
                     case 4 :
-                        table[0][index] = "End Date";
+                        if (taskType.equals(TaskType.DEADLINE)) {
+                            table[0][index] = "Due";
+                        } else {
+                            table[0][index] = "To";
+                        }
                         index++;
                         break;
                     case 5 :
@@ -506,7 +541,7 @@ public class CLIDisplay extends Display {
                         index++;
                         break;
                     case 8 :
-                        table[0][index] = "Status";
+                        table[0][index] = "Done";
                         index++;
                         break;
                 }
@@ -515,9 +550,10 @@ public class CLIDisplay extends Display {
 
         return table;
     }
-    
+
     /**
-     *  Output the actions to user in appropiate way
+     * Output the actions to user in appropiate way
+     *
      * @param actions
      */
     private void outputActions(ArrayList<Actions> actions) {
@@ -533,15 +569,15 @@ public class CLIDisplay extends Display {
         }
 
     }
-    
+
     /**
-     *  Output the alias data to user in appropiate way
+     * Output the alias data to user in appropiate way
+     *
      * @param alias
      */
     private void outputAliases(AliasData alias) {
         Map<String, String> aliases = alias.getAliasMap();
-        if (aliases.size
-                () == 0) {
+        if (aliases.size() == 0) {
             System.out.println(NormalMessage.ALIAS_MAP_EMPTY);
         }
         for (int i = 0; i < aliases.size();) {

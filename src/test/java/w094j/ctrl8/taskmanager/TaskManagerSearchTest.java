@@ -3,7 +3,6 @@ package w094j.ctrl8.taskmanager;
 
 import static org.junit.Assert.assertArrayEquals;
 
-import java.io.InputStream;
 import java.util.Arrays;
 
 import org.junit.BeforeClass;
@@ -16,9 +15,7 @@ import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.data.TaskData;
 import w094j.ctrl8.database.config.ParserConfig;
 import w094j.ctrl8.database.config.TaskManagerConfig;
-import w094j.ctrl8.display.Display;
 import w094j.ctrl8.parse.Parser;
-import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
 /**
@@ -27,21 +24,27 @@ import w094j.ctrl8.pojo.Task;
 @RunWith(value = Parameterized.class)
 public class TaskManagerSearchTest {
 
-    private static ITaskManager taskManager;
+    private static Task aTask = new Task();
+    private static Task brotherTask = new Task();
+    private static Task fatherTask = new Task();
+    private static Task motherTask = new Task();
+    private static Task sisterTask = new Task();
 
-    private String[] objectIdExpected;
+    private static TaskData taskData = new TaskData();
     private String searchQuery;
+    private Task[] taskArrayExpected;
 
     /**
      * Creates a test case with the search query, and retrieve the array of
      * objectIds expected
      *
      * @param searchQuery
-     * @param objectIdExpected
+     * @param taskArrayExpected
      */
-    public TaskManagerSearchTest(String searchQuery, String[] objectIdExpected) {
+    public TaskManagerSearchTest(String searchQuery, Task[] taskArrayExpected) {
         this.searchQuery = searchQuery;
-        this.objectIdExpected = objectIdExpected;
+        this.taskArrayExpected = taskArrayExpected;
+        Arrays.sort(this.taskArrayExpected);
     }
 
     /**
@@ -52,12 +55,12 @@ public class TaskManagerSearchTest {
     // @formatter:off
     public static Iterable<Object[]> data() {
         return Arrays.asList(new Object[][] {
-        /**
-         * Normal tests
-         */
-        { "I am", new String[] { "0", "1", "2", "3" } },
-                { "A", new String[] { "4" } }, { "a", new String[] { "4" } },
-                { "NUS", new String[] { "4" } }
+                /**
+                 * Normal tests
+                 */
+                { "I am", new Task[] { fatherTask, motherTask, sisterTask, brotherTask } },
+                { "A", new Task[] { aTask } },
+                { "a", new Task[] { aTask } }
 
         });
     }
@@ -69,49 +72,25 @@ public class TaskManagerSearchTest {
 
         TaskManagerConfig config = new TaskManagerConfig();
         AliasData aliasData = new AliasData();
-        TaskData taskData = new TaskData();
-        TaskManager.initInstance(config, aliasData, taskData, new Display() {
-            @Override
-            public InputStream getInputStream() {
-                // TODO Auto-generated method stub
-                return null;
-            }
+        TaskManager.initInstance(config, aliasData, taskData, null);
 
-            @Override
-            public void updateUI(Response res) {
-                // TODO Auto-generated method stub
-
-            }
-        }, null);
-        taskManager = TaskManager.getInstance();
-
-        Task fatherTask = new Task();
-        fatherTask.setId("0");
         fatherTask.setTitle("I am your father.");
         fatherTask.setCategory("NUS");
         taskData.updateTaskMap(fatherTask, null, false);
 
-        Task motherTask = new Task();
-        motherTask.setId("1");
         motherTask.setTitle("I am your mother.");
         motherTask.setCategory("NUS");
         taskData.updateTaskMap(motherTask, null, false);
 
-        Task sisterTask = new Task();
-        sisterTask.setId("2");
         sisterTask.setTitle("I am your sister.");
         sisterTask.setCategory("FAM");
         taskData.updateTaskMap(sisterTask, null, false);
 
-        Task brotherTask = new Task();
-        brotherTask.setId("3");
         brotherTask.setTitle("I am your brother.");
         brotherTask.setCategory("FAM");
         brotherTask.setDescription("NUS");
         taskData.updateTaskMap(brotherTask, null, false);
 
-        Task aTask = new Task();
-        aTask.setId("4");
         aTask.setTitle("A NUS");
         aTask.setCategory("FAM");
         taskData.updateTaskMap(aTask, null, false);
@@ -123,8 +102,8 @@ public class TaskManagerSearchTest {
     @Test
     public void testDeadline() {
 
-        assertArrayEquals(this.taskManager.search(this.searchQuery),
-                this.objectIdExpected);
+        assertArrayEquals(this.taskData.search(this.searchQuery),
+                this.taskArrayExpected);
     }
 
 }

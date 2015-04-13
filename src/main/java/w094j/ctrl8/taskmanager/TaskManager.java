@@ -2,26 +2,9 @@ package w094j.ctrl8.taskmanager;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +12,7 @@ import w094j.ctrl8.data.AliasData;
 import w094j.ctrl8.data.TaskData;
 import w094j.ctrl8.database.IDatabase;
 import w094j.ctrl8.database.config.TaskManagerConfig;
-import w094j.ctrl8.display.Display;
 import w094j.ctrl8.exception.CommandExecuteException;
-import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.CommandExecutionMessage;
 import w094j.ctrl8.message.HelpMessage;
 import w094j.ctrl8.message.NormalMessage;
@@ -62,11 +43,8 @@ public class TaskManager implements ITaskManager {
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
     private AliasData aliasData;
-    private boolean continueExecution = true;
     // Storage object (External)
     private IDatabase database;
-    // Interface supporting interaction with user
-    private Display display;
     private TaskData taskData;
 
     /**
@@ -89,9 +67,8 @@ public class TaskManager implements ITaskManager {
      * @param database
      */
     private TaskManager(TaskManagerConfig config, AliasData aliasData,
-            TaskData taskData, Display display, IDatabase database) {
+            TaskData taskData, IDatabase database) {
         assertNotNull(config); // Should not be a null object
-        this.display = display;
         this.aliasData = aliasData;
         this.database = database;
         this.taskData = taskData;
@@ -119,39 +96,17 @@ public class TaskManager implements ITaskManager {
      * @return return the Task manager.
      */
     public static TaskManager initInstance(TaskManagerConfig config,
-            AliasData aliasData, TaskData taskData, Display display,
-            IDatabase database) {
+            AliasData aliasData, TaskData taskData, IDatabase database) {
         if (instance != null) {
             throw new RuntimeException(
                     "Cannot initialize Task Manager as it was initialized before.");
         } else {
-            instance = new TaskManager(config, aliasData, taskData, display,
-                    database);
+            instance = new TaskManager(config, aliasData, taskData, database);
         }
         return instance;
     }
 
     // @author A0112092W
-    /**
-     * add all task's title, decription and id to produce the material for
-     * lucene to search
-     *
-     * @param w
-     * @param title
-     * @param description
-     * @param id
-     */
-    private static void addDoc(IndexWriter w, String title, String description,
-            String id) throws IOException {
-
-        Document doc = new Document();
-        doc.add(new TextField("title", title, Field.Store.YES));
-        doc.add(new TextField("id", id, Field.Store.YES));
-        // use a string field for isbn because we don't want it tokenized
-        doc.add(new TextField("description", description == null ? ""
-                : description, Field.Store.YES));
-        w.addDocument(doc);
-    }
 
     /**
      * Basic CRUD: create a Task Creates a task and add into the current
@@ -163,21 +118,24 @@ public class TaskManager implements ITaskManager {
      * @param isUndo
      */
     @Override
-    public void add(Task task, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
+    public Response add(Task task, Statement statement, boolean isUndo) {
+
+        Response res = new Response(statement.getCommand());
 
         // Task object should not be null
         if (task == null) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_NULL_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_NULL_TASK));
+            return res;
         }
         logger.debug("in add task: " + task.getTitle());
         logger.debug("in add " + statement.getCommand() + " "
                 + statement.getStatementArgumentsOnly());
         // Make sure we are not adding an Incomplete task to database
         if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK));
+            return res;
         }
 
         boolean isOverlapWarning = false;
@@ -195,10 +153,10 @@ public class TaskManager implements ITaskManager {
         try {
             // Update Taskmap
             this.taskData.updateTaskMap(task, statement, isUndo);
-
         } catch (Exception e) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP));
+            return res;
         }
 
         try {
@@ -209,19 +167,19 @@ public class TaskManager implements ITaskManager {
 
         // Informs user that his add statement is successful
         if (isUndo == false) {
-            Response res = new Response();
             res.reply = (isOverlapWarning ? "Warning, there is a clash in timings.\n"
-                    : "") + task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
-            this.display.updateUI(res);
+                    : "")
+                    + task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
         }
+        return res;
     }
 
     /**
      * Display all aliases to user
      */
     @Override
-    public void alias() {
-        Response res = new Response();
+    public Response alias(Statement statement) {
+        Response res = new Response(statement.getCommand());
         logger.debug("in alias taskmanager");
         if (this.aliasData.isEmpty()) {
             res.reply = NormalMessage.ALIAS_MAP_EMPTY;
@@ -229,7 +187,7 @@ public class TaskManager implements ITaskManager {
             logger.info("alias is passed to response");
             res.alias = this.aliasData;
         }
-        this.display.updateUI(res);
+        return res;
 
     }
 
@@ -237,17 +195,17 @@ public class TaskManager implements ITaskManager {
      * Add an alias to current database with the alias string, alias value
      */
     @Override
-    public void aliasAdd(String alias, String value, Statement statement,
-            boolean isUndo) throws CommandExecuteException {
+    public Response aliasAdd(String alias, String value, Statement statement,
+            boolean isUndo) {
+
+        Response res = new Response(statement.getCommand());
 
         // add the alias to aliasData
         this.aliasData.addAlias(alias, value);
 
         // print add alias to user if this action is not undo
         if (isUndo == false) {
-            Response res = new Response();
             res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
-            this.display.updateUI(res);
         }
 
         // save to database
@@ -256,6 +214,8 @@ public class TaskManager implements ITaskManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return res;
     }
 
     /**
@@ -263,31 +223,31 @@ public class TaskManager implements ITaskManager {
      * value
      */
     @Override
-    public void aliasDelete(String query, Statement statement, boolean isUndo)
-            throws DataException {
+    public Response aliasDelete(String query, Statement statement,
+            boolean isUndo) {
 
-        // creates an alias data to be display to user
-        String value = this.aliasData.toValue(query);
-        AliasData deleted = new AliasData();
-        deleted.addAlias(query, value);
+        Response res = new Response(statement.getCommand());
 
-        // delete the alias
-        this.aliasData.deleteAlias(query);
-
-        // display to user
-        if (isUndo == false) {
-            Response res = new Response();
-            res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
-            res.alias = deleted;
-            this.display.updateUI(res);
-        }
-
-        // save to database
         try {
+            // creates an alias data to be display to user
+            String value = this.aliasData.toValue(query);
+            AliasData deleted = new AliasData();
+            deleted.addAlias(query, value);
+
+            // delete the alias
+            this.aliasData.deleteAlias(query);
+
+            // display to user
+            if (isUndo == false) {
+                res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
+                res.alias = deleted;
+            }
+
             this.database.saveToStorage();
         } catch (Exception e) {
-            e.printStackTrace();
+            res.setException(e);
         }
+        return res;
     }
 
     /**
@@ -298,12 +258,12 @@ public class TaskManager implements ITaskManager {
      * @param isUndo
      */
     @Override
-    public void delete(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
-        Task task;
+    public Response delete(String query, Statement statement, boolean isUndo) {
+        Task task = null;
+        Response res = new Response(statement.getCommand());
         try {
             // search the task with the string query
-            String[] taskIdList = this.search(query);
+            Task[] taskIdList = this.taskData.search(query);
             if (taskIdList == null) {
                 throw new CommandExecuteException(
                         CommandExecutionMessage.EXCEPTION_MISSING_TASK);
@@ -312,11 +272,13 @@ public class TaskManager implements ITaskManager {
             if (taskIdList.length > 0) {
                 // only 1 result from searching
                 if (taskIdList.length == 1) {
-                    task = this.taskData.remove(taskIdList[0], statement);
+                    task = this.taskData.remove(taskIdList[0].getId(),
+                            statement);
                 } else {
                     int index = this.chooseIndex(taskIdList,
                             NormalMessage.MODIFIED);
-                    task = this.taskData.remove(taskIdList[index], statement);
+                    task = this.taskData.remove(taskIdList[index].getId(),
+                            statement);
                 }
                 // Update the database
                 try {
@@ -334,27 +296,16 @@ public class TaskManager implements ITaskManager {
                         CommandExecutionMessage.EXCEPTION_BAD_TASKID);
             }
         } catch (Exception e) {
-            throw new CommandExecuteException(e.getMessage());
+            res.setException(new CommandExecuteException(e.getMessage()));
+            return res;
         }
 
         // if action is not undo, shows the user delete task succesful
         if (isUndo == false) {
-            Response res = new Response();
             res.reply = task.getTitle() + NormalMessage.DELETE_TASK_SUCCESSFUL;
-            this.display.updateUI(res);
         }
+        return res;
 
-    }
-
-    /**
-     * Displays an output message requesting for the next user input. This may
-     * be empty if the UI does not require such.
-     */
-    @Override
-    public void displayNextCommandRequest() {
-        Response res = new Response();
-        res.reply = NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST;
-        this.display.updateUI(res);
     }
 
     /**
@@ -365,14 +316,16 @@ public class TaskManager implements ITaskManager {
      * @param isUndo
      */
     @Override
-    public void done(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
+    public Response done(String query, Statement statement, boolean isUndo) {
+
+        Response res = new Response(statement.getCommand());
 
         // search the query by using lucene
-        String[] taskIdList = this.search(query);
+        Task[] taskIdList = this.taskData.search(query);
         if (taskIdList == null) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK));
+            return res;
         }
         /* Check if key exists in taskStateMap */
         if (taskIdList.length > 0) {
@@ -384,7 +337,7 @@ public class TaskManager implements ITaskManager {
                 index = this.chooseIndex(taskIdList, NormalMessage.MODIFIED);
             }
 
-            Task task = this.taskData.getTask(taskIdList[index]);
+            Task task = taskIdList[index];
             if (task.getStatus() == true) {
                 logger.debug("The task is already done");
             }
@@ -392,11 +345,12 @@ public class TaskManager implements ITaskManager {
 
             try {
                 // Update the TaskMap
-                this.taskData.updateTaskMap(taskIdList[index], task, statement,
+                this.taskData.updateTaskMap(task.getId(), task, statement,
                         isUndo);
             } catch (Exception e) {
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+                res.setException(new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP));
+                return res;
             }
             try {
                 this.database.saveToStorage();
@@ -406,42 +360,35 @@ public class TaskManager implements ITaskManager {
             }
             // Informs user that his add statement is successful
             if (isUndo == false) {
-                Response res = new Response();
                 res.reply = task.getTitle()
                         + NormalMessage.DONE_TASK_SUCCESSFUL;
-                this.display.updateUI(res);
             }
         } else {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK));
+            return res;
         }
+        return res;
     }
 
     /**
      * Exit the program
      */
     @Override
-    public void exit() {
-        Response res = new Response();
+    public Response exit(Statement statement) {
+        Response res = new Response(statement.getCommand());
         res.reply = NormalMessage.EXIT_COMMAND;
-        this.display.updateUI(res);
 
-        this.cleanUp();
+        try {
+            this.database.saveToStorage();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         // stop loop
-        this.continueExecution = false;
-    }
-
-    /**
-     * This method return the caller a boolean whether this terminal should
-     * continue to be executed.
-     *
-     * @return continueExecution
-     */
-    @Override
-    public boolean getContinueExecution() {
-
-        return this.continueExecution;
+        res.setContinueExecution(false);
+        return res;
     }
 
     /**
@@ -450,11 +397,11 @@ public class TaskManager implements ITaskManager {
      * @param command
      */
     @Override
-    public void help(CommandType command) {
+    public Response help(CommandType command, Statement statement) {
         String helpMessage = this.outputHelpMessage(command);
-        Response res = new Response();
+        Response res = new Response(statement.getCommand());
         res.reply = helpMessage;
-        this.display.updateUI(res);
+        return res;
     }
 
     /**
@@ -464,17 +411,16 @@ public class TaskManager implements ITaskManager {
      * @param index
      */
     @Override
-    public void historyClear(int index) {
+    public Response historyClear(int index, Statement statement) {
         // creates an actions that contains the deleted history
         Actions actionsRemoved = this.taskData.deleteHistory(index);
         ArrayList<Actions> temp = new ArrayList<Actions>();
         temp.add(actionsRemoved);
 
         // display it to user
-        Response res = new Response();
+        Response res = new Response(statement.getCommand());
         res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
         res.actions = temp;
-        this.display.updateUI(res);
 
         // update the databse
         try {
@@ -483,6 +429,7 @@ public class TaskManager implements ITaskManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return res;
 
     }
 
@@ -492,15 +439,22 @@ public class TaskManager implements ITaskManager {
      * @param index
      */
     @Override
-    public void historyUndo(int index) throws CommandExecuteException {
+    public Response historyUndo(int index, Statement statement) {
+        Response res = new Response(statement.getCommand());
         // undo the history with index
-        this.taskData.undoHistory(index, this);
+        try {
+            this.taskData.undoHistory(index, this);
+        } catch (CommandExecuteException e1) {
+            res.setException(e1);
+            return res;
+        }
         // update the database
         try {
             this.database.saveToStorage();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return res;
     }
 
     /**
@@ -512,15 +466,16 @@ public class TaskManager implements ITaskManager {
      * @param incompleteTask
      */
     @Override
-    public void modify(String query, Task incompleteTask, Statement statement,
-            boolean isUndo) throws CommandExecuteException {
-
+    public Response modify(String query, Task incompleteTask,
+            Statement statement, boolean isUndo) {
+        Response res = new Response(statement.getCommand());
         // search the task with a query
-        String[] taskIdList = this.search(query);
+        Task[] taskIdList = this.taskData.search(query);
 
         if (taskIdList == null) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK));
+            return res;
         }
         /* Check if key exists in taskStateMap */
         if (taskIdList.length > 0) {
@@ -534,7 +489,7 @@ public class TaskManager implements ITaskManager {
             logger.debug("Modify: the task exist");
 
             // retrieve the task from current data
-            Task task = this.taskData.getTask(taskIdList[index]);
+            Task task = taskIdList[index];
 
             // modify the task
             try {
@@ -542,12 +497,13 @@ public class TaskManager implements ITaskManager {
                 logger.debug(new Gson().toJson(task));
             } catch (Exception e) {
                 logger.debug(e.getMessage());
-                throw new CommandExecuteException(e.getMessage());
+                res.setException(new CommandExecuteException(e.getMessage()));
+                return res;
             }
             try {
                 // Update the task data
-                this.taskData.updateTaskMap(taskIdList[index], task, statement,
-                        isUndo);
+                this.taskData.updateTaskMap(taskIdList[index].getId(), task,
+                        statement, isUndo);
                 logger.debug("update task");
                 try {
                     this.database.saveToStorage();
@@ -556,139 +512,51 @@ public class TaskManager implements ITaskManager {
                     e.printStackTrace();
                 }
             } catch (Exception e) {
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
+                res.setException(new CommandExecuteException(
+                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP));
+                return res;
             }
 
             // Informs user that his modify statement is successful
             if (isUndo == false) {
-                Response res = new Response();
                 res.reply = task.getTitle()
                         + NormalMessage.MODIFY_TASK_SUCCESSFUL;
-                this.display.updateUI(res);
             }
         } else {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK));
+            return res;
         }
+        return res;
 
     }
 
     @Override
-    public void pushData() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * Search all the task that are add into lucene with a query return an array
-     * of string that contains all the task's Id
-     *
-     * @param search
-     * @return String[]
-     */
-    @Override
-    public String[] search(String query) {
-        String[] taskIdList = null;
-        try {
-            // 0. Specify the analyzer for tokenizing text.
-            // The same analyzer should be used for indexing and searching
-            Analyzer analyzer = new SimpleAnalyzer();
-
-            // 1. create the index
-            Directory index = new RAMDirectory();
-
-            IndexWriterConfig config = new IndexWriterConfig(analyzer);
-
-            IndexWriter w = new IndexWriter(index, config);
-            for (String key : this.taskData.getTaskStateMap().keySet()) {
-                Task t = this.taskData.getTask(key);
-                if (t != null) {
-                    addDoc(w, t.getTitle(), t.getDescription(), t.getId());
-                }
-            }
-            w.close();
-
-            // 2. query
-            if (query.length() < 0) {
-                throw new Exception("WHY No Query?!");
-            }
-
-            // the "title" arg specifies the default field to use
-            // when no field is explicitly specified in the query.
-            Query q = new QueryParser("title", analyzer).parse(query);
-
-            // 3. search
-            int hitsPerPage = 10;
-            IndexReader reader = DirectoryReader.open(index);
-            IndexSearcher searcher = new IndexSearcher(reader);
-            TopScoreDocCollector collector = TopScoreDocCollector
-                    .create(hitsPerPage);
-            searcher.search(q, collector);
-            ScoreDoc[] hits = collector.topDocs().scoreDocs;
-
-            // 4. display results
-            if (hits.length > 0) {
-                try {
-                    taskIdList = new String[hits.length];
-
-                    logger.debug("Found:" + hits.length + " hits.");
-                    for (int i = 0; i < hits.length; ++i) {
-                        int docId = hits[i].doc;
-
-                        Document d = searcher.doc(docId);
-                        String t = d.get("id");
-
-                        taskIdList[i] = t;
-                        logger.debug("Task#" + i + "="
-                                + new Gson().toJson(taskIdList[i]));
-                    }
-
-                    Task[] tasks = new Task[taskIdList.length];
-                    for (int i = 0; i < tasks.length; i++) {
-                        tasks[i] = this.taskData.getTask(taskIdList[i]);
-                    }
-                    Arrays.sort(tasks);
-
-                    Response res = new Response();
-                    res.taskList = tasks;
-                    logger.debug(new Gson().toJson(res));
-                    this.display.updateUI(res);
-
-                } catch (Exception e) {
-                    throw new CommandExecuteException(e.getMessage());
-                }
-            } else {
-                logger.debug("No results.");
-            }
-
-            // reader can only be closed when there
-            // is no need to access the documents any more.
-            reader.close();
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
-        }
-        return taskIdList;
+    public Response search(String query, Statement statement) {
+        Response res = new Response(statement.getCommand());
+        res.taskList = this.taskData.search(query);
+        return res;
     }
 
     /**
      * display all the tasks to user
      */
     @Override
-    public void view() throws CommandExecuteException {
+    public Response view(Statement statement) {
+
         logger.debug("inside view");
+        Response res = new Response(statement.getCommand());
         if (this.taskData.numOfTasks() <= TASK_MAP_MINIMUM_SIZE) {
             /*
              * taskMap size is illegal, most likely cause is that the task map
              * is empty
              */
-            Response res = new Response();
+
             res.reply = NormalMessage.NO_TASK_FOUND;
-            this.display.updateUI(res);
             logger.debug("no task found" + this.taskData.numOfTasks());
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK));
+            return res;
         } else {
             try {
                 // get the task list from task data
@@ -698,40 +566,39 @@ public class TaskManager implements ITaskManager {
                 // display the task to user
                 Arrays.sort(taskList);
 
-                Response res = new Response();
                 res.taskList = taskList;
-                this.display.updateUI(res);
 
             } catch (Exception e) {
-                throw new CommandExecuteException(e.getMessage());
+                res.setException(new CommandExecuteException(e.getMessage()));
+                return res;
             }
         }
+        return res;
     }
 
     /**
      * display all history to user according to the action's created time
      */
     @Override
-    public void viewHistory() throws CommandExecuteException {
+    public Response viewHistory(Statement statement) {
+        Response res = new Response(statement.getCommand());
         if (this.taskData.getActionsList().size() == 0) {
             /*
              * history is empty
              */
-            Response res = new Response();
             res.reply = NormalMessage.NO_HISTORY_FOUND;
-            this.display.updateUI(res);
 
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
+            res.setException(new CommandExecuteException(
+                    CommandExecutionMessage.EXCEPTION_MISSING_TASK));
+            return res;
         } else {
             try {
                 // display to user
-                Response res = new Response();
                 res.actions = this.taskData.getActionsList();
-                this.display.updateUI(res);
-
+                return res;
             } catch (Exception e) {
-                throw new CommandExecuteException(e.getMessage());
+                res.setException(new CommandExecuteException(e.getMessage()));
+                return res;
             }
         }
 
@@ -745,30 +612,11 @@ public class TaskManager implements ITaskManager {
      * @param command
      * @return 0
      */
-    private int chooseIndex(String[] taskIdList, String command) {
+    private int chooseIndex(Task[] tasks, String command) {
 
-        Task[] tasks = new Task[taskIdList.length];
-        for (int i = 0; i < tasks.length; i++) {
-            tasks[i] = this.taskData.getTask(taskIdList[i]);
-        }
         Arrays.sort(tasks);
 
-        Response res = new Response();
-        res.reply = NormalMessage.CHOOSE_FROM_LIST + command;
-        res.taskList = tasks;
-        logger.debug(new Gson().toJson(res));
-        this.display.updateUI(res);
-
         return 0;
-    }
-
-    /**
-     * TODO: Any remainder operations left to do after 'exit' command is invoked
-     * goes here. This includes dumping information into an external text file.
-     * Or (maybe) editing an external config file
-     */
-    private void cleanUp() {
-        this.pushData();
     }
 
     /**

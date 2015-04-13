@@ -37,29 +37,32 @@ public class Task implements Comparable<Task> {
         TIMED
     }
 
-    //@formatter:off
-    private String id;
-    private String title;
     private String category;
     private String description;
-    private Date startDate;
     private Date endDate;
+    private String etag;
+    private String googleId;
+    //@formatter:off
+    private ObjectId id;
+    private Boolean isDone;
+
+    private Boolean isSynced;
+
+    private Date lastModifiedTime;
     private String location;
     private Integer priority;
     private Date reminder;
-    private Boolean isDone;
-    private String googleId;
-    private String etag;
-    private Boolean isSynced;
-    private Date lastModifiedTime;
+    private Date startDate;
     private TaskType taskType;
-    //@formatter:on  
+    //@formatter:on
+    private String title;
 
     /**
      * default constructor
      */
     public Task() {
         this.taskType = TaskType.INCOMPLETE;
+        this.id = new ObjectId();
     }
 
     public Task(Task task) {
@@ -126,9 +129,9 @@ public class Task implements Comparable<Task> {
     }
 
     /**
-     * @return id
+     * @return the id
      */
-    public String getId() {
+    public ObjectId getId() {
         return this.id;
     }
 
@@ -250,7 +253,7 @@ public class Task implements Comparable<Task> {
      * @param id
      *            the id to set
      */
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -322,9 +325,6 @@ public class Task implements Comparable<Task> {
      * @throws Exception
      */
     public void toCompleteTask() throws Exception {
-        if (this.id == null) {
-            this.id = new ObjectId().toString();
-        }
 
         if ((this.title == null) || this.title.equals("")) {
             throw new Exception("No title");

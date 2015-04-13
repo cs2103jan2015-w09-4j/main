@@ -5,7 +5,7 @@ import java.security.InvalidParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import w094j.ctrl8.exception.CommandExecuteException;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0112521B
@@ -33,10 +33,9 @@ public class AliasAddStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
         // Statement to be added
-        taskManager.aliasAdd(this.alias, this.phrase, this, isUndo);
+        return taskManager.aliasAdd(this.alias, this.phrase, this, isUndo);
 
     }
 

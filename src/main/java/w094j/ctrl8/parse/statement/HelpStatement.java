@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.exception.ParseException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0112521B
@@ -34,8 +35,8 @@ public class HelpStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo) {
-        taskManager.help(this.command);
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
+        return taskManager.help(this.command, this);
     }
 
 }

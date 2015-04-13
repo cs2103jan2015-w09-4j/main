@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import w094j.ctrl8.exception.CommandExecuteException;
 import w094j.ctrl8.parse.CommandParser;
 import w094j.ctrl8.parse.Parser;
+import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.taskmanager.ITaskManager;
 
 //@author A0065517A
@@ -47,8 +48,7 @@ public abstract class Statement {
      * @throws CommandExecuteException
      *             when the execution of the command has problems.
      */
-    public abstract void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException;
+    public abstract Response execute(ITaskManager taskManager, boolean isUndo);
 
     /**
      * @return the command
