@@ -3,7 +3,154 @@
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\ParseException.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\data\AliasData.java
+	 */
+
+/**
+ * This class contains all data about alias that are needed in alias-related
+ * operation
+ */
+public class AliasData implements IStorableElement {
+
+    private Map<String, String> aliasMap;
+
+    /**
+     * Default constructor of AliasData
+     */
+    public AliasData() {
+        this.aliasMap = new HashMap<String, String>();
+    }
+
+    /**
+     * Adds an alias to the data structure.
+     *
+     * @param alias
+     *            the alias to associate with value.
+     * @param value
+     *            the value to associate with alias.
+     * @return the previous value associated with alias, or null if there is
+     *         none.
+     */
+    public String addAlias(String alias, String value) {
+        assert (alias != null);
+        assert (value != null);
+        assert (!value.equals(""));
+        assert (!value.equals(""));
+        return this.aliasMap.put(alias, value);
+    }
+
+    /**
+     * Deletes an alias.
+     *
+     * @param alias
+     *            to be deleted.
+     * @throws DataException
+     *             when the alias does not exist.
+     */
+    public void deleteAlias(String alias) throws DataException {
+        if (this.aliasMap.remove(alias) == null) {
+            throw new DataException("Alias(" + alias + ") does not exist.");
+        }
+    }
+
+    /**
+     * Return the Alias Map
+     *
+     * @return the aliasMap
+     */
+    public Map<String, String> getAliasMap() {
+        return this.aliasMap;
+    }
+
+    /**
+     * Gets the set of <alias, value> mappings.
+     *
+     * @return set of <alias, value> mappings.
+     */
+    public Set<Map.Entry<String, String>> getAllAliases() {
+        return this.aliasMap.entrySet();
+    }
+
+    /**
+     * Checks if Alias Data is empty.
+     *
+     * @return <code>true</code> if empty, <code>false</code> otherwise.
+     */
+    public boolean isEmpty() {
+        if (this.aliasMap == null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check whether the data structure is valid return isValid
+     */
+    @Override
+    public boolean isValid() {
+        // checks the validity of the data structure
+        // Ensures that the mapping does not contain any null keys or values.
+        // check for a key that is null, that is illegal
+        if (this.aliasMap.containsKey(null)) {
+            return false;
+        }
+        if (this.aliasMap.containsValue(null)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Set the alias map to aliasMap
+     *
+     * @param aliasMap
+     *            the aliasMap to set
+     */
+    public void setAliasMap(Map<String, String> aliasMap) {
+        this.aliasMap = aliasMap;
+    }
+
+    /**
+     * Finds the respective value for the alias.
+     *
+     * @param alias
+     *            alias should exist in the data structure.
+     * @return value mapped to alias.
+     * @throws DataException
+     *             when the alias does not exist.
+     */
+    public String toValue(String alias) throws DataException {
+        assert (alias != null);
+        String value = this.aliasMap.get(alias);
+        if (value == null) {
+            int length = alias.length();
+            String subAlias = alias;
+            while (length > 0) {
+                subAlias = subAlias.substring(0, length);
+                value = this.aliasMap.get(subAlias);
+                if (value != null) {
+                    return value + alias.substring(length, alias.length());
+                }
+                length--;
+            }
+            if (length == 0) {
+                throw new DataException(
+                        "No corresponding value for any sub-Alias of Alias("
+                                + alias + ").");
+            }
+        }
+        return value;
+    }
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\data\AliasData.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\ParseException.java
 	 */
 
 /**
@@ -33,14 +180,14 @@ public class ParseException extends Exception {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\ParseException.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\ParseException.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\AliasParser.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\AliasParser.java
 	 */
 
 /**
@@ -171,14 +318,14 @@ public class AliasParser {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\AliasParser.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\AliasParser.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AddStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AddStatement.java
 	 */
 
 /**
@@ -224,23 +371,22 @@ public class AddStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
         // Statement to be added
         // a new Task is created so that the internal implementation is not
 // affected.
-        taskManager.add(new Task(this.task), this, isUndo);
+        return taskManager.add(new Task(this.task), this, isUndo);
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AddStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AddStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AliasStatement.java
 	 */
 
 /**
@@ -261,22 +407,20 @@ public class AliasStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo) {
-        // TODO Link to Terminal
-        logger.debug("in alias");
-        taskManager.alias();
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
+        return taskManager.alias(this);
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AliasStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\CommandType.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\CommandType.java
 	 */
 
 /**
@@ -374,14 +518,14 @@ public enum CommandType {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\CommandType.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\CommandType.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ExitStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\ExitStatement.java
 	 */
 
 /**
@@ -399,20 +543,20 @@ public class ExitStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo) {
-        taskManager.exit();
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
+        return taskManager.exit(this);
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ExitStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\ExitStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HistoryStatement.java
 	 */
 
 /**
@@ -433,21 +577,21 @@ public class HistoryStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
+    public Response execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
-        taskManager.viewHistory();
+        return taskManager.viewHistory(this);
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HistoryStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ModifyStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\ModifyStatement.java
 	 */
 
 /**
@@ -502,22 +646,23 @@ public class ModifyStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException, DataException {
         // Statement to be added
-        taskManager.modify(this.query, new Task(this.task), this, isUndo);
+        return taskManager
+                .modify(this.query, new Task(this.task), this, isUndo);
 
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ModifyStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\ModifyStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\CategoryParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\CategoryParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -542,14 +687,14 @@ public class CategoryParameter extends Parameter {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\CategoryParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\CategoryParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DeadlineParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DeadlineParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -573,14 +718,14 @@ public class DeadlineParameter extends ParameterDatePayload {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DeadlineParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DeadlineParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DescriptionParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DescriptionParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -604,14 +749,14 @@ public class DescriptionParameter extends Parameter {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DescriptionParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\DescriptionParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\LocationParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\LocationParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -635,14 +780,14 @@ public class LocationParameter extends Parameter {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\LocationParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\LocationParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\Parameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\Parameter.java
 	 */
 
 /**
@@ -677,7 +822,6 @@ public abstract class Parameter {
                     .getStatementParser().getParameterParser();
             this.payload = parameterParser.unescape(payload);
         }
-        System.out.println(this.payload);
     }
 
     /**
@@ -740,14 +884,14 @@ public abstract class Parameter {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\Parameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\Parameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterContainer.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterContainer.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -814,14 +958,14 @@ public class ParameterContainer {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterContainer.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterContainer.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterDatePayload.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterDatePayload.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -889,14 +1033,14 @@ public abstract class ParameterDatePayload extends Parameter {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterDatePayload.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterDatePayload.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterType.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterType.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -948,14 +1092,14 @@ public enum ParameterType {
     TITLE;
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterType.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ParameterType.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\PriorityParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\PriorityParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -1017,14 +1161,14 @@ public class PriorityParameter extends Parameter {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\PriorityParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\PriorityParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ReminderParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ReminderParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -1048,14 +1192,14 @@ public class ReminderParameter extends ParameterDatePayload {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ReminderParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\ReminderParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\StartTimeParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\StartTimeParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -1079,14 +1223,14 @@ public class StartTimeParameter extends ParameterDatePayload {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\StartTimeParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\StartTimeParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\TitleParameter.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\TitleParameter.java
 	 */
 
 package w094j.ctrl8.parse.statement.parameter;
@@ -1113,14 +1257,14 @@ public class TitleParameter extends Parameter {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\parameter\TitleParameter.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\parameter\TitleParameter.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\SearchStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\SearchStatement.java
 	 */
 
 /**
@@ -1142,21 +1286,21 @@ public class SearchStatement extends StatementQuery {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws DataException {
         // Statement to be added
-        taskManager.search(this.query);
+        return taskManager.search(this.query, this);
     }
 
 }
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\SearchStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\SearchStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\Statement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\Statement.java
 	 */
 
 /**
@@ -1194,11 +1338,12 @@ public abstract class Statement {
      *
      * @param taskManager
      *            to execute the command in.
+     * @throws DataException
      * @throws CommandExecuteException
      *             when the execution of the command has problems.
      */
-    public abstract void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException;
+    public abstract Response execute(ITaskManager taskManager, boolean isUndo)
+            throws DataException, CommandExecuteException;
 
     /**
      * @return the command
@@ -1232,14 +1377,14 @@ public abstract class Statement {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\Statement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\Statement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementNoParams.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\StatementNoParams.java
 	 */
 
 /**
@@ -1265,644 +1410,164 @@ public abstract class StatementNoParams extends Statement {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementNoParams.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\StatementNoParams.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\DateIntervalNode.java
 	 */
 
-package w094j.ctrl8.parse;
+/**
+ * Date Interval node to represent each interval on the tree.
+ */
+class DateIntervalNode {
 
-import static org.junit.Assert.assertEquals;
+    Date endDate;
+    DateIntervalNode leftSubTree;
+    Date maxEndDate;
+    DateIntervalNode rightSubTree;
+    Date startDate;
 
-import java.util.Arrays;
+    DateIntervalNode(DateIntervalNode left, Date startDate, Date endDate,
+            Date maxEndDate, DateIntervalNode right) {
+        this.leftSubTree = left;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.maxEndDate = maxEndDate;
+        this.rightSubTree = right;
+    }
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+}
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\DateIntervalNode.java
 
-import w094j.ctrl8.database.config.CommandConfig;
-import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.parse.statement.CommandType;
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\DateIntervalTree.java
+	 */
 
 /**
- * Tests parsing of the basic variant of Commands
+ * Tree to sort out the intervals.
  */
-@RunWith(value = Parameterized.class)
-public class CommandParserTest {
+public class DateIntervalTree {
 
-    private static CommandParser parser;
-    private CommandType expected;
-    private String input;
+    private DateIntervalNode rootNode;
 
     /**
-     * Creates a Command Test with the input and expected Command enum.
-     *
-     * @param input
-     *            string to be parsed.
-     * @param expected
-     *            Command enum to be expected, null will mean that
-     *            ParseException is expected.
+     * Initializes an empty tree.
      */
-    public CommandParserTest(String input, CommandType expected) {
-        this.input = input;
-        this.expected = expected;
+    public DateIntervalTree() {
     }
 
     /**
-     * @return test data.
+     * Initializes a tree with the task array.
+     *
+     * @param taskArray
      */
-    @Parameters(name = "{index}: Parse \"{0}\" to enum({1})")
-    // @formatter:off
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                // Includes all the supported commands as of v0.2
-                { "add", CommandType.ADD },
-                { "alias", CommandType.ALIAS },
-                { "alias-add", CommandType.ALIAS_ADD },
-                { "alias-delete", CommandType.ALIAS_DELETE },
-                { "delete", CommandType.DELETE },
-                { "done", CommandType.DONE },
-                { "exit", CommandType.EXIT },
-                { "help", CommandType.HELP },
-                { "history", CommandType.HISTORY },
-                { "history-clear", CommandType.HISTORY_CLEAR },
-                { "history-undo", CommandType.HISTORY_UNDO },
-                { "modify", CommandType.MODIFY },
-                { "search", CommandType.SEARCH },
-                { "view", CommandType.VIEW },
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
-	 */
-
-    // @formatter:on
+    public DateIntervalTree(Task[] taskArray) {
+        this.addAll(taskArray);
+    }
 
     /**
-     * Tests the parsing of the command text
+     * Add all tasks to the interval tree, if there is an interval to add in
+     * each task.
+     *
+     * @param taskArray
      */
-    @Test
-    public void test() {
-        try {
-            assertEquals(this.expected, parser.parse(this.input));
-        } catch (ParseException pe) {
-            assertEquals(null, this.expected);
+    public void addAll(Task[] taskArray) {
+        // Filter the timed tasks
+        for (Task eaTask : taskArray) {
+            if (eaTask.getTaskType().equals(Task.TaskType.TIMED)) {
+                this.addInterval(eaTask);
+            }
         }
     }
 
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ExplicitShortParameterTest.java
-	 */
-
-/**
- * Tests parsing of the short explicit parameters to its String representation.
- * This will not test implicit parameters, but will also test the
- * inter-operability of long parameter parameters with the short parameters.
- */
-@RunWith(value = Parameterized.class)
-public class ExplicitShortParameterTest extends ParameterTest {
-
     /**
-     * Creates a Short Explicit Parameter test.
+     * Traverse the tree and update the maxEndDate and also appending the task
+     * with the range to the tree when needed.
      *
-     * @param input
-     *            The parameter(s) to be parsed.
-     * @param expected
-     *            Expected Parsed result, if null exception is expected.
-     * @throws ParseException
-     *             when the expected parameter list has issues.
+     * @param task
      */
-    public ExplicitShortParameterTest(String input, List<Parameter> expected)
-            throws ParseException {
-        super(input, expected, true, false);
-    }
+    public void addInterval(Task task) {
 
-    /**
-     * @return test data.
-     */
-    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
-    //@formatter:off
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                // Test a simple parameter
-                { "#nus", Arrays.asList(new Parameter[] {new CategoryParameter("nus")}) },
-                // Ensures that Explicit short will not pick up any string after it
-                { "-today +1pm", Arrays.asList(new Parameter[] {new DeadlineParameter("today"), new DescriptionParameter("1pm")}) },
-                // Test if Long Explicit parameters are still working
-                { "+{Remember to talk about Crawler technologies.}", Arrays.asList(new Parameter[] {new DescriptionParameter("Remember to talk about Crawler technologies.")}) },
-                // Test if Long Explicit parameters work with short explicit parameters
-                { "+{Remember to talk about Crawler technologies.} %10", Arrays.asList(new Parameter[] {new PriorityParameter("10"), new DescriptionParameter("Remember to talk about Crawler technologies.")}) },
-                /**
-                 * Extreme tests
-                 */
-                // An escaped = should be allowed in the parameter payload, and subsequently undelimited.
-                { "=a\\=a", Arrays.asList(new Parameter[] {new TitleParameter("a=a")}) },
-                // A character that is obviously not an parameter symbol should not be un-escaped
-                { "=a\\;a", Arrays.asList(new Parameter[] {new TitleParameter("a\\;a")}) },
-                // A valid parameter symbol should not be picked up when it does not fit the pattern of a parameter
-                { "=a=a", Arrays.asList(new Parameter[] {new TitleParameter("a=a")}) },
-                /**
-                 * Errornous tests
-                 */
-                // Ensures that a valid parameter symbol will not get picked up, if there are no parameters
-                { " = ", null },
-                // Ensures that a non-symbol is not picked up
-                { "<>", null },
+        Date startDate = task.getStartDate();
+        Date endDate = task.getEndDate();
 
-        });
-    }
-    // @formatter:on
+        DateIntervalNode newLeaf = new DateIntervalNode(null, startDate,
+                endDate, endDate, null);
 
-}
+        DateIntervalNode currentNode = this.rootNode;
+        while (currentNode != null) {
 
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ExplicitShortParameterTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ImplicitParameterTest.java
-	 */
-
-package w094j.ctrl8.parse;
-
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
-import w094j.ctrl8.parse.statement.parameter.Parameter;
-import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
-import w094j.ctrl8.parse.statement.parameter.TitleParameter;
-
-/**
- * Tests parsing of the implicit parameters to its String representation. The
- * tests will also test the inter-operability of long explicit parameters, short
- * explicit parameters and implicit parameters.
- */
-@RunWith(value = Parameterized.class)
-public class ImplicitParameterTest extends ParameterTest {
-
-    /**
-     * Creates a Explicit Parameter test.
-     *
-     * @param input
-     *            The parameter(s) to be parsed.
-     * @param expected
-     *            Expected Parsed result, if null exception is expected.
-     * @throws ParseException
-     *             when the expected parameter list has issues.
-     */
-    public ImplicitParameterTest(String input, List<Parameter> expected)
-            throws ParseException {
-        super(input, expected, true, true);
-    }
-
-    /**
-     * @return test data.
-     */
-    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
-    //@formatter:off
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                // Implicit Title for a task
-                { " nus", Arrays.asList(new Parameter[] {new TitleParameter("nus")}) },
-                // Implicit from and to for a task
-                { " from 2pm to 4pm", Arrays.asList(new Parameter[] {new StartTimeParameter("2pm"), new DeadlineParameter("4pm")}) },
-                // Implicit end time for a task
-                { " due 4pm", Arrays.asList(new Parameter[] {new DeadlineParameter("4pm")}) },
-                // A mix of Title, start and end time
-                { " nus from 2pm to 4pm", Arrays.asList(new Parameter[] {new TitleParameter("nus"), new StartTimeParameter("2pm"), new DeadlineParameter("4pm")}) },
-                { " \\#\\#\\#", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
-                { " \\###", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
-                { " \\##\\#", Arrays.asList(new Parameter[] {new TitleParameter("###")}) },
-                { " warnings to taks that clash (timing-wising)", Arrays.asList(new Parameter[] {new TitleParameter("warnings to taks that clash (timing-wising)")}) },
-                /**
-                 * Extreme tests
-                 */
-                // Implicit Title containing a non-parameter symbol
-                { " <>", Arrays.asList(new Parameter[] {new TitleParameter("<>")}) },
-                // Implicit From and To that do not contain a valid date, should not parse as start and end date but as title
-                { " Take Bus from UTown to Clementi", Arrays.asList(new Parameter[] {new TitleParameter("Take Bus from UTown to Clementi")}) },
-                /**
-                 * Errornous tests
-                 */
-                // Implicit start and end time should not be added as there must be a space infront of the from
-                { " #{s}from 2pm to 4pm", null }
-
-        });
-    }
-    //@formatter:on
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ImplicitParameterTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ParameterTest.java
-	 */
-
-package w094j.ctrl8.parse;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.junit.Test;
-
-import w094j.ctrl8.database.config.ParameterConfig;
-import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.parse.statement.parameter.Parameter;
-import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
-
-/**
- * Abstract class for test classes to extends this to test Long Explicit, Short
- * Explicit and Implicit.
- */
-public abstract class ParameterTest {
-
-    private ParameterContainer expectedParamContainer;
-    private String input;
-    private ParameterParser parser;
-
-    /**
-     * Creates a Parameter test.
-     *
-     * @param input
-     *            The String to be sent for parsing.
-     * @param expected
-     *            Expected Parameter list, if null the test will expect
-     *            Exception.
-     * @param isExplicitShortMode
-     *            Explicit short mode for the parser.
-     * @param isImplicitMode
-     *            Implicit mode for the parser.
-     * @throws ParseException
-     *             when the expected parameter list has issues.
-     */
-    public ParameterTest(String input, List<Parameter> expected,
-            boolean isExplicitShortMode, boolean isImplicitMode)
-            throws ParseException {
-        this.input = input;
-        if (expected != null) {
-            this.expectedParamContainer = new ParameterContainer(expected);
-        } else {
-            this.expectedParamContainer = null;
-        }
-        ParameterConfig config = new ParameterConfig();
-        config.setExplicitShortMode(isExplicitShortMode);
-        config.setImplicitMode(isImplicitMode);
-        this.parser = new ParameterParser(config);
-    }
-
-    /**
-     * Tests the expected parameter list against the parsed parameter list.
-     */
-    @Test
-    public void test() {
-
-        try {
-            assertEquals(this.expectedParamContainer,
-                    this.parser.parse(this.input));
-        } catch (ParseException e) {
-            if (this.expectedParamContainer != null) {
-                assertTrue(false);
+            // Update the max along the way
+            if (endDate.after(currentNode.maxEndDate)) {
+                currentNode.maxEndDate = endDate;
             } else {
-                assertTrue(true);
+                currentNode.maxEndDate = currentNode.maxEndDate;
+            }
+
+            // Update the subTree with the new leaf
+            if (startDate.before(currentNode.startDate)) {
+                if (currentNode.leftSubTree == null) {
+                    currentNode.leftSubTree = newLeaf;
+                    return;
+                } else {
+                    currentNode = currentNode.leftSubTree;
+                }
+            } else {
+                if (currentNode.rightSubTree == null) {
+                    currentNode.rightSubTree = newLeaf;
+                    return;
+                } else {
+                    currentNode = currentNode.rightSubTree;
+                }
             }
         }
 
+        // Can only reach here if rootNode is null
+        this.rootNode = newLeaf;
     }
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\ParameterTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\PriorityParameterTest.java
-	 */
-
-package w094j.ctrl8.parse;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.Arrays;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import w094j.ctrl8.database.config.ParameterConfig;
-import w094j.ctrl8.exception.ParseException;
-import w094j.ctrl8.parse.statement.parameter.ParameterContainer;
-import w094j.ctrl8.pojo.Task;
-
-/**
- * Tests parsing of the priority parameter.
- */
-@RunWith(value = Parameterized.class)
-public class PriorityParameterTest {
-
-    private static ParameterParser parser;
-    private Integer expectedPriority;
-
-    private String input;
 
     /**
-     * Creates a Priority Parameter test.
+     * Check if the current date range in task is overlapped in the tree.
      *
-     * @param input
-     *            Priority parameter to parse.
-     * @param expectedPriority
-     *            Expected Priority.
+     * @param task
+     * @return <code>true</code> if there is an overlap, <code>false</code>
+     *         otherwise.
      */
-    public PriorityParameterTest(String input, Integer expectedPriority) {
-        this.input = input;
-        this.expectedPriority = expectedPriority;
-    }
+    public boolean isOverlap(Task task) {
 
-    /**
-     * @return test data.
-     */
-    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
-    //@formatter:off
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                { "%{}", null }, { "%{0}", 0 }, { "%{1}", 1 },
-                { "%{2}", 2 }, { "%{3}", 3 }, { "%{4}", 4 },
-                { "%{5}", 5 }, { "%{6}", 6 }, { "%{7}", 7 },
-                { "%{8}", 8 }, { "%{9}", 9 }, { "%{10}", 10 }
-        });
-    }
+        Date startDate = task.getStartDate();
+        Date endDate = task.getEndDate();
 
-    /**
-     *
-     */
-    @BeforeClass
-    public static void initParser() {
-        ParameterConfig config = new ParameterConfig();
-        parser = new ParameterParser(config);
-    }
+        DateIntervalNode currentNode = this.rootNode;
+        while (currentNode != null) {
 
-    // @formatter:on
+            // If the dates are in-between the ranges
+            if ((startDate.before(currentNode.endDate))
+                    && (endDate.after(currentNode.startDate))) {
+                return true;
+            }
 
-    /**
-     * Tests the parsing of priority parameter.
-     */
-    @Test
-    public void test() {
-
-        ParameterContainer parameterContainer;
-        try {
-            parameterContainer = parser.parse(this.input);
-            Task task = new Task();
-            parameterContainer.addAll(task);
-            assertEquals(this.expectedPriority, task.getPriority());
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            assertFalse(true);
+            // update the current node, traverse down the right sub tree
+            if ((currentNode.leftSubTree != null)
+                    && (currentNode.leftSubTree.maxEndDate.after(startDate))) {
+                currentNode = currentNode.leftSubTree;
+            } else {
+                currentNode = currentNode.rightSubTree;
+            }
         }
-
-    }
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\PriorityParameterTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\statement\parameter\ParameterDatePayloadTest.java
-	 */
-
-package w094j.ctrl8.statement.parameter;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.Date;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import w094j.ctrl8.parse.statement.parameter.DeadlineParameter;
-import w094j.ctrl8.parse.statement.parameter.ReminderParameter;
-import w094j.ctrl8.parse.statement.parameter.StartTimeParameter;
-
-/**
- * Tests parsing of the Dates in the parameters deadline, starttime and
- * reminder.
- */
-@RunWith(value = Parameterized.class)
-public class ParameterDatePayloadTest {
-
-    private DeadlineParameter deadlineParameter;
-    private Date expectedDate;
-    private ReminderParameter reminderParameter;
-    private StartTimeParameter startTimeParameter;
-
-    /**
-     * Creates a test to test the 3 parameters as specified above.
-     *
-     * @param inputParameterPayload
-     *            Payload to parse for each parameter.
-     * @param expectedDate
-     */
-    public ParameterDatePayloadTest(String inputParameterPayload,
-            Date expectedDate) {
-        this.deadlineParameter = new DeadlineParameter(inputParameterPayload);
-        this.reminderParameter = new ReminderParameter(inputParameterPayload);
-        this.startTimeParameter = new StartTimeParameter(inputParameterPayload);
-        this.expectedDate = expectedDate;
-    }
-
-    /**
-     * @return test data.
-     */
-    @SuppressWarnings("deprecation")
-    @Parameters(name = "{index}: Parse \"{0}\" to get all the parameters({1})")
-    //@formatter:off
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                { "3 Aug 1992 00:00:00", new Date(92, 7, 3, 0, 0, 0) },
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\statement\parameter\ParameterDatePayloadTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\taskmanager\TaskManagerSearchTest.java
-	 */
-
-package w094j.ctrl8.taskmanager;
-
-import static org.junit.Assert.assertArrayEquals;
-
-import java.util.Arrays;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
-import w094j.ctrl8.data.AliasData;
-import w094j.ctrl8.data.TaskData;
-import w094j.ctrl8.database.config.TaskManagerConfig;
-import w094j.ctrl8.pojo.Task;
-
-/**
- * Tests the search functionality of the task mananger.
- */
-@RunWith(value = Parameterized.class)
-public class TaskManagerSearchTest {
-
-    private static ITaskManager taskManager;
-
-    private String[] objectIdExpected;
-    private String searchQuery;
-
-    /**
-     * Creates a test case with the search query, and retrieve the array of
-     * objectIds expected
-     *
-     * @param searchQuery
-     * @param objectIdExpected
-     */
-    public TaskManagerSearchTest(String searchQuery, String[] objectIdExpected) {
-        this.searchQuery = searchQuery;
-        this.objectIdExpected = objectIdExpected;
-    }
-
-    /**
-     * @return test data.
-     */
-    @SuppressWarnings("deprecation")
-    @Parameters(name = "{index}: Search \"{0}\" to get objectIds({1})")
-    //@formatter:off
-    public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-                /**
-                 * Normal tests
-                 */
-                { "I am", new String[] {"0","1","2","3"} },
-                { "A", new String[] {"4"} },
-                { "a", new String[] {"4"} },
-                { "NUS", new String[] {"4"} }
-
-
-        });
-    }
-
-    // @formatter:on
-    @BeforeClass
-    public static void initialize() {
-        TaskManagerConfig config = new TaskManagerConfig();
-        AliasData aliasData = new AliasData();
-        TaskData taskData = new TaskData();
-        taskManager = new TaskManager(config, aliasData, taskData);
-
-        Task fatherTask = new Task();
-        fatherTask.setId("0");
-        fatherTask.setTitle("I am your father.");
-        fatherTask.setCategory("NUS");
-        taskData.updateTaskMap(fatherTask, null, false);
-
-        Task motherTask = new Task();
-        motherTask.setId("1");
-        motherTask.setTitle("I am your mother.");
-        motherTask.setCategory("NUS");
-        taskData.updateTaskMap(motherTask, null, false);
-
-        Task sisterTask = new Task();
-        sisterTask.setId("2");
-        sisterTask.setTitle("I am your sister.");
-        sisterTask.setCategory("FAM");
-        taskData.updateTaskMap(sisterTask, null, false);
-
-        Task brotherTask = new Task();
-        brotherTask.setId("3");
-        brotherTask.setTitle("I am your brother.");
-        brotherTask.setCategory("FAM");
-        brotherTask.setDescription("NUS");
-        taskData.updateTaskMap(brotherTask, null, false);
-
-        Task aTask = new Task();
-        aTask.setId("4");
-        aTask.setTitle("A NUS");
-        aTask.setCategory("FAM");
-        taskData.updateTaskMap(aTask, null, false);
-    }
-
-    /**
-     * Tests the parsing of priority parameter.
-     */
-    @Test
-    public void testDeadline() {
-
-        assertArrayEquals(this.taskManager.search(this.searchQuery),
-                this.objectIdExpected);
+        return false;
     }
 
 }
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\taskmanager\TaskManagerSearchTest.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\DateIntervalTree.java
 
 
 

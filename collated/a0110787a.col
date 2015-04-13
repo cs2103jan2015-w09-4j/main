@@ -3,66 +3,60 @@
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\DisplayControllerConfig.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\DisplayControllerConfig.java
 	 */
 
 package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+/**
+ * Configures the Display Controller.
+ */
 public class DisplayControllerConfig implements IStorableElement {
     private GUITextDisplayConfig textDisplayConfig;
     private GUITextInputConfig textInputConfig;
 
+    /**
+     * Initializes the DisplayController.
+     */
     public DisplayControllerConfig() {
+        this.textDisplayConfig = new GUITextDisplayConfig();
+        this.textInputConfig = new GUITextInputConfig();
     }
 
-    public DisplayControllerConfig(GUITextDisplayConfig textDisplayConfig,
-            GUITextInputConfig textInputConfig) {
-        this.textDisplayConfig = textDisplayConfig;
-        this.textInputConfig = textInputConfig;
+    /**
+     * @return
+     */
+    public GUITextDisplayConfig getGUITextDisplayConfig() {
+        return this.getGUITextDisplayConfig();
     }
-    
-    public GUITextDisplayConfig getGUITextDisplayConfig(){
-        if(this.textDisplayConfig==null){
-            return new GUITextDisplayConfig();
-        } else {
-            return this.textDisplayConfig;
-        }
-    }
-    
-    public GUITextInputConfig getGUITextInputConfig(){
-        if(this.textInputConfig==null){
-            return new GUITextInputConfig();
-        } else {
-            return this.textInputConfig;
-        }
-    }
-    
-    public void setGUITextDisplayConfig(GUITextDisplayConfig config){
-        this.textDisplayConfig  = config;
-    }
-    
-    public void setGUITextInputConfig(GUITextInputConfig config){
-        this.textInputConfig = config;
+
+    /**
+     * @return
+     */
+    public GUITextInputConfig getGUITextInputConfig() {
+        return this.getGUITextInputConfig();
     }
 
     @Override
     public boolean isValid() {
-        return (this.textDisplayConfig==null ? true : this.textDisplayConfig.isValid()) &&
-               (this.textInputConfig==null ? true : this.textInputConfig.isValid());
+        return (this.textDisplayConfig == null ? true : this.textDisplayConfig
+                .isValid())
+                && (this.textInputConfig == null ? true : this.textInputConfig
+                        .isValid());
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\DisplayControllerConfig.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\DisplayControllerConfig.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUIDisplayConfig.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUIDisplayConfig.java
 	 */
 
 package w094j.ctrl8.database.config;
@@ -74,18 +68,23 @@ import w094j.ctrl8.database.IStorableElement;
  * the GUIDisplay component.
  */
 public class GUIDisplayConfig implements IStorableElement {
-    protected static String[] DEFAULT_ARGS = new String[] {""};
-    
+    protected static String[] DEFAULT_ARGS = new String[] { "" };
+
     protected String[] appArgs;
     protected DisplayControllerConfig controllerConfig;
 
-    // The one and only constructor. Produces a default configuration.
+    /**
+     * The one and only constructor. Produces a default configuration.
+     */
     public GUIDisplayConfig() {
         this.controllerConfig = new DisplayControllerConfig();
     }
-    
-    public String[] getAppArgs(){
-        if(this.appArgs == null){
+
+    /**
+     * @return application arguements.
+     */
+    public String[] getAppArgs() {
+        if (this.appArgs == null) {
             return DEFAULT_ARGS;
         } else {
             return this.appArgs;
@@ -94,28 +93,32 @@ public class GUIDisplayConfig implements IStorableElement {
 
     @Override
     public boolean isValid() {
-        return (this.controllerConfig != null && this.controllerConfig.isValid());
+        return ((this.controllerConfig != null) && this.controllerConfig
+                .isValid());
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUIDisplayConfig.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUIDisplayConfig.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUITextDisplayConfig.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUITextDisplayConfig.java
 	 */
 
 package w094j.ctrl8.database.config;
 
 import w094j.ctrl8.database.IStorableElement;
 
+/**
+ * Config for the GUI Text Display.
+ */
 public class GUITextDisplayConfig extends GUITextGenericConfig implements
-        IStorableElement {
-    //Uses a different set of default values
+IStorableElement {
+    // Uses a different set of default values
     protected static final TextColour DEFAULT_TEXT_COLOUR = TextColour.Black;
     protected static final int DEFAULT_TEXT_SIZE = 12;
 
@@ -127,61 +130,315 @@ public class GUITextDisplayConfig extends GUITextGenericConfig implements
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\GUITextDisplayConfig.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUITextDisplayConfig.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUITextGenericConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
+
+/**
+ * Configs the GUI text Generic.
+ */
+public abstract class GUITextGenericConfig implements IStorableElement {
+    /**
+     * Text Color
+     */
+    @SuppressWarnings("javadoc")
+    public enum TextColour {
+        Awesome("orange"), Black("black"), Default("black"), Invalid("");
+
+        private String textColour;
+
+        TextColour(String textColour) {
+            this.textColour = textColour;
+        }
+
+        @Override
+        public String toString() {
+            return this.textColour;
+        }
+    };
+
+    protected static final TextColour DEFAULT_TEXT_COLOUR = GUITextGenericConfig.TextColour.Default;
+    protected static final int DEFAULT_TEXT_SIZE = 10;
+    protected TextColour textColour;
+    protected Integer textSize;
+
+    /**
+     *
+     */
+    public GUITextGenericConfig() {
+    }
+
+    /**
+     * @param textColour
+     * @param textSize
+     */
+    public GUITextGenericConfig(TextColour textColour, int textSize) {
+        this.setTextSize(textSize);
+        this.setTextColour(textColour);
+    }
+
+    /**
+     * @return textClour
+     */
+    public TextColour getTextColour() {
+        if (this.textColour == null) {
+            return DEFAULT_TEXT_COLOUR;
+        } else {
+            return this.textColour;
+        }
+    }
+
+    /**
+     * @return textSize
+     */
+    public int getTextSize() {
+        if (this.textSize == null) {
+            return DEFAULT_TEXT_SIZE;
+        } else {
+            return this.textSize;
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.textSize > 0;
+    }
+
+    /**
+     * @param newColour
+     */
+    public void setTextColour(TextColour newColour) {
+        this.textColour = newColour;
+    }
+
+    /**
+     * @param textSize
+     */
+    public void setTextSize(int textSize) {
+        if ((textSize > 32) || (textSize < 5)) {
+            this.textSize = DEFAULT_TEXT_SIZE;
+        } else {
+            this.textSize = textSize;
+        }
+    }
+
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUITextGenericConfig.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUITextInputConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
+
+/**
+ * GUI Text Input
+ */
+public class GUITextInputConfig extends GUITextGenericConfig implements
+        IStorableElement {
+    // Uses a different set of default values
+    protected static final TextColour DEFAULT_TEXT_COLOUR = TextColour.Black;
+    protected static final int DEFAULT_TEXT_SIZE = 20;
+
+    GUITextInputConfig() {
+    }
+
+    GUITextInputConfig(TextColour textColour, int textSize) {
+        super(textColour, textSize);
+    }
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GUITextInputConfig.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
 	 */
 
     private String lastMessage;
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
 	 */
 
-    /*
+    /**
      * For testing purposes. Facilitates JUnit testing of individual modules
      * using CLIDisplay
+     *
+     * @return lastMessage
      */
     public String getLastMessage() {
         return this.lastMessage;
 
     }
 
-    public void outputMessage(String message) {
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+    @Override
+    public void goodbye() {
+        // TODO Not Implemented Yet
+
+    }
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
 	 */
 
-        /*
-         * For testing purposes. see getLastMessage()
-         */
+    /**
+     * For testing purposes. see getLastMessage()
+     *
+     * @param message
+     */
+    public void outputMessage(String message) {
+
         this.lastMessage = message;
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\CLIDisplay.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\GUICore.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\Display.java
+	 */
+
+package w094j.ctrl8.display;
+
+import java.io.InputStream;
+
+import org.apache.commons.lang.NotImplementedException;
+
+import w094j.ctrl8.database.config.DisplayConfig;
+import w094j.ctrl8.pojo.Response;
+
+/**
+ * This abstract class defines the possible interactions a Terminal object use
+ * to communicate with a Display Object. All Display classes should extend from
+ * this abstract class to acheive the singleton pattern, avoiding multiple
+ * instances of Display objects existing concurrently.
+ */
+public abstract class Display {
+
+    private static Display instance;
+
+    /**
+     * Gets the current instance of the Display.
+     *
+     * @return the current instance.
+     */
+    public static Display getInstance() {
+        if (instance == null) {
+            throw new RuntimeException(
+                    "Display must be initialized before retrieveing.");
+        }
+        return instance;
+    }
+
+    /**
+     * Initializes an instance of Display given a displayConfig
+     *
+     * @param displayConfig
+     * @return display
+     */
+    public static Display initInstance(DisplayConfig displayConfig) {
+
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize Display as it was initialized before.");
+        } else {
+            if (displayConfig.isGUI()) {
+// instance = new GUIDisplay(displayConfig.getGUI());
+                throw new NotImplementedException(
+                        "GUI is under test, disabled.");
+            } else {
+                instance = new CLIDisplay(displayConfig.getCLI());
+            }
+        }
+        return instance;
+
+    }
+
+    /**
+     * Gets the inputstream of the Display object. The primary method of getting
+     * input from user.
+     *
+     * @return InputStream user input as an inputstream.
+     */
+    public abstract InputStream getInputStream();
+
+    /**
+     * Informs the UI to display a goodbye message to the user.
+     */
+    public abstract void goodbye();
+
+    /**
+     * Prompts the user for input and gets an response.
+     *
+     * @param <T>
+     *            Type of object to return from the user input.
+     * @param prompt
+     * @return The parsed result.
+     */
+    public abstract <T> T promptUser(Prompt<T> prompt);
+
+    /**
+     * Informs the UI to update itself with the response object provided after
+     * an executation of a statement. If no commands are detected, then it will
+     * just print the task table. Refer to w094j.ctrl8.pojo.Response.java for
+     * more information.
+     *
+     * @param res
+     *            The response POJO which lists all the variables that a
+     *            response may contain.
+     */
+    public abstract void updateUI(Response res);
+
+    /**
+     * Informs the UI to display a welcome message to the user.
+     */
+    public abstract void welcome();
+
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\Display.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\GUICore.java
 	 */
 
 package w094j.ctrl8.display.gui;
@@ -205,12 +462,11 @@ import w094j.ctrl8.message.NormalMessage;
 
 /**
  * The application core of the GUI implementation. To create an application
- * window, simply initialise the object using its constructors.
+ * window, simply initialise the object using its constructor
+ * GUICore(<GUIDisplayConfig>,<Thread>). Do not used its default constructor as
+ * that is reserved for Application.launch.
  *
  * <pre>
- * E.g
- * new GUICore(new String[] {""});
- * 
  * Refer to
  * http://docs.oracle.com/javase/8/javafx/api/javafx/application/Application.html
  * </pre>
@@ -243,7 +499,6 @@ public class GUICore extends Application implements Runnable {
      * @return the consoleController
      */
     public ConsoleSceneController getConsoleController() {
-        System.out.println(this + ":" + this.consoleController);
         return this.consoleController;
     }
 
@@ -346,7 +601,6 @@ public class GUICore extends Application implements Runnable {
                     .getResource(LocalResource.ConsoleScene));
             BorderPane consoleScene = (BorderPane) loader.load();
 
-            // TODO
             consoleScene
                     .setStyle("-fx-faint-focus-color: transparent;-fx-focus-color: transparent;");
 
@@ -356,7 +610,6 @@ public class GUICore extends Application implements Runnable {
             // Give controller access
             this.setConsoleController(loader.getController());
             this.getConsoleController().setRoot(this);
-            System.out.println(this.getConsoleController());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -365,14 +618,14 @@ public class GUICore extends Application implements Runnable {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\GUICore.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\GUICore.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\model\FXTextFieldInputStream.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\model\FXTextFieldInputStream.java
 	 */
 
 package w094j.ctrl8.display.gui.model;
@@ -388,10 +641,13 @@ import javafx.scene.input.KeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * InputStream that takes a JavaFX TextField object as input, and provides a
+ * means of reading it like a typical InputStream.
+ */
 public class FXTextFieldInputStream extends InputStream {
     byte[] contents;
     int pointer = 0;
-    private String delimiter = "\r\n";
 
     private Logger logger = LoggerFactory
             .getLogger(FXTextFieldInputStream.class);
@@ -402,21 +658,20 @@ public class FXTextFieldInputStream extends InputStream {
         text.addEventHandler(KeyEvent.KEY_PRESSED,
                 new EventHandler<KeyEvent>() {
 
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
-                    FXTextFieldInputStream.this.contents = (text
+                    @Override
+                    public void handle(KeyEvent event) {
+                        if (event.getCode() == KeyCode.ENTER) {
+                            FXTextFieldInputStream.this.contents = (text
                                     .getText() + "\n").getBytes();
-                    FXTextFieldInputStream.this.pointer = 0;
-                    text.setText("");
-                    synchronized (FXTextFieldInputStream.this) {
+                            FXTextFieldInputStream.this.pointer = 0;
+                            text.setText("");
 
-                        FXTextFieldInputStream.this.notifyAll();
-
+                            synchronized (FXTextFieldInputStream.this) {
+                                FXTextFieldInputStream.this.notifyAll();
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
     };
 
     // Disables the default constructor
@@ -428,36 +683,32 @@ public class FXTextFieldInputStream extends InputStream {
     public int read() throws IOException {
         if (this.pointer == this.contents.length) {
             this.pointer++;
-            System.out.println("-1L");
             return -1;
         }
         if (this.pointer > this.contents.length) {
             synchronized (this) {
                 try {
                     this.wait();
-                    System.out.println("Exit wait");
                     this.pointer = 0;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    System.out.println("-1");
                     return -1;
                 }
             }
         }
-// System.out.println("(" + this.contents[this.pointer] + ")");
         return this.contents[this.pointer++];
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\model\FXTextFieldInputStream.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\model\FXTextFieldInputStream.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\ConsoleSceneController.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\view\ConsoleSceneController.java
 	 */
 
 package w094j.ctrl8.display.gui.view;
@@ -480,11 +731,14 @@ import w094j.ctrl8.database.config.GUITextInputConfig;
 import w094j.ctrl8.display.gui.GUICore;
 import w094j.ctrl8.display.gui.model.FXTextFieldInputStream;
 
+/**
+ * Controller class for the JavaFX Application. Manages capturing input from
+ * Application window as well as updating its view.
+ */
 public class ConsoleSceneController {
     private static final String __newline = "\n";
     private static final String CSS_FAINT_FOCUS_TRANSPARENT = "-fx-faint-focus-color: transparent;";
     private static final String CSS_FOCUS_TRANSPARENT = "-fx-focus-color: transparent;";
-
     private static final String CSS_FONT_SIZE = "-fx-font-size: %1$2s ;";
     private static final String CSS_TEXT_FILL = "-fx-text-fill: %1$2s ;";
 
@@ -515,9 +769,15 @@ public class ConsoleSceneController {
         this.textDisplay.appendText(input + __newline);
     }
 
+    /**
+     * Applies a DisplayControllerConfig to modify certain settings. Refer to
+     * DisplayControllerConfig class for more details.
+     * 
+     * @param controllerConfig
+     */
     public void applyConfig(DisplayControllerConfig controllerConfig) {
-        applyToTextDisplay(controllerConfig.textDisplayConfig);
-        applyToTextInput(controllerConfig.textInputConfig);
+        applyToTextDisplay(controllerConfig.getGUITextDisplayConfig());
+        applyToTextInput(controllerConfig.getGUITextInputConfig());
 
     }
 
@@ -593,18 +853,18 @@ public class ConsoleSceneController {
          * enter button is pressed
          */
         this.inputStream = new FXTextFieldInputStream(textInput);
-        this.logger.debug("InputStream Thread created, Init complete");
+        this.logger.info("InputStream Thread created, Init complete");
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\ConsoleSceneController.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\view\ConsoleSceneController.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\LocalResource.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\view\LocalResource.java
 	 */
 
 package w094j.ctrl8.display.gui.view;
@@ -619,14 +879,14 @@ public class LocalResource {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\gui\view\LocalResource.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\gui\view\LocalResource.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\GUIDisplay.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\GUIDisplay.java
 	 */
 
 package w094j.ctrl8.display;
@@ -647,30 +907,48 @@ import w094j.ctrl8.pojo.Response;
 import w094j.ctrl8.pojo.Task;
 
 /**
- * Class implements Display Interface as a simple CLI with additional GUI
- * display for its output in the same window
+ * Class implements Display using JavaFX framework which creates an application
+ * for the user to interact with. The application window runs on a seperate
+ * thread to prevent the main thread from freezing up due to the nature of
+ * JavaFX. Instead, thread notifications are used to notify the main thread (who
+ * holds GUIDisplay) when it is initialised and ready for interaction.
+ *
+ * <pre>
+ * This implementation is incomplete and unstable.
+ * </pre>
  */
-
+@Deprecated
 public class GUIDisplay extends Display {
     private GUICore guiCore;
-    private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
     private Thread GUIThread;
+    private Logger logger = LoggerFactory.getLogger(GUIDisplay.class);
 
+    /**
+     *
+     */
     public GUIDisplay() {
-        this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
+        this.guiCore = new GUICore(new GUIDisplayConfig(),
+                Thread.currentThread());
     }
 
+    /**
+     * @param config
+     */
     public GUIDisplay(GUIDisplayConfig config) {
         if ((config == null) || !config.isValid()) {
             this.logger
-            .debug("Invalid or null config received! Reverting to defaults.");
-            this.guiCore = new GUICore(new GUIDisplayConfig(), Thread.currentThread());
+                    .debug("Invalid or null config received! Reverting to defaults.");
+            this.guiCore = new GUICore(new GUIDisplayConfig(),
+                    Thread.currentThread());
         } else {
             this.guiCore = new GUICore(config, Thread.currentThread());
         }
         this.GUIThread = new Thread(this.guiCore);
-        //Ensure that GUIThread is completely initialised before returning constructor
-        synchronized(this.GUIThread){
+        /*
+         * Ensure that GUIThread is completely initialised before returning
+         * constructor
+         */
+        synchronized (this.GUIThread) {
             this.GUIThread.start();
         }
     }
@@ -680,6 +958,25 @@ public class GUIDisplay extends Display {
         return this.guiCore.getInputStream();
     }
 
+    @Override
+    public void goodbye() {
+        // TODO Not Implemented Yet
+
+    }
+
+    @Override
+    public <T> T promptUser(Prompt<T> prompt) {
+        // TODO Not Implemented Yet
+        return null;
+    }
+
+    /*
+     * XXX Buggy. Ideally the updateUI Function needs to notify the application
+     * thread to update the UI while providing a shareable version of response
+     * for the application thread to access. Current version does not work
+     * because the main thread is tampering with JavaFX objects which throws
+     * exceptions
+     */
     @Override
     public void updateUI(Response res) {
         boolean allNull = true; // Initial assumption
@@ -704,178 +1001,24 @@ public class GUIDisplay extends Display {
 
         if (allNull) {
             this.logger
-            .debug("Respose object does not contain any useful information");
+                    .debug("Respose object does not contain any useful information");
         }
     }
 
-    private String[][] initNullTaskTable(String[][] table, int taskNumber) {
-        int i = taskNumber;
-        table[i][0] = "-";
+    @Override
+    public void welcome() {
+        // TODO Auto-generated method stub
 
-        table[i][1] = "-";
-
-        table[i][2] = "-";
-
-        table[i][3] = "-";
-
-        table[i][4] = "-";
-
-        table[i][5] = "-";
-
-        table[i][6] = "-";
-
-        table[i][7] = "-";
-
-        table[i][8] = "-";
-
-        table[i][9] = "-";
-        return table;
     }
 
-    /*
-     * Initialize the table with adding the first row for each of the task's
-     * properties.
-     */
-    private String[][] initTable(int taskNumber, int taskProperties) {
-        String[][] table = new String[taskNumber][taskProperties];
-        table[0][0] = "Title";
-        table[0][1] = "Category";
-        table[0][2] = "Description";
-        table[0][3] = "StartDate";
-        table[0][4] = "EndDate";
-        table[0][5] = "Location";
-        table[0][6] = "Priority";
-        table[0][7] = "Reminder";
-        table[0][8] = "TaskType";
-        table[0][9] = "Status";
-
-        return table;
-    }
-
-    /**
-     * This method is used to output the task for the user in certain format.
-     * Modified from CLIDisplay and contextualised for GUI
-     *
-     * @param taskList
-     * @throws OutputExecuteException
-     */
-    private void outputTask(Task[] taskList) throws OutputExecuteException {
-        String[][] table = this.initTable(taskList.length + 1,
-                MagicNumbersAndConstants.NUMBER_TASK_PROPERTIES);
-        int iteration = taskList.length + 1;
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        table = this.initNullTaskTable(table, 1);
-
-        for (int i = 1; i < iteration; i++) {
-            // task should be not null
-            if (taskList[i - 1] == null) {
-                throw new OutputExecuteException(
-                        OuputExecuteMessage.EXCEPTION_NULL_TASK);
-            }
-
-            if (taskList[i - 1].getTitle() == null) {
-                table[i][0] = "-";
-            } else {
-                table[i][0] = taskList[i - 1].getTitle();
-            }
-
-            if (taskList[i - 1].getCategory() == null) {
-                table[i][1] = "-";
-            } else {
-                table[i][1] = taskList[i - 1].getCategory();
-            }
-            if (taskList[i - 1].getDescription() == null) {
-                table[i][2] = "-";
-            } else {
-                table[i][2] = taskList[i - 1].getDescription();
-            }
-            if (taskList[i - 1].getStartDate() == null) {
-                table[i][3] = "-";
-            } else {
-                table[i][3] = df.format(taskList[i - 1].getStartDate());
-            }
-            if (taskList[i - 1].getEndDate() == null) {
-                table[i][4] = "-";
-            } else {
-                table[i][4] = df.format(taskList[i - 1].getEndDate());
-            }
-            if (taskList[i - 1].getLocation() == null) {
-                table[i][5] = "-";
-            } else {
-                table[i][5] = taskList[i - 1].getLocation();
-            }
-
-            table[i][6] = String.valueOf(taskList[i - 1].getPriority());
-
-            if (taskList[i - 1].getReminder() == null) {
-                table[i][7] = "-";
-            } else {
-                table[i][7] = df.format(taskList[i - 1].getReminder());
-            }
-
-            table[i][8] = taskList[i - 1].getTaskType().toString();
-
-            if (taskList[i - 1].getStatus() == true) {
-                table[i][9] = "Done";
-            } else {
-                table[i][9] = "Not Done Yet";
-            }
-        }
-        this.printTable(table);
-    }
-
-    /**
-     * This method is used to print a table with format of following the format
-     * of right justified table x xxx yyy y zz zz
-     *
-     * <pre>
-     * Modified from CLIDisplay and contextualised for GUI
-     * </pre>
-     *
-     * @param table
-     */
-    private void printTable(String[][] table) {
-        // Find out what the maximum number of columns is in any row
-        int maxColumns = 0;
-        for (String[] element : table) {
-            maxColumns = Math.max(element.length, maxColumns);
-        }
-
-        // Find the maximum length of a string in each column
-        int[] lengths = new int[maxColumns];
-        for (String[] element : table) {
-            for (int j = 0; j < element.length; j++) {
-                lengths[j] = Math.max(element[j].length(), lengths[j]);
-            }
-        }
-
-        // Generate a format string for each column
-        String[] formats = new String[lengths.length];
-        for (int i = 0; i < lengths.length; i++) {
-            formats[i] = "%1$" + lengths[i] + "s"
-                    + ((i + 1) == lengths.length ? "\n" : " ");
-        }
-
-        // Print 'em out
-        StringBuilder sb = new StringBuilder();
-        for (String[] element : table) {
-            for (int j = 0; j < element.length; j++) {
-                sb.append(String.format(formats[j], element[j]));
-            }
-        }
-        this.guiCore.getConsoleController().appendToDisplay(sb.toString());
-    }
-
-}
-
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\display\GUIDisplay.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\display\GUIDisplay.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\CommandExecuteException.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\CommandExecuteException.java
 	 */
 
 
@@ -893,14 +1036,14 @@ public class CommandExecuteException extends Exception {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\CommandExecuteException.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\CommandExecuteException.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\TaskOverwriteException.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\TaskOverwriteException.java
 	 */
 
 
@@ -919,14 +1062,14 @@ public class TaskOverwriteException extends Exception {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\TaskOverwriteException.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\TaskOverwriteException.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\CommandExecutionMessage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\CommandExecutionMessage.java
 	 */
 
 package w094j.ctrl8.message;
@@ -944,14 +1087,14 @@ public class CommandExecutionMessage {
     public static final String INVALID_INDEX = "Invalid Index!";
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\CommandExecutionMessage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\CommandExecutionMessage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
 	 */
 
     public static final String HELP_ADD_COMMAND_SYNTAX = "add ={<title>}";
@@ -969,14 +1112,14 @@ public class CommandExecutionMessage {
     public static final String NO_FILEPATH_MESSAGE = "No filepath entered. Using default filepath.";
     public static final String NO_TASK_FOUND = "No Tasks found.";
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\NormalMessage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Response.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\pojo\Response.java
 	 */
 
 package w094j.ctrl8.pojo;
@@ -984,6 +1127,7 @@ package w094j.ctrl8.pojo;
 import java.util.ArrayList;
 
 import w094j.ctrl8.data.AliasData;
+import w094j.ctrl8.parse.statement.CommandType;
 
 /**
  * Response object defines what a Display Interface expects to receive after a
@@ -999,45 +1143,93 @@ import w094j.ctrl8.data.AliasData;
  * NULL
  */
 public class Response {
+    public ArrayList<Actions> actions;
+    public AliasData alias;
     /*
      * The list of properties(variables) that a response MAY contain
      */
     public String reply;
+    public String[] TaskIdList;
     public Task[] taskList;
-    public AliasData alias;
-    public ArrayList<Actions> actions;
-    public String[] TaskIdList; 
+    private CommandType commandRan;
+    private Exception exception;
+    private boolean isContinueExecution;
+    private boolean isError;
+
+    /**
+     * Initializes a response that signals that the Statement failed to execute.
+     */
+    public Response() {
+        this.isError = true;
+    }
 
     /**
      * Default constructor. Initializes all properties to be NULL
      */
-    public Response() {
+    public Response(CommandType commandRan) {
+        this.commandRan = commandRan;
         this.reply = null;
         this.taskList = null;
         this.alias = null;
         this.actions = null;
         this.TaskIdList = null;
+        this.isContinueExecution = true;
+    }
+
+    /**
+     * @return the commandRan
+     */
+    public CommandType getCommandRan() {
+        return this.commandRan;
+    }
+
+    /**
+     * @return the exception
+     */
+    public Exception getException() {
+        return this.exception;
+    }
+
+    /**
+     * @return the isContinueExecution
+     */
+    public boolean isContinueExecution() {
+        return this.isContinueExecution;
+    }
+
+    /**
+     * @param commandRan
+     *            the commandRan to set
+     */
+    public void setCommandRan(CommandType commandRan) {
+        this.commandRan = commandRan;
+    }
+
+    /**
+     * @param isContinueExecution
+     *            the isContinueExecution to set
+     */
+    public void setContinueExecution(boolean isContinueExecution) {
+        this.isContinueExecution = isContinueExecution;
+    }
+
+    /**
+     * @param exception
+     *            the exception to set
+     */
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Response.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\pojo\Response.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Task.java
-	 */
-
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Task.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\ITaskManager.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\ITaskManager.java
 	 */
 
 public interface ITaskManager {
@@ -1054,15 +1246,17 @@ public interface ITaskManager {
      *            Task object. Expects a well defined Task, otherwise throws
      *            CommandExecuteException
      * @param statement
-     * @throws CommandExecuteException
+     * @throws DataException
+     * @throws IOException
+     * @throws GeneralSecurityException
+     *             @
      */
-    public void add(Task task, Statement statement,boolean isUndo)
-            throws CommandExecuteException;
+    public Response add(Task task, Statement statement, boolean isUndo);
 
     /**
      * View all aliases in the database.
      */
-    public void alias();
+    public Response alias(Statement statement);
 
     /**
      * adding of alias from user
@@ -1070,10 +1264,13 @@ public interface ITaskManager {
      * @param alias
      * @param value
      * @param statement
-     * @throws CommandExecuteException
+     * @throws DataException
+     * @throws IOException
+     * @throws GeneralSecurityException
+     *             @
      */
-    public void aliasAdd(String alias, String value, Statement statement,boolean isUndo)
-            throws CommandExecuteException;
+    public Response aliasAdd(String alias, String value, Statement statement,
+            boolean isUndo);
 
     /**
      * delete a alias
@@ -1082,8 +1279,8 @@ public interface ITaskManager {
      * @param statement
      * @throws DataException
      */
-    public void aliasDelete(String query, Statement statement,boolean isUndo)
-            throws DataException;
+    public Response aliasDelete(String query, Statement statement,
+            boolean isUndo) throws DataException;
 
     /**
      * <pre>
@@ -1099,9 +1296,11 @@ public interface ITaskManager {
      *            key that represents the task object
      * @param statement
      * @throws CommandExecuteException
+     * @throws DataException
+     *             @
      */
-    public void delete(String taskID, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+    public Response delete(String taskID, Statement statement, boolean isUndo)
+            throws CommandExecuteException, DataException;
 
     /**
      * Set the task's status to done
@@ -1109,16 +1308,18 @@ public interface ITaskManager {
      * @param query
      * @param statement
      * @throws CommandExecuteException
+     * @throws DataException
+     *             @
      */
-    public void done(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+    public Response done(String query, Statement statement, boolean isUndo)
+            throws CommandExecuteException, DataException;
 
     /**
      * Stops the Terminal from continuing its REPL loop. Function is called when
      * an exit statement is executed. Performs a cleanup before terminating the
      * terminal See Issue #74 on github
      */
-    public void exit();
+    public Response exit(Statement statement);
 
     /**
      * Generates information to assist the user in understanding the available
@@ -1126,7 +1327,8 @@ public interface ITaskManager {
      *
      * @param command
      */
-    public void help(CommandType command); // TODO add parameter to support help
+    public Response help(CommandType command, Statement statement); // TODO add
+// parameter to support help
 // for
 // specific
 // commands
@@ -1136,15 +1338,18 @@ public interface ITaskManager {
      *
      * @param index
      */
-    public void historyClear(int parseInt);
+    public Response historyClear(int parseInt, Statement statement);
 
     /**
      * undo the action with index in history
      *
      * @param index
      * @throws CommandExecuteException
+     * @throws DataException
+     *             @
      */
-    public void historyUndo(int parseInt) throws CommandExecuteException;
+    public Response historyUndo(int parseInt, Statement statement)
+            throws CommandExecuteException, DataException;
 
     /**
      * <pre>
@@ -1165,25 +1370,27 @@ public interface ITaskManager {
      *            completed. Is used as an overwrite.
      * @param statement
      * @throws CommandExecuteException
+     * @throws DataException
+     *             @
      */
-    public void modify(String query, Task incompleteTask, Statement statement, boolean isUndo)
-            throws CommandExecuteException;
+    public Response modify(String query, Task incompleteTask,
+            Statement statement, boolean isUndo)
+                    throws CommandExecuteException, DataException;
 
     /**
-     * Instructs the data store to dump its information into an external file.
-     * This saves an instance of the list of Tasks that the Terminal has stored
-     * so that data can be recovered in the event of unexpected program
-     * termination.
+     * Saves the Tasks in the task manager,
      */
-    public void pushData();
+    public void save();
 
     /**
      * TODO
-     * 
+     *
      * @param query
      * @param task
+     * @throws DataException
      */
-    public String[] search(String query);
+    public Response search(String query, Statement statement)
+            throws DataException;
 
     /**
      * <pre>
@@ -1195,25 +1402,26 @@ public interface ITaskManager {
      *
      * @throws CommandExecuteException
      */
-    public void view() throws CommandExecuteException;
+    public Response view(Statement statement) throws CommandExecuteException;
 
     /**
      * view the history of actions
      *
      * @throws CommandExecuteException
      */
-    public void viewHistory() throws CommandExecuteException;
+    public Response viewHistory(Statement statement)
+            throws CommandExecuteException;
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\ITaskManager.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\ITaskManager.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
 	 */
 
 
@@ -1224,7 +1432,6 @@ public interface ITaskManager {
  * operations. It parses user inputs and translates them into statements for
  * command objects to perform needed operations (e.g ADD operation)
  */
-
 public class TaskManager implements ITaskManager {
 
     private static TaskManager instance;
@@ -1234,17 +1441,18 @@ public class TaskManager implements ITaskManager {
     private static final int TASK_MAP_MINIMUM_SIZE = 0;
 
     private AliasData aliasData;
-    private boolean continueExecution = true;
     // Storage object (External)
-    private IDatabase database;
-    // Interface supporting interaction with user
-    private Display display;
+// private IDatabase database;
     private TaskData taskData;
 
-    /*
-     * TODO This function is currently a stub. Until Config object has completed
-     * implementation
+    /**
+     * Following Singleton pattern, All constructors are made private. Only way
+     * to get an instance is through getInstance() and initInstance()
      */
+    private TaskManager() {
+
+    }
+
     /**
      * Constructor for terminal with a config object
      *
@@ -1253,22 +1461,13 @@ public class TaskManager implements ITaskManager {
      *            to be setup
      * @param aliasData
      * @param taskData
+     * @param display
+     * @param database
      */
-    public TaskManager(TaskManagerConfig config, AliasData aliasData,
+    private TaskManager(TaskManagerConfig config, AliasData aliasData,
             TaskData taskData) {
         assertNotNull(config); // Should not be a null object
-        this.display = Display.getInstance();
         this.aliasData = aliasData;
-        /*
-         * TODO replace with proper configuration
-         */
-        try {
-            this.database = Database.getInstance();
-        } catch (Exception e) {
-            Response res = new Response();
-            res.reply = e.getMessage();
-            this.display.updateUI(res);
-        }
         this.taskData = taskData;
     }
 
@@ -1279,15 +1478,15 @@ public class TaskManager implements ITaskManager {
      */
     public static TaskManager getInstance() {
         if (instance == null) {
-            instance = initInstance(new TaskManagerConfig(), new AliasData(),
-                    new TaskData());
+            throw new RuntimeException(
+                    "Task Mananger must be initialized before retrieveing.");
         }
         return instance;
     }
 
     /**
      * Creates a Task Manager
-     * 
+     *
      * @param config
      * @param aliasData
      * @param taskData
@@ -1297,591 +1496,14 @@ public class TaskManager implements ITaskManager {
             AliasData aliasData, TaskData taskData) {
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Task Manager as it was initialized before.");
         } else {
             instance = new TaskManager(config, aliasData, taskData);
         }
         return instance;
     }
 
-    // @ author A0112092W
-    private static void addDoc(IndexWriter w, String title, String description,
-            String id) throws IOException {
-
-        // TODO
-        // not supposed to be here
-
-        Document doc = new Document();
-        doc.add(new TextField("title", title, Field.Store.YES));
-        doc.add(new TextField("id", id, Field.Store.YES));
-        // use a string field for isbn because we don't want it tokenized
-        doc.add(new TextField("description", description == null ? ""
-                : description, Field.Store.YES));
-        w.addDocument(doc);
-    }
-
-    @Override
-    public void add(Task task, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
-        // Task object should not be null
-        if (task == null) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_NULL_TASK);
-        }
-        logger.debug("in add task: " + task.getTitle());
-        logger.debug("in add " + statement.getCommand() + " "
-                + statement.getStatementArgumentsOnly());
-        // Make sure we are not adding an Incomplete task to database
-        if (task.getTaskType() == Task.TaskType.INCOMPLETE) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_IS_INCOMPLETE_TASK);
-        }
-
-        try {
-            // Update Taskmap
-            this.taskData.updateTaskMap(task, statement, isUndo);
-
-        } catch (Exception e) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
-        }
-
-        try {
-            this.database.saveToStorage();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // Informs user that his add statement is successful
-        if (isUndo == false) {
-            Response res = new Response();
-            res.reply = task.getTitle() + NormalMessage.ADD_TASK_SUCCESSFUL;
-            this.display.updateUI(res);
-        }
-    }
-
-    @Override
-    public void alias() {
-        Response res = new Response();
-        logger.debug("in alias taskmanager");
-        if (this.aliasData.isEmpty()) {
-            res.reply = NormalMessage.ALIAS_MAP_EMPTY;
-        } else {
-            logger.info("alias is passed to response");
-            res.alias = this.aliasData;
-        }
-        this.display.updateUI(res);
-
-    }
-
-    @Override
-    public void aliasAdd(String alias, String value, Statement statement,
-            boolean isUndo) throws CommandExecuteException {
-        this.aliasData.addAlias(alias, value);
-        if (isUndo == false) {
-            Response res = new Response();
-            res.reply = alias + NormalMessage.ADD_ALIAS_SUCCESSFUL + value;
-            this.display.updateUI(res);
-        }
-        try {
-            this.database.saveToStorage();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void aliasDelete(String query, Statement statement, boolean isUndo)
-            throws DataException {
-        String value = this.aliasData.toValue(query);
-        AliasData deleted = new AliasData();
-        deleted.addAlias(query, value);
-        this.aliasData.deleteAlias(query);
-        if (isUndo == false) {
-            Response res = new Response();
-            res.reply = NormalMessage.ALIAS_DELETE_SUCCESSFUL;
-            res.alias = deleted;
-            this.display.updateUI(res);
-        }
-        try {
-            this.database.saveToStorage();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void delete(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
-        Task task;
-        try {
-            String[] taskIdList = this.search(query);
-            if (taskIdList == null) {
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-            }
-            /* Check if key exists in taskStateMap */
-            if (taskIdList.length > 0) {
-                if (taskIdList.length == 1) {
-                    task = this.taskData.remove(taskIdList[0], statement);
-                } else {
-                    int index = this.chooseIndex(taskIdList,
-                            NormalMessage.MODIFIED);
-                    task = this.taskData.remove(taskIdList[index], statement);
-                }
-                // Update the database
-                try {
-                    this.database.saveToStorage();
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                logger.debug("task removed successfully");
-
-            } else {
-                logger.debug("In delete cant find");
-                logger.debug("in delete " + this.taskData.numOfTasks());
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_BAD_TASKID);
-            }
-        } catch (Exception e) {
-            throw new CommandExecuteException(e.getMessage());
-        }
-
-        if (isUndo == false) {
-            Response res = new Response();
-            res.reply = task.getTitle() + NormalMessage.DELETE_TASK_SUCCESSFUL;
-            this.display.updateUI(res);
-        }
-
-    }
-
-    /**
-     * Displays an output message requesting for the next user input. This may
-     * be empty if the UI does not require such.
-     */
-    public void displayNextCommandRequest() {
-        Response res = new Response();
-        res.reply = NormalMessage.DISPLAY_NEXT_COMMAND_REQUEST;
-        this.display.updateUI(res);
-    }
-
-    @Override
-    public void done(String query, Statement statement, boolean isUndo)
-            throws CommandExecuteException {
-
-        String[] taskIdList = this.search(query);
-        if (taskIdList == null) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        }
-        /* Check if key exists in taskStateMap */
-        if (taskIdList.length > 0) {
-            int index;
-            if (taskIdList.length == 1) {
-                index = 0;
-            } else {
-                index = this.chooseIndex(taskIdList, NormalMessage.MODIFIED);
-            }
-
-            Task task = this.taskData.getTask(taskIdList[index]);
-            if (task.getStatus() == true) {
-                logger.debug("The task is already done");
-            }
-            task.setStatus(true);
-
-            try {
-                // Update the TaskMap
-                this.taskData.updateTaskMap(taskIdList[index], task, statement,
-                        isUndo);
-            } catch (Exception e) {
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
-            }
-            try {
-                this.database.saveToStorage();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            // Informs user that his add statement is successful
-            if (isUndo == false) {
-                Response res = new Response();
-                res.reply = task.getTitle()
-                        + NormalMessage.DONE_TASK_SUCCESSFUL;
-                this.display.updateUI(res);
-            }
-        } else {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        }
-    }
-
-    @Override
-    public void exit() {
-        Response res = new Response();
-        res.reply = NormalMessage.EXIT_COMMAND;
-        this.display.updateUI(res);
-
-        this.cleanUp();
-
-        // stop loop
-        this.continueExecution = false;
-    }
-
-    /**
-     * This method return the caller a boolean whether this terminal should
-     * continue to be executed.
-     *
-     * @return continueExecution
-     */
-    public boolean getContinueExecution() {
-
-        return this.continueExecution;
-    }
-
-    @Override
-    public void help(CommandType command) {
-        String helpMessage = this.outputHelpMessage(command);
-        Response res = new Response();
-        res.reply = helpMessage;
-        this.display.updateUI(res);
-    }
-
-    @Override
-    public void historyClear(int index) {
-        Actions actionsRemoved = this.taskData.deleteHistory(index);
-        ArrayList<Actions> temp = new ArrayList<Actions>();
-        temp.add(actionsRemoved);
-        Response res = new Response();
-        res.reply = NormalMessage.HISTORY_CLEAR_SUCCESSFUL;
-        res.actions = temp;
-        this.display.updateUI(res);
-        try {
-            this.database.saveToStorage();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void historyUndo(int index) throws CommandExecuteException {
-        this.taskData.undoHistory(index, this);
-        try {
-            this.database.saveToStorage();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Part of CRUD: Update. Modifies the specified Task with new incomplete
-     * Task that contains new information Throws [CommandExecutionException]
-     * Refer to Issue #50
-     *
-     * @param query
-     * @param incompleteTask
-     */
-    @Override
-    public void modify(String query, Task incompleteTask, Statement statement,
-            boolean isUndo) throws CommandExecuteException {
-        String[] taskIdList = this.search(query);
-        if (taskIdList == null) {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        }
-        /* Check if key exists in taskStateMap */
-        if (taskIdList.length > 0) {
-            int index;
-            if (taskIdList.length == 1) {
-                index = 0;
-            } else {
-                index = this.chooseIndex(taskIdList, NormalMessage.MODIFIED);
-            }
-
-            logger.debug("Modify: the task exist");
-            Task task = this.taskData.getTask(taskIdList[index]);
-
-            try {
-
-                task.update(incompleteTask);
-                logger.debug(new Gson().toJson(task));
-            } catch (Exception e) {
-                logger.debug(e.getMessage());
-                throw new CommandExecuteException(e.getMessage());
-            }
-            try {
-                // Update the TaskMap
-                this.taskData.updateTaskMap(taskIdList[index], task, statement,
-                        isUndo);
-                logger.debug("update task");
-                try {
-                    this.database.saveToStorage();
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            } catch (Exception e) {
-                throw new CommandExecuteException(
-                        CommandExecutionMessage.EXCEPTION_UPDATE_TASK_MAP);
-            }
-
-            // Informs user that his add statement is successful
-            if (isUndo == false) {
-                Response res = new Response();
-                res.reply = task.getTitle()
-                        + NormalMessage.MODIFY_TASK_SUCCESSFUL;
-                this.display.updateUI(res);
-            }
-        } else {
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        }
-
-    }
-
-    @Override
-    public void pushData() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public String[] search(String query) {
-        String[] taskIdList = null;
-        try {
-            // 0. Specify the analyzer for tokenizing text.
-            // The same analyzer should be used for indexing and searching
-            Analyzer analyzer = new SimpleAnalyzer();
-
-            // 1. create the index
-            Directory index = new RAMDirectory();
-
-            IndexWriterConfig config = new IndexWriterConfig(analyzer);
-
-            IndexWriter w = new IndexWriter(index, config);
-            for (String key : this.taskData.getTaskStateMap().keySet()) {
-                Task t = this.taskData.getTask(key);
-                if (t != null) {
-                    addDoc(w, t.getTitle(), t.getDescription(), t.getId());
-                }
-            }
-            w.close();
-
-            // 2. query
-            if (query.length() < 0) {
-                throw new Exception("WHY No Query?!");
-            }
-
-            // the "title" arg specifies the default field to use
-            // when no field is explicitly specified in the query.
-            Query q = new QueryParser("title", analyzer).parse(query);
-
-            // 3. search
-            int hitsPerPage = 10;
-            IndexReader reader = DirectoryReader.open(index);
-            IndexSearcher searcher = new IndexSearcher(reader);
-            TopScoreDocCollector collector = TopScoreDocCollector
-                    .create(hitsPerPage);
-            searcher.search(q, collector);
-            ScoreDoc[] hits = collector.topDocs().scoreDocs;
-
-            // 4. display results
-            if (hits.length > 0) {
-                try {
-                    taskIdList = new String[hits.length];
-
-                    logger.debug("Found:" + hits.length + " hits.");
-                    for (int i = 0; i < hits.length; ++i) {
-                        int docId = hits[i].doc;
-
-                        Document d = searcher.doc(docId);
-                        String t = d.get("id");
-
-                        taskIdList[i] = t;
-                        logger.debug("Task#" + i + "="
-                                + new Gson().toJson(taskIdList[i]));
-                    }
-
-                    Task[] tasks = new Task[taskIdList.length];
-                    for (int i = 0; i < tasks.length; i++) {
-                        tasks[i] = this.taskData.getTask(taskIdList[i]);
-                    }
-                    Arrays.sort(tasks);
-
-                    Response res = new Response();
-                    res.taskList = tasks;
-                    logger.debug(new Gson().toJson(res));
-                    this.display.updateUI(res);
-
-                } catch (Exception e) {
-                    throw new CommandExecuteException(e.getMessage());
-                }
-            } else {
-                logger.debug("No results.");
-            }
-
-            // reader can only be closed when there
-            // is no need to access the documents any more.
-            reader.close();
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
-        }
-        return taskIdList;
-    }
-
-    @Override
-    public void view() throws CommandExecuteException {
-        logger.debug("inside view");
-        if (this.taskData.numOfTasks() <= TASK_MAP_MINIMUM_SIZE) {
-            /*
-             * taskMap size is illegal, most likely cause is that the task map
-             * is empty
-             */
-            Response res = new Response();
-            res.reply = NormalMessage.NO_TASK_FOUND;
-            this.display.updateUI(res);
-            logger.debug("no task found" + this.taskData.numOfTasks());
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        } else {
-            try {
-                Task[] taskList = this.taskData.getTaskList();
-                logger.debug("Number of Tasks:" + this.taskData.numOfTasks());
-
-                Arrays.sort(taskList);
-
-                Response res = new Response();
-                res.taskList = taskList;
-                this.display.updateUI(res);
-
-            } catch (Exception e) {
-                throw new CommandExecuteException(e.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public void viewHistory() throws CommandExecuteException {
-        if (this.taskData.getActionsList().size() == 0) {
-            /*
-             * history is empty
-             */
-            Response res = new Response();
-            res.reply = NormalMessage.NO_HISTORY_FOUND;
-            this.display.updateUI(res);
-
-            throw new CommandExecuteException(
-                    CommandExecutionMessage.EXCEPTION_MISSING_TASK);
-        } else {
-            try {
-
-                Response res = new Response();
-                res.actions = this.taskData.getActionsList();
-                this.display.updateUI(res);
-
-            } catch (Exception e) {
-                throw new CommandExecuteException(e.getMessage());
-            }
-        }
-
-    }
-
-    private int chooseIndex(String[] taskIdList, String command) {
-
-        Task[] tasks = new Task[taskIdList.length];
-        for (int i = 0; i < tasks.length; i++) {
-            tasks[i] = this.taskData.getTask(taskIdList[i]);
-        }
-        Arrays.sort(tasks);
-
-        Response res = new Response();
-        res.reply = NormalMessage.CHOOSE_FROM_LIST + command;
-        res.taskList = tasks;
-        logger.debug(new Gson().toJson(res));
-        this.display.updateUI(res);
-
-        return 0;
-    }
-
-    /**
-     * TODO: Any remainder operations left to do after 'exit' command is invoked
-     * goes here. This includes dumping information into an external text file.
-     * Or (maybe) editing an external config file
-     */
-    private void cleanUp() {
-        this.pushData();
-    }
-
-    /**
-     * @param command
-     */
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\display\GUIDisplayTest.java
-	 */
-
-package w094j.ctrl8.display;
-
-/**
- * XXX This class is NOT intended to be commited/pushed to the Github
- * repository. If accidentally done so. Please help to delete! Quick way of
- * running only the GUIDisplay component for unit testing purposes.
- */
-public class GUIDisplayTest {
-
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\display\GUIDisplayTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
-	 */
-
-                /**
-                 * Errornous tests
-                 */
-                { null, null },
-                { "", null },
-                { "some really long text", null }, // multiple words
-                { "add-alias", null }, // lazy pattern detection
-                { ".add", null }, // not 100% match
-                { "clearhistory", null }, // detect whether symbols are caught
-                { "saerch", null }, // typo
-                /**
-                 * Extreme tests
-                 */
-                { "add               ", CommandType.ADD }, // buffers
-
-        });
-    }
-
-    /**
-     * Initializes the command parser.
-     */
-    @BeforeClass
-    public static void initParser() {
-        CommandConfig config = new CommandConfig();
-        parser = new CommandParser(config);
-    }
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\CommandParserTest.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
 
 
 

@@ -3,22 +3,271 @@
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\DatabaseConfig.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\data\Data.java
 	 */
+
+/**
+ * The Data class contains two types of data which is AliasData and TaskData
+ */
+public class Data {
+
+    private AliasData alias;
+    private TaskData task;
+
+    /**
+     * Default constructor of Data
+     */
+    public Data() {
+        this.task = new TaskData();
+        this.alias = new AliasData();
+    }
+
+    /**
+     * @return the alias
+     */
+    public AliasData getAlias() {
+        return this.alias;
+    }
+
+    /**
+     * @return the task
+     */
+    public TaskData getTask() {
+        return this.task;
+    }
+
+    /**
+     * @param alias
+     *            the alias to set
+     */
+    public void setAlias(AliasData alias) {
+        this.alias = alias;
+    }
+
+    /**
+     * @param task
+     *            the task to set
+     */
+    public void setTask(TaskData task) {
+        this.task = task;
+    }
+
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\data\Data.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\Config.java
+	 */
+
+/**
+ * Class encapsulates configuration options for program. This includes whether
+ * program is running in CLI or GUI mode, where to read/dump data to/from etc.
+ */
+public class Config implements IStorableElement {
+
+    private DatabaseConfig database;
+    private DisplayConfig display;
+    private ParserConfig parser;
+    private TaskManagerConfig taskManager;
+    private TerminalConfig terminal;
+
+    /**
+     *
+     */
+    public Config() {
+        this.database = new DatabaseConfig();
+        this.display = new DisplayConfig();
+        this.parser = new ParserConfig();
+        this.taskManager = new TaskManagerConfig();
+        this.terminal = new TerminalConfig();
+    }
+
+    /**
+     * @return the database
+     */
+    public DatabaseConfig getDatabase() {
+        return this.database;
+    }
+
+    /**
+     * @return the display
+     */
+    public DisplayConfig getDisplay() {
+        return this.display;
+    }
+
+    /**
+     * @return the parser
+     */
+    public ParserConfig getParser() {
+        return this.parser;
+    }
+
+    /**
+     * @return the taskManager
+     */
+    public TaskManagerConfig getTaskManager() {
+        return this.taskManager;
+    }
+
+    /**
+     * @return the terminal
+     */
+    public TerminalConfig getTerminal() {
+        return this.terminal;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.database.isValid() && this.display.isValid()
+                && this.parser.isValid() && this.taskManager.isValid()
+                && this.terminal.isValid();
+    }
+
+    /**
+     * @param database
+     *            the database to set
+     */
+    public void setDatabase(DatabaseConfig database) {
+        this.database = database;
+    }
+
+    /**
+     * @param display
+     *            the display to set
+     */
+    public void setDisplay(DisplayConfig display) {
+        this.display = display;
+    }
+
+    /**
+     * @param parser
+     *            the parser to set
+     */
+    public void setParser(ParserConfig parser) {
+        this.parser = parser;
+    }
+
+    /**
+     * @param taskManager
+     *            the taskManager to set
+     */
+    public void setTaskManager(TaskManagerConfig taskManager) {
+        this.taskManager = taskManager;
+    }
+
+    /**
+     * @param terminal
+     *            the terminal to set
+     */
+    public void setTerminal(TerminalConfig terminal) {
+        this.terminal = terminal;
+    }
+
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\Config.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\DatabaseConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
 
 /**
  * Configuration file for Database.
  */
 public class DatabaseConfig implements IStorableElement {
+    private DiskStorageConfig diskStorage;
+    private GoogleStorageConfig googleStorage;
 
+    /**
+     * Creates a Database config with empty diskStorage and googleStorage
+     * configs.
+     */
+    public DatabaseConfig() {
+        this.diskStorage = new DiskStorageConfig();
+        this.googleStorage = new GoogleStorageConfig();
+    }
+
+    /**
+     * @return the diskStorageConfig
+     */
+    public DiskStorageConfig getDiskStorageConfig() {
+        return this.diskStorage;
+    }
+
+    /**
+     * @return the googleStorageConfig
+     */
+    public GoogleStorageConfig getGoogleStorageConfig() {
+        return this.googleStorage;
+    }
+
+    @Override
+    public boolean isValid() {
+        return this.diskStorage.isValid()
+                && this.googleStorage.isValid();
+    }
+
+    /**
+     * @param diskStorageConfig
+     *            the command to set
+     */
+    public void setDiskStorageConfig(DiskStorageConfig diskStorageConfig) {
+        this.diskStorage = diskStorageConfig;
+    }
+
+    /**
+     * @param googleStorageConfig
+     *            the googleStorageConfig to set
+     */
+    public void setGoogleStorageConfig(GoogleStorageConfig googleStorageConfig) {
+        this.googleStorage = googleStorageConfig;
+    }
+
+}
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\DatabaseConfig.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\DiskStorageConfig.java
+	 */
+
+/**
+ * Configuration file for DiskStorage.
+ */
+public class DiskStorageConfig implements IStorableElement {
+
+    /**
+     * Frequency of the clearing of the history.
+     */
+    @SuppressWarnings("javadoc")
     public enum Frequency {
-        DAILY, MONTHLY, NEVER, SESSION, WEEKLY, YEARLY
+        DAILY, MONTHLY, SESSION, WEEKLY, YEARLY
     }
 
     private static Frequency AUTO_CLEAR_HISTORY_FREQUENCY_DEFAULT = Frequency.SESSION;
     private Frequency autoClearHistoryFrequency;
 
-    public DatabaseConfig() {
+    /**
+     *
+     */
+    public DiskStorageConfig() {
     }
 
     /**
@@ -40,24 +289,101 @@ public class DatabaseConfig implements IStorableElement {
     }
 
     /**
-     * Sets how frequent the history will be cleared
+     * Sets how frequent the history will be cleared. Possible values are:
+     * Frequency.SESSION, Frequency.DAILY, Frequency.WEEKLY, Frequency.MONTHLY,
+     * Frequency.YEARLY
      *
      * @param frequency
      */
     public void setAutoClearHistoryFrequency(Frequency frequency) {
         this.autoClearHistoryFrequency = frequency;
     }
-
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\config\DatabaseConfig.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\DiskStorageConfig.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\Database.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GoogleStorageConfig.java
+	 */
+
+package w094j.ctrl8.database.config;
+
+import w094j.ctrl8.database.IStorableElement;
+
+/**
+ * Configuration file for GoogleStorage.
+ */
+public class GoogleStorageConfig implements IStorableElement {
+
+    private static Boolean AUTO_DOWNLOAD_AFTER_SAVE_DEFAULT = true;
+    private static Boolean SYNC_WITH_GOOGLE_DEFAULT = true;
+    private Boolean autoDownloadAfterSave;
+    private Boolean syncWithGoogle;
+
+    /**
+     * Creates a GoogleStorage Config object
+     */
+    public GoogleStorageConfig() {
+    }
+
+    /**
+     * @return autoDownloadAfterSave
+     */
+    public Boolean getAutoDownloadAfterSave() {
+        if (this.autoDownloadAfterSave == null) {
+            return AUTO_DOWNLOAD_AFTER_SAVE_DEFAULT;
+        } else {
+            return this.autoDownloadAfterSave;
+        }
+    }
+
+    /**
+     * @return syncWithGoogle
+     */
+    public Boolean getSyncWithGoogle() {
+        if (this.syncWithGoogle == null) {
+            return SYNC_WITH_GOOGLE_DEFAULT;
+        } else {
+            return this.syncWithGoogle;
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (!this.syncWithGoogle && this.autoDownloadAfterSave) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param autoSyncAfterSave
+     */
+    public void setAutoSync(Boolean autoSyncAfterSave) {
+        this.autoDownloadAfterSave = autoSyncAfterSave;
+    }
+
+    /**
+     * @param syncWithGoogle
+     */
+    public void setSyncWithGoogle(Boolean syncWithGoogle) {
+        this.syncWithGoogle = syncWithGoogle;
+    }
+
+}
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\config\GoogleStorageConfig.java
+
+
+
+
+
+	/**
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\Database.java
 	 */
 
 
@@ -79,8 +405,8 @@ public class Database implements IDatabase {
     public Database(String pathString) throws IOException, NoSuchFileException {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(Statement.class, new StatementGsonAdaptor());
-        this.gson = builder.excludeFieldsWithoutExposeAnnotation()
-                .setPrettyPrinting().create();
+        builder.enableComplexMapKeySerialization();
+        this.gson = builder.setPrettyPrinting().create();
         this.path = this.getOrCreatePath(pathString);
         this.file = this.path.toFile().isFile() ? this.getFile() : new DBfile();
     }
@@ -89,20 +415,18 @@ public class Database implements IDatabase {
      * Gets the current instance of the CLIDisplay.
      *
      * @return the current instance.
-     * @throws IOException
-     * @throws NoSuchFileException
      */
-    public static Database getInstance() throws NoSuchFileException,
-            IOException {
+    public static Database getInstance() {
         if (instance == null) {
-            instance = initInstance(null);
+            throw new RuntimeException(
+                    "Database must be initialized before retrieveing.");
         }
         return instance;
     }
 
     /**
      * @param filePath
-     * @return
+     * @return instance
      * @throws NoSuchFileException
      * @throws IOException
      */
@@ -111,7 +435,7 @@ public class Database implements IDatabase {
 
         if (instance != null) {
             throw new RuntimeException(
-                    "Cannot initialize when it was initialized.");
+                    "Cannot initialize Database as it was initialized before.");
         } else {
             instance = new Database(filePath);
         }
@@ -120,7 +444,8 @@ public class Database implements IDatabase {
     }
 
     @Override
-    public void downloadFromStorage() throws Exception {
+    public void downloadFromStorage() throws GeneralSecurityException,
+    IOException, DataException {
         Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
         Storage googleCalStorage = new GoogleStorage(this.file, this.gson);
         diskStorage.readData();
@@ -143,14 +468,17 @@ public class Database implements IDatabase {
     /**
      * Save and write file.
      *
-     * @throws Exception
+     * @throws IOException
+     * @throws GeneralSecurityException
+     * @throws DataException
      */
     @Override
-    public void saveToStorage() throws Exception {
-        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
+    public void saveToStorage() throws GeneralSecurityException, IOException,
+    DataException {
         Storage googleStorage = new GoogleStorage(this.file, this.gson);
-        diskStorage.storeData();
         googleStorage.storeData();
+        Storage diskStorage = new DiskStorage(this.file, this.path, this.gson);
+        diskStorage.storeData();
     }
 
     @Override
@@ -185,14 +513,14 @@ public class Database implements IDatabase {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\Database.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\Database.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\DiskStorage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\DiskStorage.java
 	 */
 
 package w094j.ctrl8.database;
@@ -204,6 +532,7 @@ import java.nio.file.Path;
 import w094j.ctrl8.pojo.DBfile;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Disk Storage
@@ -217,6 +546,7 @@ public class DiskStorage extends Storage {
     /**
      * @param file
      * @param filePath
+     * @param gson
      */
     public DiskStorage(DBfile file, Path filePath, Gson gson) {
         super(file);
@@ -227,8 +557,9 @@ public class DiskStorage extends Storage {
 
     @Override
     public void readData() throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = new String(Files.readAllBytes(this.filePath));
-        this.file = this.gson.fromJson(json, DBfile.class);
+        this.file = gson.fromJson(json, DBfile.class);
     }
 
     @Override
@@ -241,16 +572,20 @@ public class DiskStorage extends Storage {
         }
     }
 
+    @Override
+    public void sync() {
+    }
+
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\DiskStorage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\DiskStorage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\Factory.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\Factory.java
 	 */
 
 package w094j.ctrl8.database;
@@ -264,38 +599,79 @@ import w094j.ctrl8.taskmanager.TaskManager;
 import w094j.ctrl8.terminal.Terminal;
 
 /**
- * Factory
+ * Factory This class will initialize all instance of Database, Config, Parser,
+ * Display, TaskManager and Terminal.
  */
 public class Factory {
+
+    private static Factory instance;
 
     /**
      * @param filePath
      * @throws IOException
      */
-    public Factory(String filePath) throws IOException {
-
-        Database db = Database.initInstance(filePath);
-
+    private Factory(String filePath) throws IOException {
+        Database db = null;
+        try {
+            db = Database.initInstance(filePath);
+        } catch (Exception e) {
+            System.out
+            .println("Database corrupted, delete config file and retry.");
+        }
         Config config = db.getConfig();
 
-        Parser.initInstance(config.getParser(), db.getData().getAlias());
-        Display.initInstance(config.getDisplay());
-        TaskManager.initInstance(config.getTaskManager(), db.getData()
-                .getAlias(), db.getData().getTask());
-        Terminal.initInstance(config.getTerminal());
+        Parser parser = Parser.initInstance(config.getParser(), db.getData()
+                .getAlias());
+        Display display = Display.initInstance(config.getDisplay());
+        TaskManager taskManager = TaskManager.initInstance(config
+                .getTaskManager(), db.getData().getAlias(), db.getData()
+                .getTask());
+        Terminal.initInstance(config.getTerminal(), taskManager, display,
+                parser, db);
+    }
 
+    /**
+     * Return the instance of this Factory class
+     *
+     * @return instance
+     * @throws IOException
+     */
+    public static Factory getInstance() throws IOException {
+        if (instance == null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        }
+        return instance;
+    }
+
+    /**
+     * Initialize the instance of Factory class and return the instance
+     *
+     * @param filePath
+     * @return instance
+     * @throws IOException
+     */
+
+    public static Factory initInstance(String filePath) throws IOException {
+        if (instance != null) {
+            throw new RuntimeException(
+                    "Cannot initialize when it was initialized.");
+        } else {
+            instance = new Factory(filePath);
+        }
+        return instance;
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\Factory.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\Factory.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\GoogleStorage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\GoogleStorage.java
 	 */
 
 package w094j.ctrl8.database;
@@ -314,9 +690,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import w094j.ctrl8.database.config.GoogleStorageConfig;
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.message.NormalMessage;
 import w094j.ctrl8.parse.statement.CommandType;
 import w094j.ctrl8.pojo.Actions;
@@ -352,10 +731,11 @@ import com.google.gson.Gson;
  * Google Calendar Storage
  */
 public class GoogleStorage extends Storage {
-    private static DataStore<String> dataStoreEvent;
+    private static DataStore<ObjectId> dataStoreEvent;
     private static FileDataStoreFactory dataStoreFactory;
     private static DataStore<String> dataStoreSyncSettings;
-    private static DataStore<String> dataStoreTask;
+    private static DataStore<ObjectId> dataStoreTask;
+    private static final String EMPTY_STRING = "";
     private static final String ERROR_MESSAGE_FILE_NOT_FOUND = " file not found";
     private static final int FULL_SYNC_YEAR_FROM_NOW = -1;
     private static final String GOOGLE_EVENT_STATUS_CANCELLED = "cancelled";
@@ -365,6 +745,7 @@ public class GoogleStorage extends Storage {
     private static HttpTransport httpTransport;
     private static JsonFactory jsonFactory = new JacksonFactory();
     private static Logger logger = LoggerFactory.getLogger(GoogleStorage.class);
+    private static final int MILLISECONDS_IN_A_MINUTE = 60000;
     private static final String NO_TITLE = "(No title)";
     private static final String SYNC_TOKEN_KEY = "syncToken";
     private com.google.api.services.calendar.Calendar.Events.List calendarRequest;
@@ -372,21 +753,31 @@ public class GoogleStorage extends Storage {
     private com.google.api.services.calendar.Calendar clientCalendar;
     private GoogleClientSecrets clientSecrets;
     private com.google.api.services.tasks.Tasks clientTask;
+    private GoogleStorageConfig config;
     private Credential credential;
     private final java.io.File DATA_STORE_CALENDAR_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/CalendarInfo");
+            + "/CalendarInfo");
     private final java.io.File DATA_STORE_CREDENTIAL_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/StoredCredential");
+            + "/StoredCredential");
     private final java.io.File DATA_STORE_DIR = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME);
+    private final java.io.File DATA_STORE_EVENT_STORE = new java.io.File(
+            System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
+            + "/EventStore");
     private final java.io.File DATA_STORE_INETERNET_STATUS_LAST_SESSION = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/InternetStatusLastSession");
+            + "/InternetStatusLastSession");
+    private final java.io.File DATA_STORE_SYNC_SETTINGS = new java.io.File(
+            System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
+            + "/SyncSettings");
+    private final java.io.File DATA_STORE_TASK_STORE = new java.io.File(
+            System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
+            + "/TaskStore");
     private final java.io.File DATA_STORE_TASKLIST_INFO_FILE = new java.io.File(
             System.getProperty("user.home"), ".store/" + NormalMessage.APP_NAME
-                    + "/TaskListInfo");
+            + "/TaskListInfo");
     private DBfile dbFile;
     private final String EVENT_REMINDER_METHOD_EMAIL = "email";
     private final String EVENT_REMINDER_METHOD_POPUP = "popup";
@@ -396,112 +787,64 @@ public class GoogleStorage extends Storage {
     private Calendar googleCalendar;
     private TaskList googleTaskList;
     private Gson gson;
+    private boolean isAutoDownloadAfterSave;
     private boolean isInternetReachableLastSession;
+    private boolean isSyncWithGoogle;
     private final String SYNC_SETTINGS = "SyncSettings";
     private final String TASK_STORE = "TaskStore";
-    private String userId = "user";
+    private ArrayList<String> toBeDeletedGoogleEventIdList;
+    private ArrayList<String> toBeDeletedGoogleTaskIdList;
+    private final String userId = "user";
 
     /**
      * @param file
      * @param gson
-     * @throws Exception
+     * @throws IOException
+     * @throws GeneralSecurityException
      */
-    public GoogleStorage(DBfile file, Gson gson) throws Exception {
+    public GoogleStorage(DBfile file, Gson gson)
+            throws GeneralSecurityException, IOException {
         super(file);
         this.dbFile = file;
         this.gson = gson;
+        this.setConfig();
         this.initialize();
     }
 
-    /**
-     * Deletes calendar and task list in Google and deletes user's local related
-     * files.
-     */
-    public void deleteCalendarAndTaskList() {
-        try {
-            logger.info("Deleting Google " + NormalMessage.APP_NAME
-                    + " Calendar");
-            this.clientCalendar.calendars().delete(this.googleCalendar.getId())
-                    .execute();
-
-            logger.info("Deleting Google " + NormalMessage.APP_NAME
-                    + " Task List");
-            this.clientTask.tasklists().delete(this.googleTaskList.getId())
-                    .execute();
-
-            this.deleteLocalGoogleInfo();
-
-        } catch (Exception e) {
-            logger.debug("Failed to delete");
+    @Override
+    public void readData() throws IOException, DataException {
+        if (this.isSyncWithGoogle && this.isInternetReachable()) {
+            this.getUnsyncedEventsAndTasksFromGoogle();
         }
     }
 
-    /**
-     * Deletes user's local files that are related to Google Calendar & Google
-     * Task List. This does not delete the calendar or task list in Google.
-     */
-    public void deleteLocalGoogleInfo() {
-        this.deleteFile(this.DATA_STORE_CREDENTIAL_FILE);
-        this.deleteFile(this.DATA_STORE_CALENDAR_INFO_FILE);
-        this.deleteFile(this.DATA_STORE_TASKLIST_INFO_FILE);
-        this.deleteFile(this.DATA_STORE_INETERNET_STATUS_LAST_SESSION);
-        this.deleteFile(this.DATA_STORE_DIR);
-    }
-
     @Override
-    public void readData() {
+    public void storeData() throws IOException, DataException {
+        if (this.isSyncWithGoogle) {
+            boolean isInternetReachableThisSession = this.isInternetReachable();
 
-    }
-
-    @Override
-    public void storeData() throws Exception, IOException {
-        boolean isInternetReachableThisSession = this.isInternetReachable();
-
-        if (isInternetReachableThisSession) {
-            ArrayList<Actions> actionList = this.dbFile.getData().getTask()
-                    .getActionsList();
-            Actions action = actionList.get(actionList.size() - 1);
-            CommandType command = action.getStatement().getCommand();
-            String taskId = action.getTaskID();
-            Task localTask = this.dbFile.getData().getTask().getTaskStateMap()
-                    .get(taskId).getFinalTask();
-
-            switch (command) {
-                case ADD :
-                    this.addToGoogle(localTask);
-                    break;
-                case DELETE :
-                    this.deleteFromGoogle();
-                    break;
-                case DONE :
-                    this.markAsDoneInGoogle(localTask);
-                    break;
-                case MODIFY :
-                    this.modifyInGoogle(localTask);
-                    break;
-                default :
-                    break;
+            if (isInternetReachableThisSession) {
+                if (this.isInternetReachableLastSession) {
+                    this.updateOneUnsyncedEventOrTaskToGoogle();
+                } else {
+                    this.updateAllUnsyncedEventsAndTasksToGoogle();
+                }
+                if (this.isAutoDownloadAfterSave) {
+                    this.getUnsyncedEventsAndTasksFromGoogle();
+                }
             }
-            this.sync();
-            if (!this.isInternetReachableLastSession) {
-                //this.uploadUnsyncedEventsAndTasksToGoogle();
-            }
-        }
 
-        if (isInternetReachableThisSession != this.isInternetReachableLastSession) {
             this.saveIntenetStatusInfo();
+
         }
     }
 
-    /**
-     * Sync with Google Calendar and Google Task
-     *
-     * @throws Exception
-     */
-    public void sync() throws Exception {
-        logger.info("Syncing...");
-        this.syncGoogleCalendar();
-        this.syncGoogleTasks();
+    @Override
+    public void sync() throws IOException, DataException {
+        if (this.isSyncWithGoogle && this.isInternetReachable()) {
+            this.updateAllUnsyncedEventsAndTasksToGoogle();
+            this.getUnsyncedEventsAndTasksFromGoogle();
+        }
     }
 
     private void addGoogleEvent(Task localEvent) throws IOException {
@@ -519,7 +862,6 @@ public class GoogleStorage extends Storage {
         localEvent.setGoogleId(googleEvent.getId());
         localEvent.setEtag(googleEvent.getEtag());
 
-        logger.info("Saving dataStoreEvent: " + localEvent.getTitle());
         dataStoreEvent.set(googleEvent.getId(), localEvent.getId());
     }
 
@@ -538,15 +880,15 @@ public class GoogleStorage extends Storage {
         localTask.setGoogleId(googleTask.getId());
         localTask.setEtag(googleTask.getEtag());
 
-        logger.info("Saving dataStoreTask: " + localTask.getTitle());
         dataStoreTask.set(googleTask.getId(), localTask.getId());
     }
 
-    private void addLocalEvent(Event googleEvent) throws Exception {
+    private void addLocalEvent(Event googleEvent) throws DataException,
+    IOException {
         logger.info("Adding new event from Google: " + googleEvent.getSummary());
         Task localEvent = new Task();
+        localEvent.setGoogleId(googleEvent.getId());
         this.setLocalEventFields(googleEvent, localEvent);
-        logger.info("Saving dataStoreEvent: " + localEvent.getTitle());
         dataStoreEvent.set(googleEvent.getId(), localEvent.getId());
 
         this.dbFile.getData().getTask().updateTaskMap(localEvent, null, false);
@@ -554,12 +896,11 @@ public class GoogleStorage extends Storage {
 
     private void addLocalTask(
             com.google.api.services.tasks.model.Task googleTask)
-                    throws Exception {
-        logger.info("Adding new task from Google: " + googleTask.getTitle()
-                + " " + googleTask.getNotes());
+                    throws IOException, DataException {
+        logger.info("Adding new task from Google: " + googleTask.getTitle());
         Task localTask = new Task();
+        localTask.setGoogleId(googleTask.getId());
         this.setLocalTaskFields(googleTask, localTask);
-        logger.info("Saving dataStoreTask: " + localTask.getTitle());
         dataStoreTask.set(googleTask.getId(), localTask.getId());
 
         this.dbFile.getData().getTask().updateTaskMap(localTask, null, false);
@@ -629,36 +970,36 @@ public class GoogleStorage extends Storage {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void deleteFromGoogle() throws IOException {
         logger.info("Deleting Google Event/Task...");
         List<Task> localTaskList = Arrays.asList(this.dbFile.getData()
                 .getTask().getTaskList());
-        ArrayList<String> googleTaskIdList = new ArrayList<String>(
-                dataStoreTask.keySet());
-        ArrayList<String> googleEventIdList = new ArrayList<String>(
-                dataStoreEvent.keySet());
+        ArrayList<String> tempGoogleTaskIdList = (ArrayList<String>) this.toBeDeletedGoogleTaskIdList
+                .clone();
+        ArrayList<String> tempGoogleEventIdList = (ArrayList<String>) this.toBeDeletedGoogleEventIdList
+                .clone();
 
         for (Task i : localTaskList) {
-            googleTaskIdList.remove(i.getGoogleId());
-            googleEventIdList.remove(i.getGoogleId());
+            tempGoogleTaskIdList.remove(i.getGoogleId());
+            tempGoogleEventIdList.remove(i.getGoogleId());
         }
 
-        for (String googleId : googleTaskIdList) {
+        for (String googleId : tempGoogleTaskIdList) {
             this.deleteGoogleTask(googleId);
         }
 
-        for (String googleId : googleEventIdList) {
+        for (String googleId : tempGoogleEventIdList) {
             this.deleteGoogleEvent(googleId);
         }
     }
 
     private void deleteGoogleEvent(String googleId) throws IOException {
         logger.info("Deleting Google Event: " + googleId);
-        logger.info("Deleting dataStoreEvent: " + googleId);
         dataStoreEvent.delete(googleId);
         try {
             this.clientCalendar.events()
-                    .delete(this.googleCalendar.getId(), googleId).execute();
+            .delete(this.googleCalendar.getId(), googleId).execute();
         } catch (IOException e) {
             logger.info("Fail to delete Google Event: " + googleId);
         }
@@ -666,28 +1007,36 @@ public class GoogleStorage extends Storage {
 
     private void deleteGoogleTask(String googleId) throws IOException {
         logger.info("Deleting Google Task: " + googleId);
-        logger.info("Deleting dataStoreTask: " + googleId);
         dataStoreTask.delete(googleId);
         try {
             this.clientTask.tasks()
-                    .delete(this.googleTaskList.getId(), googleId).execute();
+            .delete(this.googleTaskList.getId(), googleId).execute();
         } catch (IOException e) {
             logger.info("Fail to delete Google Task: " + googleId);
         }
+    }
+
+    private void deleteLocalGoogleInfo() {
+        this.deleteFile(this.DATA_STORE_CALENDAR_INFO_FILE);
+        this.deleteFile(this.DATA_STORE_CREDENTIAL_FILE);
+        this.deleteFile(this.DATA_STORE_EVENT_STORE);
+        this.deleteFile(this.DATA_STORE_INETERNET_STATUS_LAST_SESSION);
+        this.deleteFile(this.DATA_STORE_SYNC_SETTINGS);
+        this.deleteFile(this.DATA_STORE_TASK_STORE);
+        this.deleteFile(this.DATA_STORE_TASKLIST_INFO_FILE);
+        this.deleteFile(this.DATA_STORE_DIR);
     }
 
     private void deleteLocalTask(Task localTask) throws IOException {
         if (localTask != null) {
             logger.info("Deleting local task/event: " + localTask.getTitle());
             if (localTask.getTaskType() == TaskType.TIMED) {
-                logger.info("Deleting dataStoreEvent: " + localTask.getTitle());
                 dataStoreEvent.delete(localTask.getGoogleId());
             } else {
-                logger.info("Deleting dataStoreTask: " + localTask.getTitle());
                 dataStoreTask.delete(localTask.getGoogleId());
             }
             this.dbFile.getData().getTask().getTaskStateMap()
-                    .get(localTask.getId()).setFinalTask(null);
+            .get(localTask.getId()).setFinalTask(null);
         }
     }
 
@@ -722,6 +1071,13 @@ public class GoogleStorage extends Storage {
                 .getDataStore(this.SYNC_SETTINGS);
     }
 
+    private java.util.Date getGoogleCalendarStartSyncDate() {
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.setTime(new java.util.Date());
+        cal.add(java.util.Calendar.YEAR, FULL_SYNC_YEAR_FROM_NOW);
+        return cal.getTime();
+    }
+
     private void getInternetStatusLastSession() throws IOException {
         logger.info("Getting Internet status last session...");
         String json = new String(
@@ -732,9 +1088,12 @@ public class GoogleStorage extends Storage {
     }
 
     private Task getLocalEventByGoogleId(String googleId) {
-        String taskId = null;
+
+        ObjectId taskId = null;
         try {
-            taskId = dataStoreEvent.get(googleId);
+            if (dataStoreEvent.get(googleId) != null) {
+                taskId = dataStoreEvent.get(googleId);
+            }
         } catch (IOException e) {
             return null;
         }
@@ -742,12 +1101,17 @@ public class GoogleStorage extends Storage {
             return this.dbFile.getData().getTask().getTask(taskId);
         }
         return null;
+
     }
 
     private Task getLocalTaskByGoogleId(String googleId) {
-        String taskId = null;
+
+        ObjectId taskId = null;
         try {
-            taskId = dataStoreTask.get(googleId);
+            if (dataStoreTask.get(googleId) != null) {
+                taskId = dataStoreTask.get(googleId);
+            }
+
         } catch (IOException e) {
             return null;
         }
@@ -755,13 +1119,7 @@ public class GoogleStorage extends Storage {
             return this.dbFile.getData().getTask().getTask(taskId);
         }
         return null;
-    }
 
-    private java.util.Date getStartSyncDate() {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        cal.setTime(new java.util.Date());
-        cal.add(java.util.Calendar.YEAR, FULL_SYNC_YEAR_FROM_NOW);
-        return cal.getTime();
     }
 
     private void getTaskListInfo() throws IOException {
@@ -771,17 +1129,38 @@ public class GoogleStorage extends Storage {
         this.googleTaskList = this.gson.fromJson(json, TaskList.class);
     }
 
-    private void initialize() throws Exception {
-        this.initializeTransport();
-        this.initializeDataStoreFactory();
-        this.getClientSecrets();
-        this.setUpAuthorizationCodeFlow();
-        this.setUpGlobalCaleandarInstance();
-        this.setUpGlobalTaskInstance();
-        this.createOrGetCalendar();
-        this.createOrGetTaskList();
-        this.createOrGetIntenetStatusLastSession();
-        this.getDataStoreInfo();
+    private void getTempGoogleIdList() throws IOException {
+        this.toBeDeletedGoogleEventIdList = new ArrayList<String>(
+                dataStoreEvent.keySet());
+        this.toBeDeletedGoogleTaskIdList = new ArrayList<String>(
+                dataStoreTask.keySet());
+    }
+
+    private void getUnsyncedEventsAndTasksFromGoogle() throws IOException,
+            DataException {
+        this.syncGoogleCalendar();
+        this.syncGoogleTaskList();
+    }
+
+    private void initialize() throws GeneralSecurityException, IOException {
+        if (this.isSyncWithGoogle) {
+            if (this.isInternetReachable()) {
+                this.initializeTransport();
+                this.initializeDataStoreFactory();
+                this.getClientSecrets();
+                this.setUpAuthorizationCodeFlow();
+                this.setUpGlobalCaleandarInstance();
+                this.setUpGlobalTaskInstance();
+                this.createOrGetCalendar();
+                this.createOrGetTaskList();
+                this.createOrGetIntenetStatusLastSession();
+                this.getDataStoreInfo();
+                this.getTempGoogleIdList();
+            }
+        } else if (this.DATA_STORE_DIR.exists()) {
+            this.deleteLocalGoogleInfo();
+            this.removeUnnecessaryInfoForLocalTasks();
+        }
     }
 
     private void initializeDataStoreFactory() throws IOException {
@@ -790,15 +1169,21 @@ public class GoogleStorage extends Storage {
     }
 
     private void initializeTransport() throws GeneralSecurityException,
-            IOException {
+    IOException {
         logger.info("Initializing Transport...");
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
     private boolean isInternetReachable() {
         try {
-            InetAddress.getByName(this.GOOGLE_WEBSITE);
-            logger.info("Has internet connection");
+            InetAddress google = InetAddress.getByName(this.GOOGLE_WEBSITE);
+            try {
+                google.isReachable(0);
+                logger.info("Has internet connection");
+            } catch (IOException e) {
+                logger.info("No internet connection");
+                return false;
+            }
         } catch (UnknownHostException e) {
             logger.info("No internet connection");
             return false;
@@ -810,7 +1195,7 @@ public class GoogleStorage extends Storage {
     private boolean isValidGoogleEventId(String googleId) {
         try {
             this.clientCalendar.events()
-                    .get(this.googleCalendar.getId(), googleId).execute();
+            .get(this.googleCalendar.getId(), googleId).execute();
             logger.info("Valid Google Event ID: " + googleId);
             return true;
         } catch (IOException e) {
@@ -823,7 +1208,7 @@ public class GoogleStorage extends Storage {
     private boolean isValidGoogleTaskId(String googleId) {
         try {
             this.clientTask.tasks().get(this.googleTaskList.getId(), googleId)
-                    .execute();
+            .execute();
             logger.info("Valid Google Task ID: " + googleId);
             return true;
         } catch (IOException e) {
@@ -838,7 +1223,7 @@ public class GoogleStorage extends Storage {
 
         if (syncToken == null) {
             this.calendarRequest.setTimeMin(new DateTime(this
-                    .getStartSyncDate(), TimeZone.getDefault()));
+                    .getGoogleCalendarStartSyncDate(), TimeZone.getDefault()));
         } else {
             this.calendarRequest.setSyncToken(syncToken);
         }
@@ -868,8 +1253,8 @@ public class GoogleStorage extends Storage {
         }
     }
 
-    private void modifyInGoogle(Task localTask) throws Exception {
-
+    private void modifyInGoogle(Task localTask) throws IOException,
+    DataException {
         if (localTask.getTaskType() == TaskType.TIMED) {
             if (dataStoreEvent.containsKey(localTask.getGoogleId())) {
                 // modify event
@@ -902,10 +1287,21 @@ public class GoogleStorage extends Storage {
                 if (dataStoreEvent.containsKey(localTask.getGoogleId())) {
                     this.deleteGoogleEvent(localTask.getGoogleId());
                 }
-                this.addGoogleEvent(localTask);
+                this.addGoogleTask(localTask);
             }
         }
 
+    }
+
+    private void removeUnnecessaryInfoForLocalTasks() {
+        List<Task> localTaskList = Arrays.asList(this.dbFile.getData()
+                .getTask().getTaskList());
+
+        for (Task i : localTaskList) {
+            i.setGoogleId(null);
+            i.setEtag(null);
+            i.setSyncStatus(null);
+        }
     }
 
     private void saveCalendarInfo() {
@@ -946,6 +1342,13 @@ public class GoogleStorage extends Storage {
 
     }
 
+    private void setConfig() {
+        this.config = this.dbFile.getConfig().getDatabase()
+                .getGoogleStorageConfig();
+        this.isAutoDownloadAfterSave = this.config.getAutoDownloadAfterSave();
+        this.isSyncWithGoogle = this.config.getSyncWithGoogle();
+    }
+
     private void setGoogleEventFields(Event googleEvent, Task localEvent) {
         DateTime dateTime;
 
@@ -973,13 +1376,13 @@ public class GoogleStorage extends Storage {
             eventReminderEmail.setMethod(this.EVENT_REMINDER_METHOD_EMAIL);
             eventReminderEmail.setMinutes((int) (localEvent.getStartDate()
                     .getTime() - localEvent.getReminder().getTime())
-                    / (60 * 1000));
+                    / MILLISECONDS_IN_A_MINUTE);
 
             EventReminder eventReminderPopUp = new EventReminder();
             eventReminderPopUp.setMethod(this.EVENT_REMINDER_METHOD_POPUP);
             eventReminderPopUp.setMinutes((int) (localEvent.getStartDate()
                     .getTime() - localEvent.getReminder().getTime())
-                    / (60 * 1000));
+                    / MILLISECONDS_IN_A_MINUTE);
 
             List<EventReminder> eventReminderList = new ArrayList<EventReminder>();
             eventReminderList.add(eventReminderEmail);
@@ -1022,7 +1425,10 @@ public class GoogleStorage extends Storage {
     }
 
     private void setLocalEventFields(Event googleEvent, Task localEvent)
-            throws Exception {
+            throws DataException {
+
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+
         if (googleEvent.getSummary() != null) {
             localEvent.setTitle(googleEvent.getSummary());
         } else {
@@ -1032,25 +1438,34 @@ public class GoogleStorage extends Storage {
         if (googleEvent.getDescription() != null) {
             localEvent.setDescription(googleEvent.getDescription());
         }
-        if (googleEvent.getStart() != null) {
+
+        if (googleEvent.getStart().getDate() == null) {
             localEvent.setStartDate(new Date(googleEvent.getStart()
                     .getDateTime().getValue()));
-        }
-        if (googleEvent.getEnd() != null) {
-            localEvent.setEndDate(new Date(googleEvent.getEnd().getDateTime()
+        } else {
+            localEvent.setStartDate(new Date(googleEvent.getStart().getDate()
                     .getValue()));
         }
+
+        if (googleEvent.getEnd().getDate() == null) {
+            localEvent.setEndDate(new Date(googleEvent.getEnd().getDateTime()
+                    .getValue()));
+        } else {
+            localEvent.setEndDate(new Date(googleEvent.getEnd().getDate()
+                    .getValue()));
+        }
+
         if (googleEvent.getLocation() != null) {
             localEvent.setLocation(googleEvent.getLocation());
         }
-        if (googleEvent.getReminders().getOverrides() == null) {
+
+        if (googleEvent.getReminders().getUseDefault()
+                || (googleEvent.getReminders().getOverrides() == null)) {
             localEvent.setReminder(null);
         } else {
             int minutesBeforeStartDate = googleEvent.getReminders()
                     .getOverrides().get(0).getMinutes();
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            cal.setTime(new Date(googleEvent.getStart().getDateTime()
-                    .getValue()));
+            cal.setTime(localEvent.getStartDate());
             cal.add(java.util.Calendar.MINUTE, (-1) * minutesBeforeStartDate);
             localEvent.setReminder(cal.getTime());
         }
@@ -1060,8 +1475,9 @@ public class GoogleStorage extends Storage {
 
     private void setLocalTaskFields(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-            throws Exception {
-        if ((googleTask.getTitle() == null) || googleTask.getTitle().equals("")) {
+                    throws DataException {
+        if ((googleTask.getTitle() == null)
+                || googleTask.getTitle().equals(EMPTY_STRING)) {
             localTask.setTitle(NO_TITLE);
         } else {
             localTask.setTitle(googleTask.getTitle());
@@ -1088,13 +1504,16 @@ public class GoogleStorage extends Storage {
 
     private void setUpAuthorizationCodeFlow() throws IOException {
         logger.info("Setting up authorization code flow...");
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                httpTransport, jsonFactory, this.clientSecrets,
+        GoogleAuthorizationCodeFlow flow;
+
+        flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,
+                jsonFactory, this.clientSecrets,
                 Collections.singleton(CalendarScopes.CALENDAR + " "
                         + TasksScopes.TASKS)).setDataStoreFactory(
-                dataStoreFactory).build();
+                                dataStoreFactory).build();
         this.credential = new AuthorizationCodeInstalledApp(flow,
                 new LocalServerReceiver()).authorize(this.userId);
+
     }
 
     private void setUpGlobalCaleandarInstance() {
@@ -1112,7 +1531,7 @@ public class GoogleStorage extends Storage {
         .setApplicationName(NormalMessage.APP_NAME).build();
     }
 
-    private void syncAllEvents() throws Exception {
+    private void syncAllEvents() throws IOException, DataException {
         logger.info("Syncing all events...");
         String pageToken = null;
         this.events = null;
@@ -1126,7 +1545,7 @@ public class GoogleStorage extends Storage {
                     logger.info("Invalid sync token, clearing event store and re-syncing...");
                     dataStoreSyncSettings.delete(SYNC_TOKEN_KEY);
                     dataStoreEvent.clear();
-                    this.sync();
+                    this.syncGoogleCalendar();
                 } else {
                     throw e;
                 }
@@ -1145,26 +1564,30 @@ public class GoogleStorage extends Storage {
         } while (pageToken != null);
     }
 
-    private void syncEvent(Task localEvent, Event googleEvent) throws Exception {
-        logger.info("Updating event: " + localEvent.getTitle());
+    private void syncEvent(Task localEvent, Event googleEvent)
+            throws IOException, DataException {
+        logger.info("Updating Google event: " + localEvent.getTitle());
 
         Date googleEventLastModifiedTime = new Date(googleEvent.getUpdated()
                 .getValue());
 
-        if (localEvent.getLastModifiedTime().after(googleEventLastModifiedTime)) {
-            this.updateGoogleEvent(googleEvent, localEvent);
-        } else {
+        if (localEvent.getLastModifiedTime()
+                .before(googleEventLastModifiedTime)) {
             this.updateLocalEvent(googleEvent, localEvent);
+        } else {
+            this.updateGoogleEvent(googleEvent, localEvent);
         }
     }
 
-    private void syncEventFromGoogle(Event googleEvent) throws Exception {
+    private void syncEventFromGoogle(Event googleEvent) throws IOException,
+    DataException {
         Task localEvent = this.getLocalEventByGoogleId(googleEvent.getId());
 
-        if (GOOGLE_EVENT_STATUS_CANCELLED.equals(googleEvent.getStatus())
-                && dataStoreEvent.containsKey(googleEvent.getId())) {
-            if (localEvent != null) {
-                this.deleteLocalTask(localEvent);
+        if (GOOGLE_EVENT_STATUS_CANCELLED.equals(googleEvent.getStatus())) {
+            if (dataStoreEvent.containsKey(googleEvent.getId())) {
+                if (localEvent != null) {
+                    this.deleteLocalTask(localEvent);
+                }
             }
         } else {
             if (localEvent != null) {
@@ -1175,7 +1598,7 @@ public class GoogleStorage extends Storage {
         }
     }
 
-    private void syncGoogleCalendar() throws Exception {
+    private void syncGoogleCalendar() throws IOException, DataException {
         logger.info("Syncing Google Calendar...");
         this.calendarRequest = this.clientCalendar.events().list(
                 this.googleCalendar.getId());
@@ -1184,48 +1607,102 @@ public class GoogleStorage extends Storage {
         this.setNextSyncToken();
     }
 
-    private void syncGoogleTasks() throws Exception {
-        logger.info("Syncing Google Task...");
+    private void syncGoogleTaskList() throws IOException, DataException {
+        logger.info("Syncing Google Task List...");
         Tasks tasks = this.clientTask.tasks().list(this.googleTaskList.getId())
                 .execute();
-        List<com.google.api.services.tasks.model.Task> items = tasks.getItems();
-        ArrayList<String> googleTaskIdList = new ArrayList<String>(
-                dataStoreTask.keySet());
 
-        for (com.google.api.services.tasks.model.Task googleTask : items) {
-            Task localTask = this.getLocalTaskByGoogleId(googleTask.getId());
-            if (localTask == null) {
-                this.addLocalTask(googleTask);
-                googleTaskIdList.remove(googleTask.getId());
-            } else {
-                this.syncTask(localTask, googleTask);
-                googleTaskIdList.remove(googleTask.getId());
+        if (tasks.getItems() != null) {
+            List<com.google.api.services.tasks.model.Task> items = tasks
+                    .getItems();
+            logger.info("Google Task List size: " + items.size());
+
+            for (com.google.api.services.tasks.model.Task googleTask : items) {
+                Task localTask = this
+                        .getLocalTaskByGoogleId(googleTask.getId());
+
+                if ((localTask == null)) {
+                    this.addLocalTask(googleTask);
+                    this.toBeDeletedGoogleTaskIdList.remove(googleTask.getId());
+                } else {
+                    this.syncTask(localTask, googleTask);
+                    this.toBeDeletedGoogleTaskIdList.remove(googleTask.getId());
+                }
             }
         }
 
-        for (String googleId : googleTaskIdList) {
+        for (String googleId : this.toBeDeletedGoogleTaskIdList) {
             this.deleteLocalTask(this.getLocalTaskByGoogleId(googleId));
         }
     }
 
     private void syncTask(Task localTask,
             com.google.api.services.tasks.model.Task googleTask)
-                    throws Exception {
-        logger.info("Updating task: " + localTask.getTitle());
+                    throws IOException, DataException {
 
         Date googleTaskLastModifiedTime = new Date(googleTask.getUpdated()
                 .getValue());
 
-        if (localTask.getLastModifiedTime().after(googleTaskLastModifiedTime)) {
-            this.updateGoogleTask(googleTask, localTask);
+        if (!localTask.getIsSynced()) {
+            if (!localTask.getEtag().equals(googleTask.getEtag())) {
+                // both local and google tasks changed, overwrite the latest one
+                if (localTask.getLastModifiedTime().after(
+                        googleTaskLastModifiedTime)) {
+                    this.updateGoogleTask(googleTask, localTask);
+                } else {
+                    if (googleTask.getDeleted() == null) {
+                        this.updateLocalTask(googleTask, localTask);
+                    } else {
+                        // google task flagged as deleted
+                        this.deleteLocalTask(localTask);
+                    }
+                }
+            } else {
+                // only local task changed
+                this.updateGoogleTask(googleTask, localTask);
+            }
         } else {
-            this.updateLocalTask(googleTask, localTask);
+            if (!localTask.getEtag().equals(googleTask.getEtag())) {
+                // only google task changed
+                this.updateGoogleTask(googleTask, localTask);
+            }
         }
+    }
+
+    private void updateAllUnsyncedEventsAndTasksToGoogle() throws IOException,
+            DataException {
+        logger.info("Uploading unsynced Events and Tasks");
+        List<Task> localTaskList = Arrays.asList(this.dbFile.getData()
+                .getTask().getTaskList());
+
+        for (Task i : localTaskList) {
+            if ((i.getIsSynced() == null)) {
+                this.addToGoogle(i);
+            } else if (!i.getIsSynced()) {
+                this.modifyInGoogle(i);
+                this.toBeDeletedGoogleTaskIdList.remove(i.getGoogleId());
+                this.toBeDeletedGoogleEventIdList.remove(i.getGoogleId());
+            } else if (i.getIsSynced()) {
+                this.toBeDeletedGoogleTaskIdList.remove(i.getGoogleId());
+                this.toBeDeletedGoogleEventIdList.remove(i.getGoogleId());
+            }
+        }
+
+        for (String googleId : this.toBeDeletedGoogleTaskIdList) {
+            this.deleteGoogleTask(googleId);
+        }
+
+        for (String googleId : this.toBeDeletedGoogleEventIdList) {
+            this.deleteGoogleEvent(googleId);
+        }
+
     }
 
     private void updateGoogleEvent(Event googleEvent, Task localEvent)
             throws IOException {
         this.setGoogleEventFields(googleEvent, localEvent);
+        googleEvent.setStatus(null);
+        logger.info("Updating Google event: " + localEvent.getTitle());
 
         googleEvent = this.clientCalendar
                 .events()
@@ -1233,69 +1710,87 @@ public class GoogleStorage extends Storage {
                         googleEvent).execute();
 
         localEvent.setEtag(googleEvent.getEtag());
+        this.toBeDeletedGoogleEventIdList.remove(googleEvent.getId());
     }
 
     private void updateGoogleTask(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-            throws IOException {
+                    throws IOException {
+        logger.info("Updating Google task: " + localTask.getTitle());
         this.setGoogleTaskFields(googleTask, localTask);
+        googleTask.setDeleted(null);
         googleTask = this.clientTask
                 .tasks()
-                .update(this.googleTaskList.getId(), localTask.getId(),
-                        googleTask).execute();
+                .update(this.googleTaskList.getId().toString(),
+                        localTask.getId().toString(), googleTask).execute();
+
         localTask.setEtag(googleTask.getEtag());
+        this.toBeDeletedGoogleTaskIdList.remove(googleTask.getId());
     }
 
     private void updateLocalEvent(Event googleEvent, Task localEvent)
-            throws Exception {
+            throws DataException {
+        logger.info("Updating local event: " + googleEvent.getSummary());
         this.setLocalEventFields(googleEvent, localEvent);
+        this.toBeDeletedGoogleEventIdList.remove(googleEvent.getId());
     }
 
     private void updateLocalTask(
             com.google.api.services.tasks.model.Task googleTask, Task localTask)
-            throws Exception {
+                    throws DataException {
+        logger.info("Updating local task: " + googleTask.getTitle());
         this.setLocalTaskFields(googleTask, localTask);
+        this.toBeDeletedGoogleTaskIdList.remove(googleTask.getId());
     }
 
-    private void uploadUnsyncedEventsAndTasksToGoogle() throws Exception {
-        logger.info("Uploading unsynced Events and Tasks");
-        List<Task> localTaskList = Arrays.asList(this.dbFile.getData()
-                .getTask().getTaskList());
-        ArrayList<String> googleTaskIdList = new ArrayList<String>(
-                dataStoreTask.keySet());
-        ArrayList<String> googleEventIdList = new ArrayList<String>(
-                dataStoreEvent.keySet());
+    private void updateOneUnsyncedEventOrTaskToGoogle() throws IOException,
+            DataException {
+        ArrayList<Actions> actionList = this.dbFile.getData().getTask()
+                .getActionsList();
+        if ((actionList.size() - 1) > 0) {
+            Actions lastAction = actionList.get(actionList.size() - 1);
+            CommandType command = lastAction.getStatement().getCommand();
+            ObjectId taskId = lastAction.getTaskID();
+            Task localTask = this.dbFile.getData().getTask().getTaskStateMap()
+                    .get(taskId).getFinalTask();
 
-        for (Task i : localTaskList) {
-            if ((i.getIsSynced() == null)) {
-                this.addToGoogle(i);
-            } else if (!i.getIsSynced()) {
-                this.modifyInGoogle(i);
-                googleTaskIdList.remove(i.getGoogleId());
-                googleEventIdList.remove(i.getGoogleId());
+            switch (command) {
+                case ADD :
+                    this.addToGoogle(localTask);
+                    break;
+                case DELETE :
+                    this.deleteFromGoogle();
+                    break;
+                case DONE :
+                    this.markAsDoneInGoogle(localTask);
+                    break;
+                case MODIFY :
+                    this.modifyInGoogle(localTask);
+                    break;
+                default :
+                    break;
             }
         }
-
     }
-
 }
-
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\GoogleStorage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\GoogleStorage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\IDatabase.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\IDatabase.java
 	 */
 
 package w094j.ctrl8.database;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import w094j.ctrl8.data.Data;
 import w094j.ctrl8.database.config.Config;
+import w094j.ctrl8.exception.DataException;
 
 /**
  * Interface for Database
@@ -1323,31 +1818,41 @@ public interface IDatabase {
     /**
      * Store data to Disk and Google
      *
-     * @throws Exception
+     * @throws DataException
+     *             when the task is errornous.
+     * @throws IOException
+     *             when the connection to Google has issues or when the internet
+     *             has issues.
+     * @throws GeneralSecurityException
+     *             when there is file permission issues.
      */
-    void saveToStorage() throws Exception;
+    void saveToStorage() throws GeneralSecurityException, IOException,
+            DataException;
 
     /**
-     * Sync Data
+     * Sync with Google Calendar and Google Task
+     *
+     * @throws Exception
      */
-    void sync();
+    void sync() throws Exception;
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\IDatabase.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\IDatabase.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\Storage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\Storage.java
 	 */
 
 package w094j.ctrl8.database;
 
 import java.io.IOException;
 
+import w094j.ctrl8.exception.DataException;
 import w094j.ctrl8.pojo.DBfile;
 
 /**
@@ -1364,26 +1869,35 @@ public abstract class Storage {
      * Read Data from Disk and Google
      *
      * @throws IOException
+     * @throws DataException
      */
-    abstract public void readData() throws IOException;
+    abstract public void readData() throws IOException, DataException;
 
     /**
      * Store Data to Disk and Google
      *
      * @throws IOException
-     * @throws Exception
+     * @throws DataException
      */
-    abstract public void storeData() throws IOException, Exception;
+    abstract public void storeData() throws IOException, DataException;
+
+    /**
+     * Sync with Google
+     * 
+     * @throws DataException
+     * @throws IOException
+     */
+    abstract public void sync() throws IOException, DataException;
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\database\Storage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\database\Storage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\ErrorMessage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\ErrorMessage.java
 	 */
 
 public class ErrorMessage {
@@ -1391,14 +1905,14 @@ public class ErrorMessage {
     public static final String ERROR_READING_INPUT = "Error: User Input Failed!";
     public static final String OPTION_NOT_FOUND = "Error: Option can't be found";
     public static final String STATEMENT_ADD_PARAMETER = "Add statement must have parameters.";
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\ErrorMessage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\ErrorMessage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\HelpMessage.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\HelpMessage.java
 	 */
 
 
@@ -1450,16 +1964,19 @@ public class HelpMessage {
     //@formatter:on
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\message\HelpMessage.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\message\HelpMessage.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasAddStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AliasAddStatement.java
 	 */
 
+/**
+ *
+ */
 public class AliasAddStatement extends Statement {
 
     private static Logger logger = LoggerFactory
@@ -1468,13 +1985,18 @@ public class AliasAddStatement extends Statement {
     private String alias;
     private String phrase;
 
-    public AliasAddStatement(String statementString) {
+    /**
+     * @param statementString
+     * @throws ParseException
+     */
+    public AliasAddStatement(String statementString) throws ParseException {
         super(CommandType.ALIAS_ADD, statementString);
         if (this.getStatementArgumentsOnly().trim().split("\\s+").length < 2) {
-            throw new InvalidParameterException(
+            throw new ParseException(
                     "AliasAdd statement must specify an alias and its phrase.");
         } else {
-            String arr[] = this.getStatementArgumentsOnly().split(" ", 2);
+            String arr[] = this.getStatementArgumentsOnly().trim()
+                    .split(" ", 2);
             this.alias = arr[0];
             this.phrase = arr[1];
             logger.debug("Valid alias-add Command, query \"" + statementString
@@ -1484,23 +2006,22 @@ public class AliasAddStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
         // Statement to be added
-        taskManager.aliasAdd(this.alias, this.phrase, this, isUndo);
+        return taskManager.aliasAdd(this.alias, this.phrase, this, isUndo);
 
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasAddStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AliasAddStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasDeleteStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AliasDeleteStatement.java
 	 */
 
 public class AliasDeleteStatement extends StatementQuery {
@@ -1513,32 +2034,28 @@ public class AliasDeleteStatement extends StatementQuery {
      */
     public AliasDeleteStatement(String statementString) {
         super(CommandType.ALIAS_DELETE, statementString);
-        this.query = this.getStatementArgumentsOnly();
+        this.query = this.getStatementArgumentsOnly().trim();
         logger.debug("Valid alias-delete Command, query \"" + statementString
                 + "\"");
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws DataException {
         // TODO Link to Terminal
-        try {
-            taskManager.aliasDelete(this.query, this, isUndo);
-        } catch (DataException e) {
-            e.printStackTrace();
-        }
+        return taskManager.aliasDelete(this.query, this, isUndo);
 
     }
 
 }
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\AliasDeleteStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\AliasDeleteStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\DeleteStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\DeleteStatement.java
 	 */
 
 public class DeleteStatement extends StatementQuery {
@@ -1552,26 +2069,26 @@ public class DeleteStatement extends StatementQuery {
      */
     public DeleteStatement(String statementString) {
         super(CommandType.DELETE, statementString);
-        this.query = this.getStatementArgumentsOnly();
+        this.query = this.getStatementArgumentsOnly().trim();
         logger.debug("Valid delete Command, query \"" + statementString + "\"");
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException, DataException {
 
-        taskManager.delete(this.query, this, isUndo);
+        return taskManager.delete(this.query, this, isUndo);
     }
 
 }
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\DeleteStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\DeleteStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\DoneStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\DoneStatement.java
 	 */
 
 public class DoneStatement extends StatementQuery {
@@ -1584,28 +2101,28 @@ public class DoneStatement extends StatementQuery {
      */
     public DoneStatement(String statementString) {
         super(CommandType.DONE, statementString);
-        this.query = this.getStatementArgumentsOnly();
+        this.query = this.getStatementArgumentsOnly().trim();
         logger.debug("Valid done Command, query \"" + statementString + "\"");
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException, DataException {
         // TODO Link to Terminal
         // statement to be added
-        taskManager.done(this.query, this, isUndo);
+        return taskManager.done(this.query, this, isUndo);
 
     }
 
 }
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\DoneStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\DoneStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HelpStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HelpStatement.java
 	 */
 
 /**
@@ -1633,20 +2150,20 @@ public class HelpStatement extends Statement {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo) {
-        taskManager.help(this.command);
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
+        return taskManager.help(this.command, this);
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HelpStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HelpStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryClearStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HistoryClearStatement.java
 	 */
 
 public class HistoryClearStatement extends StatementOnePosInt {
@@ -1666,21 +2183,20 @@ public class HistoryClearStatement extends StatementOnePosInt {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
-        taskManager.historyClear(Integer.parseInt(this.query));
+    public Response execute(ITaskManager taskManager, boolean isUndo) {
+        return taskManager.historyClear(Integer.parseInt(this.query), this);
     }
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryClearStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HistoryClearStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryUndoStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HistoryUndoStatement.java
 	 */
 
 public class HistoryUndoStatement extends StatementOnePosInt {
@@ -1698,22 +2214,22 @@ public class HistoryUndoStatement extends StatementOnePosInt {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
-            throws CommandExecuteException {
+    public Response execute(ITaskManager taskManager, boolean isUndo)
+            throws CommandExecuteException, DataException {
         // TODO Link to Terminal
         // temporary index to be passed before search implemented.
-        taskManager.historyUndo(this.getPositiveInteger());
+        return taskManager.historyUndo(this.getPositiveInteger(), this);
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\HistoryUndoStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\HistoryUndoStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementOnePosInt.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\StatementOnePosInt.java
 	 */
 
 /**
@@ -1768,14 +2284,14 @@ public abstract class StatementOnePosInt extends Statement {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementOnePosInt.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\StatementOnePosInt.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementQuery.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\StatementQuery.java
 	 */
 
 /**
@@ -1802,14 +2318,14 @@ public abstract class StatementQuery extends Statement {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\StatementQuery.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\StatementQuery.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ViewStatement.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\ViewStatement.java
 	 */
 
 public class ViewStatement extends StatementNoParams {
@@ -1824,20 +2340,20 @@ public class ViewStatement extends StatementNoParams {
     }
 
     @Override
-    public void execute(ITaskManager taskManager, boolean isUndo)
+    public Response execute(ITaskManager taskManager, boolean isUndo)
             throws CommandExecuteException {
-        taskManager.view();
+        return taskManager.view(this);
     }
 
 }
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\parse\statement\ViewStatement.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\parse\statement\ViewStatement.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\DBfile.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\pojo\DBfile.java
 	 */
 
 
@@ -1859,7 +2375,7 @@ public class DBfile {
 
     /**
      * TODO
-     * 
+     *
      * @param data
      * @param config
      */
@@ -1900,14 +2416,14 @@ public class DBfile {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\DBfile.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\pojo\DBfile.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Task.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\pojo\Task.java
 	 */
 
 
@@ -1941,16 +2457,19 @@ public class Task implements Comparable<Task> {
     private Date endDate;
     private String etag;
     private String googleId;
-    private String id;
+    //@formatter:off
+    private ObjectId id;
     private Boolean isDone;
 
     private Boolean isSynced;
+
     private Date lastModifiedTime;
     private String location;
     private Integer priority;
     private Date reminder;
     private Date startDate;
     private TaskType taskType;
+    //@formatter:on
     private String title;
 
     /**
@@ -1958,6 +2477,7 @@ public class Task implements Comparable<Task> {
      */
     public Task() {
         this.taskType = TaskType.INCOMPLETE;
+        this.id = new ObjectId();
     }
 
     public Task(Task task) {
@@ -2006,8 +2526,6 @@ public class Task implements Comparable<Task> {
      * @return end date
      */
     public Date getEndDate() {
-        // Only timed and deadline tasks have an end date
-        assert ((this.taskType == TaskType.TIMED) || (this.taskType == TaskType.DEADLINE));
         return this.endDate;
     }
 
@@ -2026,9 +2544,9 @@ public class Task implements Comparable<Task> {
     }
 
     /**
-     * @return id
+     * @return the id
      */
-    public String getId() {
+    public ObjectId getId() {
         return this.id;
     }
 
@@ -2071,8 +2589,6 @@ public class Task implements Comparable<Task> {
      * @return Date :the start Date of the task
      */
     public Date getStartDate() {
-        // only Timed tasks have a start date
-        assert (this.taskType == TaskType.TIMED);
         return this.startDate;
     }
 
@@ -2136,6 +2652,7 @@ public class Task implements Comparable<Task> {
     public void setEtag(String eTag) {
         this.etag = eTag;
         this.isSynced = true;
+        this.lastModifiedTime = new Date();
     }
 
     /**
@@ -2151,7 +2668,7 @@ public class Task implements Comparable<Task> {
      * @param id
      *            the id to set
      */
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
@@ -2201,6 +2718,14 @@ public class Task implements Comparable<Task> {
     }
 
     /**
+     * @param isSynced
+     *            the isSynced to set
+     */
+    public void setSyncStatus(Boolean isSynced) {
+        this.isSynced = isSynced;
+    }
+
+    /**
      * @param title
      *            the title to set
      */
@@ -2211,16 +2736,13 @@ public class Task implements Comparable<Task> {
 
     /**
      * Change incomplete task to complete task this.task should have a title
-     *
-     * @throws Exception
+     * 
+     * @throws DataException
      */
-    public void toCompleteTask() throws Exception {
-        if (this.id == null) {
-            this.id = new ObjectId().toString();
-        }
+    public void toCompleteTask() throws DataException {
 
         if ((this.title == null) || this.title.equals("")) {
-            throw new Exception("No title");
+            throw new DataException("No title");
         }
 
         if ((this.location != null) && this.location.equals("")) {
@@ -2229,7 +2751,8 @@ public class Task implements Comparable<Task> {
 
         if ((this.startDate != null) && (this.endDate != null)) {
             if (this.startDate.after(this.endDate)) {
-                throw new Exception("Start Date shouldn't be after End Date");
+                throw new DataException(
+                        "Start Date shouldn't be after End Date");
             }
         }
 
@@ -2341,14 +2864,15 @@ public class Task implements Comparable<Task> {
     }
 
 }
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\pojo\Task.java
+
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\pojo\Task.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
 	 */
 
     private String outputHelpMessage(CommandType command) {
@@ -2409,14 +2933,14 @@ public class Task implements Comparable<Task> {
      * TODO WHY IS THIS HERE? This method is used to print the table with
      * border. (modified from printTable)
      */
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
 
 
 
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
 	 */
 
     private String printTableWithBorder(int startIndex, int endIndex,
@@ -2511,212 +3035,7 @@ public class Task implements Comparable<Task> {
 
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\PriorityParameterExceptionTest.java
-	 */
-
-package w094j.ctrl8.parse;
-
-import java.security.InvalidParameterException;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import w094j.ctrl8.database.config.ParameterConfig;
-
-/**
- * PriorityParameter Exception Test. Valid priority number(int) ranges from 0 to
- * 10 inclusive. Exception will be thrown if it is invalid.
- */
-public class PriorityParameterExceptionTest {
-    private ParameterConfig config = new ParameterConfig();
-    private ParameterParser parser = new ParameterParser(this.config);
-
-    /**
-     * Test for error value: double
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testDouble() throws Exception {
-        try {
-            this.parser.parse("%{0.0}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be an integer.")) {
-                Assert.fail("should have printed: Priority must be an integer.");
-            }
-        }
-    }
-
-    /**
-     * Boundary Testing: Extreme Value (Integer.MAX_VALUE)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testIntMaxValue() throws Exception {
-        try {
-            this.parser.parse("%{" + (Integer.MAX_VALUE) + "}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10")) {
-                Assert.fail("should have printed: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
-            }
-        }
-    }
-
-    /**
-     * Boundary Testing: Extreme Value (Integer.MIN_VALUE)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testIntMinValue() throws Exception {
-        try {
-            this.parser.parse("%{\\" + (Integer.MIN_VALUE) + "}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10")) {
-                System.out.println(e.toString());
-                Assert.fail("should have printed: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
-            }
-        }
-    }
-
-    /**
-     * Boundary Testing: Just Below Range
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testOutOfRangeNegative() throws Exception {
-        try {
-            this.parser.parse("%{\\-1}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10")) {
-                Assert.fail("should have printed: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
-            }
-        }
-
-    }
-
-    /**
-     * Boundary Testing: Just Above Range
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testOutOfRangePositive() throws Exception {
-        try {
-            this.parser.parse("%{11}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10")) {
-                Assert.fail("should have printed: Priority must be between and inclusive of 0 and 10. 0 <= priority <= 10");
-            }
-
-        }
-    }
-
-    /**
-     * Test for error value: String (2 words)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testString() throws Exception {
-        try {
-            this.parser.parse("%{string string}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be an integer.")) {
-                Assert.fail("should have printed: Priority must be an integer.");
-            }
-        }
-    }
-
-    /**
-     * Test for error value: String (1 word)
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testWord() throws Exception {
-        try {
-            this.parser.parse("%{word}");
-            Assert.fail("should have thrown InvalidParameterException");
-        } catch (InvalidParameterException e) {
-            if (!e.toString()
-                    .equals("java.security.InvalidParameterException: Priority must be an integer.")) {
-                Assert.fail("should have printed: Priority must be an integer.");
-            }
-        }
-    }
-
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\parse\PriorityParameterExceptionTest.java
-
-
-
-
-
-	/**
-	 * origin: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\statement\parameter\ParameterDatePayloadTest.java
-	 */
-
-                { "June 15 1992 6:01:00", new Date(92, 5, 15, 6, 1, 0) },
-                { "30 january 1993 23:59", new Date(93, 0, 30, 23, 59, 0) },
-                { "31 dec 1994 12:00", new Date(94, 11, 31, 12, 00, 0) }
-
-        });
-    }
-
-    // @formatter:on
-
-    /**
-     * Tests the parsing of priority parameter.
-     */
-    @Test
-    public void testDeadline() {
-
-        assertEquals(this.expectedDate, this.deadlineParameter.getDate());
-    }
-
-    /**
-     * Tests the parsing of priority parameter.
-     */
-    @Test
-    public void testReminder() {
-
-        assertEquals(this.expectedDate, this.reminderParameter.getDate());
-    }
-
-    /**
-     * Tests the parsing of priority parameter.
-     */
-    @Test
-    public void testStartTime() {
-
-        assertEquals(this.expectedDate, this.startTimeParameter.getDate());
-    }
-}
-
-	// End of segment: D:\git\CS2103T\main\src\test\java\w094j\ctrl8\statement\parameter\ParameterDatePayloadTest.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\taskmanager\TaskManager.java
 
 
 

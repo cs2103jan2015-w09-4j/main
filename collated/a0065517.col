@@ -3,7 +3,7 @@
 
 
 	/**
-	 * origin: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\IllegalConfigException.java
+	 * origin: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\IllegalConfigException.java
 	 */
 
 /**
@@ -32,7 +32,7 @@ public class IllegalConfigException extends Exception {
     }
 }
 
-	// End of segment: D:\git\CS2103T\main\src\main\java\w094j\ctrl8\exception\IllegalConfigException.java
+	// End of segment: C:\Users\imchenchen\Documents\GitHub\cs2103jan2015-w09-4j\main\src\main\java\w094j\ctrl8\exception\IllegalConfigException.java
 
 
 
