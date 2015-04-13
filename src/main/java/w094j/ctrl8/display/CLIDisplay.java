@@ -408,68 +408,72 @@ public class CLIDisplay extends Display {
 
         logger.debug("Updating Response(" + new Gson().toJson(res) + ")");
 
-        if (res.reply != null) {
-            this.outputMessage(res.reply);
-        }
-        if (res.taskList != null) {
-
-            List<Task> floatingTasks = new ArrayList<>();
-            List<Task> timedTasks = new ArrayList<>();
-            List<Task> deadlinedTasks = new ArrayList<>();
-
-            for (Task eaTask : res.taskList) {
-                switch (eaTask.getTaskType()) {
-                    case DEADLINE :
-                        deadlinedTasks.add(eaTask);
-                        break;
-                    case FLOATING :
-                        floatingTasks.add(eaTask);
-                        break;
-                    case TIMED :
-                        timedTasks.add(eaTask);
-                        break;
-                    default :
-                        // Should never be an incomplete task
-                        assert (false);
-                        break;
-                }
-            }
-
-            try {
-                if (floatingTasks.size() > 0) {
-                    this.outputTask(FLOATING_TASK_NAME, floatingTasks
-                            .toArray(new Task[floatingTasks.size()]),
-                            TaskType.FLOATING);
-                    System.out.println();
-                }
-                if (deadlinedTasks.size() > 0) {
-                    this.outputTask(DEADLINED_TASK_NAME, deadlinedTasks
-                            .toArray(new Task[deadlinedTasks.size()]),
-                            TaskType.DEADLINE);
-                    System.out.println();
-                }
-                if (timedTasks.size() > 0) {
-                    this.outputTask(TIMED_TASK_NAME,
-                            timedTasks.toArray(new Task[timedTasks.size()]),
-                            TaskType.TIMED);
-                }
-            } catch (OutputExecuteException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        if (res.alias != null) {
-            this.outputAliases(res.alias);
-        }
-        if (res.actions != null) {
-            this.outputActions(res.actions);
-        }
-
         if (res.getCommandRan() == null) {
-            System.out.println("ERROR");
-            throw new RuntimeException();
+            System.out.println(res.getException().getMessage());
         } else {
+
+            if (res.reply != null) {
+                this.outputMessage(res.reply);
+            }
+            if (res.taskList != null) {
+
+                List<Task> floatingTasks = new ArrayList<>();
+                List<Task> timedTasks = new ArrayList<>();
+                List<Task> deadlinedTasks = new ArrayList<>();
+
+                for (Task eaTask : res.taskList) {
+                    switch (eaTask.getTaskType()) {
+                        case DEADLINE :
+                            deadlinedTasks.add(eaTask);
+                            break;
+                        case FLOATING :
+                            floatingTasks.add(eaTask);
+                            break;
+                        case TIMED :
+                            timedTasks.add(eaTask);
+                            break;
+                        default :
+                            // Should never be an incomplete task
+                            assert (false);
+                            break;
+                    }
+                }
+
+                try {
+                    if (floatingTasks.size() > 0) {
+                        this.outputTask(FLOATING_TASK_NAME, floatingTasks
+                                .toArray(new Task[floatingTasks.size()]),
+                                TaskType.FLOATING);
+                        System.out.println();
+                    }
+                    if (deadlinedTasks.size() > 0) {
+                        this.outputTask(DEADLINED_TASK_NAME, deadlinedTasks
+                                .toArray(new Task[deadlinedTasks.size()]),
+                                TaskType.DEADLINE);
+                        System.out.println();
+                    }
+                    if (timedTasks.size() > 0) {
+                        this.outputTask(
+                                TIMED_TASK_NAME,
+                                timedTasks.toArray(new Task[timedTasks.size()]),
+                                TaskType.TIMED);
+                    }
+                } catch (OutputExecuteException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            if (res.alias != null) {
+                this.outputAliases(res.alias);
+            }
+            if (res.actions != null) {
+                this.outputActions(res.actions);
+            }
+        }
+
+        if (!((res.getCommandRan() != null) && !res.isContinueExecution())) {
+
             System.out.print(String.format(this.config.getPromptDefault(),
                     this.config.getAppName()));
         }

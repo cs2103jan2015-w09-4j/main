@@ -1,7 +1,6 @@
 package w094j.ctrl8.parse.statement;
 
-import java.security.InvalidParameterException;
-
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +16,10 @@ public class AliasAddStatement extends Statement {
     private String alias;
     private String phrase;
 
-    public AliasAddStatement(String statementString) {
+    public AliasAddStatement(String statementString) throws ParseException {
         super(CommandType.ALIAS_ADD, statementString);
         if (this.getStatementArgumentsOnly().trim().split("\\s+").length < 2) {
-            throw new InvalidParameterException(
+            throw new ParseException(
                     "AliasAdd statement must specify an alias and its phrase.");
         } else {
             String arr[] = this.getStatementArgumentsOnly().split(" ", 2);

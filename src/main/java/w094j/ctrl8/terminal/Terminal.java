@@ -1,5 +1,7 @@
 package w094j.ctrl8.terminal;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -109,15 +111,17 @@ public class Terminal {
                     res = statement.execute(this.taskManager, false);
                     this.display.updateUI(res);
                     this.db.saveToStorage();
-                } catch (ParseException pe) {
-
-                } catch (DataException de) {
-
-                } catch (CommandExecuteException cee) {
-
+                    continueExecution = res.isContinueExecution();
+                } catch (DataException | ParseException
+                        | CommandExecuteException recoverableException) {
+                    res.setException(recoverableException);
+                    this.display.updateUI(res);
+                } catch (GeneralSecurityException | IOException irrecoverableException) {
+                    continueExecution = false;
+                    res.setException(irrecoverableException);
+                    this.display.updateUI(res);
                 }
 
-                continueExecution = res.isContinueExecution();
             }
         }
     }
